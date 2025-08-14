@@ -32,7 +32,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('✅ Mapbox token found, returning to client');
+    console.log('✅ Mapbox token found:', mapboxToken.substring(0, 20) + '...');
+    console.log('🚀 Returning token to client');
     
     // Return the token to the client
     return new Response(
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+          'Cache-Control': 'no-cache, no-store, must-revalidate' // No caching to ensure fresh token
         }
       }
     );

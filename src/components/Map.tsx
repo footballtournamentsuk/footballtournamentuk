@@ -131,6 +131,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     const container = mapContainer.current;
     if (!container || !mapboxToken || map.current) {
       console.log('⏳ Map initialization waiting. Container:', !!container, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
+      if (container && !mapboxToken) {
+        console.log('⏳ Container ready, waiting for token...');
+      }
       return;
     }
 
@@ -228,12 +231,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   // Container callback that triggers re-initialization
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
+    console.log('📍 Map container callback triggered with node:', !!node);
     if (node) {
-      console.log('📍 Map container mounted and ready');
+      console.log('📍 Map container mounted and ready, dimensions:', node.offsetWidth, 'x', node.offsetHeight);
       mapContainer.current = node;
-      setContainerReady(true);
-    } else {
-      setContainerReady(false);
+      // Force a re-render to trigger map initialization
+      setTimeout(() => {
+        console.log('⏰ Container ready timeout triggered');
+      }, 100);
     }
   }, []);
 
