@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X } from 'lucide-react';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
@@ -394,82 +395,75 @@ const ProfilePage = () => {
                 <CardTitle>Location & Dates</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="location_name">Venue Name *</Label>
-                    <Input
-                      id="location_name"
-                      value={editingTournament.location_name}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, location_name: e.target.value }))}
-                      placeholder="e.g., Etihad Campus"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="postcode">Postcode *</Label>
-                    <Input
-                      id="postcode"
-                      value={editingTournament.postcode}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, postcode: e.target.value }))}
-                      placeholder="M11 3FF"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="region">Region *</Label>
-                    <Input
-                      id="region"
-                      value={editingTournament.region}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, region: e.target.value }))}
-                      placeholder="Greater Manchester"
-                      required
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="location_name">Venue Name *</Label>
+                  <Input
+                    id="location_name"
+                    value={editingTournament.location_name}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, location_name: e.target.value }))}
+                    placeholder="e.g., Etihad Campus"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="postcode">Postcode *</Label>
+                  <Input
+                    id="postcode"
+                    value={editingTournament.postcode}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, postcode: e.target.value }))}
+                    placeholder="tn62hr"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="region">Region *</Label>
+                  <Input
+                    id="region"
+                    value={editingTournament.region}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, region: e.target.value }))}
+                    placeholder="Greater Manchester"
+                    required
+                  />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="start_date">Start Date & Time *</Label>
-                    <Input
-                      id="start_date"
-                      type="datetime-local"
-                      value={editingTournament.start_date}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, start_date: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="end_date">End Date & Time *</Label>
-                    <Input
-                      id="end_date"
-                      type="datetime-local"
-                      value={editingTournament.end_date}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, end_date: e.target.value }))}
-                      required
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="start_date">Start Date & Time *</Label>
+                  <DateTimePicker
+                    value={editingTournament.start_date}
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, start_date: value }))}
+                    placeholder="Select start date"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="end_date">End Date & Time *</Label>
+                  <DateTimePicker
+                    value={editingTournament.end_date}
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, end_date: value }))}
+                    placeholder="Select end date"
+                  />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="registration_deadline">Registration Deadline</Label>
-                    <Input
-                      id="registration_deadline"
-                      type="datetime-local"
-                      value={editingTournament.registration_deadline || ''}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, registration_deadline: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="max_teams">Max Teams</Label>
-                    <Input
-                      id="max_teams"
-                      type="number"
-                      value={editingTournament.max_teams || ''}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, max_teams: parseInt(e.target.value) || undefined }))}
-                      placeholder="Optional"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="registration_deadline">Registration Deadline</Label>
+                  <DateTimePicker
+                    value={editingTournament.registration_deadline || ''}
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, registration_deadline: value }))}
+                    placeholder="Select registration deadline"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="max_teams">Max Teams</Label>
+                  <Input
+                    id="max_teams"
+                    type="number"
+                    value={editingTournament.max_teams || ''}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, max_teams: parseInt(e.target.value) || undefined }))}
+                    placeholder="Optional"
+                  />
                 </div>
               </CardContent>
             </Card>
