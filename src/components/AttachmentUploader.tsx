@@ -78,13 +78,27 @@ export const AttachmentUploader: React.FC<AttachmentUploaderProps> = ({
     setSelectedFiles(prev => prev.filter(f => f.id !== id));
   };
 
+  // Function to sanitize filename for Supabase Storage
+  const sanitizeFilename = (filename: string) => {
+    // Replace any non-ASCII characters and special characters with safe alternatives
+    return filename
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[^\w\s.-]/g, '') // Keep only word chars, spaces, dots, and hyphens
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+      .toLowerCase(); // Convert to lowercase
+  };
+
   const uploadSingleFile = async (fileToUpload: UploadFile) => {
     setSelectedFiles(prev => 
       prev.map(f => f.id === fileToUpload.id ? { ...f, uploading: true, error: undefined } : f)
     );
 
     try {
-      const fileName = `${fileToUpload.file.name}`;
+      const sanitizedFileName = sanitizeFilename(fileToUpload.file.name);
+      const timestamp = Date.now();
+      const fileName = `${timestamp}_${sanitizedFileName}`;
       const filePath = `${userId}/${tournamentId}/${fileName}`;
 
       // Upload to Supabase Storage
