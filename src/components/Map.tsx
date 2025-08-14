@@ -5,6 +5,7 @@ import { Tournament } from '@/types/tournament';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -31,18 +32,19 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const fetchMapboxToken = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/get-mapbox-token');
+      setError(null);
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch Mapbox token');
+      const { data, error: functionError } = await supabase.functions.invoke('get-mapbox-token');
+      
+      if (functionError) {
+        throw new Error(`Function error: ${functionError.message}`);
       }
       
-      const data = await response.json();
-      if (data.token) {
+      if (data?.token) {
         setMapboxToken(data.token);
         setError(null);
       } else {
-        throw new Error('No token found');
+        throw new Error('No token found in response');
       }
     } catch (err) {
       console.error('Error fetching Mapbox token:', err);
@@ -74,7 +76,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       );
 
       map.current.on('load', () => {
+        console.log('Map loaded successfully');
         addTournamentMarkers();
+      });
+
+      map.current.on('error', (e) => {
+        console.error('Map error:', e);
+        setError('Failed to load map. Please check your Mapbox token.');
       });
 
     } catch (error) {
@@ -124,20 +132,25 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   }, []);
 
   useEffect(() => {
-    if (mapboxToken) {
+    if (mapboxToken && mapContainer.current) {
+      console.log('Initializing map with token');
       initializeMap(mapboxToken);
     }
   }, [mapboxToken]);
 
   useEffect(() => {
     if (map.current && tournaments.length > 0) {
+      console.log('Adding tournament markers:', tournaments.length);
       addTournamentMarkers();
     }
   }, [tournaments, onTournamentSelect]);
 
   useEffect(() => {
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, []);
 
@@ -176,8 +189,8 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   }
 
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
-      <div ref={mapContainer} className="absolute inset-0" />
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg bg-surface">
+      <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
       
       {selectedTournament && (
         <div className="absolute top-4 left-4 right-4 z-10">

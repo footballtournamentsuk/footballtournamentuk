@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Settings, MapPin, Save, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const SettingsPage = () => {
   const [mapboxToken, setMapboxToken] = useState('');
@@ -34,16 +35,12 @@ const SettingsPage = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/settings/mapbox-token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: mapboxToken }),
+      const { data, error } = await supabase.functions.invoke('save-mapbox-token', {
+        body: { token: mapboxToken }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to save token');
+      if (error) {
+        throw error;
       }
 
       toast({
