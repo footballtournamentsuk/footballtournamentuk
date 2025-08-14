@@ -250,7 +250,7 @@ const TournamentDetails = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-sm max-w-none">
-                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line break-words overflow-wrap-anywhere">
                       {tournament.extended_description}
                     </p>
                   </div>
