@@ -144,7 +144,7 @@ const Hero: React.FC = () => {
             <div className="flex items-center justify-center mb-2">
               <Users className="w-6 h-6 text-orange-400 mr-2" />
               <div className="text-3xl font-bold text-orange-400">
-                {teamsCounter.formattedValue}
+                1K+
               </div>
             </div>
             <div className="text-white/80 font-medium">Teams Registered</div>
