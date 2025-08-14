@@ -1,10 +1,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Users, Trophy, Search, List } from 'lucide-react';
+import { MapPin, Calendar, Users, Trophy, Search, List, FileText } from 'lucide-react';
 import heroImage from '@/assets/hero-football.jpg';
+import { useCounterAnimation } from '@/hooks/useCounterAnimation';
 
 const Hero: React.FC = () => {
+  // Animated counters for statistics
+  const tournamentsCounter = useCounterAnimation({ end: 120, duration: 2500 });
+  const leaguesCounter = useCounterAnimation({ end: 25, duration: 2000 });
+  const teamsCounter = useCounterAnimation({ end: 1000, duration: 3000 });
+
   const scrollToMap = () => {
     const mapSection = document.getElementById('tournament-map');
     mapSection?.scrollIntoView({ behavior: 'smooth' });
@@ -102,18 +108,33 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20">
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">500+</div>
-            <div className="text-white/80">Tournaments</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20" ref={tournamentsCounter.elementRef}>
+          <div className="text-center group">
+            <div className="flex items-center justify-center mb-2">
+              <Trophy className="w-6 h-6 text-emerald-400 mr-2" />
+              <div className="text-3xl font-bold text-emerald-400">
+                {tournamentsCounter.count}+
+              </div>
+            </div>
+            <div className="text-white/80 font-medium">Tournaments Listed</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">50+</div>
-            <div className="text-white/80">Leagues</div>
+          <div className="text-center group">
+            <div className="flex items-center justify-center mb-2">
+              <FileText className="w-6 h-6 text-blue-400 mr-2" />
+              <div className="text-3xl font-bold text-blue-400">
+                {leaguesCounter.count}+
+              </div>
+            </div>
+            <div className="text-white/80 font-medium">Leagues Available</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold mb-1">5K+</div>
-            <div className="text-white/80">Teams</div>
+          <div className="text-center group">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="w-6 h-6 text-orange-400 mr-2" />
+              <div className="text-3xl font-bold text-orange-400">
+                {teamsCounter.count < 1000 ? teamsCounter.count : `${Math.floor(teamsCounter.count / 100) / 10}K`}+
+              </div>
+            </div>
+            <div className="text-white/80 font-medium">Teams Registered</div>
           </div>
         </div>
       </div>
