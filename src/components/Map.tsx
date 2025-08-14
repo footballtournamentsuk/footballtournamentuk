@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Tournament } from '@/types/tournament';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -14,15 +13,49 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
+  const mapContainer = useRef<HTMLDivElement | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  const [containerReady, setContainerReady] = useState(false);
 
-  // Fetch Mapbox token from Supabase edge function
+  // Callback ref to detect when container is mounted
+  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
+    console.log('📍 Container callback triggered:', !!node);
+    
+    if (node) {
+      mapContainer.current = node;
+      
+      // Use requestAnimationFrame to ensure the element is fully rendered
+      requestAnimationFrame(() => {
+        const rect = node.getBoundingClientRect();
+        console.log('📐 Container dimensions after RAF:', rect.width, 'x', rect.height);
+        
+        if (rect.width > 0 && rect.height > 0) {
+          console.log('✅ Container is ready with dimensions');
+          setContainerReady(true);
+        } else {
+          console.log('⏳ Container has no dimensions yet');
+          // Try again after a short delay
+          setTimeout(() => {
+            const newRect = node.getBoundingClientRect();
+            console.log('📐 Container dimensions after delay:', newRect.width, 'x', newRect.height);
+            if (newRect.width > 0 && newRect.height > 0) {
+              setContainerReady(true);
+            }
+          }, 100);
+        }
+      });
+    } else {
+      mapContainer.current = null;
+      setContainerReady(false);
+    }
+  }, []);
+
+  // Fetch Mapbox token
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -55,29 +88,29 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     fetchToken();
   }, []);
 
-  // Initialize map after token and container are ready
+  // Initialize map when both container and token are ready
   useEffect(() => {
     // Skip if running on server side
     if (typeof window === 'undefined') return;
     
-    const container = mapRef.current;
-    console.log('🎯 Map init check - Container:', !!container, 'Token:', !!mapboxToken, 'Map exists:', !!mapInstance.current);
+    const container = mapContainer.current;
+    console.log('🎯 Map init check - Container:', !!container, 'ContainerReady:', containerReady, 'Token:', !!mapboxToken, 'Map exists:', !!mapInstance.current);
 
-    if (!container || !mapboxToken || mapInstance.current) {
-      console.log('⏳ Waiting for container/token...');
+    if (!container || !containerReady || !mapboxToken || mapInstance.current) {
+      console.log('⏳ Waiting for prerequisites...');
       return;
     }
 
-    // Check container dimensions
+    // Double-check container dimensions
     const rect = container.getBoundingClientRect();
-    console.log('📐 Container dimensions:', rect.width, 'x', rect.height);
+    console.log('📐 Final dimension check:', rect.width, 'x', rect.height);
     
     if (rect.width === 0 || rect.height === 0) {
-      console.log('⏳ Container has no dimensions yet');
+      console.log('⏳ Container still has no dimensions');
       return;
     }
 
-    console.log('🚀 Initializing map...');
+    console.log('🚀 Initializing map with all prerequisites met...');
 
     try {
       // Create map instance
@@ -95,10 +128,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       mapInstance.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       mapInstance.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
-      // Handle map load
+      // Handle map load - THIS IS WHERE WE HIDE SPINNER AND ADD MARKERS
       mapInstance.current.on('load', () => {
         console.log('🎉 Map loaded successfully!');
-        setIsLoading(false);
+        setIsLoading(false);  // Hide spinner
         setError(null);
         
         // Add markers for tournaments
@@ -117,11 +150,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Failed to initialize map: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken]);
+  }, [mapboxToken, containerReady]);
 
   // Add tournament markers
   const addTournamentMarkers = () => {
-    if (!mapInstance.current) return;
+    if (!mapInstance.current) {
+      console.log('No map instance for markers');
+      return;
+    }
 
     console.log('📍 Adding markers for', tournaments.length, 'tournaments');
 
@@ -137,9 +173,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     const bounds = new mapboxgl.LngLatBounds();
 
     tournaments.forEach((tournament) => {
-      if (!tournament.location?.coordinates) return;
+      if (!tournament.location?.coordinates) {
+        console.log('Tournament missing coordinates:', tournament.name);
+        return;
+      }
 
       const [lng, lat] = tournament.location.coordinates;
+      console.log('Creating marker for:', tournament.name, 'at', lng, lat);
       
       // Create marker element
       const markerEl = document.createElement('div');
@@ -187,14 +227,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         padding: 50,
         maxZoom: 10
       });
+      console.log('✅ Map fitted to', markersRef.current.length, 'markers');
     }
-
-    console.log('✅ Added', markersRef.current.length, 'markers');
   };
 
-  // Update markers when tournaments change
+  // Update markers when tournaments change (but only after map is loaded)
   useEffect(() => {
     if (mapInstance.current && !isLoading) {
+      console.log('🔄 Updating markers for tournament change');
       addTournamentMarkers();
     }
   }, [tournaments, isLoading]);
@@ -220,7 +260,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   if (isLoading) {
     return (
-      <div className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center" style={{ height: '520px' }}>
+      <div 
+        className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center"
+        style={{ height: '520px', width: '100%' }}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading map...</p>
@@ -231,7 +274,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   if (error) {
     return (
-      <div className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center" style={{ height: '520px' }}>
+      <div 
+        className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center"
+        style={{ height: '520px', width: '100%' }}
+      >
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6">
             <div className="text-center">
@@ -254,9 +300,12 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   }
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden shadow-lg border" style={{ height: '520px' }}>
+    <div 
+      className="relative w-full rounded-lg overflow-hidden shadow-lg border"
+      style={{ height: '520px', width: '100%' }}
+    >
       <div 
-        ref={mapRef}
+        ref={mapContainerCallback}
         className="w-full h-full"
         style={{ 
           width: '100%',
