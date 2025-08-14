@@ -25,9 +25,11 @@ import {
   Home,
   Gift,
   Calendar as CalendarIcon,
-  Info
+  Info,
+  ChevronDown,
+  Navigation
 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const TournamentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -535,10 +537,39 @@ const TournamentDetails = () => {
                     {tournament.location.postcode} • {tournament.location.region}
                   </div>
                 </div>
-                <Button variant="outline" className="w-full" size="sm">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  View on Map
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full" size="sm">
+                      <Navigation className="w-4 h-4 mr-2" />
+                      Directions
+                      <ChevronDown className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full bg-popover border border-border shadow-lg z-50">
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={`https://waze.com/ul?q=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 cursor-pointer w-full"
+                      >
+                        <Navigation className="w-4 h-4" />
+                        Open in Waze
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(tournament.location.coordinates[1] + ',' + tournament.location.coordinates[0])}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 cursor-pointer w-full"
+                      >
+                        <MapPin className="w-4 h-4" />
+                        Open in Google Maps
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </CardContent>
             </Card>
 
