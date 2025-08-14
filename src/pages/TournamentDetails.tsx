@@ -146,32 +146,76 @@ const TournamentDetails = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Tournaments
           </Button>
+        </div>
+      </div>
+
+      {/* Tournament Info Section */}
+      <div className="bg-background border-b">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Badge className={getStatusColor(tournament.status)} variant="secondary">
+              {tournament.status.replace(/_/g, ' ')}
+            </Badge>
+            <Badge className={getTypeColor(tournament.type)} variant="secondary">
+              {tournament.type}
+            </Badge>
+          </div>
           
-          <div className="text-white">
-            <div className="flex flex-wrap gap-2 mb-4">
-              <Badge className={getStatusColor(tournament.status)} variant="secondary">
-                {tournament.status.replace(/_/g, ' ')}
-              </Badge>
-              <Badge className={getTypeColor(tournament.type)} variant="secondary">
-                {tournament.type}
-              </Badge>
-            </div>
-            <h1 className="text-4xl font-bold mb-2">{tournament.name}</h1>
-            <div className="flex items-center gap-4 text-white/90">
-              <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                <span>{tournament.location.name}</span>
+          <h1 className="text-4xl font-bold mb-6">{tournament.name}</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-primary" />
               </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDate(tournament.dates.start)} - {formatDate(tournament.dates.end)}</span>
-              </div>
-              {tournament.cost && (
-                <div className="font-bold">
-                  £{tournament.cost.amount} per team
+              <div>
+                <div className="font-medium">Location</div>
+                <div className="text-muted-foreground">{tournament.location.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {tournament.location.postcode} • {tournament.location.region}
                 </div>
-              )}
+              </div>
             </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <div className="font-medium">Tournament Dates</div>
+                <div className="text-muted-foreground">
+                  {formatDate(tournament.dates.start)} - {formatDate(tournament.dates.end)}
+                </div>
+              </div>
+            </div>
+            
+            {tournament.dates.registrationDeadline && (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-warning" />
+                </div>
+                <div>
+                  <div className="font-medium">Registration Deadline</div>
+                  <div className="text-muted-foreground">
+                    {formatDate(tournament.dates.registrationDeadline)}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {tournament.cost && (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-success" />
+                </div>
+                <div>
+                  <div className="font-medium">Cost per Team</div>
+                  <div className="text-2xl font-bold text-primary">
+                    £{tournament.cost.amount}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
