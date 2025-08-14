@@ -37,16 +37,13 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    // Set the auth token for the client
-    supabaseClient.auth.setSession({
-      access_token: authHeader.replace('Bearer ', ''),
-      refresh_token: ''
-    });
-
-    // Get the current user to verify identity
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Get the current user using the auth header directly
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
     
     if (userError || !user) {
+      console.error('User error:', userError);
       throw new Error('Unauthorized');
     }
 
