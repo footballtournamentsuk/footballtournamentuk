@@ -217,14 +217,9 @@ const ProfilePage = () => {
     if (newPublishState) {
       toast({
         title: "Profile Published! 🎉",
-        description: "Your team profile is now live! Go to the homepage and click the 'Teams' tab to see it.",
+        description: "Your team profile is now live! Your tournaments will appear in the main tournament list.",
         duration: 6000,
       });
-      
-      // Optional: Navigate to homepage after a short delay
-      setTimeout(() => {
-        window.location.href = '/#teams';
-      }, 2000);
     } else {
       toast({
         title: "Profile Unpublished",
