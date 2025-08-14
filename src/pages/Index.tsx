@@ -3,20 +3,25 @@ import Hero from '@/components/Hero';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
+import TeamCard from '@/components/TeamCard';
 import { useTournaments } from '@/hooks/useTournaments';
+import { useTeams } from '@/hooks/useTeams';
 import { useAuth } from '@/hooks/useAuth';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Filter, Settings } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, Plus, Filter, Settings, Users } from 'lucide-react';
 
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const { tournaments, loading, error } = useTournaments();
+  const [activeTab, setActiveTab] = useState<'tournaments' | 'teams'>('tournaments');
+  const { tournaments, loading: tournamentsLoading, error: tournamentsError } = useTournaments();
+  const { teams, loading: teamsLoading, error: teamsError } = useTeams();
   const { user } = useAuth();
 
   // Filter tournaments based on active filters and search query
@@ -105,7 +110,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Tournaments Section */}
+      {/* Tournaments & Teams Section */}
       <section id="tournaments" className="py-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8">
@@ -115,18 +120,20 @@ const Index = () => {
                 {/* Search and Add Tournament */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">Find Tournaments</h2>
+                    <h2 className="text-2xl font-bold">Discover</h2>
                     <div className="flex gap-2">
                       {user ? (
-                        <Button variant="default" size="sm">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add Tournament
+                        <Button variant="default" size="sm" asChild>
+                          <a href="/profile">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Profile
+                          </a>
                         </Button>
                       ) : (
                         <Button variant="default" size="sm" asChild>
                           <a href="/auth">
                             <Plus className="w-4 h-4 mr-2" />
-                            Sign In to Add
+                            Sign In
                           </a>
                         </Button>
                       )}
@@ -136,7 +143,7 @@ const Index = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
-                      placeholder="Search tournaments, locations, leagues..."
+                      placeholder={`Search ${activeTab}...`}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -161,76 +168,142 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Filters */}
-                <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
-                  <TournamentFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    onClearFilters={clearFilters}
-                  />
-                </div>
+                {/* Filters - only show for tournaments */}
+                {activeTab === 'tournaments' && (
+                  <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
+                    <TournamentFilters
+                      filters={filters}
+                      onFiltersChange={setFilters}
+                      onClearFilters={clearFilters}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Main Content - Tournament Cards */}
+            {/* Main Content - Tournament Cards & Team Cards */}
             <div className="lg:w-2/3">
-              {error && (
-                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-destructive text-sm">Error loading tournaments: {error}</p>
-                </div>
-              )}
-              
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    {loading ? 'Loading...' : `${filteredTournaments.length} Tournament${filteredTournaments.length !== 1 ? 's' : ''} Found`}
-                  </h3>
-                  {hasActiveFilters && !loading && (
-                    <p className="text-sm text-muted-foreground">
-                      Showing filtered results
-                    </p>
-                  )}
-                </div>
-                
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearFilters}
-                  >
-                    Clear All Filters
-                  </Button>
-                )}
-              </div>
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'tournaments' | 'teams')}>
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="tournaments" className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    Tournaments ({tournaments.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="teams" className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Teams ({teams.length})
+                  </TabsTrigger>
+                </TabsList>
 
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
-                  ))}
-                </div>
-              ) : filteredTournaments.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">⚽</div>
-                  <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Try adjusting your search criteria or filters
-                  </p>
-                  <Button onClick={clearFilters} variant="outline">
-                    Clear Filters
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredTournaments.map(tournament => (
-                    <TournamentCard
-                      key={tournament.id}
-                      tournament={tournament}
-                      onSelect={handleTournamentSelect}
-                    />
-                  ))}
-                </div>
-              )}
+                <TabsContent value="tournaments">
+                  {tournamentsError && (
+                    <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <p className="text-destructive text-sm">Error loading tournaments: {tournamentsError}</p>
+                    </div>
+                  )}
+              
+                  
+                  <div className="mb-6 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold">
+                        {tournamentsLoading ? 'Loading...' : `${filteredTournaments.length} Tournament${filteredTournaments.length !== 1 ? 's' : ''} Found`}
+                      </h3>
+                      {hasActiveFilters && !tournamentsLoading && (
+                        <p className="text-sm text-muted-foreground">
+                          Showing filtered results
+                        </p>
+                      )}
+                    </div>
+                    
+                    {hasActiveFilters && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFilters}
+                      >
+                        Clear All Filters
+                      </Button>
+                    )}
+                  </div>
+
+                  {tournamentsLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[...Array(6)].map((_, i) => (
+                        <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
+                      ))}
+                    </div>
+                  ) : filteredTournaments.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">⚽</div>
+                      <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Try adjusting your search criteria or filters
+                      </p>
+                      <Button onClick={clearFilters} variant="outline">
+                        Clear Filters
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {filteredTournaments.map(tournament => (
+                        <TournamentCard
+                          key={tournament.id}
+                          tournament={tournament}
+                          onSelect={handleTournamentSelect}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="teams">
+                  {teamsError && (
+                    <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <p className="text-destructive text-sm">Error loading teams: {teamsError}</p>
+                    </div>
+                  )}
+                  
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold">
+                      {teamsLoading ? 'Loading...' : `${teams.length} Published Team${teams.length !== 1 ? 's' : ''}`}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Football organizations and teams looking for players
+                    </p>
+                  </div>
+
+                  {teamsLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="animate-pulse bg-muted rounded-lg h-64"></div>
+                      ))}
+                    </div>
+                  ) : teams.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">👥</div>
+                      <h3 className="text-xl font-semibold mb-2">No published teams yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Be the first team to publish your profile!
+                      </p>
+                      {user ? (
+                        <Button asChild>
+                          <a href="/profile">Create Team Profile</a>
+                        </Button>
+                      ) : (
+                        <Button asChild>
+                          <a href="/auth">Sign Up to Create Profile</a>
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {teams.map(team => (
+                        <TeamCard key={team.id} team={team} />
+                      ))}
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
