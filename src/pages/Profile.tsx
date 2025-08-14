@@ -12,7 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
@@ -82,6 +82,7 @@ interface Tournament {
   schedule_details?: string;
   prize_information?: string;
   additional_notes?: string;
+  banner_url?: string;
 }
 
 const ProfilePage = () => {
@@ -95,6 +96,7 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
   const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament>({
     name: '',
     description: '',
@@ -409,7 +411,8 @@ const ProfilePage = () => {
         sponsor_info: selectedTournamentForDetails.sponsor_info || '',
         schedule_details: selectedTournamentForDetails.schedule_details || '',
         prize_information: selectedTournamentForDetails.prize_information || '',
-        additional_notes: selectedTournamentForDetails.additional_notes || ''
+        additional_notes: selectedTournamentForDetails.additional_notes || '',
+        banner_url: selectedTournamentForDetails.banner_url || null
       };
 
       const { error } = await supabase
@@ -440,6 +443,83 @@ const ProfilePage = () => {
       });
     } finally {
       setSavingExtendedDetails(false);
+    }
+  };
+
+  const uploadBanner = async (file: File) => {
+    if (!selectedTournamentForDetails?.id || !user) return;
+
+    setUploadingBanner(true);
+    try {
+      // Generate a unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${selectedTournamentForDetails.id}/banner.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('banners')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL
+      const { data: urlData } = supabase.storage
+        .from('banners')
+        .getPublicUrl(fileName);
+
+      const banner_url = urlData.publicUrl;
+
+      // Update the tournament with the banner URL
+      const { error: updateError } = await supabase
+        .from('tournaments')
+        .update({ banner_url })
+        .eq('id', selectedTournamentForDetails.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setSelectedTournamentForDetails(prev => prev ? { ...prev, banner_url } : null);
+      await loadTournaments();
+
+      toast({
+        title: "Banner uploaded!",
+        description: "Tournament banner has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error uploading banner",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingBanner(false);
+    }
+  };
+
+  const handleBannerFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select an image file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      uploadBanner(file);
     }
   };
 
@@ -1035,6 +1115,51 @@ const ProfilePage = () => {
               <div className="lg:col-span-2">
                 {selectedTournamentForDetails ? (
                   <div className="space-y-6">
+                    {/* Banner Upload Section */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Image className="w-5 h-5" />
+                          Tournament Banner
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {selectedTournamentForDetails.banner_url && (
+                          <div className="w-full">
+                            <img 
+                              src={selectedTournamentForDetails.banner_url} 
+                              alt="Tournament banner"
+                              className="w-full h-48 object-cover rounded-lg border"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <Label htmlFor="banner_upload">Upload Banner Image</Label>
+                          <div className="mt-2">
+                            <input
+                              id="banner_upload"
+                              type="file"
+                              accept="image/*"
+                              onChange={handleBannerFileChange}
+                              disabled={uploadingBanner}
+                              className="hidden"
+                            />
+                            <Button
+                              variant="outline"
+                              onClick={() => document.getElementById('banner_upload')?.click()}
+                              disabled={uploadingBanner}
+                              className="w-full"
+                            >
+                              <Upload className="w-4 h-4 mr-2" />
+                              {uploadingBanner ? 'Uploading...' : selectedTournamentForDetails.banner_url ? 'Replace Banner' : 'Upload Banner'}
+                            </Button>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Upload a banner image for your tournament page. Recommended size: 1200x400px. Max file size: 5MB.
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                     <Card>
                       <CardHeader>
                         <CardTitle>Extended Description</CardTitle>

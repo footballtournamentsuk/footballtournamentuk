@@ -124,6 +124,7 @@ export type Database = {
           accommodation_info: string | null
           additional_notes: string | null
           age_groups: string[]
+          banner_url: string | null
           computed_status: string | null
           contact_email: string
           contact_name: string
@@ -166,6 +167,7 @@ export type Database = {
           accommodation_info?: string | null
           additional_notes?: string | null
           age_groups: string[]
+          banner_url?: string | null
           computed_status?: string | null
           contact_email: string
           contact_name: string
@@ -208,6 +210,7 @@ export type Database = {
           accommodation_info?: string | null
           additional_notes?: string | null
           age_groups?: string[]
+          banner_url?: string | null
           computed_status?: string | null
           contact_email?: string
           contact_name?: string
