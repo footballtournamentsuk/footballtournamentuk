@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Replace this with your actual Mapbox public token
+// Mapbox public token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
 
 interface MapProps {
@@ -48,7 +48,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       return;
     }
 
-    console.log('Setting mapbox access token...');
+    console.log('Setting mapbox access token and creating map...');
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     try {
@@ -60,6 +60,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         pitch: 0,
       });
 
+      console.log('Map created, adding controls...');
       map.current.addControl(
         new mapboxgl.NavigationControl({
           visualizePitch: false,
@@ -68,20 +69,22 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       );
 
       map.current.on('load', () => {
-        console.log('Map loaded successfully');
+        console.log('Map loaded successfully, adding markers...');
         setIsLoading(false);
-        addTournamentMarkers();
+        if (tournaments.length > 0) {
+          addTournamentMarkers();
+        }
       });
 
       map.current.on('error', (e) => {
         console.error('Map error:', e);
-        setError('Failed to load map. Please check your Mapbox token.');
+        setError('Failed to load map. Please check your internet connection.');
         setIsLoading(false);
       });
 
     } catch (error) {
       console.error('Error initializing map:', error);
-      setError('Failed to initialize map. Please check your Mapbox token.');
+      setError('Failed to initialize map. Please check your internet connection.');
       setIsLoading(false);
     }
   };
