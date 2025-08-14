@@ -33,6 +33,7 @@ export interface Tournament {
   website?: string;
   features?: string[];
   organizerId?: string;
+  banner_url?: string;
 }
 
 // Database tournament type from Supabase
@@ -64,6 +65,7 @@ export interface DatabaseTournament {
   features: string[] | null;
   organizer_id: string | null;
   computed_status: string | null;
+  banner_url: string | null;
   created_at: string;
   updated_at: string;
 }

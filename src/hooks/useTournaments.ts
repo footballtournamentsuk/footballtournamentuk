@@ -40,6 +40,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     website: dbTournament.website || undefined,
     features: dbTournament.features || undefined,
     organizerId: dbTournament.organizer_id || undefined,
+    banner_url: dbTournament.banner_url || undefined,
   };
 };
 

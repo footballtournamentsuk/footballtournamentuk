@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -250,8 +251,11 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             variant="outline" 
             size="sm"
             className="px-3"
+            asChild
           >
-            Details
+            <Link to={`/tournaments/${tournament.id}`}>
+              Details
+            </Link>
           </Button>
         </div>
       </CardContent>
