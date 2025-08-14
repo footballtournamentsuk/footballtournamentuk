@@ -87,9 +87,10 @@ const ProfilePage = () => {
         .from('profiles')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
+        console.error('Profile loading error:', error);
         throw error;
       }
 
@@ -121,9 +122,10 @@ const ProfilePage = () => {
         .from('teams')
         .select('*')
         .eq('owner_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
+        console.error('Team loading error:', error);
         throw error;
       }
 

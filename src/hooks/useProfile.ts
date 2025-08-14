@@ -27,9 +27,10 @@ export const useProfile = () => {
         .from('profiles')
         .select('full_name, contact_email')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
+        console.error('Profile hook error:', error);
         throw error;
       }
 
