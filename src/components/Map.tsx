@@ -6,8 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Mapbox public token
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
+// Set Mapbox access token immediately
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -31,25 +31,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   const initializeMap = () => {
-    console.log('=== initializeMap called ===');
-    console.log('mapContainer.current:', mapContainer.current);
-    console.log('map.current:', map.current);
-    console.log('MAPBOX_TOKEN:', MAPBOX_TOKEN);
-    
-    if (!mapContainer.current) {
-      console.log('ERROR: No map container found');
-      setError('Map container element not found');
-      setIsLoading(false);
-      return;
-    }
-    
-    if (map.current) {
-      console.log('Map already exists, skipping initialization');
-      return;
-    }
+    if (!mapContainer.current || map.current) return;
 
-    console.log('Setting mapbox access token and creating map...');
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+    console.log('🗺️ Initializing Mapbox map...');
     
     try {
       map.current = new mapboxgl.Map({
@@ -57,34 +41,28 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         style: 'mapbox://styles/mapbox/light-v11',
         center: [-2.5, 54.5], // Center on UK
         zoom: 5.5,
-        pitch: 0,
       });
 
-      console.log('Map created, adding controls...');
-      map.current.addControl(
-        new mapboxgl.NavigationControl({
-          visualizePitch: false,
-        }),
-        'top-right'
-      );
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       map.current.on('load', () => {
-        console.log('Map loaded successfully, adding markers...');
+        console.log('✅ Map loaded successfully');
         setIsLoading(false);
+        setError(null);
         if (tournaments.length > 0) {
           addTournamentMarkers();
         }
       });
 
       map.current.on('error', (e) => {
-        console.error('Map error:', e);
-        setError('Failed to load map. Please check your internet connection.');
+        console.error('❌ Map error:', e);
+        setError('Failed to load map');
         setIsLoading(false);
       });
 
     } catch (error) {
-      console.error('Error initializing map:', error);
-      setError('Failed to initialize map. Please check your internet connection.');
+      console.error('❌ Error creating map:', error);
+      setError('Failed to initialize map');
       setIsLoading(false);
     }
   };
@@ -100,11 +78,28 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       // Create custom marker element
       const markerElement = document.createElement('div');
       markerElement.className = 'tournament-marker';
-      markerElement.innerHTML = `
-        <div class="w-8 h-8 bg-primary rounded-full border-2 border-white shadow-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-          <div class="w-3 h-3 bg-white rounded-full"></div>
-        </div>
+      markerElement.style.cssText = `
+        width: 32px;
+        height: 32px;
+        background-color: hsl(var(--primary));
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
       `;
+      
+      const innerDot = document.createElement('div');
+      innerDot.style.cssText = `
+        width: 12px;
+        height: 12px;
+        background-color: white;
+        border-radius: 50%;
+      `;
+      markerElement.appendChild(innerDot);
 
       const marker = new mapboxgl.Marker(markerElement)
         .setLngLat(tournament.location.coordinates)
@@ -121,6 +116,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         });
       });
 
+      markerElement.addEventListener('mouseenter', () => {
+        markerElement.style.transform = 'scale(1.1)';
+      });
+
+      markerElement.addEventListener('mouseleave', () => {
+        markerElement.style.transform = 'scale(1)';
+      });
+
       markers.current.push(marker);
     });
   };
@@ -128,42 +131,21 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
     
-    console.log('🗺️ Initializing map...');
     initializeMap();
-  }, []);
 
-  // Retry initialization if container becomes available later
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!map.current && mapContainer.current) {
-        console.log('🔄 Retry map initialization...');
-        initializeMap();
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    console.log('=== Tournament data changed ===');
-    console.log('Map exists:', !!map.current);
-    console.log('Tournament count:', tournaments.length);
-    
-    if (map.current && tournaments.length > 0) {
-      console.log('Adding tournament markers');
-      addTournamentMarkers();
-    }
-  }, [tournaments]);
-
-  useEffect(() => {
     return () => {
-      console.log('=== Map component unmounting ===');
       if (map.current) {
         map.current.remove();
         map.current = null;
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (map.current && tournaments.length > 0) {
+      addTournamentMarkers();
+    }
+  }, [tournaments]);
 
   if (isLoading) {
     return (
@@ -181,25 +163,11 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       <div className="relative w-full h-[600px] bg-surface rounded-lg shadow-lg flex items-center justify-center">
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6">
-            <div className="text-center mb-4">
+            <div className="text-center">
               <MapPin className="w-12 h-12 text-destructive mx-auto mb-2" />
-              <h3 className="text-lg font-semibold mb-2">Map Configuration Required</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                To display the interactive map, please replace the placeholder token in the Map component with your Mapbox public access token.
-              </p>
-              <div className="bg-muted p-3 rounded text-xs font-mono mb-4">
-                MAPBOX_TOKEN = 'pk.your-actual-token-here'
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Get your free token at{' '}
-                <a 
-                  href="https://mapbox.com/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  mapbox.com
-                </a>
+              <h3 className="text-lg font-semibold mb-2">Map Error</h3>
+              <p className="text-sm text-muted-foreground">
+                {error}. Please refresh the page to try again.
               </p>
             </div>
           </CardContent>
@@ -212,17 +180,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg bg-surface">
       <div 
         ref={mapContainer} 
-        id="map-container"
-        className="absolute inset-0 w-full h-full bg-gray-100" 
-        style={{ 
-          minHeight: '600px',
-          minWidth: '100%',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        }}
+        className="absolute inset-0 w-full h-full" 
       />
       
       {selectedTournament && (
