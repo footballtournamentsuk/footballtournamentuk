@@ -122,6 +122,7 @@ export type Database = {
       tournaments: {
         Row: {
           age_groups: string[]
+          computed_status: string | null
           contact_email: string
           contact_name: string
           contact_phone: string | null
@@ -152,6 +153,7 @@ export type Database = {
         }
         Insert: {
           age_groups: string[]
+          computed_status?: string | null
           contact_email: string
           contact_name: string
           contact_phone?: string | null
@@ -182,6 +184,7 @@ export type Database = {
         }
         Update: {
           age_groups?: string[]
+          computed_status?: string | null
           contact_email?: string
           contact_name?: string
           contact_phone?: string | null
@@ -217,7 +220,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      compute_tournament_status: {
+        Args: {
+          end_date: string
+          registration_deadline: string
+          start_date: string
+        }
+        Returns: string
+      }
+      update_tournament_status: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

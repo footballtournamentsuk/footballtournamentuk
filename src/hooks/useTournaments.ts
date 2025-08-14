@@ -25,7 +25,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     ageGroups: dbTournament.age_groups as AgeGroup[],
     teamTypes: dbTournament.team_types as TeamType[],
     type: dbTournament.type as 'league' | 'tournament' | 'camp' | 'holiday',
-    status: dbTournament.status as 'upcoming' | 'ongoing' | 'completed' | 'cancelled',
+    status: (dbTournament.computed_status || dbTournament.status) as 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled',
     maxTeams: dbTournament.max_teams || undefined,
     registeredTeams: dbTournament.registered_teams || undefined,
     cost: dbTournament.cost_amount ? {
@@ -63,7 +63,18 @@ export const useTournaments = () => {
       }
 
       const transformedTournaments = data.map(transformTournament);
-      setTournaments(transformedTournaments);
+      
+      // Sort tournaments: ongoing first, then by start date ascending
+      const sortedTournaments = transformedTournaments.sort((a, b) => {
+        // Ongoing tournaments should appear first
+        if (a.status === 'ongoing' && b.status !== 'ongoing') return -1;
+        if (b.status === 'ongoing' && a.status !== 'ongoing') return 1;
+        
+        // Then sort by start date ascending
+        return new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime();
+      });
+      
+      setTournaments(sortedTournaments);
     } catch (err) {
       console.error('Error fetching tournaments:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch tournaments');

@@ -18,7 +18,7 @@ export interface Tournament {
   teamTypes: TeamType[];
   league?: League;
   type: 'league' | 'tournament' | 'camp' | 'holiday';
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  status: 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled';
   maxTeams?: number;
   registeredTeams?: number;
   cost?: {
@@ -63,6 +63,7 @@ export interface DatabaseTournament {
   website: string | null;
   features: string[] | null;
   organizer_id: string | null;
+  computed_status: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -33,11 +33,21 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
   const getStatusColor = (status: Tournament['status']) => {
     switch (status) {
       case 'upcoming':
-        return 'bg-success text-success-foreground';
-      case 'ongoing':
-        return 'bg-warning text-warning-foreground';
-      case 'completed':
         return 'bg-neutral text-neutral-foreground';
+      case 'ongoing':
+        return 'bg-destructive text-destructive-foreground';
+      case 'today':
+        return 'bg-warning text-warning-foreground';
+      case 'tomorrow':
+        return 'bg-accent text-accent-foreground';
+      case 'registration_open':
+        return 'bg-success text-success-foreground';
+      case 'registration_closes_soon':
+        return 'bg-warning text-warning-foreground';
+      case 'registration_closed':
+        return 'bg-neutral text-neutral-foreground';
+      case 'completed':
+        return 'bg-muted text-muted-foreground';
       case 'cancelled':
         return 'bg-destructive text-destructive-foreground';
       default:
@@ -74,7 +84,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             </h3>
             <div className="flex flex-wrap gap-2">
               <Badge className={getStatusColor(tournament.status)} variant="secondary">
-                {tournament.status}
+                {tournament.status.replace(/_/g, ' ')}
               </Badge>
               <Badge className={getTypeColor(tournament.type)} variant="secondary">
                 {tournament.type}
