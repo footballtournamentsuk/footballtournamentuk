@@ -123,37 +123,44 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   useEffect(() => {
-    console.log('Map component mounted');
-    console.log('mapContainer ref:', mapContainer);
+    console.log('=== Map Component Mounted ===');
+    console.log('mapContainer ref available:', !!mapContainer.current);
     
-    // Simple initialization without retry logic
-    const timer = setTimeout(() => {
-      console.log('Attempting to initialize map after timeout');
-      console.log('mapContainer.current at init time:', mapContainer.current);
+    // Use requestAnimationFrame to ensure DOM is fully ready
+    const initMap = () => {
+      console.log('=== Initializing Map ===');
+      console.log('Container at init time:', mapContainer.current);
       
       if (mapContainer.current) {
+        console.log('Container found, proceeding with map creation');
         initializeMap();
       } else {
-        console.log('Container still not available, setting error');
-        setError('Map container failed to initialize properly');
+        console.error('Container element not found after DOM ready');
+        setError('Map container element not available');
         setIsLoading(false);
       }
-    }, 500); // Give more time for DOM to be ready
+    };
 
-    return () => clearTimeout(timer);
+    requestAnimationFrame(() => {
+      setTimeout(initMap, 100);
+    });
   }, []);
 
   useEffect(() => {
+    console.log('=== Tournament data changed ===');
+    console.log('Map exists:', !!map.current);
+    console.log('Tournament count:', tournaments.length);
+    
     if (map.current && tournaments.length > 0) {
-      console.log('Adding tournament markers:', tournaments.length);
+      console.log('Adding tournament markers');
       addTournamentMarkers();
     }
-  }, [tournaments, onTournamentSelect]);
+  }, [tournaments]);
 
   useEffect(() => {
     return () => {
+      console.log('=== Map component unmounting ===');
       if (map.current) {
-        console.log('Cleaning up map...');
         map.current.remove();
         map.current = null;
       }
