@@ -12,15 +12,13 @@ interface MapProps {
   onTournamentSelect: (tournament: Tournament | null) => void;
 }
 
-// For demo purposes, using a placeholder token
-const MAPBOX_TOKEN = 'pk.placeholder-token-enter-your-real-token';
-
 const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState(MAPBOX_TOKEN);
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -28,6 +26,30 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       month: 'short',
       year: 'numeric'
     }).format(date);
+  };
+
+  const fetchMapboxToken = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/get-mapbox-token');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch Mapbox token');
+      }
+      
+      const data = await response.json();
+      if (data.token) {
+        setMapboxToken(data.token);
+        setError(null);
+      } else {
+        throw new Error('No token found');
+      }
+    } catch (err) {
+      console.error('Error fetching Mapbox token:', err);
+      setError('Mapbox token not configured. Please set it up in the admin settings.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const initializeMap = (token: string) => {
@@ -55,10 +77,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         addTournamentMarkers();
       });
 
-      setShowTokenInput(false);
     } catch (error) {
       console.error('Error initializing map:', error);
-      setShowTokenInput(true);
+      setError('Failed to initialize map. Please check your Mapbox token.');
     }
   };
 
@@ -99,7 +120,11 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   useEffect(() => {
-    if (mapboxToken && mapboxToken !== MAPBOX_TOKEN) {
+    fetchMapboxToken();
+  }, []);
+
+  useEffect(() => {
+    if (mapboxToken) {
       initializeMap(mapboxToken);
     }
   }, [mapboxToken]);
@@ -116,48 +141,34 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     };
   }, []);
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const token = formData.get('token') as string;
-    if (token) {
-      setMapboxToken(token);
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="relative w-full h-[600px] bg-surface rounded-lg shadow-lg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading map...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (showTokenInput) {
+  if (error) {
     return (
       <div className="relative w-full h-[600px] bg-surface rounded-lg shadow-lg flex items-center justify-center">
         <Card className="w-full max-w-md mx-4">
           <CardContent className="p-6">
             <div className="text-center mb-4">
-              <MapPin className="w-12 h-12 text-primary mx-auto mb-2" />
-              <h3 className="text-lg font-semibold mb-2">Enter Mapbox Token</h3>
+              <MapPin className="w-12 h-12 text-destructive mx-auto mb-2" />
+              <h3 className="text-lg font-semibold mb-2">Map Configuration Required</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                To display the interactive map, please enter your Mapbox public token. 
-                You can get one free at{' '}
-                <a 
-                  href="https://mapbox.com/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  mapbox.com
-                </a>
+                {error}
               </p>
             </div>
-            <form onSubmit={handleTokenSubmit} className="space-y-4">
-              <input
-                name="token"
-                type="text"
-                placeholder="pk.your-mapbox-token-here"
-                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                required
-              />
-              <Button type="submit" className="w-full">
-                Load Map
-              </Button>
-            </form>
+            <Button asChild className="w-full">
+              <a href="/settings">
+                Go to Admin Settings
+              </a>
+            </Button>
           </CardContent>
         </Card>
       </div>

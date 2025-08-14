@@ -8,7 +8,7 @@ import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Filter } from 'lucide-react';
+import { Search, Plus, Filter, Settings } from 'lucide-react';
 
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
@@ -114,10 +114,18 @@ const Index = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold">Find Tournaments</h2>
-                    <Button variant="default" size="sm">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Tournament
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <a href="/settings">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Settings
+                        </a>
+                      </Button>
+                      <Button variant="default" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Tournament
+                      </Button>
+                    </div>
                   </div>
                   
                   <div className="relative">
