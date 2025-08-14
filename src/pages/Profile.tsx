@@ -50,6 +50,7 @@ const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<'logo' | 'banner' | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [team, setTeam] = useState<Team>({
     name: '',
@@ -242,6 +243,76 @@ const ProfilePage = () => {
     }
   };
 
+  const uploadImage = async (file: File, type: 'logo' | 'banner') => {
+    if (!user) return;
+    
+    setUploading(type);
+    try {
+      // Create file path with user ID folder
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const bucket = type === 'logo' ? 'logos' : 'banners';
+
+      // Delete existing file if it exists
+      const existingUrl = type === 'logo' ? team.logo_url : team.banner_url;
+      if (existingUrl) {
+        const existingPath = existingUrl.split('/').slice(-2).join('/'); // user_id/filename
+        await supabase.storage.from(bucket).remove([existingPath]);
+      }
+
+      // Upload new file
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+      // Update team record
+      const updateField = type === 'logo' ? 'logo_url' : 'banner_url';
+      await autosave({ [updateField]: data.publicUrl }, 'teams');
+
+      toast({
+        title: "Upload successful",
+        description: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const handleFileSelect = (type: 'logo' | 'banner') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast({
+            title: "File too large",
+            description: "Please select an image smaller than 5MB",
+            variant: "destructive",
+          });
+          return;
+        }
+        uploadImage(file, type);
+      }
+    };
+    input.click();
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
   }
@@ -253,6 +324,7 @@ const ProfilePage = () => {
           <h1 className="text-3xl font-bold text-foreground">Profile Setup</h1>
           <div className="flex items-center gap-2">
             {saving && <span className="text-sm text-muted-foreground">Saving...</span>}
+            {uploading && <span className="text-sm text-muted-foreground">Uploading {uploading}...</span>}
           </div>
         </div>
 
@@ -488,17 +560,45 @@ const ProfilePage = () => {
 
               <div className="space-y-2">
                 <Label>Logo Upload</Label>
-                <Button variant="outline" className="w-full">
+                {team.logo_url && (
+                  <div className="mb-2">
+                    <img 
+                      src={team.logo_url} 
+                      alt="Team logo" 
+                      className="w-20 h-20 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleFileSelect('logo')}
+                  disabled={uploading === 'logo'}
+                >
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload Logo
+                  {uploading === 'logo' ? 'Uploading...' : team.logo_url ? 'Change Logo' : 'Upload Logo'}
                 </Button>
               </div>
 
               <div className="space-y-2">
                 <Label>Banner Upload</Label>
-                <Button variant="outline" className="w-full">
+                {team.banner_url && (
+                  <div className="mb-2">
+                    <img 
+                      src={team.banner_url} 
+                      alt="Team banner" 
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleFileSelect('banner')}
+                  disabled={uploading === 'banner'}
+                >
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload Banner
+                  {uploading === 'banner' ? 'Uploading...' : team.banner_url ? 'Change Banner' : 'Upload Banner'}
                 </Button>
               </div>
             </CardContent>
