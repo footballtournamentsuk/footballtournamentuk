@@ -224,7 +224,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken, containerReady]);
+  }, [mapboxToken]);
 
   // Container callback that triggers re-initialization
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
@@ -337,18 +337,18 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
                       <MapPin className="w-4 h-4 text-primary" />
                       <span>{selectedTournament.location.name}, {selectedTournament.location.postcode}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary" />
-                      <span>{formatDate(selectedTournament.dates.start)} - {formatDate(selectedTournament.dates.end)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-primary" />
-                      <span>{selectedTournament.format} • {selectedTournament.ageGroups.join(', ')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-primary" />
-                      <span>{selectedTournament.teamTypes.join(', ')} teams</span>
-                    </div>
+                     <div className="flex items-center gap-2">
+                       <Calendar className="w-4 h-4 text-primary" />
+                       <span>{formatDate(selectedTournament.dates.start)} - {formatDate(selectedTournament.dates.end)}</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <Users className="w-4 h-4 text-primary" />
+                       <span>{selectedTournament.format} • {selectedTournament.ageGroups.join(', ')}</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <Trophy className="w-4 h-4 text-primary" />
+                       <span>{selectedTournament.teamTypes.join(', ')} teams</span>
+                     </div>
                   </div>
                 </div>
                 <Button

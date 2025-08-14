@@ -30,8 +30,7 @@ const Index = () => {
         tournament.name.toLowerCase().includes(query) ||
         tournament.description?.toLowerCase().includes(query) ||
         tournament.location.name.toLowerCase().includes(query) ||
-        tournament.location.region.toLowerCase().includes(query) ||
-        tournament.league?.name.toLowerCase().includes(query)
+        tournament.location.region.toLowerCase().includes(query)
       );
     }
 
