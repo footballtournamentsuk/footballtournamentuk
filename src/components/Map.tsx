@@ -31,7 +31,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   const initializeMap = () => {
-    if (!mapContainer.current || map.current) return;
+    console.log('initializeMap called');
+    console.log('mapContainer.current:', mapContainer.current);
+    console.log('map.current:', map.current);
+    
+    if (!mapContainer.current || map.current) {
+      console.log('Early return: container missing or map already exists');
+      return;
+    }
 
     // Check if token is configured
     if (MAPBOX_TOKEN === 'pk.your-mapbox-token-here') {
@@ -117,7 +124,14 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   useEffect(() => {
     console.log('Map component mounted, initializing...');
-    initializeMap();
+    console.log('Current MAPBOX_TOKEN:', MAPBOX_TOKEN);
+    
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      initializeMap();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -130,6 +144,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   useEffect(() => {
     return () => {
       if (map.current) {
+        console.log('Cleaning up map...');
         map.current.remove();
         map.current = null;
       }
