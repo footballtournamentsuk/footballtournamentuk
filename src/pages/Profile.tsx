@@ -12,10 +12,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
+import { AttachmentUploader } from '@/components/AttachmentUploader';
 
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
@@ -1298,6 +1299,26 @@ const ProfilePage = () => {
                             rows={3}
                           />
                         </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Attachments Section */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <FileText className="w-5 h-5" />
+                          Tournament Attachments
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <AttachmentUploader
+                          tournamentId={selectedTournamentForDetails.id}
+                          userId={user?.id || ''}
+                          onUploadComplete={() => {
+                            // Optional: Trigger refresh of attachments if needed
+                            console.log('Attachment uploaded successfully');
+                          }}
+                        />
                       </CardContent>
                     </Card>
 

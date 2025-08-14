@@ -119,6 +119,42 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id: string
+          tournament_id: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id?: string
+          tournament_id: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          id?: string
+          tournament_id?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       tournaments: {
         Row: {
           accommodation_info: string | null

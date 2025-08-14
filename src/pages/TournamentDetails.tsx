@@ -30,11 +30,14 @@ import {
   Navigation
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AttachmentViewer } from '@/components/AttachmentViewer';
+import { useAttachments } from '@/hooks/useAttachments';
 
 const TournamentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
+  const { attachments } = useAttachments(id || '');
 
   const tournament = tournaments.find(t => t.id === id);
 
@@ -488,6 +491,9 @@ const TournamentDetails = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Attachments */}
+            <AttachmentViewer attachments={attachments} />
           </div>
 
           {/* Sidebar */}
