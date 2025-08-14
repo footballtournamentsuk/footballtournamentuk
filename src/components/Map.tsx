@@ -31,16 +31,24 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   const initializeMap = () => {
-    console.log('initializeMap called');
+    console.log('=== initializeMap called ===');
     console.log('mapContainer.current:', mapContainer.current);
     console.log('map.current:', map.current);
+    console.log('MAPBOX_TOKEN:', MAPBOX_TOKEN);
     
-    if (!mapContainer.current || map.current) {
-      console.log('Early return: container missing or map already exists');
+    if (!mapContainer.current) {
+      console.log('ERROR: No map container found');
+      setError('Map container element not found');
+      setIsLoading(false);
+      return;
+    }
+    
+    if (map.current) {
+      console.log('Map already exists, skipping initialization');
       return;
     }
 
-    console.log('Initializing map with token');
+    console.log('Setting mapbox access token...');
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     try {
@@ -115,28 +123,24 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   useEffect(() => {
-    console.log('Map component mounted, initializing...');
-    console.log('Current MAPBOX_TOKEN:', MAPBOX_TOKEN);
+    console.log('Map component mounted');
+    console.log('mapContainer ref:', mapContainer);
     
-    // Wait for DOM to be ready and retry if container not available
-    const initWithRetry = (attempts = 0) => {
-      if (attempts > 50) { // Max 5 seconds of retries
-        console.log('Max retry attempts reached, container never became available');
-        setError('Map container failed to initialize');
-        setIsLoading(false);
-        return;
-      }
+    // Simple initialization without retry logic
+    const timer = setTimeout(() => {
+      console.log('Attempting to initialize map after timeout');
+      console.log('mapContainer.current at init time:', mapContainer.current);
       
       if (mapContainer.current) {
-        console.log('Container available, initializing map');
         initializeMap();
       } else {
-        console.log(`Container not ready, retry attempt ${attempts + 1}`);
-        setTimeout(() => initWithRetry(attempts + 1), 100);
+        console.log('Container still not available, setting error');
+        setError('Map container failed to initialize properly');
+        setIsLoading(false);
       }
-    };
-    
-    initWithRetry();
+    }, 500); // Give more time for DOM to be ready
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -201,7 +205,11 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg bg-surface">
-      <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
+      <div 
+        ref={mapContainer} 
+        className="absolute inset-0 w-full h-full" 
+        style={{ minHeight: '600px' }}
+      />
       
       {selectedTournament && (
         <div className="absolute top-4 left-4 right-4 z-10">
