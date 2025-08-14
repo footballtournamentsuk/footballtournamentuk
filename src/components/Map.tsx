@@ -6,8 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Set Mapbox access token immediately
+// Set Mapbox access token immediately with extensive logging
+console.log('🔧 Setting Mapbox token...');
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
+console.log('✅ Mapbox token set:', mapboxgl.accessToken);
+console.log('📦 Mapbox GL version:', mapboxgl.version);
+console.log('🌐 Mapbox supported:', mapboxgl.supported());
 
 interface MapProps {
   tournaments: Tournament[];
@@ -16,6 +20,8 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
+  console.log('🗺️ Map component rendering with', tournaments.length, 'tournaments');
+  
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,77 +90,140 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   // Callback ref to handle container mounting
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
-    if (!node || map.current) return;
+    console.log('📍 Map container callback called with node:', node);
+    
+    if (!node) {
+      console.log('❌ Node is null, returning...');
+      return;
+    }
+    
+    if (map.current) {
+      console.log('⚠️ Map already exists, skipping initialization');
+      return;
+    }
 
-    console.log('✅ Map container mounted, initializing map...');
-    console.log('Mapbox token:', mapboxgl.accessToken ? 'Set' : 'Missing');
+    console.log('🚀 Starting map initialization...');
+    console.log('🔑 Mapbox token check:', mapboxgl.accessToken);
+    console.log('🎯 Container dimensions:', node.offsetWidth, 'x', node.offsetHeight);
+    console.log('🌍 Mapbox supported check:', mapboxgl.supported());
+    
+    if (!mapboxgl.supported()) {
+      console.error('❌ Mapbox GL is not supported in this browser');
+      setError('Your browser does not support Mapbox GL. Please try a different browser.');
+      setIsLoading(false);
+      return;
+    }
     
     try {
-      // Create map
+      console.log('🎨 Creating Mapbox map instance...');
+      
+      // Create map with extensive logging
       map.current = new mapboxgl.Map({
         container: node,
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [-3.0, 54.5], // UK center
         zoom: 5.5,
         projection: 'mercator',
-        attributionControl: false
+        attributionControl: false,
+        trackResize: true
       });
 
-      console.log('Map instance created successfully');
+      console.log('✅ Map instance created:', map.current);
+      console.log('📍 Map container:', map.current.getContainer());
 
-      // Add controls
+      // Add controls with logging
+      console.log('🎮 Adding map controls...');
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+      console.log('✅ Controls added');
 
-      // Map load event
+      // Set up all event listeners with detailed logging
+      console.log('📡 Setting up event listeners...');
+      
       map.current.on('load', () => {
-        console.log('✅ Map loaded successfully');
+        console.log('🎉 MAP LOAD EVENT FIRED - Map fully loaded!');
+        console.log('📊 Map loaded state:', map.current?.loaded());
         setIsLoading(false);
         setError(null);
         
         // Add markers after map loads
         if (tournaments.length > 0) {
+          console.log('🎯 Adding markers after map load...');
           createTournamentMarkers();
+        } else {
+          console.log('📍 No tournaments to add markers for');
         }
       });
 
-      // Error handling
+      // Comprehensive error handling
       map.current.on('error', (e) => {
-        console.error('❌ Map error:', e);
-        setError('Failed to load map. Please check your internet connection.');
+        console.error('❌❌ MAP ERROR EVENT:', e);
+        console.error('Error details:', e.error);
+        console.error('Error message:', e.error?.message);
+        console.error('Error stack:', e.error?.stack);
+        setError(`Map error: ${e.error?.message || 'Failed to load map tiles'}`);
         setIsLoading(false);
       });
 
-      // Style load event for additional debugging
+      // Additional debugging events
       map.current.on('style.load', () => {
-        console.log('Map style loaded');
+        console.log('🎨 Map style loaded successfully');
+      });
+      
+      map.current.on('sourcedata', (e) => {
+        console.log('📡 Source data event:', e.sourceId, 'loaded:', e.isSourceLoaded);
+      });
+      
+      map.current.on('data', (e) => {
+        console.log('📊 Data event:', e.type);
+      });
+      
+      map.current.on('idle', () => {
+        console.log('😴 Map is idle');
       });
 
     } catch (error) {
-      console.error('❌ Map initialization error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to initialize map');
+      console.error('💥💥 CRITICAL MAP INITIALIZATION ERROR:');
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('Full error object:', error);
+      
+      setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
   }, [tournaments]);
 
-  // Update markers when tournaments change
+  // Update markers when tournaments change with logging
   useEffect(() => {
+    console.log('🔄 Tournament effect triggered. Loading:', isLoading, 'Tournament count:', tournaments.length);
+    
     if (map.current && !isLoading && tournaments.length > 0) {
-      console.log('Tournaments updated, creating markers...');
+      console.log('🎯 Conditions met, creating markers...');
       createTournamentMarkers();
+    } else {
+      console.log('⏸️ Skipping marker creation. Map exists:', !!map.current, 'Not loading:', !isLoading, 'Has tournaments:', tournaments.length > 0);
     }
   }, [tournaments, isLoading]);
 
-  // Cleanup on unmount
+  // Cleanup on unmount with logging
   useEffect(() => {
+    console.log('🧹 Map cleanup effect registered');
+    
     return () => {
+      console.log('🧹 Cleaning up map component...');
       if (map.current) {
-        console.log('🧹 Cleaning up map');
+        console.log('🗑️ Removing map instance');
         map.current.remove();
         map.current = null;
+        console.log('✅ Map cleanup complete');
+      } else {
+        console.log('ℹ️ No map to clean up');
       }
     };
   }, []);
+
+  console.log('🎭 Map component render state - Loading:', isLoading, 'Error:', error);
 
   if (isLoading) {
     return (
