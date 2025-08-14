@@ -34,6 +34,16 @@ export interface Tournament {
   features?: string[];
   organizerId?: string;
   banner_url?: string;
+  extended_description?: string;
+  venue_details?: string;
+  rules_and_regulations?: string;
+  what_to_bring?: string;
+  accommodation_info?: string;
+  gallery_images?: string[];
+  sponsor_info?: string;
+  schedule_details?: string;
+  prize_information?: string;
+  additional_notes?: string;
 }
 
 // Database tournament type from Supabase
@@ -66,6 +76,16 @@ export interface DatabaseTournament {
   organizer_id: string | null;
   computed_status: string | null;
   banner_url: string | null;
+  extended_description: string | null;
+  venue_details: string | null;
+  rules_and_regulations: string | null;
+  what_to_bring: string | null;
+  accommodation_info: string | null;
+  gallery_images: string[] | null;
+  sponsor_info: string | null;
+  schedule_details: string | null;
+  prize_information: string | null;
+  additional_notes: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -239,6 +239,25 @@ const TournamentDetails = () => {
               </Card>
             )}
 
+            {/* Extended Description */}
+            {tournament.extended_description && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Detailed Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose prose-sm max-w-none">
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {tournament.extended_description}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Tournament Details */}
             <Card>
               <CardHeader>
@@ -328,6 +347,142 @@ const TournamentDetails = () => {
                       </Badge>
                     ))}
                   </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Venue Details */}
+            {tournament.venue_details && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    Venue Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.venue_details}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Rules and Regulations */}
+            {tournament.rules_and_regulations && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Rules & Regulations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.rules_and_regulations}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Schedule Details */}
+            {tournament.schedule_details && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CalendarIcon className="w-5 h-5" />
+                    Schedule & Match Format
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.schedule_details}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* What to Bring */}
+            {tournament.what_to_bring && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Briefcase className="w-5 h-5" />
+                    What to Bring
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.what_to_bring}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Accommodation & Travel */}
+            {tournament.accommodation_info && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Home className="w-5 h-5" />
+                    Accommodation & Travel
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.accommodation_info}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Prize Information */}
+            {tournament.prize_information && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="w-5 h-5" />
+                    Prizes & Awards
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.prize_information}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Sponsors */}
+            {tournament.sponsor_info && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Gift className="w-5 h-5" />
+                    Sponsors & Partners
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.sponsor_info}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Additional Notes */}
+            {tournament.additional_notes && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Info className="w-5 h-5" />
+                    Additional Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {tournament.additional_notes}
+                  </p>
                 </CardContent>
               </Card>
             )}

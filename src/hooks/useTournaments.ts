@@ -41,6 +41,16 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     features: dbTournament.features || undefined,
     organizerId: dbTournament.organizer_id || undefined,
     banner_url: dbTournament.banner_url || undefined,
+    extended_description: dbTournament.extended_description || undefined,
+    venue_details: dbTournament.venue_details || undefined,
+    rules_and_regulations: dbTournament.rules_and_regulations || undefined,
+    what_to_bring: dbTournament.what_to_bring || undefined,
+    accommodation_info: dbTournament.accommodation_info || undefined,
+    gallery_images: dbTournament.gallery_images || undefined,
+    sponsor_info: dbTournament.sponsor_info || undefined,
+    schedule_details: dbTournament.schedule_details || undefined,
+    prize_information: dbTournament.prize_information || undefined,
+    additional_notes: dbTournament.additional_notes || undefined,
   };
 };
 
