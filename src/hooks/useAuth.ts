@@ -27,8 +27,20 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const signUpWithMagicLink = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/profile`;
+    
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    });
+    return { error };
+  };
+
   const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/profile`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -58,6 +70,7 @@ export const useAuth = () => {
     session,
     loading,
     signUp,
+    signUpWithMagicLink,
     signIn,
     signOut,
   };

@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          contact_email: string
+          contact_phone: string | null
+          created_at: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          age_groups: string[]
+          banner_url: string | null
+          city: string
+          country: string
+          created_at: string
+          facebook: string | null
+          formats: string[]
+          genders: string[]
+          id: string
+          instagram: string | null
+          is_published: boolean
+          logo_url: string | null
+          name: string
+          owner_id: string
+          region: string
+          twitter: string | null
+          updated_at: string
+          venue_address: string | null
+          venue_latitude: number | null
+          venue_longitude: number | null
+          website: string | null
+        }
+        Insert: {
+          age_groups?: string[]
+          banner_url?: string | null
+          city: string
+          country: string
+          created_at?: string
+          facebook?: string | null
+          formats?: string[]
+          genders?: string[]
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          region: string
+          twitter?: string | null
+          updated_at?: string
+          venue_address?: string | null
+          venue_latitude?: number | null
+          venue_longitude?: number | null
+          website?: string | null
+        }
+        Update: {
+          age_groups?: string[]
+          banner_url?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          facebook?: string | null
+          formats?: string[]
+          genders?: string[]
+          id?: string
+          instagram?: string | null
+          is_published?: boolean
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          region?: string
+          twitter?: string | null
+          updated_at?: string
+          venue_address?: string | null
+          venue_latitude?: number | null
+          venue_longitude?: number | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       tournaments: {
         Row: {
           age_groups: string[]
