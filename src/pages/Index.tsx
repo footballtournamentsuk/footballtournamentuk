@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '@/components/Hero';
+import OrganizerCTA from '@/components/OrganizerCTA';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
@@ -99,6 +100,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <Hero />
+
+      {/* Organizer CTA Section */}
+      <OrganizerCTA />
 
       {/* Map Section */}
       <section id="tournament-map" className="py-16 bg-surface">
