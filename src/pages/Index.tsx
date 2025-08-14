@@ -323,12 +323,26 @@ const Index = () => {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3">Popular Cities</h4>
+              <h4 className="font-semibold mb-3">Major Cities</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/80">
-                <li><Link to="/city/london" className="hover:text-primary-foreground">London Tournaments</Link></li>
-                <li><Link to="/city/manchester" className="hover:text-primary-foreground">Manchester Tournaments</Link></li>
-                <li><Link to="/city/birmingham" className="hover:text-primary-foreground">Birmingham Tournaments</Link></li>
-                <li><Link to="/city/liverpool" className="hover:text-primary-foreground">Liverpool Tournaments</Link></li>
+                <li><Link to="/tournaments/london" className="hover:text-primary-foreground">London Tournaments</Link></li>
+                <li><Link to="/tournaments/manchester" className="hover:text-primary-foreground">Manchester Tournaments</Link></li>
+                <li><Link to="/tournaments/birmingham" className="hover:text-primary-foreground">Birmingham Tournaments</Link></li>
+                <li><Link to="/tournaments/liverpool" className="hover:text-primary-foreground">Liverpool Tournaments</Link></li>
+                <li><Link to="/tournaments/leeds" className="hover:text-primary-foreground">Leeds Tournaments</Link></li>
+                <li><Link to="/tournaments/glasgow" className="hover:text-primary-foreground">Glasgow Tournaments</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-3">More Cities</h4>
+              <ul className="space-y-2 text-sm text-primary-foreground/80">
+                <li><Link to="/tournaments/newcastle-upon-tyne" className="hover:text-primary-foreground">Newcastle Tournaments</Link></li>
+                <li><Link to="/tournaments/sheffield" className="hover:text-primary-foreground">Sheffield Tournaments</Link></li>
+                <li><Link to="/tournaments/bristol" className="hover:text-primary-foreground">Bristol Tournaments</Link></li>
+                <li><Link to="/tournaments/nottingham" className="hover:text-primary-foreground">Nottingham Tournaments</Link></li>
+                <li><Link to="/tournaments/leicester" className="hover:text-primary-foreground">Leicester Tournaments</Link></li>
+                <li><Link to="/tournaments/brighton" className="hover:text-primary-foreground">Brighton Tournaments</Link></li>
               </ul>
             </div>
             

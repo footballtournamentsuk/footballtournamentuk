@@ -42,10 +42,11 @@ import { AttachmentViewer } from '@/components/AttachmentViewer';
 import { useAttachments } from '@/hooks/useAttachments';
 
 const TournamentDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, param } = useParams<{ id?: string; param?: string }>();
+  const tournamentId = id || param;
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
-  const { attachments } = useAttachments(id || '');
+  const { attachments } = useAttachments(tournamentId || '');
 
   // Function to get appropriate icon for each feature
   const getFeatureIcon = (feature: string) => {
@@ -84,7 +85,7 @@ const TournamentDetails = () => {
     return <Star className="w-4 h-4 text-gray-500/70" />;
   };
 
-  const tournament = tournaments.find(t => t.id === id);
+  const tournament = tournaments.find(t => t.id === tournamentId);
 
   if (loading) {
     return (

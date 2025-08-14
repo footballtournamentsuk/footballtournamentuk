@@ -127,6 +127,46 @@ export const UK_CITIES: CityConfig[] = [
     coordinates: [-5.9301, 54.5973],
     seoDescription: 'Explore youth football tournaments in Belfast. Find 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Northern Ireland for all youth age groups.',
     introText: 'Belfast brings Northern Ireland\'s resilient football spirit to youth tournaments with remarkable enthusiasm and quality. The city\'s growing football infrastructure and passionate community create excellent conditions for youth development. Belfast tournaments are known for their character-building experiences and the determination they inspire in young players.'
+  },
+  {
+    slug: 'leicester',
+    displayName: 'Leicester',
+    region: 'East Midlands',
+    coordinates: [-1.1397, 52.6369],
+    seoDescription: 'Find youth football tournaments in Leicester. Explore 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across the East Midlands for all youth age groups.',
+    introText: 'Leicester combines Premier League excitement with grassroots football passion in its youth tournaments. The city\'s diverse football community and excellent facilities create welcoming environments for young players. Leicester tournaments are known for their inclusive spirit and commitment to developing talent from all backgrounds.'
+  },
+  {
+    slug: 'portsmouth',
+    displayName: 'Portsmouth',
+    region: 'Hampshire',
+    coordinates: [-1.0898, 50.8198],
+    seoDescription: 'Discover youth football tournaments in Portsmouth. Browse 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Hampshire for all age groups and abilities.',
+    introText: 'Portsmouth brings naval tradition and football heritage together in memorable youth tournaments. The historic port city offers unique tournament experiences with coastal venues and strong community support. Portsmouth tournaments are celebrated for their maritime atmosphere and commitment to youth football development.'
+  },
+  {
+    slug: 'brighton',
+    displayName: 'Brighton',
+    region: 'East Sussex',
+    coordinates: [-0.1372, 50.8225],
+    seoDescription: 'Explore youth football tournaments in Brighton. Find 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across East Sussex for all youth age groups.',
+    introText: 'Brighton offers seaside charm combined with progressive football development in its youth tournaments. The vibrant coastal city provides inspiring settings for young players to develop their skills. Brighton tournaments are known for their creative approach and inclusive community atmosphere.'
+  },
+  {
+    slug: 'oxford',
+    displayName: 'Oxford',
+    region: 'Oxfordshire',
+    coordinates: [-1.2577, 51.7520],
+    seoDescription: 'Find youth football tournaments in Oxford. Explore 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Oxfordshire for all age groups and skill levels.',
+    introText: 'Oxford combines academic excellence with football passion in its youth tournaments. The historic university city offers unique tournament experiences that emphasize both sporting and educational values. Oxford tournaments are particularly noted for their focus on fair play and intellectual approach to the game.'
+  },
+  {
+    slug: 'cambridge',
+    displayName: 'Cambridge',
+    region: 'Cambridgeshire',
+    coordinates: [0.1218, 52.2053],
+    seoDescription: 'Discover youth football tournaments in Cambridge. Browse 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Cambridgeshire for all youth age groups.',
+    introText: 'Cambridge brings scholarly tradition to youth football tournaments with emphasis on tactical understanding and technical development. The historic university city provides inspiring venues and educational approaches to tournament football. Cambridge tournaments are known for their analytical approach and commitment to player development.'
   }
 ];
 

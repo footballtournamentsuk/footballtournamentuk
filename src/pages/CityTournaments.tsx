@@ -16,8 +16,9 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Filter, Settings, ArrowLeft, MapPin, Calendar, Trophy } from 'lucide-react';
 
 const CityTournaments = () => {
-  const { citySlug } = useParams<{ citySlug: string }>();
-  const city = getCityBySlug(citySlug || '');
+  const { citySlug, param } = useParams<{ citySlug?: string; param?: string }>();
+  const slugToUse = citySlug || param;
+  const city = getCityBySlug(slugToUse || '');
   
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -123,7 +124,7 @@ const CityTournaments = () => {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">City Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            The city "{citySlug}" is not in our database.
+            The city "{slugToUse}" is not in our database.
           </p>
           <Link to="/">
             <Button>Return Home</Button>
@@ -362,21 +363,73 @@ const CityTournaments = () => {
                     ))}
                   </div>
                 ) : cityTournaments.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">⚽</div>
-                    <h3 className="text-xl font-semibold mb-2">No tournaments found in {city.displayName}</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Try adjusting your search criteria or check back later for new tournaments.
-                    </p>
-                    <div className="flex gap-2 justify-center">
-                      <Button onClick={clearFilters} variant="outline">
-                        Clear Filters
-                      </Button>
-                      <Link to="/">
-                        <Button variant="default">
-                          View All UK Tournaments
-                        </Button>
-                      </Link>
+                  <div className="text-center py-16 bg-surface rounded-lg">
+                    <div className="max-w-lg mx-auto">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+                        <Trophy className="w-12 h-12 text-emerald-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold mb-4 text-foreground">
+                        No tournaments yet in {city.displayName}
+                      </h3>
+                      <div className="space-y-3 text-muted-foreground mb-8">
+                        <p className="text-lg">
+                          We're actively working to bring exciting youth football tournaments to {city.displayName} and the {city.region} area.
+                        </p>
+                        <p>
+                          Check back soon or explore tournaments in nearby cities. You can also sign up to get notified when new tournaments are announced in your area.
+                        </p>
+                      </div>
+                      
+                      {/* Key Features Still Available */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="flex flex-col items-center text-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-400 rounded-full flex items-center justify-center mb-2">
+                            <MapPin className="w-6 h-6 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">{city.region}</span>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mb-2">
+                            <Trophy className="w-6 h-6 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">All Formats</span>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-400 rounded-full flex items-center justify-center mb-2">
+                            <Calendar className="w-6 h-6 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">Coming Soon</span>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                          <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-400 rounded-full flex items-center justify-center mb-2">
+                            <Search className="w-6 h-6 text-white" />
+                          </div>
+                          <span className="text-sm font-medium">Stay Updated</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        {hasActiveFilters && (
+                          <Button onClick={clearFilters} variant="outline">
+                            <Filter className="w-4 h-4 mr-2" />
+                            Clear Filters
+                          </Button>
+                        )}
+                        <Link to="/">
+                          <Button variant="default" size="lg">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            View All UK Tournaments
+                          </Button>
+                        </Link>
+                        {!user && (
+                          <Link to="/auth">
+                            <Button variant="secondary" size="lg">
+                              <Plus className="w-4 h-4 mr-2" />
+                              Sign Up for Updates
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ) : (

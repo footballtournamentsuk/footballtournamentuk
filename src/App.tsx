@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import TeamView from "./pages/TeamView";
 import TournamentDetails from "./pages/TournamentDetails";
 import CityTournaments from "./pages/CityTournaments";
+import TournamentRouter from "./components/TournamentRouter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -117,7 +118,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/teams/:id" element={<TeamView />} />
           <Route path="/city/:citySlug" element={<CityTournaments />} />
-          <Route path="/tournaments/:id" element={<TournamentDetails />} />
+          <Route path="/tournaments/:param" element={<TournamentRouter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
