@@ -6,9 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Set Mapbox access token immediately
-mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
-
 interface MapProps {
   tournaments: Tournament[];
   selectedTournament?: Tournament | null;
@@ -30,43 +27,6 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     }).format(date);
   };
 
-  const initializeMap = () => {
-    if (!mapContainer.current || map.current) return;
-
-    console.log('🗺️ Initializing Mapbox map...');
-    
-    try {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [-2.5, 54.5], // Center on UK
-        zoom: 5.5,
-      });
-
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-      map.current.on('load', () => {
-        console.log('✅ Map loaded successfully');
-        setIsLoading(false);
-        setError(null);
-        if (tournaments.length > 0) {
-          addTournamentMarkers();
-        }
-      });
-
-      map.current.on('error', (e) => {
-        console.error('❌ Map error:', e);
-        setError('Failed to load map');
-        setIsLoading(false);
-      });
-
-    } catch (error) {
-      console.error('❌ Error creating map:', error);
-      setError('Failed to initialize map');
-      setIsLoading(false);
-    }
-  };
-
   const addTournamentMarkers = () => {
     if (!map.current) return;
 
@@ -74,22 +34,23 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     markers.current.forEach(marker => marker.remove());
     markers.current = [];
 
+    console.log('Adding markers for tournaments:', tournaments.length);
+
     tournaments.forEach(tournament => {
       // Create custom marker element
       const markerElement = document.createElement('div');
-      markerElement.className = 'tournament-marker';
       markerElement.style.cssText = `
         width: 32px;
         height: 32px;
-        background-color: hsl(var(--primary));
+        background-color: #3b82f6;
         border-radius: 50%;
-        border: 2px solid white;
+        border: 3px solid white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: transform 0.2s;
+        transition: transform 0.2s ease;
       `;
       
       const innerDot = document.createElement('div');
@@ -117,7 +78,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       });
 
       markerElement.addEventListener('mouseenter', () => {
-        markerElement.style.transform = 'scale(1.1)';
+        markerElement.style.transform = 'scale(1.15)';
       });
 
       markerElement.addEventListener('mouseleave', () => {
@@ -126,14 +87,68 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
       markers.current.push(marker);
     });
+
+    console.log('✅ Added', markers.current.length, 'tournament markers');
   };
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
-    
-    initializeMap();
 
+    console.log('🗺️ Starting map initialization...');
+    console.log('Container element:', mapContainer.current);
+    
+    // Set Mapbox access token
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
+    
+    try {
+      // Create the map
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-2.5, 54.5], // Center on UK
+        zoom: 5.5,
+        projection: 'mercator'
+      });
+
+      console.log('✅ Map instance created');
+
+      // Add navigation controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      // Set up event listeners
+      map.current.on('load', () => {
+        console.log('✅ Map fully loaded and ready');
+        setIsLoading(false);
+        setError(null);
+        
+        // Add tournament markers if we have tournaments
+        if (tournaments.length > 0) {
+          console.log('Adding tournament markers on map load...');
+          addTournamentMarkers();
+        }
+      });
+
+      map.current.on('error', (e) => {
+        console.error('❌ Mapbox error:', e.error);
+        setError(`Map error: ${e.error?.message || 'Unknown error'}`);
+        setIsLoading(false);
+      });
+
+      map.current.on('sourcedata', (e) => {
+        if (e.isSourceLoaded) {
+          console.log('Map source loaded:', e.sourceId);
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error creating map:', error);
+      setError(`Failed to create map: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setIsLoading(false);
+    }
+
+    // Cleanup function
     return () => {
+      console.log('🧹 Cleaning up map...');
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -141,11 +156,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     };
   }, []);
 
+  // Update markers when tournaments change
   useEffect(() => {
-    if (map.current && tournaments.length > 0) {
+    if (map.current && !isLoading && tournaments.length > 0) {
+      console.log('Tournaments updated, refreshing markers...');
       addTournamentMarkers();
     }
-  }, [tournaments]);
+  }, [tournaments, isLoading]);
 
   if (isLoading) {
     return (
@@ -166,9 +183,16 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
             <div className="text-center">
               <MapPin className="w-12 h-12 text-destructive mx-auto mb-2" />
               <h3 className="text-lg font-semibold mb-2">Map Error</h3>
-              <p className="text-sm text-muted-foreground">
-                {error}. Please refresh the page to try again.
+              <p className="text-sm text-muted-foreground mb-4">
+                {error}
               </p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                variant="outline"
+                size="sm"
+              >
+                Reload Page
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -177,10 +201,15 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   }
 
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg bg-surface">
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
       <div 
         ref={mapContainer} 
-        className="absolute inset-0 w-full h-full" 
+        className="absolute inset-0 w-full h-full bg-gray-100" 
+        style={{ 
+          minHeight: '600px',
+          width: '100%',
+          height: '100%'
+        }}
       />
       
       {selectedTournament && (
