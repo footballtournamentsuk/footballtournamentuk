@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Tournament } from '@/types/tournament';
@@ -13,47 +13,13 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
-  const mapContainer = useRef<HTMLDivElement | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
-  const [containerReady, setContainerReady] = useState(false);
-
-  // Callback ref to detect when container is mounted
-  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
-    console.log('📍 Container callback triggered:', !!node);
-    
-    if (node) {
-      mapContainer.current = node;
-      
-      // Use requestAnimationFrame to ensure the element is fully rendered
-      requestAnimationFrame(() => {
-        const rect = node.getBoundingClientRect();
-        console.log('📐 Container dimensions after RAF:', rect.width, 'x', rect.height);
-        
-        if (rect.width > 0 && rect.height > 0) {
-          console.log('✅ Container is ready with dimensions');
-          setContainerReady(true);
-        } else {
-          console.log('⏳ Container has no dimensions yet');
-          // Try again after a short delay
-          setTimeout(() => {
-            const newRect = node.getBoundingClientRect();
-            console.log('📐 Container dimensions after delay:', newRect.width, 'x', newRect.height);
-            if (newRect.width > 0 && newRect.height > 0) {
-              setContainerReady(true);
-            }
-          }, 100);
-        }
-      });
-    } else {
-      mapContainer.current = null;
-      setContainerReady(false);
-    }
-  }, []);
 
   // Fetch Mapbox token
   useEffect(() => {
@@ -88,74 +54,99 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     fetchToken();
   }, []);
 
-  // Initialize map when both container and token are ready
+  // Initialize map when token is ready and container exists
   useEffect(() => {
-    // Skip if running on server side
     if (typeof window === 'undefined') return;
     
-    const container = mapContainer.current;
-    console.log('🎯 Map init check - Container:', !!container, 'ContainerReady:', containerReady, 'Token:', !!mapboxToken, 'Map exists:', !!mapInstance.current);
-
-    if (!container || !containerReady || !mapboxToken || mapInstance.current) {
-      console.log('⏳ Waiting for prerequisites...');
+    const container = mapRef.current;
+    
+    console.log('🎯 Map init check:');
+    console.log('  - Container exists:', !!container);
+    console.log('  - Token available:', !!mapboxToken);
+    console.log('  - Map instance exists:', !!mapInstance.current);
+    
+    if (!container) {
+      console.log('❌ Container ref is null');
+      return;
+    }
+    
+    if (!mapboxToken) {
+      console.log('⏳ Token not ready yet');
+      return;
+    }
+    
+    if (mapInstance.current) {
+      console.log('ℹ️ Map already exists');
       return;
     }
 
-    // Double-check container dimensions
+    // Check if container has dimensions
     const rect = container.getBoundingClientRect();
-    console.log('📐 Final dimension check:', rect.width, 'x', rect.height);
+    console.log('📐 Container dimensions:', rect.width, 'x', rect.height);
     
     if (rect.width === 0 || rect.height === 0) {
-      console.log('⏳ Container still has no dimensions');
-      return;
+      console.log('⏳ Container has no dimensions, retrying...');
+      // Retry after a short delay
+      const timer = setTimeout(() => {
+        const newRect = container.getBoundingClientRect();
+        console.log('📐 Retry - Container dimensions:', newRect.width, 'x', newRect.height);
+        if (newRect.width > 0 && newRect.height > 0) {
+          initializeMap();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
 
-    console.log('🚀 Initializing map with all prerequisites met...');
+    initializeMap();
 
-    try {
-      // Create map instance
-      mapInstance.current = new mapboxgl.Map({
-        container: container,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-3.4, 55.3], // UK center
-        zoom: 4.5,
-        attributionControl: false,
-      });
+    function initializeMap() {
+      if (!container || !mapboxToken || mapInstance.current) return;
 
-      console.log('✅ Map instance created');
+      console.log('🚀 Initializing Mapbox map...');
 
-      // Add controls
-      mapInstance.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      mapInstance.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+      try {
+        // Create map instance
+        mapInstance.current = new mapboxgl.Map({
+          container: container,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [-3.4, 55.3], // UK center
+          zoom: 4.5,
+          attributionControl: false,
+        });
 
-      // Handle map load - THIS IS WHERE WE HIDE SPINNER AND ADD MARKERS
-      mapInstance.current.on('load', () => {
-        console.log('🎉 Map loaded successfully!');
-        setIsLoading(false);  // Hide spinner
-        setError(null);
-        
-        // Add markers for tournaments
-        addTournamentMarkers();
-      });
+        console.log('✅ Map instance created successfully');
 
-      // Handle map errors
-      mapInstance.current.on('error', (e) => {
-        console.error('❌ Map error:', e);
-        setError(`Map error: ${e.error?.message || 'Unknown error'}`);
+        // Add controls
+        mapInstance.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        mapInstance.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+
+        // Handle map load event
+        mapInstance.current.on('load', () => {
+          console.log('🎉 Map loaded! Hiding spinner and adding markers...');
+          setIsLoading(false);
+          setError(null);
+          addTournamentMarkers();
+        });
+
+        // Handle map errors
+        mapInstance.current.on('error', (e) => {
+          console.error('❌ Map error:', e);
+          setError(`Map error: ${e.error?.message || 'Unknown error'}`);
+          setIsLoading(false);
+        });
+
+      } catch (err) {
+        console.error('💥 Map initialization failed:', err);
+        setError(`Failed to initialize map: ${err instanceof Error ? err.message : 'Unknown error'}`);
         setIsLoading(false);
-      });
-
-    } catch (err) {
-      console.error('💥 Map initialization error:', err);
-      setError(`Failed to initialize map: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      setIsLoading(false);
+      }
     }
-  }, [mapboxToken, containerReady]);
+  }, [mapboxToken]);
 
   // Add tournament markers
   const addTournamentMarkers = () => {
     if (!mapInstance.current) {
-      console.log('No map instance for markers');
+      console.log('❌ No map instance for adding markers');
       return;
     }
 
@@ -166,20 +157,21 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     markersRef.current = [];
 
     if (tournaments.length === 0) {
-      console.log('No tournaments to display');
+      console.log('ℹ️ No tournaments to display');
       return;
     }
 
     const bounds = new mapboxgl.LngLatBounds();
+    let markersAdded = 0;
 
     tournaments.forEach((tournament) => {
       if (!tournament.location?.coordinates) {
-        console.log('Tournament missing coordinates:', tournament.name);
+        console.log('⚠️ Tournament missing coordinates:', tournament.name);
         return;
       }
 
       const [lng, lat] = tournament.location.coordinates;
-      console.log('Creating marker for:', tournament.name, 'at', lng, lat);
+      console.log('📍 Creating marker for:', tournament.name, 'at', lng, lat);
       
       // Create marker element
       const markerEl = document.createElement('div');
@@ -208,7 +200,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
       // Add click handler
       markerEl.addEventListener('click', () => {
-        console.log('Marker clicked:', tournament.name);
+        console.log('🖱️ Marker clicked:', tournament.name);
         onTournamentSelect(tournament);
       });
 
@@ -219,22 +211,23 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
       markersRef.current.push(marker);
       bounds.extend([lng, lat]);
+      markersAdded++;
     });
 
     // Fit map to show all markers
-    if (markersRef.current.length > 0) {
+    if (markersAdded > 0) {
       mapInstance.current.fitBounds(bounds, {
         padding: 50,
         maxZoom: 10
       });
-      console.log('✅ Map fitted to', markersRef.current.length, 'markers');
+      console.log('✅ Map fitted to', markersAdded, 'markers');
     }
   };
 
   // Update markers when tournaments change (but only after map is loaded)
   useEffect(() => {
     if (mapInstance.current && !isLoading) {
-      console.log('🔄 Updating markers for tournament change');
+      console.log('🔄 Updating markers due to tournament change');
       addTournamentMarkers();
     }
   }, [tournaments, isLoading]);
@@ -243,7 +236,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   useEffect(() => {
     return () => {
       if (mapInstance.current) {
-        console.log('🧹 Cleaning up map');
+        console.log('🧹 Cleaning up map instance');
         mapInstance.current.remove();
         mapInstance.current = null;
       }
@@ -258,63 +251,62 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     }).format(date);
   };
 
-  if (isLoading) {
-    return (
-      <div 
-        className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center"
-        style={{ height: '520px', width: '100%' }}
-      >
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading map...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div 
-        className="relative w-full bg-surface border rounded-lg shadow-lg flex items-center justify-center"
-        style={{ height: '520px', width: '100%' }}
-      >
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-2" />
-              <h3 className="text-lg font-semibold mb-2">Map Error</h3>
-              <p className="text-sm text-muted-foreground mb-4">{error}</p>
-              <Button 
-                onClick={() => window.location.reload()} 
-                variant="default"
-                size="sm"
-                className="w-full"
-              >
-                Reload Page
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+  // Always render the container, regardless of loading/error state
   return (
     <div 
       className="relative w-full rounded-lg overflow-hidden shadow-lg border"
       style={{ height: '520px', width: '100%' }}
     >
+      {/* Map container - ALWAYS rendered */}
       <div 
-        ref={mapContainerCallback}
-        className="w-full h-full"
+        ref={mapRef}
+        id="map"
+        className="w-full h-full absolute inset-0"
         style={{ 
           width: '100%',
-          height: '520px'
+          height: '520px',
+          position: 'absolute',
+          top: 0,
+          left: 0
         }}
       />
       
-      {selectedTournament && (
-        <div className="absolute top-4 left-4 right-4 z-10">
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-surface/90 flex items-center justify-center z-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading map...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error overlay */}
+      {error && (
+        <div className="absolute inset-0 bg-surface/90 flex items-center justify-center z-20">
+          <Card className="w-full max-w-md mx-4">
+            <CardContent className="p-6">
+              <div className="text-center">
+                <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-2" />
+                <h3 className="text-lg font-semibold mb-2">Map Error</h3>
+                <p className="text-sm text-muted-foreground mb-4">{error}</p>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="default"
+                  size="sm"
+                  className="w-full"
+                >
+                  Reload Page
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
+      {/* Tournament selection popup */}
+      {selectedTournament && !isLoading && !error && (
+        <div className="absolute top-4 left-4 right-4 z-30">
           <Card className="bg-background/95 backdrop-blur-sm shadow-lg">
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
@@ -353,8 +345,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         </div>
       )}
       
-      {!isLoading && tournaments.length > 0 && (
-        <div className="absolute bottom-4 left-4 z-10">
+      {/* Tournament counter */}
+      {!isLoading && !error && tournaments.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-30">
           <div className="bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm font-medium shadow-lg">
             {tournaments.length} tournament{tournaments.length !== 1 ? 's' : ''} found
           </div>
