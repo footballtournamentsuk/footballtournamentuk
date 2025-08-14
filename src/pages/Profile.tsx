@@ -69,17 +69,17 @@ const ProfilePage = () => {
     is_published: false,
   });
 
-  // Redirect if not authenticated
-  if (!loading && !user) {
-    return <Navigate to="/auth" replace />;
-  }
-
   useEffect(() => {
     if (user) {
       loadProfile();
       loadTeam();
     }
   }, [user]);
+
+  // Redirect if not authenticated
+  if (!loading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   const loadProfile = async () => {
     try {
