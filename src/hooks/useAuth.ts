@@ -39,14 +39,17 @@ export const useAuth = () => {
     return { error };
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, name?: string) => {
     const redirectUrl = `${window.location.origin}/profile`;
     
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl
+        emailRedirectTo: redirectUrl,
+        data: {
+          full_name: name
+        }
       }
     });
     return { error };
@@ -57,6 +60,12 @@ export const useAuth = () => {
       email,
       password,
     });
+    
+    // Redirect to profile after successful sign in
+    if (!error) {
+      window.location.href = '/profile';
+    }
+    
     return { error };
   };
 
