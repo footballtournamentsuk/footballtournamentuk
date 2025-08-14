@@ -14,7 +14,7 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, signUpWithMagicLink, signIn } = useAuth();
+  const { user, signUp, signIn } = useAuth();
   const { toast } = useToast();
 
   // Redirect if already authenticated
@@ -24,17 +24,17 @@ const AuthPage = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
+    if (!email || !password) {
       toast({
         title: "Error",
-        description: "Please enter your email address",
+        description: "Please enter both email and password",
         variant: "destructive",
       });
       return;
     }
 
     setIsLoading(true);
-    const { error } = await signUpWithMagicLink(email);
+    const { error } = await signUp(email, password);
     
     if (error) {
       toast({
@@ -44,8 +44,8 @@ const AuthPage = () => {
       });
     } else {
       toast({
-        title: "Check Your Email",
-        description: "We've sent you a magic link to sign in. Check your email and click the link to get started.",
+        title: "Success",
+        description: "Account created successfully! Please check your email to confirm your account.",
       });
     }
     setIsLoading(false);
@@ -155,7 +155,7 @@ const AuthPage = () => {
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Create Account</CardTitle>
                 <CardDescription>
-                  Enter your email to get started - no password needed!
+                  Sign up as a tournament organizer
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -175,15 +175,32 @@ const AuthPage = () => {
                       />
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                      <Input
+                        id="signup-password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Create a password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10 pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Sending Magic Link...' : 'Send Magic Link'}
+                    {isLoading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
-                <div className="mt-4 p-3 bg-muted/30 rounded-lg">
-                  <p className="text-sm text-muted-foreground text-center">
-                    We'll send you a secure link to sign in instantly - no password required!
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
