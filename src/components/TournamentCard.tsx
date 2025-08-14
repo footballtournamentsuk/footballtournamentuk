@@ -252,13 +252,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-full bg-popover border border-border shadow-lg z-50">
-              <DropdownMenuItem 
-                onClick={() => onSelect(tournament)}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <MapPin className="w-4 h-4" />
-                View on Our Map
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a
                   href={`https://waze.com/ul?q=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
