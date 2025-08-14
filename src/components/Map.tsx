@@ -126,12 +126,25 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     console.log('Map component mounted, initializing...');
     console.log('Current MAPBOX_TOKEN:', MAPBOX_TOKEN);
     
-    // Add a small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      initializeMap();
-    }, 100);
-
-    return () => clearTimeout(timer);
+    // Wait for DOM to be ready and retry if container not available
+    const initWithRetry = (attempts = 0) => {
+      if (attempts > 50) { // Max 5 seconds of retries
+        console.log('Max retry attempts reached, container never became available');
+        setError('Map container failed to initialize');
+        setIsLoading(false);
+        return;
+      }
+      
+      if (mapContainer.current) {
+        console.log('Container available, initializing map');
+        initializeMap();
+      } else {
+        console.log(`Container not ready, retry attempt ${attempts + 1}`);
+        setTimeout(() => initWithRetry(attempts + 1), 100);
+      }
+    };
+    
+    initWithRetry();
   }, []);
 
   useEffect(() => {
