@@ -213,15 +213,12 @@ const ProfilePage = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      // First delete the user's profile and team data
-      if (team.id) {
-        await supabase.from('teams').delete().eq('id', team.id);
-      }
-      
-      await supabase.from('profiles').delete().eq('user_id', user?.id);
-      
-      // Then delete the auth user
-      const { error } = await supabase.auth.admin.deleteUser(user?.id || '');
+      // Call the edge function to delete the account
+      const { error } = await supabase.functions.invoke('delete-account', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
       
       if (error) throw error;
       
@@ -230,12 +227,14 @@ const ProfilePage = () => {
         description: "Your account has been permanently deleted.",
       });
       
-      // Sign out and redirect
+      // Sign out and redirect to home page
       await signOut();
+      window.location.href = '/';
     } catch (error: any) {
+      console.error('Delete account error:', error);
       toast({
         title: "Error deleting account",
-        description: error.message,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     }
