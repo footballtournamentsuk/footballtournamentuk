@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Upload, Save, Eye, Globe } from 'lucide-react';
+import { Upload, Save, Eye, Globe, Trash2 } from 'lucide-react';
 
 const GENDERS = ['Boys', 'Girls', 'Mixed'];
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
@@ -46,7 +47,7 @@ interface Team {
 }
 
 const ProfilePage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -210,6 +211,36 @@ const ProfilePage = () => {
     autosave({ is_published: !team.is_published }, 'teams');
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      // First delete the user's profile and team data
+      if (team.id) {
+        await supabase.from('teams').delete().eq('id', team.id);
+      }
+      
+      await supabase.from('profiles').delete().eq('user_id', user?.id);
+      
+      // Then delete the auth user
+      const { error } = await supabase.auth.admin.deleteUser(user?.id || '');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Account deleted",
+        description: "Your account has been permanently deleted.",
+      });
+      
+      // Sign out and redirect
+      await signOut();
+    } catch (error: any) {
+      toast({
+        title: "Error deleting account",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
   }
@@ -221,15 +252,6 @@ const ProfilePage = () => {
           <h1 className="text-3xl font-bold text-foreground">Profile Setup</h1>
           <div className="flex items-center gap-2">
             {saving && <span className="text-sm text-muted-foreground">Saving...</span>}
-            <Button
-              onClick={togglePublish}
-              disabled={!canPublish}
-              variant={team.is_published ? "secondary" : "default"}
-              className="flex items-center gap-2"
-            >
-              {team.is_published ? <Eye className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
-              {team.is_published ? 'Published' : 'Publish Profile'}
-            </Button>
           </div>
         </div>
 
@@ -491,6 +513,51 @@ const ProfilePage = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-4">
+          <Button
+            onClick={togglePublish}
+            disabled={!canPublish}
+            variant={team.is_published ? "secondary" : "default"}
+            className="flex items-center justify-center gap-2 w-full"
+            size="lg"
+          >
+            {team.is_published ? <Eye className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
+            {team.is_published ? 'Published' : 'Publish Profile'}
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive" 
+                className="flex items-center justify-center gap-2 w-full"
+                size="lg"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Account
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your account,
+                  profile, team information, and remove all of your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleDeleteAccount}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, delete my account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </div>
   );
