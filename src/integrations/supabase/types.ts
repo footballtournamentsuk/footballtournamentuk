@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tournaments: {
+        Row: {
+          age_groups: string[]
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          cost_amount: number | null
+          cost_currency: string | null
+          created_at: string
+          description: string | null
+          end_date: string
+          features: string[] | null
+          format: string
+          id: string
+          latitude: number
+          location_name: string
+          longitude: number
+          max_teams: number | null
+          name: string
+          organizer_id: string | null
+          postcode: string
+          region: string
+          registered_teams: number | null
+          registration_deadline: string | null
+          start_date: string
+          status: string
+          team_types: string[]
+          type: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          age_groups: string[]
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          cost_amount?: number | null
+          cost_currency?: string | null
+          created_at?: string
+          description?: string | null
+          end_date: string
+          features?: string[] | null
+          format: string
+          id?: string
+          latitude: number
+          location_name: string
+          longitude: number
+          max_teams?: number | null
+          name: string
+          organizer_id?: string | null
+          postcode: string
+          region: string
+          registered_teams?: number | null
+          registration_deadline?: string | null
+          start_date: string
+          status?: string
+          team_types: string[]
+          type: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          age_groups?: string[]
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          cost_amount?: number | null
+          cost_currency?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          features?: string[] | null
+          format?: string
+          id?: string
+          latitude?: number
+          location_name?: string
+          longitude?: number
+          max_teams?: number | null
+          name?: string
+          organizer_id?: string | null
+          postcode?: string
+          region?: string
+          registered_teams?: number | null
+          registration_deadline?: string | null
+          start_date?: string
+          status?: string
+          team_types?: string[]
+          type?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
