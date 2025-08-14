@@ -7,7 +7,7 @@ import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // Replace this with your actual Mapbox public token
-const MAPBOX_TOKEN = 'pk.your-mapbox-token-here';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -37,14 +37,6 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     
     if (!mapContainer.current || map.current) {
       console.log('Early return: container missing or map already exists');
-      return;
-    }
-
-    // Check if token is configured
-    if (MAPBOX_TOKEN === 'pk.your-mapbox-token-here') {
-      console.log('Mapbox token not configured');
-      setError('Please add your Mapbox public token to the Map component');
-      setIsLoading(false);
       return;
     }
 
@@ -169,9 +161,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       <div className="relative w-full h-[600px] bg-surface rounded-lg shadow-lg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">
-            {MAPBOX_TOKEN === 'pk.your-mapbox-token-here' ? 'Checking map configuration...' : 'Loading map...'}
-          </p>
+          <p className="text-muted-foreground">Loading map...</p>
         </div>
       </div>
     );
