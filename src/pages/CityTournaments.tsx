@@ -1,0 +1,500 @@
+import React, { useState, useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import CityHero from '@/components/CityHero';
+import Map from '@/components/Map';
+import TournamentFilters from '@/components/TournamentFilters';
+import TournamentCard from '@/components/TournamentCard';
+import { SEO } from '@/components/SEO';
+import { useTournaments } from '@/hooks/useTournaments';
+import { useAuth } from '@/hooks/useAuth';
+import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
+import { getCityBySlug, UK_CITIES } from '@/data/cities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Search, Plus, Filter, Settings, ArrowLeft, MapPin, Calendar, Trophy } from 'lucide-react';
+
+const CityTournaments = () => {
+  const { citySlug } = useParams<{ citySlug: string }>();
+  const city = getCityBySlug(citySlug || '');
+  
+  const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
+  const [filters, setFilters] = useState<Filters>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const { tournaments, loading, error } = useTournaments();
+  const { user } = useAuth();
+
+  // Filter tournaments by city/region
+  const { cityTournaments, upcomingTournaments, pastTournaments } = useMemo(() => {
+    if (!city) return { cityTournaments: [], upcomingTournaments: [], pastTournaments: [] };
+
+    // Filter tournaments for this city/region
+    let filtered = tournaments.filter(tournament => {
+      // Match by region or city name in location
+      return tournament.location.region === city.region ||
+             tournament.location.name.toLowerCase().includes(city.displayName.toLowerCase()) ||
+             tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase());
+    });
+
+    // Apply search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(tournament =>
+        tournament.name.toLowerCase().includes(query) ||
+        tournament.description?.toLowerCase().includes(query) ||
+        tournament.location.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply filters
+    if (filters.format?.length) {
+      filtered = filtered.filter(t => filters.format!.includes(t.format));
+    }
+    
+    if (filters.ageGroups?.length) {
+      filtered = filtered.filter(t => 
+        t.ageGroups.some(age => filters.ageGroups!.includes(age))
+      );
+    }
+    
+    if (filters.teamTypes?.length) {
+      filtered = filtered.filter(t => 
+        t.teamTypes.some(type => filters.teamTypes!.includes(type))
+      );
+    }
+    
+    if (filters.type?.length) {
+      filtered = filtered.filter(t => filters.type!.includes(t.type));
+    }
+    
+    if (filters.status?.length) {
+      filtered = filtered.filter(t => filters.status!.includes(t.status));
+    }
+
+    // Separate upcoming and past tournaments
+    const upcoming = filtered.filter(t => 
+      !['completed', 'cancelled'].includes(t.status)
+    ).sort((a, b) => {
+      return new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime();
+    });
+
+    const past = filtered.filter(t => 
+      ['completed', 'cancelled'].includes(t.status)
+    ).sort((a, b) => {
+      return new Date(b.dates.start).getTime() - new Date(a.dates.start).getTime();
+    });
+
+    return { 
+      cityTournaments: filtered, 
+      upcomingTournaments: upcoming, 
+      pastTournaments: past 
+    };
+  }, [tournaments, filters, searchQuery, city]);
+
+  const handleTournamentSelect = (tournament: Tournament | null) => {
+    setSelectedTournament(tournament);
+  };
+
+  const clearFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+  };
+
+  const hasActiveFilters = Object.values(filters).some(value => 
+    value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
+  ) || searchQuery.trim();
+
+  const scrollToMap = () => {
+    const mapSection = document.getElementById('tournament-map');
+    mapSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToTournaments = () => {
+    const tournamentsSection = document.getElementById('tournaments');
+    tournamentsSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // If city not found, show 404
+  if (!city) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">City Not Found</h1>
+          <p className="text-muted-foreground mb-6">
+            The city "{citySlug}" is not in our database.
+          </p>
+          <Link to="/">
+            <Button>Return Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const pageTitle = `Youth Football Tournaments in ${city.displayName} | UK Youth Football`;
+  const pageDescription = city.seoDescription;
+
+  return (
+    <HelmetProvider>
+      <div className="min-h-screen bg-background">
+        <SEO 
+          title={pageTitle}
+          description={pageDescription}
+          canonicalUrl={`/city/${city.slug}`}
+          tournaments={upcomingTournaments.slice(0, 5)}
+          cityName={city.displayName}
+        />
+
+        {/* City Hero Section */}
+        <CityHero 
+          city={city}
+          tournamentCount={upcomingTournaments.length}
+          onScrollToMap={scrollToMap}
+          onScrollToTournaments={scrollToTournaments}
+        />
+
+        {/* Breadcrumb Navigation */}
+        <div className="bg-surface py-4">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Link to="/" className="hover:text-foreground">Home</Link>
+              <span>/</span>
+              <span className="text-foreground font-medium">{city.displayName} Tournaments</span>
+            </nav>
+          </div>
+        </div>
+
+        {/* SEO Intro Section */}
+        <section className="py-12 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-3">
+                <Trophy className="w-8 h-8 text-warning animate-pulse" />
+                Youth Football Tournaments in {city.displayName}
+                <Trophy className="w-8 h-8 text-warning animate-pulse" />
+              </h2>
+              <div className="prose prose-lg mx-auto text-muted-foreground">
+                <p>{city.introText}</p>
+              </div>
+              
+              {/* Quick Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="bg-surface rounded-lg p-6 text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <MapPin className="w-6 h-6 text-emerald-500 mr-2" />
+                    <span className="text-2xl font-bold text-emerald-500">{upcomingTournaments.length}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Upcoming Tournaments</p>
+                </div>
+                <div className="bg-surface rounded-lg p-6 text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Calendar className="w-6 h-6 text-blue-500 mr-2" />
+                    <span className="text-2xl font-bold text-blue-500">{city.region}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Coverage Area</p>
+                </div>
+                <div className="bg-surface rounded-lg p-6 text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Trophy className="w-6 h-6 text-orange-500 mr-2" />
+                    <span className="text-2xl font-bold text-orange-500">All</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Age Groups & Formats</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Map Section */}
+        <section id="tournament-map" className="py-16 bg-surface">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Tournament Map - {city.displayName}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Explore tournaments across {city.displayName} and {city.region}. Click on any marker to view tournament details.
+              </p>
+            </div>
+            
+            <Map 
+              tournaments={upcomingTournaments}
+              selectedTournament={selectedTournament}
+              onTournamentSelect={handleTournamentSelect}
+              centerCoordinates={city.coordinates}
+              defaultZoom={11}
+            />
+          </div>
+        </section>
+
+        {/* Tournaments Section */}
+        <section id="tournaments" className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Sidebar - Filters */}
+              <div className="lg:w-1/3">
+                <div className="sticky top-4 space-y-6">
+                  {/* Back to All Cities */}
+                  <div className="mb-4">
+                    <Link to="/">
+                      <Button variant="outline" size="sm" className="mb-4">
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Back to All Tournaments
+                      </Button>
+                    </Link>
+                  </div>
+
+                  {/* Search and Add Tournament */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-bold">Find in {city.displayName}</h2>
+                      <div className="flex gap-2">
+                        {user ? (
+                          <Button variant="default" size="sm" asChild>
+                            <Link to="/profile">
+                              <Settings className="w-4 h-4 mr-2" />
+                              Profile
+                            </Link>
+                          </Button>
+                        ) : (
+                          <Button variant="default" size="sm" asChild>
+                            <Link to="/auth">
+                              <Plus className="w-4 h-4 mr-2" />
+                              Sign In to Add
+                            </Link>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                      <Input
+                        placeholder={`Search tournaments in ${city.displayName}...`}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+
+                    {/* Mobile Filter Toggle */}
+                    <div className="lg:hidden">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="w-full"
+                      >
+                        <Filter className="w-4 h-4 mr-2" />
+                        {showFilters ? 'Hide Filters' : 'Show Filters'}
+                        {hasActiveFilters && (
+                          <Badge variant="secondary" className="ml-2">
+                            Active
+                          </Badge>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Filters */}
+                  <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
+                    <TournamentFilters
+                      filters={filters}
+                      onFiltersChange={setFilters}
+                      onClearFilters={clearFilters}
+                    />
+                  </div>
+
+                  {/* Other Cities Quick Links */}
+                  <div className="bg-surface rounded-lg p-4">
+                    <h3 className="font-semibold mb-3">Other Cities</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                  {UK_CITIES.filter(c => c.slug !== city.slug).slice(0, 6).map(otherCity => (
+                        <Link 
+                          key={otherCity.slug} 
+                          to={`/city/${otherCity.slug}`}
+                          className="text-xs bg-background hover:bg-muted rounded px-2 py-1 transition-colors"
+                        >
+                          {otherCity.displayName}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content - Tournament Cards */}
+              <div className="lg:w-2/3">
+                {error && (
+                  <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <p className="text-destructive text-sm">Error loading tournaments: {error}</p>
+                  </div>
+                )}
+                
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      {loading ? 'Loading...' : `${cityTournaments.length} Tournament${cityTournaments.length !== 1 ? 's' : ''} Found in ${city.displayName}`}
+                    </h3>
+                    {hasActiveFilters && !loading && (
+                      <p className="text-sm text-muted-foreground">
+                        Showing filtered results
+                      </p>
+                    )}
+                  </div>
+                  
+                  {hasActiveFilters && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearFilters}
+                    >
+                      Clear All Filters
+                    </Button>
+                  )}
+                </div>
+
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
+                    ))}
+                  </div>
+                ) : cityTournaments.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">⚽</div>
+                    <h3 className="text-xl font-semibold mb-2">No tournaments found in {city.displayName}</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Try adjusting your search criteria or check back later for new tournaments.
+                    </p>
+                    <div className="flex gap-2 justify-center">
+                      <Button onClick={clearFilters} variant="outline">
+                        Clear Filters
+                      </Button>
+                      <Link to="/">
+                        <Button variant="default">
+                          View All UK Tournaments
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {/* Upcoming Tournaments */}
+                    {upcomingTournaments.length > 0 && (
+                      <div>
+                        <div className="mb-4">
+                          <h4 className="text-lg font-semibold text-foreground">
+                            Upcoming Tournaments in {city.displayName} ({upcomingTournaments.length})
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Sorted by start date - soonest first
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {upcomingTournaments.map(tournament => (
+                            <TournamentCard
+                              key={tournament.id}
+                              tournament={tournament}
+                              onSelect={handleTournamentSelect}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Past Tournaments - Collapsible */}
+                    {pastTournaments.length > 0 && (
+                      <div className="border-t pt-8">
+                        <details className="group">
+                          <summary className="cursor-pointer mb-4 flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-muted transition-colors">
+                            <div>
+                              <h4 className="text-lg font-semibold text-foreground">
+                                Past Tournaments in {city.displayName} ({pastTournaments.length})
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                Completed and cancelled tournaments
+                              </p>
+                            </div>
+                            <div className="text-muted-foreground group-open:rotate-90 transition-transform">
+                              ▶
+                            </div>
+                          </summary>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                            {pastTournaments.map(tournament => (
+                              <TournamentCard
+                                key={tournament.id}
+                                tournament={tournament}
+                                onSelect={handleTournamentSelect}
+                              />
+                            ))}
+                          </div>
+                        </details>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-primary text-primary-foreground py-12">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="md:col-span-2">
+                <h3 className="text-2xl font-bold mb-4">UK Youth Football</h3>
+                <p className="text-primary-foreground/80 mb-4">
+                  Connecting young football talent with tournaments, leagues, and camps across the United Kingdom. 
+                  From grassroots to elite level competitions.
+                </p>
+                <div className="flex space-x-4">
+                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    About Us
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    Contact
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
+                    Help
+                  </Button>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-3">Popular Cities</h4>
+                <ul className="space-y-2 text-sm text-primary-foreground/80">
+                  {UK_CITIES.slice(0, 4).map(cityLink => (
+                    <li key={cityLink.slug}>
+                      <Link to={`/city/${cityLink.slug}`} className="hover:text-primary-foreground">
+                        {cityLink.displayName} Tournaments
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-3">For Organizers</h4>
+                <ul className="space-y-2 text-sm text-primary-foreground/80">
+                  <li>Add Tournament</li>
+                  <li>Manage Events</li>
+                  <li>League Admin</li>
+                  <li>Analytics</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-sm text-primary-foreground/60">
+              <p>© 2024 UK Youth Football Platform. All rights reserved. | {city.displayName} Youth Football Tournaments</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </HelmetProvider>
+  );
+};
+
+export default CityTournaments;

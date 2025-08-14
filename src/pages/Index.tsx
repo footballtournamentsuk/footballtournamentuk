@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
@@ -322,12 +323,12 @@ const Index = () => {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3">For Teams</h4>
+              <h4 className="font-semibold mb-3">Popular Cities</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/80">
-                <li>Find Tournaments</li>
-                <li>League Registration</li>
-                <li>Holiday Camps</li>
-                <li>Team Management</li>
+                <li><Link to="/city/london" className="hover:text-primary-foreground">London Tournaments</Link></li>
+                <li><Link to="/city/manchester" className="hover:text-primary-foreground">Manchester Tournaments</Link></li>
+                <li><Link to="/city/birmingham" className="hover:text-primary-foreground">Birmingham Tournaments</Link></li>
+                <li><Link to="/city/liverpool" className="hover:text-primary-foreground">Liverpool Tournaments</Link></li>
               </ul>
             </div>
             

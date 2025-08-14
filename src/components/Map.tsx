@@ -10,9 +10,17 @@ interface MapProps {
   tournaments: Tournament[];
   selectedTournament?: Tournament | null;
   onTournamentSelect: (tournament: Tournament | null) => void;
+  centerCoordinates?: [number, number];
+  defaultZoom?: number;
 }
 
-const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
+const Map: React.FC<MapProps> = ({ 
+  tournaments, 
+  selectedTournament, 
+  onTournamentSelect,
+  centerCoordinates,
+  defaultZoom = 6
+}) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -109,8 +117,8 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         mapInstance.current = new mapboxgl.Map({
           container: container,
           style: 'mapbox://styles/mapbox/streets-v12',
-          center: [-3.4, 55.3], // UK center
-          zoom: 4.5,
+          center: centerCoordinates || [-3.4, 55.3], // Custom center or UK center
+          zoom: defaultZoom,
           attributionControl: false,
         });
 
