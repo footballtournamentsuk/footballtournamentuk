@@ -82,82 +82,88 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   useEffect(() => {
-    if (!mapContainer.current) {
-      console.log('❌ No map container found');
-      return;
-    }
+    // Wait for the DOM to be ready
+    const initializeMap = () => {
+      if (!mapContainer.current) {
+        console.log('❌ Map container not ready, retrying...');
+        setTimeout(initializeMap, 100);
+        return;
+      }
 
-    if (map.current) {
-      console.log('Map already exists, skipping initialization');
-      return;
-    }
+      if (map.current) {
+        console.log('Map already exists, skipping initialization');
+        return;
+      }
 
-    console.log('🗺️ Initializing Mapbox map...');
-    console.log('Mapbox token:', mapboxgl.accessToken ? 'Set' : 'Missing');
-    console.log('Container:', mapContainer.current);
+      console.log('🗺️ Initializing Mapbox map...');
+      console.log('Mapbox token:', mapboxgl.accessToken ? 'Set' : 'Missing');
+      console.log('Container:', mapContainer.current);
 
-    let timeoutId: NodeJS.Timeout;
+      let timeoutId: NodeJS.Timeout;
 
-    try {
-      // Set a timeout to catch hanging initialization
-      timeoutId = setTimeout(() => {
-        console.log('⏰ Map initialization timeout');
-        setError('Map initialization timed out. Please refresh the page.');
+      try {
+        // Set a timeout to catch hanging initialization
+        timeoutId = setTimeout(() => {
+          console.log('⏰ Map initialization timeout');
+          setError('Map initialization timed out. Please refresh the page.');
+          setIsLoading(false);
+        }, 10000);
+
+        // Create map
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [-3.0, 54.5], // UK center
+          zoom: 5.5,
+          projection: 'mercator',
+          attributionControl: false
+        });
+
+        console.log('Map instance created');
+
+        // Add controls
+        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
+
+        // Map load event
+        map.current.on('load', () => {
+          console.log('✅ Map loaded successfully');
+          clearTimeout(timeoutId);
+          setIsLoading(false);
+          setError(null);
+          
+          // Add markers after map loads
+          if (tournaments.length > 0) {
+            createTournamentMarkers();
+          }
+        });
+
+        // Error handling
+        map.current.on('error', (e) => {
+          console.error('❌ Map error:', e);
+          clearTimeout(timeoutId);
+          setError('Failed to load map');
+          setIsLoading(false);
+        });
+
+        // Style load event for additional debugging
+        map.current.on('style.load', () => {
+          console.log('Map style loaded');
+        });
+
+      } catch (error) {
+        console.error('❌ Map initialization error:', error);
+        if (timeoutId!) clearTimeout(timeoutId!);
+        setError(error instanceof Error ? error.message : 'Failed to initialize map');
         setIsLoading(false);
-      }, 10000);
+      }
+    };
 
-      // Create map
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-3.0, 54.5], // UK center
-        zoom: 5.5,
-        projection: 'mercator',
-        attributionControl: false
-      });
-
-      console.log('Map instance created');
-
-      // Add controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
-
-      // Map load event
-      map.current.on('load', () => {
-        console.log('✅ Map loaded successfully');
-        clearTimeout(timeoutId);
-        setIsLoading(false);
-        setError(null);
-        
-        // Add markers after map loads
-        if (tournaments.length > 0) {
-          createTournamentMarkers();
-        }
-      });
-
-      // Error handling
-      map.current.on('error', (e) => {
-        console.error('❌ Map error:', e);
-        clearTimeout(timeoutId);
-        setError('Failed to load map');
-        setIsLoading(false);
-      });
-
-      // Style load event for additional debugging
-      map.current.on('style.load', () => {
-        console.log('Map style loaded');
-      });
-
-    } catch (error) {
-      console.error('❌ Map initialization error:', error);
-      clearTimeout(timeoutId!);
-      setError(error instanceof Error ? error.message : 'Failed to initialize map');
-      setIsLoading(false);
-    }
+    // Start initialization
+    initializeMap();
 
     // Cleanup
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
       if (map.current) {
         console.log('🧹 Cleaning up map');
         map.current.remove();
