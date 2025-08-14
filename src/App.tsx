@@ -5,9 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { LogOut, User, Settings as SettingsIcon } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Index from "./pages/Index";
-import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -23,12 +22,6 @@ const Navigation = () => {
           Football Tournaments
         </Link>
         <div className="flex items-center gap-4">
-          <Link to="/settings">
-            <Button variant="ghost" size="sm">
-              <SettingsIcon className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-          </Link>
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground flex items-center gap-1">
@@ -66,7 +59,6 @@ const App = () => (
         <Navigation />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

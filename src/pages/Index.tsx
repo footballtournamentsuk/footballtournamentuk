@@ -118,12 +118,6 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold">Find Tournaments</h2>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <a href="/settings">
-                          <Settings className="w-4 h-4 mr-2" />
-                          Settings
-                        </a>
-                      </Button>
                       {user ? (
                         <Button variant="default" size="sm">
                           <Plus className="w-4 h-4 mr-2" />

@@ -5,7 +5,9 @@ import { Tournament } from '@/types/tournament';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+
+// Replace this with your actual Mapbox public token
+const MAPBOX_TOKEN = 'pk.your-mapbox-token-here';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -17,7 +19,6 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,35 +30,17 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     }).format(date);
   };
 
-  const fetchMapboxToken = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const { data, error: functionError } = await supabase.functions.invoke('get-mapbox-token');
-      
-      if (functionError) {
-        throw new Error(`Function error: ${functionError.message}`);
-      }
-      
-      if (data?.token) {
-        setMapboxToken(data.token);
-        setError(null);
-      } else {
-        throw new Error('No token found in response');
-      }
-    } catch (err) {
-      console.error('Error fetching Mapbox token:', err);
-      setError('Mapbox token not configured. Please set it up in the admin settings.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const initializeMap = (token: string) => {
+  const initializeMap = () => {
     if (!mapContainer.current || map.current) return;
 
-    mapboxgl.accessToken = token;
+    // Check if token is configured
+    if (MAPBOX_TOKEN === 'pk.your-mapbox-token-here') {
+      setError('Please add your Mapbox public token to the Map component');
+      setIsLoading(false);
+      return;
+    }
+
+    mapboxgl.accessToken = MAPBOX_TOKEN;
     
     try {
       map.current = new mapboxgl.Map({
@@ -77,17 +60,20 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
       map.current.on('load', () => {
         console.log('Map loaded successfully');
+        setIsLoading(false);
         addTournamentMarkers();
       });
 
       map.current.on('error', (e) => {
         console.error('Map error:', e);
         setError('Failed to load map. Please check your Mapbox token.');
+        setIsLoading(false);
       });
 
     } catch (error) {
       console.error('Error initializing map:', error);
       setError('Failed to initialize map. Please check your Mapbox token.');
+      setIsLoading(false);
     }
   };
 
@@ -128,15 +114,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   useEffect(() => {
-    fetchMapboxToken();
+    console.log('Map component mounted, initializing...');
+    initializeMap();
   }, []);
-
-  useEffect(() => {
-    if (mapboxToken && mapContainer.current) {
-      console.log('Initializing map with token');
-      initializeMap(mapboxToken);
-    }
-  }, [mapboxToken]);
 
   useEffect(() => {
     if (map.current && tournaments.length > 0) {
@@ -176,12 +156,18 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
               <p className="text-sm text-muted-foreground mb-4">
                 {error}
               </p>
+              <p className="text-xs text-muted-foreground">
+                Get your free Mapbox token at{' '}
+                <a 
+                  href="https://mapbox.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  mapbox.com
+                </a>
+              </p>
             </div>
-            <Button asChild className="w-full">
-              <a href="/settings">
-                Go to Admin Settings
-              </a>
-            </Button>
           </CardContent>
         </Card>
       </div>
