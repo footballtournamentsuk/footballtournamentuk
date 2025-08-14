@@ -35,11 +35,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
     // Check if token is configured
     if (MAPBOX_TOKEN === 'pk.your-mapbox-token-here') {
+      console.log('Mapbox token not configured');
       setError('Please add your Mapbox public token to the Map component');
       setIsLoading(false);
       return;
     }
 
+    console.log('Initializing map with token');
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     try {
@@ -139,7 +141,9 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       <div className="relative w-full h-[600px] bg-surface rounded-lg shadow-lg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading map...</p>
+          <p className="text-muted-foreground">
+            {MAPBOX_TOKEN === 'pk.your-mapbox-token-here' ? 'Checking map configuration...' : 'Loading map...'}
+          </p>
         </div>
       </div>
     );
@@ -154,10 +158,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
               <MapPin className="w-12 h-12 text-destructive mx-auto mb-2" />
               <h3 className="text-lg font-semibold mb-2">Map Configuration Required</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {error}
+                To display the interactive map, please replace the placeholder token in the Map component with your Mapbox public access token.
               </p>
+              <div className="bg-muted p-3 rounded text-xs font-mono mb-4">
+                MAPBOX_TOKEN = 'pk.your-actual-token-here'
+              </div>
               <p className="text-xs text-muted-foreground">
-                Get your free Mapbox token at{' '}
+                Get your free token at{' '}
                 <a 
                   href="https://mapbox.com/" 
                   target="_blank" 
