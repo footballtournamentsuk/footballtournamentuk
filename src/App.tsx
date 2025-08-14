@@ -2,12 +2,60 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { LogOut, User, Settings as SettingsIcon } from "lucide-react";
 import Index from "./pages/Index";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const Navigation = () => {
+  const { user, signOut } = useAuth();
+
+  return (
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="text-xl font-bold text-primary">
+          Football Tournaments
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link to="/settings">
+            <Button variant="ghost" size="sm">
+              <SettingsIcon className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+          </Link>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground flex items-center gap-1">
+                <User className="w-4 h-4" />
+                {user.email}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => signOut()}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth">
+              <Button variant="default" size="sm">
+                Sign In
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -15,9 +63,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <Navigation />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

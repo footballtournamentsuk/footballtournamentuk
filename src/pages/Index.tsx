@@ -3,7 +3,8 @@ import Hero from '@/components/Hero';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
-import { mockTournaments } from '@/data/mockTournaments';
+import { useTournaments } from '@/hooks/useTournaments';
+import { useAuth } from '@/hooks/useAuth';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,10 +16,12 @@ const Index = () => {
   const [filters, setFilters] = useState<Filters>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const { tournaments, loading, error } = useTournaments();
+  const { user } = useAuth();
 
   // Filter tournaments based on active filters and search query
   const filteredTournaments = useMemo(() => {
-    let filtered = mockTournaments;
+    let filtered = tournaments;
 
     // Apply search query
     if (searchQuery.trim()) {
@@ -62,7 +65,7 @@ const Index = () => {
     }
 
     return filtered;
-  }, [mockTournaments, filters, searchQuery]);
+  }, [tournaments, filters, searchQuery]);
 
   const handleTournamentSelect = (tournament: Tournament | null) => {
     setSelectedTournament(tournament);
@@ -121,10 +124,19 @@ const Index = () => {
                           Settings
                         </a>
                       </Button>
-                      <Button variant="default" size="sm">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Tournament
-                      </Button>
+                      {user ? (
+                        <Button variant="default" size="sm">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Tournament
+                        </Button>
+                      ) : (
+                        <Button variant="default" size="sm" asChild>
+                          <a href="/auth">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Sign In to Add
+                          </a>
+                        </Button>
+                      )}
                     </div>
                   </div>
                   
@@ -169,12 +181,18 @@ const Index = () => {
 
             {/* Main Content - Tournament Cards */}
             <div className="lg:w-2/3">
+              {error && (
+                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-destructive text-sm">Error loading tournaments: {error}</p>
+                </div>
+              )}
+              
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">
-                    {filteredTournaments.length} Tournament{filteredTournaments.length !== 1 ? 's' : ''} Found
+                    {loading ? 'Loading...' : `${filteredTournaments.length} Tournament${filteredTournaments.length !== 1 ? 's' : ''} Found`}
                   </h3>
-                  {hasActiveFilters && (
+                  {hasActiveFilters && !loading && (
                     <p className="text-sm text-muted-foreground">
                       Showing filtered results
                     </p>
@@ -192,7 +210,13 @@ const Index = () => {
                 )}
               </div>
 
-              {filteredTournaments.length === 0 ? (
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
+                  ))}
+                </div>
+              ) : filteredTournaments.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">⚽</div>
                   <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>

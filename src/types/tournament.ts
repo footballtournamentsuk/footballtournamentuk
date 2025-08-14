@@ -32,6 +32,39 @@ export interface Tournament {
   };
   website?: string;
   features?: string[];
+  organizerId?: string;
+}
+
+// Database tournament type from Supabase
+export interface DatabaseTournament {
+  id: string;
+  name: string;
+  description: string | null;
+  location_name: string;
+  latitude: number;
+  longitude: number;
+  postcode: string;
+  region: string;
+  format: string;
+  age_groups: string[];
+  team_types: string[];
+  type: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string | null;
+  max_teams: number | null;
+  registered_teams: number | null;
+  cost_amount: number | null;
+  cost_currency: string | null;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string | null;
+  website: string | null;
+  features: string[] | null;
+  organizer_id: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export type AgeGroup = 'U6' | 'U7' | 'U8' | 'U9' | 'U10' | 'U11' | 'U12' | 'U13' | 'U14' | 'U15' | 'U16' | 'U17' | 'U18' | 'U19' | 'U20' | 'U21';
