@@ -124,28 +124,16 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     fetchMapboxToken();
   }, []);
 
-  // Callback ref to handle container mounting
-  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
-    console.log('📍 Map container callback called with node:', node);
-    
-    if (!node) {
-      console.log('❌ Node is null, returning...');
-      return;
-    }
-    
-    if (map.current) {
-      console.log('⚠️ Map already exists, skipping initialization');
-      return;
-    }
-
-    if (!mapboxToken) {
-      console.log('⏳ Mapbox token not ready yet, waiting...');
+  // Initialize map when both container and token are ready
+  useEffect(() => {
+    if (!mapContainer.current || !mapboxToken || map.current) {
+      console.log('⏳ Map initialization waiting. Container:', !!mapContainer.current, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
       return;
     }
 
     console.log('🚀 Starting map initialization...');
     console.log('🔑 Mapbox token check:', mapboxgl.accessToken);
-    console.log('🎯 Container dimensions:', node.offsetWidth, 'x', node.offsetHeight);
+    console.log('🎯 Container dimensions:', mapContainer.current.offsetWidth, 'x', mapContainer.current.offsetHeight);
     console.log('🌍 Mapbox supported check:', mapboxgl.supported());
     
     if (!mapboxgl.supported()) {
@@ -154,13 +142,13 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setIsLoading(false);
       return;
     }
-    
+
     try {
       console.log('🎨 Creating Mapbox map instance...');
       
       // Create map with extensive logging
       map.current = new mapboxgl.Map({
-        container: node,
+        container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [-3.0, 54.5], // UK center
         zoom: 5.5,
@@ -171,7 +159,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
       console.log('✅ Map instance created:', map.current);
       console.log('📍 Map container:', map.current.getContainer());
-
+    
       // Add controls with logging
       console.log('🎮 Adding map controls...');
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -233,7 +221,18 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken, tournaments]);
+  }, [mapboxToken]);
+
+  // Container ref
+  const mapContainer = useRef<HTMLDivElement>(null);
+
+  // Simple ref callback for container
+  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      console.log('📍 Map container mounted');
+      mapContainer.current = node;
+    }
+  }, []);
 
   // Update markers when tournaments change with logging
   useEffect(() => {
