@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { LogOut, User } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
+import { LogOut, User, UserCircle } from "lucide-react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -17,6 +18,7 @@ const queryClient = new QueryClient();
 
 const Navigation = () => {
   const { user, signOut } = useAuth();
+  const { profile } = useProfile();
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,10 +29,15 @@ const Navigation = () => {
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground flex items-center gap-1">
-                <User className="w-4 h-4" />
-                {user.email}
-              </span>
+              <Link 
+                to="/profile" 
+                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent transition-colors"
+              >
+                <UserCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {profile?.full_name || user.email}
+                </span>
+              </Link>
               <Button 
                 variant="outline" 
                 size="sm" 

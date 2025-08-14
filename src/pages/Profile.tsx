@@ -21,6 +21,7 @@ interface Profile {
   role: string;
   contact_email: string;
   contact_phone: string;
+  full_name: string;
 }
 
 interface Team {
@@ -93,6 +94,16 @@ const ProfilePage = () => {
 
       if (data) {
         setProfile(data);
+      } else {
+        // Create initial profile with user's name from auth metadata
+        const userName = user?.user_metadata?.full_name || '';
+        setProfile({
+          id: '',
+          role: 'organizer',
+          contact_email: user?.email || '',
+          contact_phone: '',
+          full_name: userName
+        });
       }
     } catch (error: any) {
       toast({
@@ -229,6 +240,15 @@ const ProfilePage = () => {
               <CardTitle>Profile Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="full_name">Full Name</Label>
+                <Input
+                  id="full_name"
+                  value={profile?.full_name || ''}
+                  onChange={(e) => autosave({ full_name: e.target.value }, 'profiles')}
+                />
+              </div>
+
               <div>
                 <Label htmlFor="role">Role</Label>
                 <Select
