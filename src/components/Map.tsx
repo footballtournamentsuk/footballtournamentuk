@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Tournament } from '@/types/tournament';
@@ -16,7 +16,6 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournamentSelect }) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +30,8 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   };
 
   const createTournamentMarkers = () => {
+    if (!map.current) return;
+
     console.log('Creating markers for', tournaments.length, 'tournaments');
     
     // Clear existing markers
@@ -81,96 +82,60 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     console.log('✅ Created', markers.current.length, 'markers');
   };
 
-  useEffect(() => {
-    // Wait for the DOM to be ready
-    const initializeMap = () => {
-      if (!mapContainer.current) {
-        console.log('❌ Map container not ready, retrying...');
-        setTimeout(initializeMap, 100);
-        return;
-      }
+  // Callback ref to handle container mounting
+  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
+    if (!node || map.current) return;
 
-      if (map.current) {
-        console.log('Map already exists, skipping initialization');
-        return;
-      }
+    console.log('✅ Map container mounted, initializing map...');
+    console.log('Mapbox token:', mapboxgl.accessToken ? 'Set' : 'Missing');
+    
+    try {
+      // Create map
+      map.current = new mapboxgl.Map({
+        container: node,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-3.0, 54.5], // UK center
+        zoom: 5.5,
+        projection: 'mercator',
+        attributionControl: false
+      });
 
-      console.log('🗺️ Initializing Mapbox map...');
-      console.log('Mapbox token:', mapboxgl.accessToken ? 'Set' : 'Missing');
-      console.log('Container:', mapContainer.current);
+      console.log('Map instance created successfully');
 
-      let timeoutId: NodeJS.Timeout;
+      // Add controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
-      try {
-        // Set a timeout to catch hanging initialization
-        timeoutId = setTimeout(() => {
-          console.log('⏰ Map initialization timeout');
-          setError('Map initialization timed out. Please refresh the page.');
-          setIsLoading(false);
-        }, 10000);
-
-        // Create map
-        map.current = new mapboxgl.Map({
-          container: mapContainer.current,
-          style: 'mapbox://styles/mapbox/streets-v12',
-          center: [-3.0, 54.5], // UK center
-          zoom: 5.5,
-          projection: 'mercator',
-          attributionControl: false
-        });
-
-        console.log('Map instance created');
-
-        // Add controls
-        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-        map.current.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
-
-        // Map load event
-        map.current.on('load', () => {
-          console.log('✅ Map loaded successfully');
-          clearTimeout(timeoutId);
-          setIsLoading(false);
-          setError(null);
-          
-          // Add markers after map loads
-          if (tournaments.length > 0) {
-            createTournamentMarkers();
-          }
-        });
-
-        // Error handling
-        map.current.on('error', (e) => {
-          console.error('❌ Map error:', e);
-          clearTimeout(timeoutId);
-          setError('Failed to load map');
-          setIsLoading(false);
-        });
-
-        // Style load event for additional debugging
-        map.current.on('style.load', () => {
-          console.log('Map style loaded');
-        });
-
-      } catch (error) {
-        console.error('❌ Map initialization error:', error);
-        if (timeoutId!) clearTimeout(timeoutId!);
-        setError(error instanceof Error ? error.message : 'Failed to initialize map');
+      // Map load event
+      map.current.on('load', () => {
+        console.log('✅ Map loaded successfully');
         setIsLoading(false);
-      }
-    };
+        setError(null);
+        
+        // Add markers after map loads
+        if (tournaments.length > 0) {
+          createTournamentMarkers();
+        }
+      });
 
-    // Start initialization
-    initializeMap();
+      // Error handling
+      map.current.on('error', (e) => {
+        console.error('❌ Map error:', e);
+        setError('Failed to load map. Please check your internet connection.');
+        setIsLoading(false);
+      });
 
-    // Cleanup
-    return () => {
-      if (map.current) {
-        console.log('🧹 Cleaning up map');
-        map.current.remove();
-        map.current = null;
-      }
-    };
-  }, []);
+      // Style load event for additional debugging
+      map.current.on('style.load', () => {
+        console.log('Map style loaded');
+      });
+
+    } catch (error) {
+      console.error('❌ Map initialization error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to initialize map');
+      setIsLoading(false);
+    }
+  }, [tournaments]);
 
   // Update markers when tournaments change
   useEffect(() => {
@@ -179,6 +144,17 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       createTournamentMarkers();
     }
   }, [tournaments, isLoading]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (map.current) {
+        console.log('🧹 Cleaning up map');
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -228,7 +204,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg border">
       <div 
-        ref={mapContainer} 
+        ref={mapContainerCallback}
         className="w-full h-full"
         style={{ 
           width: '100%',
