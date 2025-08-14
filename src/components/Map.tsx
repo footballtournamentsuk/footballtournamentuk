@@ -95,13 +95,21 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       try {
         console.log('🔑 Fetching Mapbox token from edge function...');
         
-        const response = await fetch(`https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token`);
+        const response = await fetch(`https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        console.log('📡 Token response status:', response.status);
         
         if (!response.ok) {
-          throw new Error(`Failed to fetch token: ${response.status}`);
+          throw new Error(`Failed to fetch token: ${response.status} ${response.statusText}`);
         }
         
         const data = await response.json();
+        console.log('📦 Token response data:', { success: data.success, hasToken: !!data.token });
         
         if (data.error) {
           throw new Error(data.message || data.error);
@@ -111,10 +119,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
           throw new Error('No token received from server');
         }
         
-        console.log('✅ Mapbox token fetched successfully');
+        console.log('✅ Mapbox token fetched successfully:', data.token.substring(0, 20) + '...');
         setMapboxToken(data.token);
         mapboxgl.accessToken = data.token;
-        console.log('✅ Mapbox token set:', mapboxgl.accessToken);
+        console.log('✅ Mapbox global token set');
         
       } catch (error) {
         console.error('❌ Failed to fetch Mapbox token:', error);
@@ -129,11 +137,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   // Initialize map when both container and token are ready
   useEffect(() => {
     const container = mapContainer.current;
-    if (!container || !mapboxToken || map.current) {
-      console.log('⏳ Map initialization waiting. Container:', !!container, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
-      if (container && !mapboxToken) {
-        console.log('⏳ Container ready, waiting for token...');
-      }
+    console.log('🎯 Map initialization check - Container:', !!container, 'Token:', !!mapboxToken, 'ContainerReady:', containerReady, 'Map exists:', !!map.current);
+    
+    if (!container || !mapboxToken || !containerReady || map.current) {
+      console.log('⏳ Map initialization waiting...');
       return;
     }
 
@@ -227,18 +234,18 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken]);
+  }, [mapboxToken, containerReady]);
 
-  // Container callback that triggers re-initialization
+  // Container callback that sets container ready state
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
     console.log('📍 Map container callback triggered with node:', !!node);
     if (node) {
-      console.log('📍 Map container mounted and ready, dimensions:', node.offsetWidth, 'x', node.offsetHeight);
+      console.log('📍 Map container mounted, dimensions:', node.offsetWidth, 'x', node.offsetHeight);
       mapContainer.current = node;
-      // Force a re-render to trigger map initialization
-      setTimeout(() => {
-        console.log('⏰ Container ready timeout triggered');
-      }, 100);
+      setContainerReady(true);
+    } else {
+      mapContainer.current = null;
+      setContainerReady(false);
     }
   }, []);
 
