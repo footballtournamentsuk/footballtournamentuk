@@ -6,10 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Set Mapbox access token immediately with extensive logging
-console.log('🔧 Setting Mapbox token...');
-mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
-console.log('✅ Mapbox token set:', mapboxgl.accessToken);
+// Mapbox token will be fetched from edge function
+console.log('🔧 Map component initializing...');
 console.log('📦 Mapbox GL version:', mapboxgl.version);
 console.log('🌐 Mapbox supported:', mapboxgl.supported());
 
@@ -26,6 +24,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mapboxToken, setMapboxToken] = useState<string | null>(null);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -88,6 +87,43 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     console.log('✅ Created', markers.current.length, 'markers');
   };
 
+  // Fetch Mapbox token from edge function
+  useEffect(() => {
+    const fetchMapboxToken = async () => {
+      try {
+        console.log('🔑 Fetching Mapbox token from edge function...');
+        
+        const response = await fetch(`https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch token: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.message || data.error);
+        }
+        
+        if (!data.token) {
+          throw new Error('No token received from server');
+        }
+        
+        console.log('✅ Mapbox token fetched successfully');
+        setMapboxToken(data.token);
+        mapboxgl.accessToken = data.token;
+        console.log('✅ Mapbox token set:', mapboxgl.accessToken);
+        
+      } catch (error) {
+        console.error('❌ Failed to fetch Mapbox token:', error);
+        setError(`Failed to load map token: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setIsLoading(false);
+      }
+    };
+
+    fetchMapboxToken();
+  }, []);
+
   // Callback ref to handle container mounting
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
     console.log('📍 Map container callback called with node:', node);
@@ -99,6 +135,11 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     
     if (map.current) {
       console.log('⚠️ Map already exists, skipping initialization');
+      return;
+    }
+
+    if (!mapboxToken) {
+      console.log('⏳ Mapbox token not ready yet, waiting...');
       return;
     }
 
@@ -192,7 +233,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [tournaments]);
+  }, [mapboxToken, tournaments]);
 
   // Update markers when tournaments change with logging
   useEffect(() => {
