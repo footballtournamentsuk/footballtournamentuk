@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
+import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
 
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
@@ -422,12 +423,25 @@ const ProfilePage = () => {
                 
                 <div>
                   <Label htmlFor="postcode">Postcode *</Label>
-                  <Input
+                  <PostcodeAutocomplete
                     id="postcode"
                     value={editingTournament.postcode}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, postcode: e.target.value }))}
-                    placeholder="tn62hr"
-                    required
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, postcode: value }))}
+                    placeholder="Enter postcode (e.g., TN62HR)"
+                    onAddressSelect={(suggestion) => {
+                      // Extract location details from the selected address
+                      const context = suggestion.context || [];
+                      const region = context.find(c => c.id.includes('region'))?.text || 
+                                   context.find(c => c.id.includes('place'))?.text || '';
+                      
+                      setEditingTournament(prev => ({ 
+                        ...prev, 
+                        postcode: suggestion.postcode,
+                        region: region,
+                        latitude: suggestion.center[1],
+                        longitude: suggestion.center[0]
+                      }));
+                    }}
                   />
                 </div>
                 

@@ -5,38 +5,41 @@ import { MapPin, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 
-interface AddressSuggestion {
+interface PostcodeSuggestion {
   id: string;
   place_name: string;
+  postcode: string;
   center: [number, number];
-  properties?: {
-    postcode?: string;
-  };
+  context: Array<{
+    id: string;
+    text: string;
+  }>;
 }
 
-interface AddressAutocompleteProps {
+interface PostcodeAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
-  onAddressSelect?: (suggestion: AddressSuggestion) => void;
+  onAddressSelect?: (suggestion: PostcodeSuggestion) => void;
   placeholder?: string;
   className?: string;
   id?: string;
 }
 
-export function AddressAutocomplete({ 
+export function PostcodeAutocomplete({ 
   value, 
   onChange, 
   onAddressSelect, 
   placeholder, 
   className,
   id 
-}: AddressAutocompleteProps) {
-  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+}: PostcodeAutocompleteProps) {
+  const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout>();
 
   // Get Mapbox token on component mount
   useEffect(() => {
@@ -84,8 +87,17 @@ export function AddressAutocomplete({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const searchPlaces = async (query: string) => {
-    if (!query.trim() || !mapboxToken) {
+  const searchPostcode = async (query: string) => {
+    if (!query.trim() || !mapboxToken || query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    // Basic UK postcode pattern validation
+    const postcodePattern = /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i;
+    const partialPostcodePattern = /^[A-Z]{1,2}[0-9]/i;
+    
+    if (!postcodePattern.test(query) && !partialPostcodePattern.test(query)) {
       setSuggestions([]);
       return;
     }
@@ -96,40 +108,64 @@ export function AddressAutocomplete({
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
         `access_token=${mapboxToken}&` +
         `country=GB&` +
-        `types=address,poi,place&` +
-        `limit=5`
+        `types=postcode,address&` +
+        `limit=8`
       );
       
       if (response.ok) {
         const data = await response.json();
-        setSuggestions(data.features || []);
+        const formattedSuggestions = (data.features || []).map((feature: any) => ({
+          id: feature.id,
+          place_name: feature.place_name,
+          postcode: feature.properties?.postcode || extractPostcode(feature.place_name),
+          center: feature.center,
+          context: feature.context || []
+        }));
+        setSuggestions(formattedSuggestions);
         setShowSuggestions(true);
       }
     } catch (error) {
-      console.error('Error searching places:', error);
+      console.error('Error searching postcode:', error);
       setSuggestions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    onChange(newValue);
-    
-    // Debounce the search
-    const timeoutId = setTimeout(() => {
-      searchPlaces(newValue);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
+  const extractPostcode = (placeName: string): string => {
+    const parts = placeName.split(', ');
+    const postcodePattern = /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i;
+    return parts.find(part => postcodePattern.test(part.trim())) || '';
   };
 
-  const handleSuggestionSelect = (suggestion: AddressSuggestion) => {
-    onChange(suggestion.place_name);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value.toUpperCase(); // Convert to uppercase for UK postcodes
+    onChange(newValue);
+    
+    // Clear previous debounce
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    
+    // Debounce the search
+    debounceRef.current = setTimeout(() => {
+      searchPostcode(newValue);
+    }, 300);
+  };
+
+  const handleSuggestionSelect = (suggestion: PostcodeSuggestion) => {
+    onChange(suggestion.postcode);
     setShowSuggestions(false);
     setSuggestions([]);
     onAddressSelect?.(suggestion);
+  };
+
+  const formatSuggestionText = (suggestion: PostcodeSuggestion) => {
+    const parts = suggestion.place_name.split(', ');
+    return {
+      primary: parts[0] || suggestion.postcode,
+      secondary: parts.slice(1).join(', ')
+    };
   };
 
   return (
@@ -141,7 +177,7 @@ export function AddressAutocomplete({
           id={id}
           value={value}
           onChange={handleInputChange}
-          placeholder={placeholder}
+          placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
           className={cn("pl-10 pr-10", className)}
           onFocus={() => {
             if (suggestions.length > 0) {
@@ -157,25 +193,36 @@ export function AddressAutocomplete({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 mt-1 w-full rounded-md border bg-popover p-1 shadow-md"
+          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-md"
         >
-          {suggestions.map((suggestion) => (
-            <Button
-              key={suggestion.id}
-              variant="ghost"
-              className="w-full justify-start p-2 h-auto text-left"
-              onClick={() => handleSuggestionSelect(suggestion)}
-            >
-              <div className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">
-                    {suggestion.place_name}
+          {suggestions.map((suggestion) => {
+            const formatted = formatSuggestionText(suggestion);
+            return (
+              <Button
+                key={suggestion.id}
+                variant="ghost"
+                className="w-full justify-start p-3 h-auto text-left hover:bg-accent"
+                onClick={() => handleSuggestionSelect(suggestion)}
+              >
+                <div className="flex items-start gap-2 w-full">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium truncate">
+                      {formatted.primary}
+                    </div>
+                    {formatted.secondary && (
+                      <div className="text-xs text-muted-foreground truncate">
+                        {formatted.secondary}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded">
+                    {suggestion.postcode}
                   </div>
                 </div>
-              </div>
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
         </div>
       )}
     </div>
