@@ -19,8 +19,8 @@ const Index = () => {
   const { tournaments, loading, error } = useTournaments();
   const { user } = useAuth();
 
-  // Filter tournaments based on active filters and search query
-  const filteredTournaments = useMemo(() => {
+  // Filter and separate tournaments
+  const { upcomingTournaments, pastTournaments } = useMemo(() => {
     let filtered = tournaments;
 
     // Apply search query
@@ -63,7 +63,22 @@ const Index = () => {
       filtered = filtered.filter(t => filters.status!.includes(t.status));
     }
 
-    return filtered;
+    // Separate upcoming and past tournaments
+    const upcoming = filtered.filter(t => 
+      !['completed', 'cancelled'].includes(t.status)
+    ).sort((a, b) => {
+      // Sort upcoming by start date ascending (soonest first)
+      return new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime();
+    });
+
+    const past = filtered.filter(t => 
+      ['completed', 'cancelled'].includes(t.status)
+    ).sort((a, b) => {
+      // Sort past by start date descending (most recent first)
+      return new Date(b.dates.start).getTime() - new Date(a.dates.start).getTime();
+    });
+
+    return { upcomingTournaments: upcoming, pastTournaments: past };
   }, [tournaments, filters, searchQuery]);
 
   const handleTournamentSelect = (tournament: Tournament | null) => {
@@ -98,7 +113,7 @@ const Index = () => {
           </div>
           
           <Map 
-            tournaments={filteredTournaments}
+            tournaments={[...upcomingTournaments, ...pastTournaments]}
             selectedTournament={selectedTournament}
             onTournamentSelect={handleTournamentSelect}
           />
@@ -185,7 +200,7 @@ const Index = () => {
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">
-                    {loading ? 'Loading...' : `${filteredTournaments.length} Tournament${filteredTournaments.length !== 1 ? 's' : ''} Found`}
+                    {loading ? 'Loading...' : `${upcomingTournaments.length + pastTournaments.length} Tournament${upcomingTournaments.length + pastTournaments.length !== 1 ? 's' : ''} Found`}
                   </h3>
                   {hasActiveFilters && !loading && (
                     <p className="text-sm text-muted-foreground">
@@ -211,7 +226,7 @@ const Index = () => {
                     <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
                   ))}
                 </div>
-              ) : filteredTournaments.length === 0 ? (
+              ) : upcomingTournaments.length === 0 && pastTournaments.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">⚽</div>
                   <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
@@ -223,14 +238,59 @@ const Index = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredTournaments.map(tournament => (
-                    <TournamentCard
-                      key={tournament.id}
-                      tournament={tournament}
-                      onSelect={handleTournamentSelect}
-                    />
-                  ))}
+                <div className="space-y-8">
+                  {/* Upcoming Tournaments */}
+                  {upcomingTournaments.length > 0 && (
+                    <div>
+                      <div className="mb-4">
+                        <h4 className="text-lg font-semibold text-foreground">
+                          Upcoming Tournaments ({upcomingTournaments.length})
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Sorted by start date - soonest first
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {upcomingTournaments.map(tournament => (
+                          <TournamentCard
+                            key={tournament.id}
+                            tournament={tournament}
+                            onSelect={handleTournamentSelect}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Past Tournaments - Collapsible */}
+                  {pastTournaments.length > 0 && (
+                    <div className="border-t pt-8">
+                      <details className="group">
+                        <summary className="cursor-pointer mb-4 flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-muted transition-colors">
+                          <div>
+                            <h4 className="text-lg font-semibold text-foreground">
+                              Past Tournaments ({pastTournaments.length})
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              Completed and cancelled tournaments
+                            </p>
+                          </div>
+                          <div className="text-muted-foreground group-open:rotate-90 transition-transform">
+                            ▶
+                          </div>
+                        </summary>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                          {pastTournaments.map(tournament => (
+                            <TournamentCard
+                              key={tournament.id}
+                              tournament={tournament}
+                              onSelect={handleTournamentSelect}
+                            />
+                          ))}
+                        </div>
+                      </details>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
