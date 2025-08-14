@@ -4,27 +4,35 @@ interface UseCounterAnimationProps {
   end: number;
   duration?: number;
   startOnView?: boolean;
+  prefix?: string;
+  suffix?: string;
+  formatNumber?: (num: number) => string;
 }
 
 export const useCounterAnimation = ({ 
   end, 
   duration = 2000, 
-  startOnView = true 
+  startOnView = true,
+  prefix = '',
+  suffix = '+',
+  formatNumber
 }: UseCounterAnimationProps) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!startOnView) {
+    if (!startOnView && !hasAnimated) {
       animateCounter();
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
+        if (entry.isIntersecting && !hasAnimated) {
           setIsVisible(true);
+          setHasAnimated(true);
           animateCounter();
         }
       },
@@ -36,11 +44,11 @@ export const useCounterAnimation = ({
     }
 
     return () => observer.disconnect();
-  }, [end, duration, isVisible, startOnView]);
+  }, [end, duration, hasAnimated, startOnView]);
 
   const animateCounter = () => {
     const startTime = Date.now();
-    const startValue = 0;
+    const startValue = Math.max(1, Math.floor(end * 0.1)); // Start from 10% of target, minimum 1
 
     const updateCounter = () => {
       const elapsed = Date.now() - startTime;
@@ -60,5 +68,12 @@ export const useCounterAnimation = ({
     requestAnimationFrame(updateCounter);
   };
 
-  return { count, elementRef };
+  const formatValue = () => {
+    if (formatNumber) {
+      return `${prefix}${formatNumber(count)}${suffix}`;
+    }
+    return `${prefix}${count}${suffix}`;
+  };
+
+  return { count, elementRef, formattedValue: formatValue() };
 };

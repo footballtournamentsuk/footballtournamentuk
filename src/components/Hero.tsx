@@ -6,10 +6,23 @@ import heroImage from '@/assets/hero-football.jpg';
 import { useCounterAnimation } from '@/hooks/useCounterAnimation';
 
 const Hero: React.FC = () => {
-  // Animated counters for statistics
-  const tournamentsCounter = useCounterAnimation({ end: 120, duration: 2500 });
-  const leaguesCounter = useCounterAnimation({ end: 25, duration: 2000 });
-  const teamsCounter = useCounterAnimation({ end: 1000, duration: 3000 });
+  // TODO: Replace with actual database values when available
+  // These are realistic starter numbers for a growing platform
+  const tournamentsCounter = useCounterAnimation({ 
+    end: 120, 
+    duration: 2500,
+    formatNumber: (num) => num.toString()
+  });
+  const leaguesCounter = useCounterAnimation({ 
+    end: 25, 
+    duration: 2000,
+    formatNumber: (num) => num.toString()
+  });
+  const teamsCounter = useCounterAnimation({ 
+    end: 1000, 
+    duration: 3000,
+    formatNumber: (num) => num >= 1000 ? `${(num / 1000).toFixed(1)}K` : num.toString()
+  });
 
   const scrollToMap = () => {
     const mapSection = document.getElementById('tournament-map');
@@ -113,7 +126,7 @@ const Hero: React.FC = () => {
             <div className="flex items-center justify-center mb-2">
               <Trophy className="w-6 h-6 text-emerald-400 mr-2" />
               <div className="text-3xl font-bold text-emerald-400">
-                {tournamentsCounter.count}+
+                {tournamentsCounter.formattedValue}
               </div>
             </div>
             <div className="text-white/80 font-medium">Tournaments Listed</div>
@@ -122,7 +135,7 @@ const Hero: React.FC = () => {
             <div className="flex items-center justify-center mb-2">
               <FileText className="w-6 h-6 text-blue-400 mr-2" />
               <div className="text-3xl font-bold text-blue-400">
-                {leaguesCounter.count}+
+                {leaguesCounter.formattedValue}
               </div>
             </div>
             <div className="text-white/80 font-medium">Leagues Available</div>
@@ -131,7 +144,7 @@ const Hero: React.FC = () => {
             <div className="flex items-center justify-center mb-2">
               <Users className="w-6 h-6 text-orange-400 mr-2" />
               <div className="text-3xl font-bold text-orange-400">
-                {teamsCounter.count < 1000 ? teamsCounter.count : `${Math.floor(teamsCounter.count / 100) / 10}K`}+
+                {teamsCounter.formattedValue}
               </div>
             </div>
             <div className="text-white/80 font-medium">Teams Registered</div>
