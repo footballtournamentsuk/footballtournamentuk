@@ -45,21 +45,16 @@ export function PostcodeAutocomplete({
   useEffect(() => {
     const fetchMapboxToken = async () => {
       try {
-        // Get environment variables from import.meta.env
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-        
-        // Use direct fetch to the edge function URL since it only accepts GET
-        const response = await fetch(`${supabaseUrl}/functions/v1/mapbox-token`, {
+        const { data, error } = await supabase.functions.invoke('mapbox-token', {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${supabaseAnonKey}`,
-            'Content-Type': 'application/json',
-          },
         });
         
-        if (response.ok) {
-          const data = await response.json();
+        if (error) {
+          console.error('Error fetching Mapbox token:', error);
+          return;
+        }
+        
+        if (data?.token) {
           setMapboxToken(data.token);
         }
       } catch (error) {
