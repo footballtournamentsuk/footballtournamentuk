@@ -28,7 +28,14 @@ import {
   Info,
   ChevronDown,
   Navigation,
-  DollarSign
+  DollarSign,
+  Camera,
+  Car,
+  Medal,
+  Utensils,
+  Coffee,
+  Wifi,
+  Shield
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AttachmentViewer } from '@/components/AttachmentViewer';
@@ -39,6 +46,43 @@ const TournamentDetails = () => {
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
   const { attachments } = useAttachments(id || '');
+
+  // Function to get appropriate icon for each feature
+  const getFeatureIcon = (feature: string) => {
+    const featureLower = feature.toLowerCase();
+    if (featureLower.includes('trophy') || featureLower.includes('trophies')) {
+      return <Trophy className="w-4 h-4 text-yellow-500/70" />;
+    }
+    if (featureLower.includes('photo') || featureLower.includes('camera')) {
+      return <Camera className="w-4 h-4 text-purple-500/70" />;
+    }
+    if (featureLower.includes('parking') || featureLower.includes('car')) {
+      return <Car className="w-4 h-4 text-blue-500/70" />;
+    }
+    if (featureLower.includes('medal') || featureLower.includes('medals')) {
+      return <Medal className="w-4 h-4 text-amber-500/70" />;
+    }
+    if (featureLower.includes('refresh') || featureLower.includes('food') || featureLower.includes('lunch')) {
+      return <Utensils className="w-4 h-4 text-green-500/70" />;
+    }
+    if (featureLower.includes('coffee') || featureLower.includes('drink')) {
+      return <Coffee className="w-4 h-4 text-orange-500/70" />;
+    }
+    if (featureLower.includes('wifi') || featureLower.includes('internet')) {
+      return <Wifi className="w-4 h-4 text-cyan-500/70" />;
+    }
+    if (featureLower.includes('security') || featureLower.includes('safe')) {
+      return <Shield className="w-4 h-4 text-red-500/70" />;
+    }
+    if (featureLower.includes('pitch') || featureLower.includes('professional')) {
+      return <MapIcon className="w-4 h-4 text-teal-500/70" />;
+    }
+    if (featureLower.includes('coach') || featureLower.includes('equipment')) {
+      return <Users className="w-4 h-4 text-indigo-500/70" />;
+    }
+    // Default icon for unmatched features
+    return <Star className="w-4 h-4 text-gray-500/70" />;
+  };
 
   const tournament = tournaments.find(t => t.id === id);
 
@@ -338,19 +382,36 @@ const TournamentDetails = () => {
 
             {/* Features */}
             {tournament.features && tournament.features.length > 0 && (
-              <Card>
-                <CardHeader>
+              <Card className="overflow-hidden">
+                <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="w-5 h-5" />
-                    Features & Amenities
+                    <div className="relative">
+                      <Star className="w-5 h-5 text-yellow-500 animate-pulse" fill="currentColor" />
+                      <div className="absolute inset-0 w-5 h-5 text-yellow-400 animate-ping opacity-25">
+                        <Star className="w-full h-full" fill="currentColor" />
+                      </div>
+                    </div>
+                    <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent font-semibold">
+                      Features & Amenities
+                    </span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {tournament.features.map((feature, index) => (
-                      <Badge key={index} variant="outline" className="justify-center py-2">
-                        {feature}
-                      </Badge>
+                      <div
+                        key={index}
+                        className="group flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-gradient-to-br from-background/50 to-muted/30 hover:from-muted/20 hover:to-muted/40 transition-all duration-300 hover:shadow-sm hover:scale-[1.02] cursor-default"
+                        role="listitem"
+                        aria-label={`Feature: ${feature}`}
+                      >
+                        <div className="shrink-0 transition-transform duration-200 group-hover:scale-110">
+                          {getFeatureIcon(feature)}
+                        </div>
+                        <span className="text-sm font-medium text-foreground/90 flex-1 min-w-0 truncate">
+                          {feature}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </CardContent>
