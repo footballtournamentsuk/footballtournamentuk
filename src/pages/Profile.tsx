@@ -463,20 +463,36 @@ const ProfilePage = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Personal Details
-            </TabsTrigger>
-            <TabsTrigger value="tournaments" className="flex items-center gap-2">
-              <Trophy className="w-4 h-4" />
-              Tournament Management
-            </TabsTrigger>
-            <TabsTrigger value="extended-details" className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Extended Tournament Details
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Vertical Tabs Navigation */}
+            <div className="w-full lg:w-64 flex-shrink-0">
+              <TabsList className="flex flex-col h-auto w-full bg-muted p-1 space-y-1">
+                <TabsTrigger 
+                  value="personal" 
+                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <User className="w-4 h-4" />
+                  Personal Details
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="tournaments" 
+                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <Trophy className="w-4 h-4" />
+                  Tournament Management
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="extended-details" 
+                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <Globe className="w-4 h-4" />
+                  Extended Tournament Details
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            {/* Tab Content */}
+            <div className="flex-1 min-w-0">
 
           {/* Personal Details Tab */}
           <TabsContent value="personal" className="space-y-6">
@@ -1184,6 +1200,8 @@ const ProfilePage = () => {
               </div>
             </div>
           </TabsContent>
+            </div>
+          </div>
         </Tabs>
       </div>
     </div>
