@@ -24,6 +24,15 @@ const Index = () => {
   const { teams, loading: teamsLoading, error: teamsError } = useTeams();
   const { user } = useAuth();
 
+  console.log('Teams data:', teams, 'Loading:', teamsLoading, 'Error:', teamsError);
+
+  // Check URL hash to set default tab
+  React.useEffect(() => {
+    if (window.location.hash === '#teams') {
+      setActiveTab('teams');
+    }
+  }, []);
+
   // Filter tournaments based on active filters and search query
   const filteredTournaments = useMemo(() => {
     let filtered = tournaments;

@@ -211,7 +211,27 @@ const ProfilePage = () => {
 
   const togglePublish = async () => {
     if (!canPublish) return;
-    autosave({ is_published: !team.is_published }, 'teams');
+    const newPublishState = !team.is_published;
+    await autosave({ is_published: newPublishState }, 'teams');
+    
+    if (newPublishState) {
+      toast({
+        title: "Profile Published! 🎉",
+        description: "Your team profile is now live! Go to the homepage and click the 'Teams' tab to see it.",
+        duration: 6000,
+      });
+      
+      // Optional: Navigate to homepage after a short delay
+      setTimeout(() => {
+        window.location.href = '/#teams';
+      }, 2000);
+    } else {
+      toast({
+        title: "Profile Unpublished",
+        description: "Your team profile is no longer visible publicly.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDeleteAccount = async () => {

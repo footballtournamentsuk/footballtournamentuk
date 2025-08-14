@@ -39,6 +39,8 @@ export const useTeams = () => {
       setLoading(true);
       setError(null);
 
+      console.log('Loading published teams...');
+
       const { data, error: fetchError } = await supabase
         .from('teams')
         .select('*')
@@ -46,9 +48,11 @@ export const useTeams = () => {
         .order('created_at', { ascending: false });
 
       if (fetchError) {
+        console.error('Supabase error loading teams:', fetchError);
         throw fetchError;
       }
 
+      console.log('Loaded teams:', data);
       setTeams(data || []);
     } catch (err: any) {
       console.error('Error loading teams:', err);
