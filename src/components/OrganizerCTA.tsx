@@ -38,11 +38,17 @@ const OrganizerCTA = () => {
             <Button
               asChild
               size="lg"
-              className="bg-white text-primary hover:bg-white/95 hover:scale-105 shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-10 py-8 h-auto rounded-xl font-bold border-2 border-white/20"
+              className="bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-110 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg px-10 py-8 h-auto rounded-xl font-bold border-2 border-accent/20 animate-pulse hover:animate-none relative overflow-hidden group"
+              style={{
+                animationDuration: '3s',
+                animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)'
+              }}
             >
-              <Link to="/auth">
+              <Link to="/auth" className="relative z-10">
                 <Plus className="w-6 h-6 mr-3" />
                 Register & Add Tournament
+                {/* Glow effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
               </Link>
             </Button>
           </div>
