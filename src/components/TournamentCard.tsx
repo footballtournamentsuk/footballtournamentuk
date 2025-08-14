@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tournament } from '@/types/tournament';
 import { 
   MapPin, 
@@ -14,7 +15,9 @@ import {
   Mail,
   ExternalLink,
   Star,
-  User
+  User,
+  ChevronDown,
+  Navigation
 } from 'lucide-react';
 
 interface TournamentCardProps {
@@ -240,13 +243,46 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button 
-            onClick={() => onSelect(tournament)}
-            className="flex-1"
-            size="sm"
-          >
-            View on Map
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="flex-1" size="sm">
+                <Navigation className="w-4 h-4 mr-2" />
+                View Location
+                <ChevronDown className="w-4 h-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full bg-popover border border-border shadow-lg z-50">
+              <DropdownMenuItem 
+                onClick={() => onSelect(tournament)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <MapPin className="w-4 h-4" />
+                View on Our Map
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`https://waze.com/ul?q=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 cursor-pointer w-full"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Open in Waze
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(tournament.location.coordinates[1] + ',' + tournament.location.coordinates[0])}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 cursor-pointer w-full"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Open in Google Maps
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button 
             variant="outline" 
             size="sm"
