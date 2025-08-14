@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
@@ -75,8 +76,11 @@ const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [activeTab, setActiveTab] = useState('personal');
   const [editingTournament, setEditingTournament] = useState<Tournament>({
     name: '',
     description: '',
@@ -174,6 +178,82 @@ const ProfilePage = () => {
         description: error.message,
         variant: "destructive",
       });
+    }
+  };
+
+  const saveProfile = async () => {
+    if (!user || !profile) return;
+
+    setSavingProfile(true);
+    try {
+      const profileData = {
+        user_id: user.id,
+        full_name: profile.full_name,
+        contact_email: profile.contact_email,
+        contact_phone: profile.contact_phone || '',
+        role: profile.role || 'organizer'
+      };
+
+      if (profile.id) {
+        // Update existing profile
+        const { error } = await supabase
+          .from('profiles')
+          .update(profileData)
+          .eq('user_id', user.id);
+        
+        if (error) throw error;
+      } else {
+        // Create new profile
+        const { data, error } = await supabase
+          .from('profiles')
+          .insert([profileData])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        setProfile({ ...profile, id: data.id });
+      }
+
+      toast({
+        title: "Profile saved!",
+        description: "Your personal details have been updated.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error saving profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const deleteAccount = async () => {
+    if (!user) return;
+
+    setDeletingAccount(true);
+    try {
+      // Call the delete account edge function
+      const { error } = await supabase.functions.invoke('delete-account');
+      
+      if (error) throw error;
+
+      toast({
+        title: "Account deleted",
+        description: "Your account has been permanently deleted.",
+      });
+
+      // Sign out after successful deletion
+      await signOut();
+    } catch (error: any) {
+      toast({
+        title: "Error deleting account",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -312,401 +392,526 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-foreground">Create Tournament</h1>
-          <div className="flex items-center gap-2">
-            {saving && <span className="text-sm text-muted-foreground">Saving...</span>}
-          </div>
+          <h1 className="text-3xl font-bold text-foreground">Profile Management</h1>
+          <Button variant="outline" onClick={signOut}>
+            Sign Out
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Tournament Form */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="tournament_name">Tournament Name *</Label>
-                  <Input
-                    id="tournament_name"
-                    value={editingTournament.name}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="e.g., Manchester Youth League"
-                    required
-                  />
-                </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="personal" className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Personal Details
+            </TabsTrigger>
+            <TabsTrigger value="tournaments" className="flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              Tournament Management
+            </TabsTrigger>
+          </TabsList>
 
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={editingTournament.description}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Brief description of your tournament"
-                    rows={3}
-                  />
-                </div>
+          {/* Personal Details Tab */}
+          <TabsContent value="personal" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="w-5 h-5" />
+                      Personal Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="full_name">Full Name</Label>
+                      <Input
+                        id="full_name"
+                        value={profile?.full_name || ''}
+                        onChange={(e) => setProfile(prev => prev ? { ...prev, full_name: e.target.value } : null)}
+                        placeholder="Enter your full name"
+                      />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="type">Type *</Label>
-                    <Select
-                      value={editingTournament.type}
-                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, type: value }))}
+                    <div>
+                      <Label htmlFor="contact_email">Email Address</Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={profile?.contact_email || ''}
+                        onChange={(e) => setProfile(prev => prev ? { ...prev, contact_email: e.target.value } : null)}
+                        placeholder="your.email@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="contact_phone">Phone Number</Label>
+                      <Input
+                        id="contact_phone"
+                        type="tel"
+                        value={profile?.contact_phone || ''}
+                        onChange={(e) => setProfile(prev => prev ? { ...prev, contact_phone: e.target.value } : null)}
+                        placeholder="+44 7700 900123"
+                      />
+                    </div>
+
+                    <Button 
+                      onClick={saveProfile} 
+                      disabled={savingProfile}
+                      className="w-full"
                     >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {TOURNAMENT_TYPES.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <Save className="w-4 h-4 mr-2" />
+                      {savingProfile ? 'Saving...' : 'Save Personal Details'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
 
-                  <div>
-                    <Label htmlFor="format">Format *</Label>
-                    <Select
-                      value={editingTournament.format}
-                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, format: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {FORMATS.map((format) => (
-                          <SelectItem key={format} value={format}>
-                            {format}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <div>
+                <Card className="border-destructive">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-destructive">
+                      <AlertTriangle className="w-5 h-5" />
+                      Danger Zone
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-foreground">Delete Account</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Permanently delete your account and all associated data. This action cannot be undone.
+                      </p>
+                    </div>
 
-            {/* Location & Dates */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Location & Dates</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="location_name">Venue Name *</Label>
-                  <AddressAutocomplete
-                    id="location_name"
-                    value={editingTournament.location_name}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, location_name: value }))}
-                    placeholder="e.g., Etihad Campus"
-                    onAddressSelect={(suggestion) => {
-                      // Extract region and postcode from selected address if available
-                      const parts = suggestion.place_name.split(', ');
-                      if (parts.length > 1) {
-                        const region = parts[parts.length - 2] || '';
-                        setEditingTournament(prev => ({ 
-                          ...prev, 
-                          location_name: suggestion.place_name,
-                          region: region,
-                          latitude: suggestion.center[1],
-                          longitude: suggestion.center[0]
-                        }));
-                      }
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="postcode">Postcode *</Label>
-                  <PostcodeAutocomplete
-                    id="postcode"
-                    value={editingTournament.postcode}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, postcode: value }))}
-                    placeholder="Enter postcode (e.g., TN62HR)"
-                    onAddressSelect={(suggestion) => {
-                      // Extract location details from the selected address
-                      const context = suggestion.context || [];
-                      const region = context.find(c => c.id.includes('region'))?.text || 
-                                   context.find(c => c.id.includes('place'))?.text || '';
-                      
-                      setEditingTournament(prev => ({ 
-                        ...prev, 
-                        postcode: suggestion.postcode,
-                        region: region,
-                        latitude: suggestion.center[1],
-                        longitude: suggestion.center[0]
-                      }));
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="region">Region *</Label>
-                  <AddressAutocomplete
-                    id="region"
-                    value={editingTournament.region}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, region: value }))}
-                    placeholder="Greater Manchester"
-                    onAddressSelect={(suggestion) => {
-                      setEditingTournament(prev => ({ 
-                        ...prev, 
-                        region: suggestion.place_name 
-                      }));
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="start_date">Start Date & Time *</Label>
-                  <DateTimePicker
-                    value={editingTournament.start_date}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, start_date: value }))}
-                    placeholder="Select start date"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="end_date">End Date & Time *</Label>
-                  <DateTimePicker
-                    value={editingTournament.end_date}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, end_date: value }))}
-                    placeholder="Select end date"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="registration_deadline">Registration Deadline</Label>
-                  <DateTimePicker
-                    value={editingTournament.registration_deadline || ''}
-                    onChange={(value) => setEditingTournament(prev => ({ ...prev, registration_deadline: value }))}
-                    placeholder="Select registration deadline"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="max_teams">Max Teams</Label>
-                  <Input
-                    id="max_teams"
-                    type="number"
-                    value={editingTournament.max_teams || ''}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, max_teams: parseInt(e.target.value) || undefined }))}
-                    placeholder="Optional"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Participants */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Participants</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Age Groups *</Label>
-                  <div className="grid grid-cols-6 gap-2 mt-2">
-                    {AGE_GROUPS.map((age) => (
-                      <div key={age} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`age-${age}`}
-                          checked={editingTournament.age_groups.includes(age)}
-                          onCheckedChange={(checked) => {
-                            const newAges = checked 
-                              ? [...editingTournament.age_groups, age]
-                              : editingTournament.age_groups.filter(a => a !== age);
-                            setEditingTournament(prev => ({ ...prev, age_groups: newAges }));
-                          }}
-                        />
-                        <Label htmlFor={`age-${age}`} className="text-sm">{age}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Team Types *</Label>
-                  <div className="flex gap-4 mt-2">
-                    {TEAM_TYPES.map((type) => (
-                      <div key={type} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`type-${type}`}
-                          checked={editingTournament.team_types.includes(type)}
-                          onCheckedChange={(checked) => {
-                            const newTypes = checked 
-                              ? [...editingTournament.team_types, type]
-                              : editingTournament.team_types.filter(t => t !== type);
-                            setEditingTournament(prev => ({ ...prev, team_types: newTypes }));
-                          }}
-                        />
-                        <Label htmlFor={`type-${type}`} className="capitalize">{type}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Features & Pricing */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Features & Pricing</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Features</Label>
-                  <div className="grid grid-cols-1 gap-2 mt-2">
-                    {AVAILABLE_FEATURES.map((feature) => (
-                      <div key={feature} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`feature-${feature}`}
-                          checked={editingTournament.features.includes(feature)}
-                          onCheckedChange={(checked) => {
-                            const newFeatures = checked 
-                              ? [...editingTournament.features, feature]
-                              : editingTournament.features.filter(f => f !== feature);
-                            setEditingTournament(prev => ({ ...prev, features: newFeatures }));
-                          }}
-                        />
-                        <Label htmlFor={`feature-${feature}`} className="text-sm">{feature}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="cost_amount">Entry Fee</Label>
-                    <Input
-                      id="cost_amount"
-                      type="number"
-                      step="0.01"
-                      value={editingTournament.cost_amount || ''}
-                      onChange={(e) => setEditingTournament(prev => ({ ...prev, cost_amount: parseFloat(e.target.value) || undefined }))}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="cost_currency">Currency</Label>
-                    <Select
-                      value={editingTournament.cost_currency}
-                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, cost_currency: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="GBP">GBP (£)</SelectItem>
-                        <SelectItem value="EUR">EUR (€)</SelectItem>
-                        <SelectItem value="USD">USD ($)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {!canSave && (
-              <Card className="border-warning bg-warning/5">
-                <CardContent className="pt-6">
-                  <p className="text-warning-foreground text-sm">
-                    <strong>Required fields missing:</strong> Complete Tournament Name, Venue, Postcode, Dates, Age Groups, and Team Types to save.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            <Button
-              onClick={saveTournament}
-              disabled={!canSave || saving}
-              className="w-full"
-              size="lg"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? 'Saving Tournament...' : editingTournament.id ? 'Update Tournament' : 'Create Tournament'}
-            </Button>
-          </div>
-
-          {/* My Tournaments Sidebar */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>My Tournaments ({tournaments.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {tournaments.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">No tournaments created yet.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {tournaments.map((tournament) => (
-                      <div key={tournament.id} className="p-3 border rounded-lg">
-                        <h4 className="font-medium text-sm">{tournament.name}</h4>
-                        <p className="text-xs text-muted-foreground">{tournament.location_name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(tournament.start_date).toLocaleDateString()}
-                        </p>
-                        <div className="flex gap-1 mt-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setEditingTournament(tournament)}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full">
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete Account
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to permanently delete your account? This will:
+                            <br />• Delete all your tournaments
+                            <br />• Remove your profile information
+                            <br />• Cancel any ongoing registrations
+                            <br /><br />
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={deleteAccount}
+                            disabled={deletingAccount}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            Edit
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="sm" variant="destructive">
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{tournament.name}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteTournament(tournament.id!)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                            {deletingAccount ? 'Deleting...' : 'Delete Account'}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </CardContent>
+                </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full" asChild>
-                  <a href="/">
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Homepage
-                  </a>
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="w-5 h-5" />
+                      Quick Actions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <Button variant="outline" className="w-full" asChild>
+                      <a href="/">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Homepage
+                      </a>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Tournament Management Tab */}
+          <TabsContent value="tournaments" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Tournament Form */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Basic Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Basic Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="tournament_name">Tournament Name *</Label>
+                      <Input
+                        id="tournament_name"
+                        value={editingTournament.name}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="e.g., Manchester Youth League"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        value={editingTournament.description}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Brief description of your tournament"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="type">Type *</Label>
+                        <Select
+                          value={editingTournament.type}
+                          onValueChange={(value) => setEditingTournament(prev => ({ ...prev, type: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {TOURNAMENT_TYPES.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type.charAt(0).toUpperCase() + type.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="format">Format *</Label>
+                        <Select
+                          value={editingTournament.format}
+                          onValueChange={(value) => setEditingTournament(prev => ({ ...prev, format: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {FORMATS.map((format) => (
+                              <SelectItem key={format} value={format}>
+                                {format}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Location & Dates */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Location & Dates</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="location_name">Venue Name *</Label>
+                      <AddressAutocomplete
+                        id="location_name"
+                        value={editingTournament.location_name}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, location_name: value }))}
+                        placeholder="e.g., Etihad Campus"
+                        onAddressSelect={(suggestion) => {
+                          // Extract region and postcode from selected address if available
+                          const parts = suggestion.place_name.split(', ');
+                          if (parts.length > 1) {
+                            const region = parts[parts.length - 2] || '';
+                            setEditingTournament(prev => ({ 
+                              ...prev, 
+                              location_name: suggestion.place_name,
+                              region: region,
+                              latitude: suggestion.center[1],
+                              longitude: suggestion.center[0]
+                            }));
+                          }
+                        }}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="postcode">Postcode *</Label>
+                      <PostcodeAutocomplete
+                        id="postcode"
+                        value={editingTournament.postcode}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, postcode: value }))}
+                        placeholder="Enter postcode (e.g., TN62HR)"
+                        onAddressSelect={(suggestion) => {
+                          // Extract location details from the selected address
+                          const context = suggestion.context || [];
+                          const region = context.find(c => c.id.includes('region'))?.text || 
+                                       context.find(c => c.id.includes('place'))?.text || '';
+                          
+                          setEditingTournament(prev => ({ 
+                            ...prev, 
+                            postcode: suggestion.postcode,
+                            region: region,
+                            latitude: suggestion.center[1],
+                            longitude: suggestion.center[0]
+                          }));
+                        }}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="region">Region *</Label>
+                      <AddressAutocomplete
+                        id="region"
+                        value={editingTournament.region}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, region: value }))}
+                        placeholder="Greater Manchester"
+                        onAddressSelect={(suggestion) => {
+                          setEditingTournament(prev => ({ 
+                            ...prev, 
+                            region: suggestion.place_name 
+                          }));
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="start_date">Start Date & Time *</Label>
+                      <DateTimePicker
+                        value={editingTournament.start_date}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, start_date: value }))}
+                        placeholder="Select start date"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="end_date">End Date & Time *</Label>
+                      <DateTimePicker
+                        value={editingTournament.end_date}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, end_date: value }))}
+                        placeholder="Select end date"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="registration_deadline">Registration Deadline</Label>
+                      <DateTimePicker
+                        value={editingTournament.registration_deadline || ''}
+                        onChange={(value) => setEditingTournament(prev => ({ ...prev, registration_deadline: value }))}
+                        placeholder="Select registration deadline"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="max_teams">Max Teams</Label>
+                      <Input
+                        id="max_teams"
+                        type="number"
+                        value={editingTournament.max_teams || ''}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, max_teams: parseInt(e.target.value) || undefined }))}
+                        placeholder="Optional"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Participants */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Participants</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>Age Groups *</Label>
+                      <div className="grid grid-cols-6 gap-2 mt-2">
+                        {AGE_GROUPS.map((age) => (
+                          <div key={age} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`age-${age}`}
+                              checked={editingTournament.age_groups.includes(age)}
+                              onCheckedChange={(checked) => {
+                                const newAges = checked 
+                                  ? [...editingTournament.age_groups, age]
+                                  : editingTournament.age_groups.filter(a => a !== age);
+                                setEditingTournament(prev => ({ ...prev, age_groups: newAges }));
+                              }}
+                            />
+                            <Label htmlFor={`age-${age}`} className="text-sm">{age}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Team Types *</Label>
+                      <div className="flex gap-4 mt-2">
+                        {TEAM_TYPES.map((type) => (
+                          <div key={type} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`type-${type}`}
+                              checked={editingTournament.team_types.includes(type)}
+                              onCheckedChange={(checked) => {
+                                const newTypes = checked 
+                                  ? [...editingTournament.team_types, type]
+                                  : editingTournament.team_types.filter(t => t !== type);
+                                setEditingTournament(prev => ({ ...prev, team_types: newTypes }));
+                              }}
+                            />
+                            <Label htmlFor={`type-${type}`} className="capitalize">{type}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Features & Pricing */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Features & Pricing</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>Features</Label>
+                      <div className="grid grid-cols-1 gap-2 mt-2">
+                        {AVAILABLE_FEATURES.map((feature) => (
+                          <div key={feature} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`feature-${feature}`}
+                              checked={editingTournament.features.includes(feature)}
+                              onCheckedChange={(checked) => {
+                                const newFeatures = checked 
+                                  ? [...editingTournament.features, feature]
+                                  : editingTournament.features.filter(f => f !== feature);
+                                setEditingTournament(prev => ({ ...prev, features: newFeatures }));
+                              }}
+                            />
+                            <Label htmlFor={`feature-${feature}`} className="text-sm">{feature}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="cost_amount">Entry Fee</Label>
+                        <Input
+                          id="cost_amount"
+                          type="number"
+                          step="0.01"
+                          value={editingTournament.cost_amount || ''}
+                          onChange={(e) => setEditingTournament(prev => ({ ...prev, cost_amount: parseFloat(e.target.value) || undefined }))}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="cost_currency">Currency</Label>
+                        <Select
+                          value={editingTournament.cost_currency}
+                          onValueChange={(value) => setEditingTournament(prev => ({ ...prev, cost_currency: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="GBP">GBP (£)</SelectItem>
+                            <SelectItem value="EUR">EUR (€)</SelectItem>
+                            <SelectItem value="USD">USD ($)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {!canSave && (
+                  <Card className="border-warning bg-warning/5">
+                    <CardContent className="pt-6">
+                      <p className="text-warning-foreground text-sm">
+                        <strong>Required fields missing:</strong> Complete Tournament Name, Venue, Postcode, Dates, Age Groups, and Team Types to save.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Button
+                  onClick={saveTournament}
+                  disabled={!canSave || saving}
+                  className="w-full"
+                  size="lg"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {saving ? 'Saving Tournament...' : editingTournament.id ? 'Update Tournament' : 'Create Tournament'}
                 </Button>
-                <Button variant="outline" className="w-full" onClick={signOut}>
-                  Sign Out
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              </div>
+
+              {/* My Tournaments Sidebar */}
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>My Tournaments ({tournaments.length})</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {tournaments.length === 0 ? (
+                      <p className="text-muted-foreground text-sm">No tournaments created yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {tournaments.map((tournament) => (
+                          <div key={tournament.id} className="p-3 border rounded-lg">
+                            <h4 className="font-medium text-sm">{tournament.name}</h4>
+                            <p className="text-xs text-muted-foreground">{tournament.location_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(tournament.start_date).toLocaleDateString()}
+                            </p>
+                            <div className="flex gap-1 mt-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingTournament(tournament)}
+                              >
+                                Edit
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="sm" variant="destructive">
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete "{tournament.name}"? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deleteTournament(tournament.id!)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

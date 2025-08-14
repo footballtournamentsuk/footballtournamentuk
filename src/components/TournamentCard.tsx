@@ -12,7 +12,8 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  Star
+  Star,
+  User
 } from 'lucide-react';
 
 interface TournamentCardProps {
@@ -200,11 +201,16 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
         )}
 
         {/* Contact Info */}
-        <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+        <div className="space-y-1 text-xs text-muted-foreground">
+          <div className="font-medium text-foreground">Organized by:</div>
+          <div className="flex items-center gap-1">
+            <User className="w-3 h-3" />
+            <span>{tournament.contact.name}</span>
+          </div>
           {tournament.contact.email && (
             <div className="flex items-center gap-1">
               <Mail className="w-3 h-3" />
-              <span>{tournament.contact.name}</span>
+              <span>{tournament.contact.email}</span>
             </div>
           )}
           {tournament.contact.phone && (
