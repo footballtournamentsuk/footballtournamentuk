@@ -21,7 +21,6 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -123,32 +122,23 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     });
   };
 
-  // Simple, reliable map initialization
   useEffect(() => {
-    if (isInitialized || !mapContainer.current) return;
+    if (!mapContainer.current || map.current) return;
     
-    console.log('🗺️ Initializing map with container:', mapContainer.current);
-    setIsInitialized(true);
+    console.log('🗺️ Initializing map...');
     initializeMap();
-  }, [isInitialized]);
+  }, []);
 
-  // Check for container availability every 100ms until found
+  // Retry initialization if container becomes available later
   useEffect(() => {
-    if (isInitialized) return;
-    
-    const checkContainer = () => {
-      if (mapContainer.current) {
-        console.log('✅ Container found, triggering initialization');
-        // Trigger re-render to run the initialization useEffect
-        setIsInitialized(false);
-      } else {
-        console.log('⏳ Waiting for container...');
-        setTimeout(checkContainer, 100);
+    const timer = setTimeout(() => {
+      if (!map.current && mapContainer.current) {
+        console.log('🔄 Retry map initialization...');
+        initializeMap();
       }
-    };
+    }, 500);
 
-    // Start checking after a small delay to ensure DOM is ready
-    setTimeout(checkContainer, 50);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
