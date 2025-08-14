@@ -70,6 +70,18 @@ interface Tournament {
   organizer_id?: string;
   latitude?: number;
   longitude?: number;
+  // Extended content fields for individual tournament pages
+  extended_description?: string;
+  venue_details?: string;
+  rules_and_regulations?: string;
+  what_to_bring?: string;
+  accommodation_info?: string;
+  gallery_images?: string[];
+  social_media_links?: any;
+  sponsor_info?: string;
+  schedule_details?: string;
+  prize_information?: string;
+  additional_notes?: string;
 }
 
 const ProfilePage = () => {
@@ -81,6 +93,8 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [activeTab, setActiveTab] = useState('personal');
+  const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
+  const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament>({
     name: '',
     description: '',
@@ -379,6 +393,56 @@ const ProfilePage = () => {
     }
   };
 
+  const saveExtendedDetails = async () => {
+    if (!selectedTournamentForDetails?.id) return;
+
+    setSavingExtendedDetails(true);
+    try {
+      const extendedData = {
+        extended_description: selectedTournamentForDetails.extended_description || '',
+        venue_details: selectedTournamentForDetails.venue_details || '',
+        rules_and_regulations: selectedTournamentForDetails.rules_and_regulations || '',
+        what_to_bring: selectedTournamentForDetails.what_to_bring || '',
+        accommodation_info: selectedTournamentForDetails.accommodation_info || '',
+        gallery_images: selectedTournamentForDetails.gallery_images || [],
+        social_media_links: selectedTournamentForDetails.social_media_links || {},
+        sponsor_info: selectedTournamentForDetails.sponsor_info || '',
+        schedule_details: selectedTournamentForDetails.schedule_details || '',
+        prize_information: selectedTournamentForDetails.prize_information || '',
+        additional_notes: selectedTournamentForDetails.additional_notes || ''
+      };
+
+      const { error } = await supabase
+        .from('tournaments')
+        .update(extendedData)
+        .eq('id', selectedTournamentForDetails.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Extended details saved!",
+        description: "Tournament page content has been updated.",
+      });
+
+      // Update the tournament in our local state
+      setTournaments(prev => prev.map(t => 
+        t.id === selectedTournamentForDetails.id 
+          ? { ...t, ...extendedData }
+          : t
+      ));
+
+      await loadTournaments();
+    } catch (error: any) {
+      toast({
+        title: "Error saving extended details",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSavingExtendedDetails(false);
+    }
+  };
+
   const canSave = editingTournament.name && editingTournament.location_name && 
                   editingTournament.postcode && editingTournament.start_date && 
                   editingTournament.end_date && editingTournament.age_groups.length > 0 && 
@@ -399,7 +463,7 @@ const ProfilePage = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="personal" className="flex items-center gap-2">
               <User className="w-4 h-4" />
               Personal Details
@@ -407,6 +471,10 @@ const ProfilePage = () => {
             <TabsTrigger value="tournaments" className="flex items-center gap-2">
               <Trophy className="w-4 h-4" />
               Tournament Management
+            </TabsTrigger>
+            <TabsTrigger value="extended-details" className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              Extended Tournament Details
             </TabsTrigger>
           </TabsList>
 
@@ -908,6 +976,211 @@ const ProfilePage = () => {
                     )}
                   </CardContent>
                 </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Extended Tournament Details Tab */}
+          <TabsContent value="extended-details" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Tournament Selection */}
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Select Tournament</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {tournaments.length === 0 ? (
+                      <p className="text-muted-foreground text-sm">
+                        Create a tournament first in the Tournament Management tab.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {tournaments.map((tournament) => (
+                          <Button
+                            key={tournament.id}
+                            variant={selectedTournamentForDetails?.id === tournament.id ? "default" : "outline"}
+                            className="w-full justify-start text-left"
+                            onClick={() => setSelectedTournamentForDetails(tournament)}
+                          >
+                            <div className="truncate">
+                              <div className="font-medium">{tournament.name}</div>
+                              <div className="text-xs opacity-60">{tournament.location_name}</div>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Extended Details Form */}
+              <div className="lg:col-span-2">
+                {selectedTournamentForDetails ? (
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Extended Description</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="extended_description">Detailed Tournament Description</Label>
+                          <Textarea
+                            id="extended_description"
+                            value={selectedTournamentForDetails.extended_description || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, extended_description: e.target.value } : null)}
+                            placeholder="Write a comprehensive description of your tournament, its history, unique features, what makes it special..."
+                            rows={6}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Venue Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="venue_details">Venue Details</Label>
+                          <Textarea
+                            id="venue_details"
+                            value={selectedTournamentForDetails.venue_details || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, venue_details: e.target.value } : null)}
+                            placeholder="Describe the venue facilities, pitch quality, spectator areas, accessibility information..."
+                            rows={4}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Rules & Competition Format</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="rules_and_regulations">Rules & Regulations</Label>
+                          <Textarea
+                            id="rules_and_regulations"
+                            value={selectedTournamentForDetails.rules_and_regulations || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, rules_and_regulations: e.target.value } : null)}
+                            placeholder="Detail the tournament format, rules, regulations, disciplinary procedures..."
+                            rows={5}
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="schedule_details">Schedule & Match Format</Label>
+                          <Textarea
+                            id="schedule_details"
+                            value={selectedTournamentForDetails.schedule_details || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, schedule_details: e.target.value } : null)}
+                            placeholder="Detailed schedule, match durations, break times, group stages, knockout format..."
+                            rows={4}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Practical Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="what_to_bring">What to Bring</Label>
+                          <Textarea
+                            id="what_to_bring"
+                            value={selectedTournamentForDetails.what_to_bring || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, what_to_bring: e.target.value } : null)}
+                            placeholder="List what teams and players should bring: kit requirements, boots, water bottles, medical forms..."
+                            rows={3}
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="accommodation_info">Accommodation & Travel</Label>
+                          <Textarea
+                            id="accommodation_info"
+                            value={selectedTournamentForDetails.accommodation_info || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, accommodation_info: e.target.value } : null)}
+                            placeholder="Information about nearby hotels, travel directions, parking arrangements..."
+                            rows={3}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Awards & Prizes</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="prize_information">Prize Information</Label>
+                          <Textarea
+                            id="prize_information"
+                            value={selectedTournamentForDetails.prize_information || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, prize_information: e.target.value } : null)}
+                            placeholder="Details about trophies, medals, individual awards, prize ceremony timing..."
+                            rows={3}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Additional Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label htmlFor="sponsor_info">Sponsors & Partners</Label>
+                          <Textarea
+                            id="sponsor_info"
+                            value={selectedTournamentForDetails.sponsor_info || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, sponsor_info: e.target.value } : null)}
+                            placeholder="Information about tournament sponsors, partners, and supporters..."
+                            rows={3}
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="additional_notes">Additional Notes</Label>
+                          <Textarea
+                            id="additional_notes"
+                            value={selectedTournamentForDetails.additional_notes || ''}
+                            onChange={(e) => setSelectedTournamentForDetails(prev => prev ? { ...prev, additional_notes: e.target.value } : null)}
+                            placeholder="Any other important information for teams and spectators..."
+                            rows={3}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Button
+                      onClick={saveExtendedDetails}
+                      disabled={savingExtendedDetails}
+                      className="w-full"
+                      size="lg"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {savingExtendedDetails ? 'Saving Details...' : 'Save Extended Details'}
+                    </Button>
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Globe className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Select a Tournament</h3>
+                      <p className="text-muted-foreground">
+                        Choose a tournament from the left to add extended details for its individual page.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </TabsContent>

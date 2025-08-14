@@ -121,6 +121,8 @@ export type Database = {
       }
       tournaments: {
         Row: {
+          accommodation_info: string | null
+          additional_notes: string | null
           age_groups: string[]
           computed_status: string | null
           contact_email: string
@@ -131,8 +133,10 @@ export type Database = {
           created_at: string
           description: string | null
           end_date: string
+          extended_description: string | null
           features: string[] | null
           format: string
+          gallery_images: string[] | null
           id: string
           latitude: number
           location_name: string
@@ -141,17 +145,26 @@ export type Database = {
           name: string
           organizer_id: string | null
           postcode: string
+          prize_information: string | null
           region: string
           registered_teams: number | null
           registration_deadline: string | null
+          rules_and_regulations: string | null
+          schedule_details: string | null
+          social_media_links: Json | null
+          sponsor_info: string | null
           start_date: string
           status: string
           team_types: string[]
           type: string
           updated_at: string
+          venue_details: string | null
           website: string | null
+          what_to_bring: string | null
         }
         Insert: {
+          accommodation_info?: string | null
+          additional_notes?: string | null
           age_groups: string[]
           computed_status?: string | null
           contact_email: string
@@ -162,8 +175,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_date: string
+          extended_description?: string | null
           features?: string[] | null
           format: string
+          gallery_images?: string[] | null
           id?: string
           latitude: number
           location_name: string
@@ -172,17 +187,26 @@ export type Database = {
           name: string
           organizer_id?: string | null
           postcode: string
+          prize_information?: string | null
           region: string
           registered_teams?: number | null
           registration_deadline?: string | null
+          rules_and_regulations?: string | null
+          schedule_details?: string | null
+          social_media_links?: Json | null
+          sponsor_info?: string | null
           start_date: string
           status?: string
           team_types: string[]
           type: string
           updated_at?: string
+          venue_details?: string | null
           website?: string | null
+          what_to_bring?: string | null
         }
         Update: {
+          accommodation_info?: string | null
+          additional_notes?: string | null
           age_groups?: string[]
           computed_status?: string | null
           contact_email?: string
@@ -193,8 +217,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_date?: string
+          extended_description?: string | null
           features?: string[] | null
           format?: string
+          gallery_images?: string[] | null
           id?: string
           latitude?: number
           location_name?: string
@@ -203,15 +229,22 @@ export type Database = {
           name?: string
           organizer_id?: string | null
           postcode?: string
+          prize_information?: string | null
           region?: string
           registered_teams?: number | null
           registration_deadline?: string | null
+          rules_and_regulations?: string | null
+          schedule_details?: string | null
+          social_media_links?: Json | null
+          sponsor_info?: string | null
           start_date?: string
           status?: string
           team_types?: string[]
           type?: string
           updated_at?: string
+          venue_details?: string | null
           website?: string | null
+          what_to_bring?: string | null
         }
         Relationships: []
       }
