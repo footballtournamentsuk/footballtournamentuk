@@ -56,25 +56,25 @@ const Hero: React.FC = () => {
         {/* Key Features */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-2xl mx-auto">
           <div className="flex flex-col items-center text-center group">
-            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 animate-pulse">
+            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 hero-pulse">
               <MapPin className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium">UK Wide</span>
           </div>
           <div className="flex flex-col items-center text-center group">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 animate-pulse">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 hero-pulse">
               <Users className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium">All Ages</span>
           </div>
           <div className="flex flex-col items-center text-center group">
-            <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 animate-pulse">
+            <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 hero-pulse">
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium">All Formats</span>
           </div>
           <div className="flex flex-col items-center text-center group">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 animate-pulse">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-400 rounded-full flex items-center justify-center mb-2 shadow-lg hover:scale-110 transition-all duration-300 hero-pulse">
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium">Real-time</span>
