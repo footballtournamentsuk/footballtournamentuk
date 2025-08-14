@@ -6,6 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// Set Mapbox access token at module level
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
+
 interface MapProps {
   tournaments: Tournament[];
   selectedTournament?: Tournament | null;
@@ -96,9 +99,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
     console.log('🗺️ Starting map initialization...');
     console.log('Container element:', mapContainer.current);
-    
-    // Set Mapbox access token
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY29hY2huZWFycHJvIiwiYSI6ImNtZWJhMXkxcjE3ZGwyeHM4NGJndnNlencifQ.OxMuFpP8dZEXRySYIp5Icg';
+    console.log('Mapbox token set:', mapboxgl.accessToken);
     
     try {
       // Create the map
@@ -110,7 +111,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         projection: 'mercator'
       });
 
-      console.log('✅ Map instance created');
+      console.log('✅ Map instance created:', map.current);
 
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -132,6 +133,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         console.error('❌ Mapbox error:', e.error);
         setError(`Map error: ${e.error?.message || 'Unknown error'}`);
         setIsLoading(false);
+      });
+
+      map.current.on('style.load', () => {
+        console.log('✅ Map style loaded');
       });
 
       map.current.on('sourcedata', (e) => {
@@ -204,11 +209,10 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg">
       <div 
         ref={mapContainer} 
-        className="absolute inset-0 w-full h-full bg-gray-100" 
+        className="w-full h-full" 
         style={{ 
-          minHeight: '600px',
           width: '100%',
-          height: '100%'
+          height: '600px'
         }}
       />
       
