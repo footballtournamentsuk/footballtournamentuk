@@ -27,7 +27,8 @@ import {
   Calendar as CalendarIcon,
   Info,
   ChevronDown,
-  Navigation
+  Navigation,
+  DollarSign
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AttachmentViewer } from '@/components/AttachmentViewer';
@@ -412,7 +413,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="w-5 h-5" />
+                    <Briefcase className="w-5 h-5 text-orange-600" />
                     What to Bring
                   </CardTitle>
                 </CardHeader>
@@ -429,7 +430,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Home className="w-5 h-5" />
+                    <Home className="w-5 h-5 text-indigo-600" />
                     Accommodation & Travel
                   </CardTitle>
                 </CardHeader>
@@ -446,7 +447,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5" />
+                    <Award className="w-5 h-5 text-amber-600" />
                     Prizes & Awards
                   </CardTitle>
                 </CardHeader>
@@ -463,7 +464,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Gift className="w-5 h-5" />
+                    <Gift className="w-5 h-5 text-pink-600" />
                     Sponsors & Partners
                   </CardTitle>
                 </CardHeader>
@@ -480,7 +481,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Info className="w-5 h-5" />
+                    <Info className="w-5 h-5 text-teal-600" />
                     Additional Information
                   </CardTitle>
                 </CardHeader>
@@ -502,7 +503,7 @@ const TournamentDetails = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CalendarIcon className="w-5 h-5" />
+                  <CalendarIcon className="w-5 h-5 text-blue-600" />
                   Important Dates
                 </CardTitle>
               </CardHeader>
@@ -637,7 +638,7 @@ const TournamentDetails = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="w-5 h-5" />
+                    <DollarSign className="w-5 h-5 text-green-600" />
                     Registration Cost
                   </CardTitle>
                 </CardHeader>
