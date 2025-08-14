@@ -22,9 +22,11 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const mapContainer = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
+  const [containerReady, setContainerReady] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -126,14 +128,15 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
 
   // Initialize map when both container and token are ready
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current) {
-      console.log('⏳ Map initialization waiting. Container:', !!mapContainer.current, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
+    const container = mapContainer.current;
+    if (!container || !mapboxToken || map.current) {
+      console.log('⏳ Map initialization waiting. Container:', !!container, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
       return;
     }
 
     console.log('🚀 Starting map initialization...');
     console.log('🔑 Mapbox token check:', mapboxgl.accessToken);
-    console.log('🎯 Container dimensions:', mapContainer.current.offsetWidth, 'x', mapContainer.current.offsetHeight);
+    console.log('🎯 Container dimensions:', container.offsetWidth, 'x', container.offsetHeight);
     console.log('🌍 Mapbox supported check:', mapboxgl.supported());
     
     if (!mapboxgl.supported()) {
@@ -148,7 +151,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       
       // Create map with extensive logging
       map.current = new mapboxgl.Map({
-        container: mapContainer.current,
+        container: container,
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [-3.0, 54.5], // UK center
         zoom: 5.5,
@@ -221,16 +224,16 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken]);
+  }, [mapboxToken, containerReady]);
 
-  // Container ref
-  const mapContainer = useRef<HTMLDivElement>(null);
-
-  // Simple ref callback for container
+  // Container callback that triggers re-initialization
   const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
     if (node) {
-      console.log('📍 Map container mounted');
+      console.log('📍 Map container mounted and ready');
       mapContainer.current = node;
+      setContainerReady(true);
+    } else {
+      setContainerReady(false);
     }
   }, []);
 
