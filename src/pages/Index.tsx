@@ -113,7 +113,7 @@ const Index = () => {
           </div>
           
           <Map 
-            tournaments={[...upcomingTournaments, ...pastTournaments]}
+            tournaments={upcomingTournaments}
             selectedTournament={selectedTournament}
             onTournamentSelect={handleTournamentSelect}
           />
