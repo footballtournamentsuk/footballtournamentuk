@@ -123,34 +123,32 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     });
   };
 
-  // Initialize map when component mounts and container is ready
+  // Simple, reliable map initialization
   useEffect(() => {
-    if (!isInitialized && mapContainer.current) {
-      console.log('✅ Container is ready, initializing map...');
-      console.log('Container element:', mapContainer.current);
-      setIsInitialized(true);
-      initializeMap();
-    }
+    if (isInitialized || !mapContainer.current) return;
+    
+    console.log('🗺️ Initializing map with container:', mapContainer.current);
+    setIsInitialized(true);
+    initializeMap();
   }, [isInitialized]);
 
-  // Fallback: try to initialize after a delay if not already done
+  // Check for container availability every 100ms until found
   useEffect(() => {
-    const fallbackTimer = setTimeout(() => {
-      if (!isInitialized) {
-        console.log('⚠️ Fallback initialization attempt...');
-        if (mapContainer.current) {
-          console.log('✅ Container found in fallback, initializing...');
-          setIsInitialized(true);
-          initializeMap();
-        } else {
-          console.error('❌ Container still not available after fallback');
-          setError('Map container could not be created');
-          setIsLoading(false);
-        }
+    if (isInitialized) return;
+    
+    const checkContainer = () => {
+      if (mapContainer.current) {
+        console.log('✅ Container found, triggering initialization');
+        // Trigger re-render to run the initialization useEffect
+        setIsInitialized(false);
+      } else {
+        console.log('⏳ Waiting for container...');
+        setTimeout(checkContainer, 100);
       }
-    }, 1000);
+    };
 
-    return () => clearTimeout(fallbackTimer);
+    // Start checking after a small delay to ensure DOM is ready
+    setTimeout(checkContainer, 50);
   }, []);
 
   useEffect(() => {
