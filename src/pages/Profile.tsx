@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
+import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
@@ -397,12 +398,25 @@ const ProfilePage = () => {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="location_name">Venue Name *</Label>
-                  <Input
+                  <AddressAutocomplete
                     id="location_name"
                     value={editingTournament.location_name}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, location_name: e.target.value }))}
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, location_name: value }))}
                     placeholder="e.g., Etihad Campus"
-                    required
+                    onAddressSelect={(suggestion) => {
+                      // Extract region and postcode from selected address if available
+                      const parts = suggestion.place_name.split(', ');
+                      if (parts.length > 1) {
+                        const region = parts[parts.length - 2] || '';
+                        setEditingTournament(prev => ({ 
+                          ...prev, 
+                          location_name: suggestion.place_name,
+                          region: region,
+                          latitude: suggestion.center[1],
+                          longitude: suggestion.center[0]
+                        }));
+                      }
+                    }}
                   />
                 </div>
                 
@@ -419,12 +433,17 @@ const ProfilePage = () => {
                 
                 <div>
                   <Label htmlFor="region">Region *</Label>
-                  <Input
+                  <AddressAutocomplete
                     id="region"
                     value={editingTournament.region}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, region: e.target.value }))}
+                    onChange={(value) => setEditingTournament(prev => ({ ...prev, region: value }))}
                     placeholder="Greater Manchester"
-                    required
+                    onAddressSelect={(suggestion) => {
+                      setEditingTournament(prev => ({ 
+                        ...prev, 
+                        region: suggestion.place_name 
+                      }));
+                    }}
                   />
                 </div>
 

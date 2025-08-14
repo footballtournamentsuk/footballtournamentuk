@@ -46,18 +46,20 @@ export function DateTimePicker({ value, onChange, placeholder, className }: Date
   }
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex gap-2 w-full", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             className={cn(
-              "flex-1 justify-start text-left font-normal",
+              "flex-1 justify-start text-left font-normal min-w-0",
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>{placeholder || "Pick a date"}</span>}
+            <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span className="truncate">
+              {date ? format(date, "PPP") : <span>{placeholder || "Pick a date"}</span>}
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -71,13 +73,13 @@ export function DateTimePicker({ value, onChange, placeholder, className }: Date
         </PopoverContent>
       </Popover>
       
-      <div className="relative">
+      <div className="relative flex-shrink-0 w-28">
         <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="time"
           value={time}
           onChange={(e) => handleTimeChange(e.target.value)}
-          className="pl-10 w-32"
+          className="pl-10 w-full"
         />
       </div>
     </div>
