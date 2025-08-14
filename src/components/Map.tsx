@@ -21,6 +21,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const markers = useRef<mapboxgl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -122,28 +123,34 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     });
   };
 
+  // Initialize map when component mounts and container is ready
   useEffect(() => {
-    console.log('=== Map Component Mounted ===');
-    console.log('mapContainer ref available:', !!mapContainer.current);
-    
-    // Use requestAnimationFrame to ensure DOM is fully ready
-    const initMap = () => {
-      console.log('=== Initializing Map ===');
-      console.log('Container at init time:', mapContainer.current);
-      
-      if (mapContainer.current) {
-        console.log('Container found, proceeding with map creation');
-        initializeMap();
-      } else {
-        console.error('Container element not found after DOM ready');
-        setError('Map container element not available');
-        setIsLoading(false);
-      }
-    };
+    if (!isInitialized && mapContainer.current) {
+      console.log('✅ Container is ready, initializing map...');
+      console.log('Container element:', mapContainer.current);
+      setIsInitialized(true);
+      initializeMap();
+    }
+  }, [isInitialized]);
 
-    requestAnimationFrame(() => {
-      setTimeout(initMap, 100);
-    });
+  // Fallback: try to initialize after a delay if not already done
+  useEffect(() => {
+    const fallbackTimer = setTimeout(() => {
+      if (!isInitialized) {
+        console.log('⚠️ Fallback initialization attempt...');
+        if (mapContainer.current) {
+          console.log('✅ Container found in fallback, initializing...');
+          setIsInitialized(true);
+          initializeMap();
+        } else {
+          console.error('❌ Container still not available after fallback');
+          setError('Map container could not be created');
+          setIsLoading(false);
+        }
+      }
+    }, 1000);
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   useEffect(() => {
@@ -214,8 +221,17 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg bg-surface">
       <div 
         ref={mapContainer} 
-        className="absolute inset-0 w-full h-full" 
-        style={{ minHeight: '600px' }}
+        id="map-container"
+        className="absolute inset-0 w-full h-full bg-gray-100" 
+        style={{ 
+          minHeight: '600px',
+          minWidth: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
+        }}
       />
       
       {selectedTournament && (
