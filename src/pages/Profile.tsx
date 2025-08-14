@@ -11,11 +11,26 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Upload, Save, Eye, Globe, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X } from 'lucide-react';
 
-const GENDERS = ['Boys', 'Girls', 'Mixed'];
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
+const TEAM_TYPES = ['boys', 'girls', 'mixed'];
 const FORMATS = ['3v3', '5v5', '7v7', '9v9', '11v11'];
+const TOURNAMENT_TYPES = ['tournament', 'league', 'camp', 'friendly'];
+const AVAILABLE_FEATURES = [
+  'Professional coaching',
+  'Equipment provided',
+  'Lunch included',
+  'Trophies',
+  'Medals',
+  'Refreshments',
+  'Photography',
+  'Professional pitches',
+  'Changing rooms',
+  'Parking',
+  'First aid',
+  'Live streaming'
+];
 
 interface Profile {
   id: string;
@@ -25,62 +40,70 @@ interface Profile {
   full_name: string;
 }
 
-interface Team {
+interface Tournament {
   id?: string;
   name: string;
-  city: string;
+  description: string;
+  location_name: string;
+  postcode: string;
   region: string;
-  country: string;
-  venue_address: string;
-  venue_latitude?: number;
-  venue_longitude?: number;
-  genders: string[];
+  format: string;
   age_groups: string[];
-  formats: string[];
-  logo_url: string;
-  banner_url: string;
-  website: string;
-  instagram: string;
-  twitter: string;
-  facebook: string;
-  is_published: boolean;
+  team_types: string[];
+  type: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  registration_deadline?: string;
+  max_teams?: number;
+  cost_amount?: number;
+  cost_currency: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone?: string;
+  website?: string;
+  features: string[];
+  organizer_id?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState<'logo' | 'banner' | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [team, setTeam] = useState<Team>({
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [editingTournament, setEditingTournament] = useState<Tournament>({
     name: '',
-    city: '',
+    description: '',
+    location_name: '',
+    postcode: '',
     region: '',
-    country: '',
-    venue_address: '',
-    genders: [],
+    format: '11v11',
     age_groups: [],
-    formats: [],
-    logo_url: '',
-    banner_url: '',
-    website: '',
-    instagram: '',
-    twitter: '',
-    facebook: '',
-    is_published: false,
+    team_types: [],
+    type: 'tournament',
+    status: 'upcoming',
+    start_date: '',
+    end_date: '',
+    cost_currency: 'GBP',
+    contact_name: '',
+    contact_email: '',
+    features: []
   });
-
-  useEffect(() => {
-    if (user) {
-      loadProfile();
-      loadTeam();
-    }
-  }, [user]);
 
   // Redirect if not authenticated
   if (!loading && !user) {
     return <Navigate to="/auth" replace />;
   }
+
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      loadTournaments();
+    }
+  }, [user]);
 
   const loadProfile = async () => {
     try {
@@ -97,16 +120,27 @@ const ProfilePage = () => {
 
       if (data) {
         setProfile(data);
+        setEditingTournament(prev => ({
+          ...prev,
+          contact_name: data.full_name || '',
+          contact_email: data.contact_email || user?.email || ''
+        }));
       } else {
-        // Create initial profile with user's name from auth metadata
+        // Create initial profile
         const userName = user?.user_metadata?.full_name || '';
-        setProfile({
+        const newProfile = {
           id: '',
           role: 'organizer',
           contact_email: user?.email || '',
           contact_phone: '',
           full_name: userName
-        });
+        };
+        setProfile(newProfile);
+        setEditingTournament(prev => ({
+          ...prev,
+          contact_name: userName,
+          contact_email: user?.email || ''
+        }));
       }
     } catch (error: any) {
       toast({
@@ -117,66 +151,119 @@ const ProfilePage = () => {
     }
   };
 
-  const loadTeam = async () => {
+  const loadTournaments = async () => {
     try {
       const { data, error } = await supabase
-        .from('teams')
+        .from('tournaments')
         .select('*')
-        .eq('owner_id', user?.id)
-        .maybeSingle();
+        .eq('organizer_id', user?.id)
+        .order('created_at', { ascending: false });
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Team loading error:', error);
+      if (error) {
+        console.error('Tournaments loading error:', error);
         throw error;
       }
 
-      if (data) {
-        setTeam(data);
-      }
+      setTournaments(data || []);
     } catch (error: any) {
       toast({
-        title: "Error loading team",
+        title: "Error loading tournaments",
         description: error.message,
         variant: "destructive",
       });
     }
   };
 
-  const autosave = async (updates: Partial<Profile> | Partial<Team>, table: 'profiles' | 'teams') => {
+  const saveTournament = async () => {
+    if (!user || !profile) return;
+
     setSaving(true);
     try {
-      if (table === 'profiles' && profile) {
+      // Validate required fields
+      if (!editingTournament.name || !editingTournament.location_name || !editingTournament.postcode || 
+          !editingTournament.start_date || !editingTournament.end_date || 
+          editingTournament.age_groups.length === 0 || editingTournament.team_types.length === 0) {
+        toast({
+          title: "Missing required fields",
+          description: "Please fill in all required fields before saving.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Geocode the location
+      let latitude, longitude;
+      try {
+        const response = await supabase.functions.invoke('mapbox-token');
+        if (response.data?.token) {
+          const geocodeResponse = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(editingTournament.location_name + ', ' + editingTournament.postcode)}.json?access_token=${response.data.token}`
+          );
+          const data = await geocodeResponse.json();
+          if (data.features && data.features.length > 0) {
+            [longitude, latitude] = data.features[0].center;
+          }
+        }
+      } catch (error) {
+        console.error('Geocoding failed:', error);
+      }
+
+      const tournamentData = {
+        ...editingTournament,
+        organizer_id: user.id,
+        latitude: latitude || 51.5074, // Default to London
+        longitude: longitude || -0.1278,
+        contact_name: profile.full_name,
+        contact_email: profile.contact_email,
+        contact_phone: profile.contact_phone
+      };
+
+      if (editingTournament.id) {
+        // Update existing tournament
         const { error } = await supabase
-          .from('profiles')
-          .update(updates)
-          .eq('user_id', user?.id);
+          .from('tournaments')
+          .update(tournamentData)
+          .eq('id', editingTournament.id);
 
         if (error) throw error;
-        setProfile({ ...profile, ...updates } as Profile);
-      } else if (table === 'teams') {
-        if (team.id) {
-          const { error } = await supabase
-            .from('teams')
-            .update(updates)
-            .eq('id', team.id);
+      } else {
+        // Create new tournament
+        const { error } = await supabase
+          .from('tournaments')
+          .insert([tournamentData]);
 
-          if (error) throw error;
-        } else {
-          const { data, error } = await supabase
-            .from('teams')
-            .insert([{ ...team, ...updates, owner_id: user?.id }])
-            .select()
-            .single();
-
-          if (error) throw error;
-          setTeam(data);
-          return;
-        }
-        setTeam({ ...team, ...updates });
+        if (error) throw error;
       }
+
+      toast({
+        title: "Tournament saved! 🎉",
+        description: "Your tournament is now live on the homepage!",
+      });
+
+      // Reset form and reload tournaments
+      setEditingTournament({
+        name: '',
+        description: '',
+        location_name: '',
+        postcode: '',
+        region: '',
+        format: '11v11',
+        age_groups: [],
+        team_types: [],
+        type: 'tournament',
+        status: 'upcoming',
+        start_date: '',
+        end_date: '',
+        cost_currency: 'GBP',
+        contact_name: profile.full_name,
+        contact_email: profile.contact_email,
+        features: []
+      });
+
+      await loadTournaments();
     } catch (error: any) {
       toast({
-        title: "Autosave failed",
+        title: "Error saving tournament",
         description: error.message,
         variant: "destructive",
       });
@@ -185,148 +272,34 @@ const ProfilePage = () => {
     }
   };
 
-  const geocodeAddress = async (address: string) => {
-    if (!address.trim()) return;
-
+  const deleteTournament = async (tournamentId: string) => {
     try {
-      const response = await supabase.functions.invoke('mapbox-token');
-      if (!response.data?.token) throw new Error('Failed to get Mapbox token');
+      const { error } = await supabase
+        .from('tournaments')
+        .delete()
+        .eq('id', tournamentId);
 
-      const geocodeResponse = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${response.data.token}`
-      );
-      
-      const data = await geocodeResponse.json();
-      
-      if (data.features && data.features.length > 0) {
-        const [longitude, latitude] = data.features[0].center;
-        autosave({ venue_latitude: latitude, venue_longitude: longitude }, 'teams');
-      }
-    } catch (error: any) {
-      console.error('Geocoding failed:', error);
-    }
-  };
-
-  const canPublish = team.name && team.city && team.country && team.age_groups.length > 0;
-
-  const togglePublish = async () => {
-    if (!canPublish) return;
-    const newPublishState = !team.is_published;
-    await autosave({ is_published: newPublishState }, 'teams');
-    
-    if (newPublishState) {
-      toast({
-        title: "Profile Published! 🎉",
-        description: "Your team profile is now live! Your tournaments will appear in the main tournament list.",
-        duration: 6000,
-      });
-    } else {
-      toast({
-        title: "Profile Unpublished",
-        description: "Your team profile is no longer visible publicly.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      // Call the edge function to delete the account
-      const { error } = await supabase.functions.invoke('delete-account', {
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
-      });
-      
       if (error) throw error;
-      
-      toast({
-        title: "Account deleted",
-        description: "Your account has been permanently deleted.",
-      });
-      
-      // Sign out and redirect to home page
-      await signOut();
-      window.location.href = '/';
-    } catch (error: any) {
-      console.error('Delete account error:', error);
-      toast({
-        title: "Error deleting account",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const uploadImage = async (file: File, type: 'logo' | 'banner') => {
-    if (!user) return;
-    
-    setUploading(type);
-    try {
-      // Create file path with user ID folder
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      const bucket = type === 'logo' ? 'logos' : 'banners';
-
-      // Delete existing file if it exists
-      const existingUrl = type === 'logo' ? team.logo_url : team.banner_url;
-      if (existingUrl) {
-        const existingPath = existingUrl.split('/').slice(-2).join('/'); // user_id/filename
-        await supabase.storage.from(bucket).remove([existingPath]);
-      }
-
-      // Upload new file
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(fileName);
-
-      // Update team record
-      const updateField = type === 'logo' ? 'logo_url' : 'banner_url';
-      await autosave({ [updateField]: data.publicUrl }, 'teams');
 
       toast({
-        title: "Upload successful",
-        description: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`,
+        title: "Tournament deleted",
+        description: "Tournament has been removed.",
       });
+
+      await loadTournaments();
     } catch (error: any) {
       toast({
-        title: "Upload failed",
+        title: "Error deleting tournament",
         description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setUploading(null);
     }
   };
 
-  const handleFileSelect = (type: 'logo' | 'banner') => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast({
-            title: "File too large",
-            description: "Please select an image smaller than 5MB",
-            variant: "destructive",
-          });
-          return;
-        }
-        uploadImage(file, type);
-      }
-    };
-    input.click();
-  };
+  const canSave = editingTournament.name && editingTournament.location_name && 
+                  editingTournament.postcode && editingTournament.start_date && 
+                  editingTournament.end_date && editingTournament.age_groups.length > 0 && 
+                  editingTournament.team_types.length > 0;
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
@@ -334,345 +307,389 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-foreground">Profile Setup</h1>
+          <h1 className="text-3xl font-bold text-foreground">Create Tournament</h1>
           <div className="flex items-center gap-2">
             {saving && <span className="text-sm text-muted-foreground">Saving...</span>}
-            {uploading && <span className="text-sm text-muted-foreground">Uploading {uploading}...</span>}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Profile Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="full_name">Full Name</Label>
-                <Input
-                  id="full_name"
-                  value={profile?.full_name || ''}
-                  onChange={(e) => autosave({ full_name: e.target.value }, 'profiles')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="role">Role</Label>
-                <Select
-                  value={profile?.role || 'organizer'}
-                  onValueChange={(value) => autosave({ role: value }, 'profiles')}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="organizer">Organizer</SelectItem>
-                    <SelectItem value="team">Team</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="contact_email">Contact Email</Label>
-                <Input
-                  id="contact_email"
-                  type="email"
-                  value={profile?.contact_email || user?.email || ''}
-                  onChange={(e) => autosave({ contact_email: e.target.value }, 'profiles')}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="contact_phone">Contact Phone</Label>
-                <Input
-                  id="contact_phone"
-                  type="tel"
-                  value={profile?.contact_phone || ''}
-                  onChange={(e) => autosave({ contact_phone: e.target.value }, 'profiles')}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Organization/Team Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Organization/Team Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="team_name">Organization/Team Name *</Label>
-                <Input
-                  id="team_name"
-                  value={team.name}
-                  onChange={(e) => autosave({ name: e.target.value }, 'teams')}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Tournament Form */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Basic Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="city">City *</Label>
+                  <Label htmlFor="tournament_name">Tournament Name *</Label>
                   <Input
-                    id="city"
-                    value={team.city}
-                    onChange={(e) => autosave({ city: e.target.value }, 'teams')}
+                    id="tournament_name"
+                    value={editingTournament.name}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="e.g., Manchester Youth League"
                     required
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="region">Region</Label>
-                  <Input
-                    id="region"
-                    value={team.region}
-                    onChange={(e) => autosave({ region: e.target.value }, 'teams')}
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={editingTournament.description}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Brief description of your tournament"
+                    rows={3}
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="type">Type *</Label>
+                    <Select
+                      value={editingTournament.type}
+                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, type: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TOURNAMENT_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="format">Format *</Label>
+                    <Select
+                      value={editingTournament.format}
+                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, format: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FORMATS.map((format) => (
+                          <SelectItem key={format} value={format}>
+                            {format}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Location & Dates */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Location & Dates</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="location_name">Venue Name *</Label>
+                    <Input
+                      id="location_name"
+                      value={editingTournament.location_name}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, location_name: e.target.value }))}
+                      placeholder="e.g., Etihad Campus"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="postcode">Postcode *</Label>
+                    <Input
+                      id="postcode"
+                      value={editingTournament.postcode}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, postcode: e.target.value }))}
+                      placeholder="M11 3FF"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="region">Region *</Label>
+                    <Input
+                      id="region"
+                      value={editingTournament.region}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, region: e.target.value }))}
+                      placeholder="Greater Manchester"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="start_date">Start Date & Time *</Label>
+                    <Input
+                      id="start_date"
+                      type="datetime-local"
+                      value={editingTournament.start_date}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, start_date: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="end_date">End Date & Time *</Label>
+                    <Input
+                      id="end_date"
+                      type="datetime-local"
+                      value={editingTournament.end_date}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, end_date: e.target.value }))}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="registration_deadline">Registration Deadline</Label>
+                    <Input
+                      id="registration_deadline"
+                      type="datetime-local"
+                      value={editingTournament.registration_deadline || ''}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, registration_deadline: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="max_teams">Max Teams</Label>
+                    <Input
+                      id="max_teams"
+                      type="number"
+                      value={editingTournament.max_teams || ''}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, max_teams: parseInt(e.target.value) || undefined }))}
+                      placeholder="Optional"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Participants */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Participants</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="country">Country *</Label>
+                  <Label>Age Groups *</Label>
+                  <div className="grid grid-cols-6 gap-2 mt-2">
+                    {AGE_GROUPS.map((age) => (
+                      <div key={age} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`age-${age}`}
+                          checked={editingTournament.age_groups.includes(age)}
+                          onCheckedChange={(checked) => {
+                            const newAges = checked 
+                              ? [...editingTournament.age_groups, age]
+                              : editingTournament.age_groups.filter(a => a !== age);
+                            setEditingTournament(prev => ({ ...prev, age_groups: newAges }));
+                          }}
+                        />
+                        <Label htmlFor={`age-${age}`} className="text-sm">{age}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Team Types *</Label>
+                  <div className="flex gap-4 mt-2">
+                    {TEAM_TYPES.map((type) => (
+                      <div key={type} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`type-${type}`}
+                          checked={editingTournament.team_types.includes(type)}
+                          onCheckedChange={(checked) => {
+                            const newTypes = checked 
+                              ? [...editingTournament.team_types, type]
+                              : editingTournament.team_types.filter(t => t !== type);
+                            setEditingTournament(prev => ({ ...prev, team_types: newTypes }));
+                          }}
+                        />
+                        <Label htmlFor={`type-${type}`} className="capitalize">{type}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Features & Pricing */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Features & Pricing</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Features</Label>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {AVAILABLE_FEATURES.map((feature) => (
+                      <div key={feature} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`feature-${feature}`}
+                          checked={editingTournament.features.includes(feature)}
+                          onCheckedChange={(checked) => {
+                            const newFeatures = checked 
+                              ? [...editingTournament.features, feature]
+                              : editingTournament.features.filter(f => f !== feature);
+                            setEditingTournament(prev => ({ ...prev, features: newFeatures }));
+                          }}
+                        />
+                        <Label htmlFor={`feature-${feature}`} className="text-sm">{feature}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cost_amount">Entry Fee</Label>
+                    <Input
+                      id="cost_amount"
+                      type="number"
+                      step="0.01"
+                      value={editingTournament.cost_amount || ''}
+                      onChange={(e) => setEditingTournament(prev => ({ ...prev, cost_amount: parseFloat(e.target.value) || undefined }))}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cost_currency">Currency</Label>
+                    <Select
+                      value={editingTournament.cost_currency}
+                      onValueChange={(value) => setEditingTournament(prev => ({ ...prev, cost_currency: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="GBP">GBP (£)</SelectItem>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="website">Website</Label>
                   <Input
-                    id="country"
-                    value={team.country}
-                    onChange={(e) => autosave({ country: e.target.value }, 'teams')}
-                    required
+                    id="website"
+                    type="url"
+                    value={editingTournament.website || ''}
+                    onChange={(e) => setEditingTournament(prev => ({ ...prev, website: e.target.value }))}
+                    placeholder="https://example.com"
                   />
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div>
-                <Label htmlFor="venue_address">Venue Address</Label>
-                <Textarea
-                  id="venue_address"
-                  value={team.venue_address}
-                  onChange={(e) => autosave({ venue_address: e.target.value }, 'teams')}
-                  onBlur={(e) => geocodeAddress(e.target.value)}
-                  rows={2}
-                />
-              </div>
-            </CardContent>
-          </Card>
+            {!canSave && (
+              <Card className="border-warning bg-warning/5">
+                <CardContent className="pt-6">
+                  <p className="text-warning-foreground text-sm">
+                    <strong>Required fields missing:</strong> Complete Tournament Name, Venue, Postcode, Dates, Age Groups, and Team Types to save.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Preferences */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Genders</Label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {GENDERS.map((gender) => (
-                    <div key={gender} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`gender-${gender}`}
-                        checked={team.genders.includes(gender)}
-                        onCheckedChange={(checked) => {
-                          const newGenders = checked 
-                            ? [...team.genders, gender]
-                            : team.genders.filter(g => g !== gender);
-                          autosave({ genders: newGenders }, 'teams');
-                        }}
-                      />
-                      <Label htmlFor={`gender-${gender}`}>{gender}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <Button
+              onClick={saveTournament}
+              disabled={!canSave || saving}
+              className="w-full"
+              size="lg"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? 'Saving Tournament...' : editingTournament.id ? 'Update Tournament' : 'Create Tournament'}
+            </Button>
+          </div>
 
-              <div>
-                <Label>Age Groups *</Label>
-                <div className="grid grid-cols-4 gap-2 mt-2">
-                  {AGE_GROUPS.map((age) => (
-                    <div key={age} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`age-${age}`}
-                        checked={team.age_groups.includes(age)}
-                        onCheckedChange={(checked) => {
-                          const newAges = checked 
-                            ? [...team.age_groups, age]
-                            : team.age_groups.filter(a => a !== age);
-                          autosave({ age_groups: newAges }, 'teams');
-                        }}
-                      />
-                      <Label htmlFor={`age-${age}`}>{age}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label>Formats</Label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {FORMATS.map((format) => (
-                    <div key={format} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`format-${format}`}
-                        checked={team.formats.includes(format)}
-                        onCheckedChange={(checked) => {
-                          const newFormats = checked 
-                            ? [...team.formats, format]
-                            : team.formats.filter(f => f !== format);
-                          autosave({ formats: newFormats }, 'teams');
-                        }}
-                      />
-                      <Label htmlFor={`format-${format}`}>{format}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Social Links */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Social Links & Media</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  type="url"
-                  value={team.website}
-                  onChange={(e) => autosave({ website: e.target.value }, 'teams')}
-                  placeholder="https://example.com"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="instagram">Instagram</Label>
-                <Input
-                  id="instagram"
-                  value={team.instagram}
-                  onChange={(e) => autosave({ instagram: e.target.value }, 'teams')}
-                  placeholder="@username"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="twitter">X (Twitter)</Label>
-                <Input
-                  id="twitter"
-                  value={team.twitter}
-                  onChange={(e) => autosave({ twitter: e.target.value }, 'teams')}
-                  placeholder="@username"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="facebook">Facebook</Label>
-                <Input
-                  id="facebook"
-                  value={team.facebook}
-                  onChange={(e) => autosave({ facebook: e.target.value }, 'teams')}
-                  placeholder="Page name or URL"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Logo Upload</Label>
-                {team.logo_url && (
-                  <div className="mb-2">
-                    <img 
-                      src={team.logo_url} 
-                      alt="Team logo" 
-                      className="w-20 h-20 object-cover rounded-lg border"
-                    />
+          {/* My Tournaments Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>My Tournaments ({tournaments.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tournaments.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">No tournaments created yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {tournaments.map((tournament) => (
+                      <div key={tournament.id} className="p-3 border rounded-lg">
+                        <h4 className="font-medium text-sm">{tournament.name}</h4>
+                        <p className="text-xs text-muted-foreground">{tournament.location_name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(tournament.start_date).toLocaleDateString()}
+                        </p>
+                        <div className="flex gap-1 mt-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingTournament(tournament)}
+                          >
+                            Edit
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="destructive">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "{tournament.name}"? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteTournament(tournament.id!)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => handleFileSelect('logo')}
-                  disabled={uploading === 'logo'}
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  {uploading === 'logo' ? 'Uploading...' : team.logo_url ? 'Change Logo' : 'Upload Logo'}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="/">
+                    <Eye className="w-4 h-4 mr-2" />
+                    View Homepage
+                  </a>
                 </Button>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Banner Upload</Label>
-                {team.banner_url && (
-                  <div className="mb-2">
-                    <img 
-                      src={team.banner_url} 
-                      alt="Team banner" 
-                      className="w-full h-32 object-cover rounded-lg border"
-                    />
-                  </div>
-                )}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => handleFileSelect('banner')}
-                  disabled={uploading === 'banner'}
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  {uploading === 'banner' ? 'Uploading...' : team.banner_url ? 'Change Banner' : 'Upload Banner'}
+                <Button variant="outline" className="w-full" onClick={signOut}>
+                  Sign Out
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {!canPublish && (
-          <Card className="border-warning bg-warning/5">
-            <CardContent className="pt-6">
-              <p className="text-warning-foreground text-sm">
-                <strong>Required fields missing:</strong> Complete Team Name, City, Country, and at least one Age Group to publish your profile.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-4">
-          <Button
-            onClick={togglePublish}
-            disabled={!canPublish}
-            variant={team.is_published ? "secondary" : "default"}
-            className="flex items-center justify-center gap-2 w-full"
-            size="lg"
-          >
-            {team.is_published ? <Eye className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
-            {team.is_published ? 'Published' : 'Publish Profile'}
-          </Button>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="destructive" 
-                className="flex items-center justify-center gap-2 w-full"
-                size="lg"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete Account
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your account,
-                  profile, team information, and remove all of your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={handleDeleteAccount}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  Yes, delete my account
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
