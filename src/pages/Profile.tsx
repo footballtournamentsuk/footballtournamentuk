@@ -559,7 +559,7 @@ const ProfilePage = () => {
               <CardContent className="space-y-4">
                 <div>
                   <Label>Features</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div className="grid grid-cols-1 gap-2 mt-2">
                     {AVAILABLE_FEATURES.map((feature) => (
                       <div key={feature} className="flex items-center space-x-2">
                         <Checkbox
@@ -606,17 +606,6 @@ const ProfilePage = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="website">Website</Label>
-                  <Input
-                    id="website"
-                    type="url"
-                    value={editingTournament.website || ''}
-                    onChange={(e) => setEditingTournament(prev => ({ ...prev, website: e.target.value }))}
-                    placeholder="https://example.com"
-                  />
                 </div>
               </CardContent>
             </Card>
