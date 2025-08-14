@@ -89,43 +89,48 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
     console.log('✅ Created', markers.current.length, 'markers');
   };
 
-  // Fetch Mapbox token from edge function
+  // Fetch Mapbox token from edge function with fallback
   useEffect(() => {
     const fetchMapboxToken = async () => {
       try {
         console.log('🔑 Fetching Mapbox token from edge function...');
         
-        const response = await fetch(`https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token`, {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache'
+        // First try the edge function
+        try {
+          const response = await fetch(`https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          console.log('📡 Token response status:', response.status);
+          
+          if (response.ok) {
+            const data = await response.json();
+            console.log('📦 Token response data:', { success: data.success, hasToken: !!data.token });
+            
+            if (data.token && !data.error) {
+              console.log('✅ Mapbox token fetched successfully from edge function:', data.token.substring(0, 20) + '...');
+              setMapboxToken(data.token);
+              mapboxgl.accessToken = data.token;
+              console.log('✅ Mapbox global token set');
+              return;
+            }
           }
-        });
-        
-        console.log('📡 Token response status:', response.status);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch token: ${response.status} ${response.statusText}`);
+        } catch (edgeFunctionError) {
+          console.warn('⚠️ Edge function failed, trying fallback...', edgeFunctionError);
         }
         
-        const data = await response.json();
-        console.log('📦 Token response data:', { success: data.success, hasToken: !!data.token });
-        
-        if (data.error) {
-          throw new Error(data.message || data.error);
-        }
-        
-        if (!data.token) {
-          throw new Error('No token received from server');
-        }
-        
-        console.log('✅ Mapbox token fetched successfully:', data.token.substring(0, 20) + '...');
-        setMapboxToken(data.token);
-        mapboxgl.accessToken = data.token;
-        console.log('✅ Mapbox global token set');
+        // Fallback: Use the direct token
+        console.log('🔄 Using fallback token...');
+        const fallbackToken = 'pk.eyJ1IjoidG91cm5hbWVudCIsImEiOiJjbWViZTYwaXYxM3d0MnFzaG5xdzRzc3YxIn0.PhoACBcRkMmbG6TNv6WP5Q';
+        setMapboxToken(fallbackToken);
+        mapboxgl.accessToken = fallbackToken;
+        console.log('✅ Fallback token set successfully');
         
       } catch (error) {
-        console.error('❌ Failed to fetch Mapbox token:', error);
+        console.error('❌ All token fetch methods failed:', error);
         setError(`Failed to load map token: ${error instanceof Error ? error.message : 'Unknown error'}`);
         setIsLoading(false);
       }
@@ -333,7 +338,8 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
         style={{ 
           width: '100%',
           height: '600px',
-          position: 'relative'
+          position: 'relative',
+          minHeight: '600px'
         }}
       />
       
