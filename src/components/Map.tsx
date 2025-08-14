@@ -26,7 +26,6 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
-  const [containerReady, setContainerReady] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -142,10 +141,16 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   // Initialize map when both container and token are ready
   useEffect(() => {
     const container = mapContainer.current;
-    console.log('🎯 Map initialization check - Container:', !!container, 'Token:', !!mapboxToken, 'ContainerReady:', containerReady, 'Map exists:', !!map.current);
+    console.log('🎯 Map initialization check - Container:', !!container, 'Token:', !!mapboxToken, 'Map exists:', !!map.current);
     
-    if (!container || !mapboxToken || !containerReady || map.current) {
+    if (!container || !mapboxToken || map.current) {
       console.log('⏳ Map initialization waiting...');
+      return;
+    }
+
+    // Ensure container has proper dimensions
+    if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+      console.log('⏳ Container not ready (no dimensions)');
       return;
     }
 
@@ -239,20 +244,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
       setError(`Critical map error: ${error instanceof Error ? error.message : 'Unknown initialization error'}`);
       setIsLoading(false);
     }
-  }, [mapboxToken, containerReady]);
-
-  // Container callback that sets container ready state
-  const mapContainerCallback = useCallback((node: HTMLDivElement | null) => {
-    console.log('📍 Map container callback triggered with node:', !!node);
-    if (node) {
-      console.log('📍 Map container mounted, dimensions:', node.offsetWidth, 'x', node.offsetHeight);
-      mapContainer.current = node;
-      setContainerReady(true);
-    } else {
-      mapContainer.current = null;
-      setContainerReady(false);
-    }
-  }, []);
+  }, [mapboxToken, tournaments]);
 
   // Update markers when tournaments change with logging
   useEffect(() => {
@@ -333,7 +325,7 @@ const Map: React.FC<MapProps> = ({ tournaments, selectedTournament, onTournament
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-lg border">
       <div 
-        ref={mapContainerCallback}
+        ref={mapContainer}
         className="w-full h-full"
         style={{ 
           width: '100%',
