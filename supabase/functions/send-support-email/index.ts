@@ -15,30 +15,40 @@ function corsHeaders(origin?: string) {
 }
 
 serve(async (req: Request) => {
+  console.log("🚀 Function called:", req.method, req.url);
   const origin = req.headers.get("origin") ?? "*";
 
   // Preflight
   if (req.method === "OPTIONS") {
+    console.log("✅ CORS preflight handled");
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
   }
 
   try {
     if (req.method !== "POST") {
+      console.log("❌ Method not allowed:", req.method);
       return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
         status: 405,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
       });
     }
 
+    console.log("🔑 Checking RESEND_API_KEY...");
     if (!RESEND_API_KEY) {
+      console.error("❌ RESEND_API_KEY not found");
       return new Response(JSON.stringify({ error: "Missing RESEND_API_KEY" }), {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
       });
     }
+    console.log("✅ RESEND_API_KEY found, length:", RESEND_API_KEY.length);
 
+    console.log("📝 Parsing request body...");
     const { name, email, subject, message } = await req.json().catch(() => ({}));
+    console.log("📋 Received data:", { name, email, subject, messageLength: message?.length });
+    
     if (!name || !email || !subject || !message) {
+      console.log("❌ Missing required fields");
       return new Response(JSON.stringify({ error: "Missing fields" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
@@ -49,7 +59,6 @@ serve(async (req: Request) => {
       from: FROM,
       to: TO,
       subject: `Support: ${subject} — from ${name}`,
-      // keep it minimal first; you can add "reply_to": email after baseline works
       html: `
         <h2>New Support Request</h2>
         <p><b>Name:</b> ${name}</p>
@@ -60,6 +69,7 @@ serve(async (req: Request) => {
       `,
     };
 
+    console.log("📧 Sending email to Resend API...");
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -69,9 +79,11 @@ serve(async (req: Request) => {
       body: JSON.stringify(body),
     });
 
-    const text = await r.text(); // capture body even on non-2xx
+    const text = await r.text();
+    console.log("📨 Resend response:", r.status, text);
+    
     if (!r.ok) {
-      // surface Resend error back to client for debugging
+      console.error("❌ Resend API error:", r.status, text);
       return new Response(JSON.stringify({ error: "Resend error", status: r.status, body: text }), {
         status: 502,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
@@ -79,11 +91,13 @@ serve(async (req: Request) => {
     }
 
     const json = JSON.parse(text);
+    console.log("✅ Email sent successfully:", json);
     return new Response(JSON.stringify({ id: json?.id ?? null }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
     });
   } catch (e) {
+    console.error("💥 Function error:", e);
     return new Response(JSON.stringify({ error: e?.message ?? "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
