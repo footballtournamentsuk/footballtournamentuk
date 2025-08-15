@@ -432,8 +432,8 @@ const Index = () => {
                 From grassroots to elite level competitions.
               </p>
               <div className="flex space-x-4">
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
-                  About Us
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/about">About Us</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                   <Link to="/faq">FAQ</Link>

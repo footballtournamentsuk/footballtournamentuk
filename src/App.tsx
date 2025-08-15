@@ -13,6 +13,7 @@ import { LogOut, User, UserCircle, Settings } from "lucide-react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import About from "./pages/About";
 import TeamView from "./pages/TeamView";
 import TournamentDetails from "./pages/TournamentDetails";
 import CityTournaments from "./pages/CityTournaments";
@@ -117,6 +118,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/about" element={<About />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/teams/:id" element={<TeamView />} />
           <Route path="/city/:citySlug" element={<CityTournaments />} />
