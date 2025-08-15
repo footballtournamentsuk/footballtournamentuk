@@ -2,129 +2,57 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
 console.log("🚀 EMAIL FUNCTION DEPLOY - send-support-email");
 
-serve(async (req: Request) => {
-  console.log("🚀 Function called:", req.method);
-  
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Deno Edge Function (Supabase) — real send, no SDK
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+const FROM = 'Football Tournaments UK <onboarding@resend.dev>';
+const TO = ['info@footballtournamentsuk.co.uk'];
+
+async function handler(req: Request) {
+  const origin = req.headers.get('origin') ?? '*';
+  const cors = {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Content-Type': 'application/json',
   };
 
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    console.log("✅ CORS preflight");
-    return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (req.method !== 'POST')  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405, headers: cors });
+  if (!RESEND_API_KEY)        return new Response(JSON.stringify({ error: 'Missing RESEND_API_KEY' }), { status: 500, headers: cors });
+
+  const { name, email, subject, message } = await req.json().catch(() => ({}));
+  if (!name || !email || !subject || !message) {
+    return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: cors });
   }
 
-  try {
-    console.log("🔍 Starting email function...");
-    
-    // Check environment
-    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-    console.log('🔑 HAS_RESEND_KEY:', !!RESEND_API_KEY);
-    
-    if (!RESEND_API_KEY) {
-      console.error("❌ RESEND_API_KEY missing");
-      return new Response(JSON.stringify({ 
-        stage: "env_check", 
-        error: "Missing RESEND_API_KEY" 
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-    
-    console.log('🔑 Key length:', RESEND_API_KEY.length);
-    
-    // Parse request
-    console.log("📝 Parsing request...");
-    const body = await req.json();
-    console.log("📋 Request body:", body);
-    
-    const { name, email, subject, message } = body;
-    
-    if (!name || !email || !subject || !message) {
-      console.log("❌ Missing fields");
-      return new Response(JSON.stringify({ 
-        stage: "validation", 
-        error: "Missing required fields",
-        received: { name: !!name, email: !!email, subject: !!subject, message: !!message }
-      }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-    
-    // Prepare email (using default Resend sender)
-    const emailPayload = {
-      from: 'Football Tournaments UK <onboarding@resend.dev>',
-      to: ['info@footballtournamentsuk.co.uk'],
-      reply_to: email, // User can reply directly to the sender
-      subject: `Support: ${subject} — from ${name}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2>New Support Message</h2>
-          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>From:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-          </div>
-          <div style="background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <h3>Message:</h3>
-            <div style="white-space: pre-wrap; line-height: 1.5;">${message}</div>
-          </div>
-        </div>
-      `,
-    };
-    
-    console.log("📧 Sending to Resend...");
-    
-    // Call Resend API
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(emailPayload),
-    });
-    
-    const responseText = await response.text();
-    console.log('📨 Resend response:', response.status, responseText);
-    
-    if (!response.ok) {
-      console.error("❌ Resend API error");
-      return new Response(JSON.stringify({ 
-        stage: "resend", 
-        status: response.status, 
-        body: responseText 
-      }), {
-        status: 502,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-    
-    const responseJson = JSON.parse(responseText);
-    console.log("✅ Email sent:", responseJson);
-    
-    return new Response(JSON.stringify({ 
-      success: true, 
-      id: responseJson?.id,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
+  const payload = {
+    from: FROM,
+    to: TO,
+    subject: `Support: ${subject} — from ${name}`,
+    html: `
+      <h2>New Support Request</h2>
+      <p><b>Name:</b> ${name}</p>
+      <p><b>Email:</b> ${email}</p>
+      <p><b>Subject:</b> ${subject}</p>
+      <div style="white-space:pre-wrap">${String(message)}</div>
+    `,
+    reply_to: email,
+  };
 
-  } catch (error) {
-    console.error("💥 Function error:", error);
-    return new Response(JSON.stringify({ 
-      stage: "exception", 
-      error: error?.message || "Unknown error" 
-    }), {
-      status: 500,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  const text = await r.text();
+  console.log('RESEND_STATUS', r.status, 'RESEND_BODY', text);
+  if (!r.ok) {
+    return new Response(JSON.stringify({ stage: 'resend', status: r.status, body: text }), { status: 502, headers: cors });
   }
-});
+
+  const data = JSON.parse(text);
+  return new Response(JSON.stringify({ id: data?.id ?? null }), { status: 200, headers: cors });
+}
+
+serve(handler);
