@@ -27,6 +27,9 @@ export const Footer = () => {
                 <Link to="/policies">Policies</Link>
               </Button>
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Link to="/cookie-policy">Cookie Policy</Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                 <a href="mailto:info@footballtournamentsuk.co.uk">Contact</a>
               </Button>
             </div>

@@ -21,8 +21,10 @@ import CityTournaments from "./pages/CityTournaments";
 import FAQ from "./pages/FAQ";
 import TournamentRouter from "./components/TournamentRouter";
 import Policies from "./pages/Policies";
+import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 import { Footer } from "./components/Footer";
+import { CookieConsent } from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -128,10 +130,12 @@ const App = () => (
           <Route path="/city/:citySlug" element={<CityTournaments />} />
           <Route path="/tournaments/:param" element={<TournamentRouter />} />
           <Route path="/policies" element={<Policies />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
+        <CookieConsent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
