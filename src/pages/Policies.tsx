@@ -129,7 +129,7 @@ export default function Policies() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-2xl">Terms & Conditions</CardTitle>
-                  <p className="text-muted-foreground">Last updated: [Insert Date]</p>
+                  <p className="text-muted-foreground">Last updated: 17.08.2025</p>
                 </CardHeader>
                 <CardContent className="prose prose-slate max-w-none dark:prose-invert">
                   <div className="space-y-6">
