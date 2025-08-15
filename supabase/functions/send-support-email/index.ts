@@ -34,19 +34,26 @@ function checkRateLimit(ip: string): boolean {
 }
 
 function validateSupportRequest(data: any): SupportRequest | null {
+  console.log('Validation input data:', data)
+  
   if (!data.name || typeof data.name !== 'string' || data.name.trim().length < 2) {
+    console.log('Validation failed: name', { name: data.name, type: typeof data.name, length: data.name?.trim()?.length })
     return null
   }
   if (!data.email || typeof data.email !== 'string' || !data.email.includes('@')) {
+    console.log('Validation failed: email', { email: data.email, type: typeof data.email, hasAt: data.email?.includes('@') })
     return null
   }
   if (!data.subject || typeof data.subject !== 'string' || data.subject.trim().length < 5) {
+    console.log('Validation failed: subject', { subject: data.subject, type: typeof data.subject, length: data.subject?.trim()?.length })
     return null
   }
   if (!data.message || typeof data.message !== 'string' || data.message.trim().length < 10) {
+    console.log('Validation failed: message', { message: data.message, type: typeof data.message, length: data.message?.trim()?.length })
     return null
   }
   
+  console.log('Validation passed successfully')
   return {
     name: data.name.trim(),
     email: data.email.trim().toLowerCase(),
