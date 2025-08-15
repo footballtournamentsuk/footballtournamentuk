@@ -55,6 +55,14 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
     setIsSubmitting(true);
 
     try {
+      console.log('🚀 Invoking send-support-email function with data:', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        pageUrl: window.location.href
+      });
+
       const { data, error } = await supabase.functions.invoke('send-support-email', {
         body: {
           name: formData.name.trim(),
@@ -64,6 +72,8 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
           pageUrl: window.location.href
         }
       });
+
+      console.log('📧 Function response:', { data, error });
 
       if (error) throw error;
 
@@ -81,7 +91,7 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
       });
       onClose();
     } catch (error: any) {
-      console.error("Error sending support message:", error);
+      console.error("❌ Error sending support message:", error);
       toast({
         title: "Error",
         description: error?.message?.includes('Too many requests') 
