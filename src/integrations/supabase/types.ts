@@ -119,6 +119,42 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          created_at: string
+          id: string
+          published: boolean
+          rating: number
+          source: string
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          rating: number
+          source?: string
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          rating?: number
+          source?: string
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tournament_attachments: {
         Row: {
           created_at: string

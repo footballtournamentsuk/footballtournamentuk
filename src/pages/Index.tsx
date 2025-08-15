@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Filter, Settings, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ReviewsSection } from '@/components/ReviewsSection';
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -241,6 +242,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Reviews Section */}
+      <ReviewsSection />
 
       {/* FAQ Section */}
       <section className="py-16 bg-surface">
