@@ -4,23 +4,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Megaphone, Handshake, Users, Heart, Mail } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import heroBackground from '@/assets/hero-football.jpg';
-
 const Support = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <SEO 
-        title="Support Us - Football Tournaments UK"
-        description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform."
-        canonicalUrl="https://footballtournaments.uk/support"
-      />
+  return <div className="min-h-screen bg-background">
+      <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="https://footballtournaments.uk/support" />
       
       {/* Hero Section */}
-      <section 
-        className="relative bg-cover bg-center bg-no-repeat py-32 px-4 flex items-center justify-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${heroBackground})`
-        }}
-      >
+      <section className="relative bg-cover bg-center bg-no-repeat py-32 px-4 flex items-center justify-center" style={{
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url(${heroBackground})`
+    }}>
         <div className="container mx-auto text-center text-white max-w-4xl">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Fuel the Passion. Grow the Game.
@@ -105,11 +96,7 @@ const Support = () => {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               Whether you want to sponsor events, volunteer your time, or simply spread the word about our platform, we'd love to hear from you.
             </p>
-            <Button 
-              size="lg" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
-              asChild
-            >
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3" asChild>
               <a href="mailto:support@footballtournaments.uk">
                 Contact Us to Support
               </a>
@@ -122,15 +109,13 @@ const Support = () => {
               <h3 className="text-2xl font-bold mb-4 text-foreground">
                 Always 100% Free
               </h3>
-              <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg leading-relaxed max-w-3xl mx-auto text-slate-50">
                 Our platform will always remain free for organizers, teams, and players. We believe football opportunities should be accessible to everyone, regardless of their financial situation. Your support helps us maintain and improve our services while keeping them completely free.
               </p>
             </div>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Support;
