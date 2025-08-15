@@ -16,6 +16,8 @@ function corsHeaders(origin?: string) {
 
 serve(async (req: Request) => {
   console.log("🚀 Function called:", req.method, req.url);
+  console.log('HAS_RESEND_KEY:', !!RESEND_API_KEY); // should log true in prod
+  
   const origin = req.headers.get("origin") ?? "*";
 
   // Preflight
