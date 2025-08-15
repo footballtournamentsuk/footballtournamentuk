@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import TeamView from "./pages/TeamView";
 import TournamentDetails from "./pages/TournamentDetails";
 import CityTournaments from "./pages/CityTournaments";
+import FAQ from "./pages/FAQ";
 import TournamentRouter from "./components/TournamentRouter";
 import NotFound from "./pages/NotFound";
 
@@ -116,6 +117,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/teams/:id" element={<TeamView />} />
           <Route path="/city/:citySlug" element={<CityTournaments />} />
           <Route path="/tournaments/:param" element={<TournamentRouter />} />

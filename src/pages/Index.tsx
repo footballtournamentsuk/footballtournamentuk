@@ -435,6 +435,9 @@ const Index = () => {
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
                   About Us
                 </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/faq">FAQ</Link>
+                </Button>
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
                   Contact
                 </Button>
