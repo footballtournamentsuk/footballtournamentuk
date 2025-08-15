@@ -125,24 +125,29 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-br from-football-primary/10 via-transparent to-football-secondary/10" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
+      
+      <div className="w-full max-w-md relative z-10">
         <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="signin" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/20 backdrop-blur-sm border border-white/30">
+            <TabsTrigger value="signin" className="flex items-center gap-2 data-[state=active]:bg-white/90 data-[state=active]:text-primary transition-all duration-300">
               <LogIn className="w-4 h-4" />
               Sign In
             </TabsTrigger>
-            <TabsTrigger value="signup" className="flex items-center gap-2">
+            <TabsTrigger value="signup" className="flex items-center gap-2 data-[state=active]:bg-white/90 data-[state=active]:text-primary transition-all duration-300">
               <UserPlus className="w-4 h-4" />
               Sign Up
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="signin">
-            <Card>
+            <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Welcome Back</CardTitle>
+                <CardTitle className="text-2xl bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Welcome Back</CardTitle>
                 <CardDescription>
                   Sign in to your organizer account
                 </CardDescription>
@@ -159,7 +164,7 @@ const AuthPage = () => {
                         placeholder="organizer@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                     </div>
@@ -174,7 +179,7 @@ const AuthPage = () => {
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 pr-10"
+                        className="pl-10 pr-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                       <button
@@ -198,7 +203,12 @@ const AuthPage = () => {
                     </button>
                   </div>
                   
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-pulse hover:animate-none" 
+                    style={{ animationDuration: '2s' }}
+                    disabled={isLoading}
+                  >
                     {isLoading ? 'Signing In...' : 'Sign In'}
                   </Button>
                 </form>
@@ -207,9 +217,9 @@ const AuthPage = () => {
           </TabsContent>
 
           <TabsContent value="signup">
-            <Card>
+            <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Create Account</CardTitle>
+                <CardTitle className="text-2xl bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Create Account</CardTitle>
                 <CardDescription>
                   Sign up as a tournament organizer
                 </CardDescription>
@@ -226,7 +236,7 @@ const AuthPage = () => {
                         placeholder="John Doe"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                     </div>
@@ -241,7 +251,7 @@ const AuthPage = () => {
                         placeholder="organizer@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                     </div>
@@ -256,7 +266,7 @@ const AuthPage = () => {
                         placeholder="Create a password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 pr-10"
+                        className="pl-10 pr-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                       <button
@@ -278,12 +288,17 @@ const AuthPage = () => {
                         placeholder="Confirm your password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-pulse hover:animate-none" 
+                    style={{ animationDuration: '2s' }}
+                    disabled={isLoading}
+                  >
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
@@ -294,8 +309,8 @@ const AuthPage = () => {
 
         {/* Forgot Password Modal */}
         {showForgotPassword && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-md">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-md bg-white/95 backdrop-blur-md border border-white/20 shadow-2xl">
               <CardHeader>
                 <CardTitle>Reset Password</CardTitle>
                 <CardDescription>
@@ -314,7 +329,7 @@ const AuthPage = () => {
                         placeholder="Enter your email"
                         value={forgotPasswordEmail}
                         onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
                         required
                       />
                     </div>
@@ -331,7 +346,11 @@ const AuthPage = () => {
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" className="flex-1" disabled={isLoading}>
+                    <Button 
+                      type="submit" 
+                      className="flex-1 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
+                      disabled={isLoading}
+                    >
                       {isLoading ? 'Sending...' : 'Send Reset Email'}
                     </Button>
                   </div>
@@ -342,7 +361,7 @@ const AuthPage = () => {
         )}
 
         <div className="text-center mt-6">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="bg-white/20 backdrop-blur-sm border-white/30 text-foreground hover:bg-white/30">
             <a href="/">
               ← Back to Homepage
             </a>
