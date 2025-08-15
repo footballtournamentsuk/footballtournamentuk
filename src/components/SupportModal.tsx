@@ -49,11 +49,38 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
       return;
     }
 
-    toast({
-      title: "Support temporarily unavailable",
-      description: "Please contact us directly at info@footballtournamentsuk.co.uk",
-      variant: "destructive",
-    });
+    try {
+      const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/support-form-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Message sent successfully",
+          description: "We'll get back to you as soon as possible.",
+        });
+        onClose();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Support form error:', error);
+      toast({
+        title: "Failed to send message",
+        description: "Please try again or contact us directly at info@footballtournamentsuk.co.uk",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
