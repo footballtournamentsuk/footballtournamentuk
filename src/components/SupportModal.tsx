@@ -73,7 +73,19 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
         }
       });
 
-      console.log('📧 Function response:', { data, error });
+      console.log('📧 Function response - Data:', data);
+      console.log('📧 Function response - Error:', error);
+      
+      // Log the full error object for debugging
+      if (error) {
+        console.error('📧 Full error object:', JSON.stringify(error, null, 2));
+        console.error('📧 Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+      }
 
       if (error) throw error;
 
