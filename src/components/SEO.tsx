@@ -144,6 +144,10 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="language" content="English" />
+      <meta name="geo.region" content="GB" />
+      <meta name="geo.placename" content="United Kingdom" />
+      <meta name="theme-color" content="#16a34a" />
+      <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       
       {/* Schema.org JSON-LD */}
       {schemas.map((schema, index) => (

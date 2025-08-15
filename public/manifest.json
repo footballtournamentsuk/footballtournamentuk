@@ -1,0 +1,18 @@
+{
+  "name": "Football Tournaments UK",
+  "short_name": "FT UK",
+  "description": "Find and join football tournaments across the UK. Free listings for organizers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "400x400",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
