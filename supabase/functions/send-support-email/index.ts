@@ -22,8 +22,10 @@ serve(async (req: Request) => {
   }
 
   try {
-    console.log("BOOT send-support-email v2");
+    console.log("BOOT send-support-email v3 - DEBUG MODE");
     console.log("HAS_RESEND_KEY", !!RESEND_API_KEY);
+    console.log("RESEND_KEY_LENGTH", RESEND_API_KEY ? RESEND_API_KEY.length : 0);
+    console.log("AVAILABLE_ENV_VARS", Object.keys(Deno.env.toObject()).filter(k => k.includes('RESEND')));
 
     if (req.method !== "POST") {
       return new Response(JSON.stringify({ error: "Method Not Allowed" }), { status: 405, headers: cors(origin) });
