@@ -516,58 +516,6 @@ const CityTournaments = () => {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-primary text-primary-foreground py-12">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="md:col-span-2">
-                <h3 className="text-2xl font-bold mb-4">UK Youth Football</h3>
-                <p className="text-primary-foreground/80 mb-4">
-                  Connecting young football talent with tournaments, leagues, and camps across the United Kingdom. 
-                  From grassroots to elite level competitions.
-                </p>
-                <div className="flex space-x-4">
-                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    About Us
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    Contact
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
-                    Help
-                  </Button>
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold mb-3">Popular Cities</h4>
-                <ul className="space-y-2 text-sm text-primary-foreground/80">
-                  {UK_CITIES.slice(0, 4).map(cityLink => (
-                    <li key={cityLink.slug}>
-                      <Link to={`/city/${cityLink.slug}`} className="hover:text-primary-foreground">
-                        {cityLink.displayName} Tournaments
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold mb-3">For Organizers</h4>
-                <ul className="space-y-2 text-sm text-primary-foreground/80">
-                  <li>Add Tournament</li>
-                  <li>Manage Events</li>
-                  <li>League Admin</li>
-                  <li>Analytics</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-sm text-primary-foreground/60">
-              <p>© 2024 UK Youth Football Platform. All rights reserved. | {city.displayName} Youth Football Tournaments</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </HelmetProvider>
   );
