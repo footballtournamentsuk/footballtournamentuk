@@ -102,11 +102,11 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
           variant={variant}
           size={size}
           onClick={handleNativeShare}
-          className="gap-2"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 transition-colors duration-200 gap-2"
           aria-label={`Share ${title}`}
         >
           <Share2 className="h-4 w-4" />
-          Share
+          Share Tournament
         </Button>
       </DialogTrigger>
       

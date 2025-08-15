@@ -243,10 +243,13 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 pt-2">
+        <div className="space-y-3 pt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="flex-1" size="sm">
+              <Button 
+                className="w-full bg-green-600 hover:bg-green-700 text-white border-0 transition-colors duration-200" 
+                size="sm"
+              >
                 <Navigation className="w-4 h-4 mr-2" />
                 View Location
                 <ChevronDown className="w-4 h-4 ml-2" />
@@ -278,25 +281,26 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <div className="flex gap-2">
+          <div className="w-full">
             <ShareButton
               url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`}
               title={tournament.name}
               description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
               size="sm"
-              variant="outline"
+              variant="default"
             />
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="px-3"
-              asChild
-            >
-              <Link to={`/tournaments/${tournament.id}`}>
-                Details
-              </Link>
-            </Button>
           </div>
+          
+          <Button 
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white border-0 transition-colors duration-200"
+            size="sm"
+            asChild
+          >
+            <Link to={`/tournaments/${tournament.id}`}>
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Details
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
