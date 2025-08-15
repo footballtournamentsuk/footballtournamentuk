@@ -66,9 +66,9 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
     }
   }, [isOpen]);
 
-  // Format datetime for different calendar systems
+  // Format datetime for Google Calendar (UTC format required)
   const formatForGoogle = (date: Date): string => {
-    return formatInTimeZone(date, 'Europe/London', "yyyyMMdd'T'HHmmss");
+    return formatInTimeZone(date, 'UTC', "yyyyMMdd'T'HHmmss'Z'");
   };
 
   const formatForICS = (date: Date): string => {
@@ -104,11 +104,9 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
     return parts.join('\\n\\n');
   };
 
-  // Generate location string with coordinates
+  // Generate location string for Google Calendar (cleaner format)
   const generateLocation = () => {
-    const address = `${tournament.location.name}, ${tournament.location.postcode}, ${tournament.location.region}`;
-    const coords = `(${tournament.location.coordinates[1]}, ${tournament.location.coordinates[0]})`;
-    return `${address} ${coords}`;
+    return `${tournament.location.name}, ${tournament.location.postcode}, ${tournament.location.region}`;
   };
 
   // Generate Google Calendar URL
@@ -122,20 +120,57 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
       ? `Registration Deadline - ${tournament.name}`
       : tournament.name;
     
-    const description = isRegistration
-      ? `Registration deadline for ${tournament.name}\\n\\nDon't forget to register!\\n\\nDetails: https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`
-      : generateDescription();
+    // Create cleaner description for Google Calendar
+    const createGoogleDescription = () => {
+      const parts = [];
+      
+      if (tournament.description && !isRegistration) {
+        parts.push(tournament.description);
+        parts.push(''); // Empty line
+      }
+      
+      if (!isRegistration) {
+        parts.push(`🏆 ${tournament.format}`);
+        parts.push(`👥 Age Groups: ${tournament.ageGroups.join(', ')}`);
+        parts.push(`⚽ Team Types: ${tournament.teamTypes.join(', ')}`);
+        
+        if (tournament.cost) {
+          parts.push(`💰 Cost: £${tournament.cost.amount} per team`);
+        }
+        
+        if (tournament.contact.email) {
+          parts.push(`📧 Contact: ${tournament.contact.email}`);
+        }
+        
+        if (tournament.contact.phone) {
+          parts.push(`📞 Phone: ${tournament.contact.phone}`);
+        }
+        
+        parts.push(''); // Empty line
+        parts.push(`🔗 Details: https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`);
+      } else {
+        parts.push(`Registration deadline for ${tournament.name}`);
+        parts.push('');
+        parts.push("⚠️ Don't forget to register!");
+        parts.push('');
+        parts.push(`🔗 Register: https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`);
+      }
+      
+      return parts.join('\n');
+    };
 
-    const params = new URLSearchParams({
-      text: title,
-      dates: `${formatForGoogle(eventDate)}/${formatForGoogle(endDate)}`,
-      ctz: 'Europe/London',
-      location: generateLocation(),
-      details: description,
-      ...(tournament.contact.email && { add: tournament.contact.email }),
-      // Add reminders (Google Calendar format)
-      reminders: isRegistration ? '1440,120' : '10080,1440,120' // 1 week, 1 day, 2 hours in minutes
-    });
+    // Google Calendar URL parameters
+    const params = new URLSearchParams();
+    params.append('action', 'TEMPLATE');
+    params.append('text', title);
+    params.append('dates', `${formatForGoogle(eventDate)}/${formatForGoogle(endDate)}`);
+    params.append('location', generateLocation());
+    params.append('details', createGoogleDescription());
+    
+    // Add organizer email if available
+    if (tournament.contact.email) {
+      params.append('add', tournament.contact.email);
+    }
 
     return `${baseUrl}&${params.toString()}`;
   };
