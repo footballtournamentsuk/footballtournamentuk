@@ -24,8 +24,8 @@ const OrganizerCTA = () => {
           <div className="mb-8">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
               Organize a Tournament?
-              <span className="block text-accent-foreground bg-accent/90 rounded-lg px-4 py-2 mt-2 inline-block">
-                Add it here!
+              <span className="block text-white/80 bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 mt-4 inline-block italic border border-white/30 font-normal text-xl md:text-2xl">
+                ↓ Add it here! ↓
               </span>
             </h2>
             <p className="text-lg md:text-xl text-white/95 max-w-3xl mx-auto leading-relaxed">
@@ -38,17 +38,19 @@ const OrganizerCTA = () => {
             <Button
               asChild
               size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-110 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg px-10 py-8 h-auto rounded-xl font-bold border-2 border-accent/20 animate-pulse hover:animate-none relative overflow-hidden group"
+              className="bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-110 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg px-12 py-8 h-auto rounded-xl font-bold border-4 border-accent/30 relative overflow-hidden group ring-4 ring-accent/20 animate-[pulse_2s_ease-in-out_infinite] hover:animate-none"
               style={{
-                animationDuration: '3s',
-                animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)'
+                background: 'linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-hover, var(--accent))) 100%)',
+                boxShadow: '0 0 30px hsl(var(--accent) / 0.5), 0 20px 40px rgba(0,0,0,0.3)'
               }}
             >
-              <Link to="/auth" className="relative z-10">
-                <Plus className="w-6 h-6 mr-3" />
+              <Link to="/auth" className="relative z-10 flex items-center">
+                <Plus className="w-6 h-6 mr-3 animate-bounce" />
                 Register & Add Tournament
-                {/* Glow effect overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                {/* Enhanced glow effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out rounded-xl" />
+                {/* Pulsing ring effect */}
+                <div className="absolute inset-0 rounded-xl border-2 border-white/40 animate-ping" style={{ animationDuration: '2s' }} />
               </Link>
             </Button>
           </div>
