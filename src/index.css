@@ -161,4 +161,16 @@
       transform: scale(1.05);
     }
   }
+
+  /* Smooth breathing animation for CTA button */
+  @keyframes breathe {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 30px hsl(var(--accent) / 0.3), 0 20px 40px rgba(0,0,0,0.15);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 40px hsl(var(--accent) / 0.5), 0 25px 50px rgba(0,0,0,0.2);
+    }
+  }
 }
