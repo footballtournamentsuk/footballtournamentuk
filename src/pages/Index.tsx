@@ -245,130 +245,137 @@ const Index = () => {
       {/* FAQ Section */}
       <section className="py-16 bg-surface">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Everything you need to know about our free football tournament bulletin board
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">What is Football Tournaments UK?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  Football Tournaments UK is a completely free bulletin board platform for football tournaments across the United Kingdom. 
-                  We connect tournament organizers with teams, players, and families looking for competitive opportunities. Think of us as 
-                  a digital noticeboard where organizers can list their events and teams can discover tournaments in their area.
+          <Collapsible>
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left group">
+              <div className="text-center flex-1">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  Frequently Asked Questions
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Everything you need to know about our free football tournament bulletin board
                 </p>
-              </CollapsibleContent>
-            </Collapsible>
+              </div>
+              <ChevronDown className="w-6 h-6 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 ml-4 flex-shrink-0" />
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="mt-6">
+              <div className="space-y-4">
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">What is Football Tournaments UK?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      Football Tournaments UK is a completely free bulletin board platform for football tournaments across the United Kingdom. 
+                      We connect tournament organizers with teams, players, and families looking for competitive opportunities. Think of us as 
+                      a digital noticeboard where organizers can list their events and teams can discover tournaments in their area.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">Do you charge any fees?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  <strong>No, never.</strong> Our platform is completely free for both tournament organizers and teams. 
-                  There are no listing fees, no commission charges, no subscription costs, and no hidden charges. 
-                  We believe youth football should be accessible to everyone, and we're committed to keeping our service free forever.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">Do you charge any fees?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      <strong>No, never.</strong> Our platform is completely free for both tournament organizers and teams. 
+                      There are no listing fees, no commission charges, no subscription costs, and no hidden charges. 
+                      We believe youth football should be accessible to everyone, and we're committed to keeping our service free forever.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">Do you organize tournaments?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  <strong>No, we don't organize tournaments.</strong> We are purely a listing platform - a digital bulletin board. 
-                  Independent tournament organizers, clubs, leagues, and associations use our platform to promote their events. 
-                  All tournament organization, management, registration, and customer service is handled directly by the individual organizers.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">Do you organize tournaments?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      <strong>No, we don't organize tournaments.</strong> We are purely a listing platform - a digital bulletin board. 
+                      Independent tournament organizers, clubs, leagues, and associations use our platform to promote their events. 
+                      All tournament organization, management, registration, and customer service is handled directly by the individual organizers.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">How can organizers list their tournaments?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  Tournament organizers can create a free account and add their events through our simple online form. 
-                  You can include all the important details like dates, location, age groups, team format, entry fees, 
-                  contact information, and registration deadlines. Once submitted, tournaments are immediately visible to 
-                  teams and families searching our platform.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">How can organizers list their tournaments?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      Tournament organizers can create a free account and add their events through our simple online form. 
+                      You can include all the important details like dates, location, age groups, team format, entry fees, 
+                      contact information, and registration deadlines. Once submitted, tournaments are immediately visible to 
+                      teams and families searching our platform.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">Who can participate in tournaments?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  Our platform features tournaments for youth players of all levels and age groups across the UK. 
-                  Participation requirements vary by tournament - some are open to all teams, others may have specific 
-                  eligibility criteria set by the organizer. Always check the tournament details and contact the organizer 
-                  directly for registration information and specific requirements.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">Who can participate in tournaments?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      Our platform features tournaments for youth players of all levels and age groups across the UK. 
+                      Participation requirements vary by tournament - some are open to all teams, others may have specific 
+                      eligibility criteria set by the organizer. Always check the tournament details and contact the organizer 
+                      directly for registration information and specific requirements.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">Are there any contracts or commitments?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  <strong>No contracts, no commitments.</strong> Organizers can list and remove tournaments at any time. 
-                  Teams can browse and contact organizers without any obligations. Our platform is designed to be flexible 
-                  and user-friendly, with no long-term commitments required from anyone.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">Are there any contracts or commitments?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      <strong>No contracts, no commitments.</strong> Organizers can list and remove tournaments at any time. 
+                      Teams can browse and contact organizers without any obligations. Our platform is designed to be flexible 
+                      and user-friendly, with no long-term commitments required from anyone.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">How do I contact tournament organizers?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  Each tournament listing includes the organizer's contact information. You can reach out to them directly 
-                  via the provided email, phone number, or website links. All registration, questions about the tournament, 
-                  and customer service should be handled directly with the tournament organizer.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">How do I contact tournament organizers?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      Each tournament listing includes the organizer's contact information. You can reach out to them directly 
+                      via the provided email, phone number, or website links. All registration, questions about the tournament, 
+                      and customer service should be handled directly with the tournament organizer.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">What if I have issues with a tournament?</h3>
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                <p className="text-muted-foreground">
-                  Since we're a listing platform, all tournament-related issues should be resolved directly with the organizer. 
-                  However, if you encounter any problems with our website or have concerns about a listing, please contact us 
-                  and we'll do our best to help. We maintain quality standards for listings on our platform.
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
+                <Collapsible>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
+                    <h3 className="text-lg font-semibold">What if I have issues with a tournament?</h3>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
+                    <p className="text-muted-foreground">
+                      Since we're a listing platform, all tournament-related issues should be resolved directly with the organizer. 
+                      However, if you encounter any problems with our website or have concerns about a listing, please contact us 
+                      and we'll do our best to help. We maintain quality standards for listings on our platform.
+                    </p>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         {/* FAQ Schema Markup for SEO */}
