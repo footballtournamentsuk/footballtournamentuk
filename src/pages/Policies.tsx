@@ -1,17 +1,12 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 export default function Policies() {
-  return (
-    <HelmetProvider>
+  return <HelmetProvider>
       <div className="min-h-screen bg-background">
         <Helmet>
           <title>Policies - Football Tournaments UK</title>
-          <meta 
-            name="description" 
-            content="Privacy Policy and Terms & Conditions for Football Tournaments UK - your free online board for football tournament listings." 
-          />
+          <meta name="description" content="Privacy Policy and Terms & Conditions for Football Tournaments UK - your free online board for football tournament listings." />
           <link rel="canonical" href="https://footballtournamentsuk.co.uk/policies" />
         </Helmet>
 
@@ -33,7 +28,7 @@ export default function Policies() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-2xl">Privacy Policy</CardTitle>
-                  <p className="text-muted-foreground">Last updated: [Insert Date]</p>
+                  <p className="text-muted-foreground">Last updated: 17.08.2025</p>
                 </CardHeader>
                 <CardContent className="prose prose-slate max-w-none dark:prose-invert">
                   <div className="space-y-6">
@@ -202,6 +197,5 @@ export default function Policies() {
           </Tabs>
         </div>
       </div>
-    </HelmetProvider>
-  );
+    </HelmetProvider>;
 }
