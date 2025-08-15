@@ -1,8 +1,8 @@
 // supabase/functions/send-support-email/index.ts
-// Deno Edge Function – uses fetch to Resend (no Node SDK) v2
+// Deno Edge Function – uses fetch to Resend (no Node SDK) - REDEPLOYED
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY"); // Must match secret name exactly
 const FROM = 'Support <info@footballtournamentsuk.co.uk>';
 const TO = ['info@footballtournamentsuk.co.uk'];
 
