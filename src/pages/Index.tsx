@@ -11,7 +11,8 @@ import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Filter, Settings } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Search, Plus, Filter, Settings, HelpCircle } from 'lucide-react';
 
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
@@ -96,8 +97,71 @@ const Index = () => {
     value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
   ) || searchQuery.trim();
 
+  // FAQ structured data for SEO
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is UK Youth Football?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "UK Youth Football is a free bulletin board platform for youth football tournaments across the UK. We provide a simple listing service where tournament organizers can advertise their events and teams can discover opportunities. We don't charge any fees, require contracts, or organize tournaments ourselves."
+        }
+      },
+      {
+        "@type": "Question", 
+        "name": "Do you charge any fees?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, our platform is completely free. There are no charges for organizers to list tournaments, no fees for teams to browse events, no hidden costs, no premium listings, and no commission on registrations. Everything is free forever."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you organize tournaments?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, we don't organize or run tournaments ourselves. We are simply a listing platform. Each tournament is independently organized by clubs, academies, schools, or other organizations. All tournament details, rules, and registration processes are managed by the individual organizers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I list my tournament on your platform?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Simply create a free account on our platform and add your tournament details through your profile. Once submitted, your tournament will appear on our map and in search results immediately. There's no approval process or waiting time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who can participate in the tournaments?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Any youth football team, academy, school, or club can participate in the tournaments listed on our platform. Specific age groups, eligibility criteria, and participation requirements are set by each individual tournament organizer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are there any contracts or terms with your platform?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, there are no binding contracts or complicated terms with our platform. Tournament organizers set their own entry fees, terms and conditions, and registration processes. We simply provide the free listing platform to connect organizers with teams."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      {/* SEO structured data for FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqStructuredData)
+        }}
+      />
       {/* Hero Section */}
       <Hero />
 
@@ -382,6 +446,112 @@ const Index = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 bg-surface/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <HelpCircle className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Get answers to common questions about our platform
+              </p>
+            </div>
+            
+            <Accordion type="single" collapsible className="space-y-4">
+              <AccordionItem value="what-is" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  What is UK Youth Football?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  UK Youth Football is a free bulletin board platform for youth football tournaments across the UK. 
+                  We provide a simple listing service where tournament organizers can advertise their events and teams 
+                  can discover opportunities. We don't charge any fees, require contracts, or organize tournaments ourselves.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="fees" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  Do you charge any fees?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  No, our platform is completely free. There are no charges for organizers to list tournaments, 
+                  no fees for teams to browse events, no hidden costs, no premium listings, and no commission on registrations. 
+                  Everything is free forever.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="organize" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  Do you organize tournaments?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  No, we don't organize or run tournaments ourselves. We are simply a listing platform. 
+                  Each tournament is independently organized by clubs, academies, schools, or other organizations. 
+                  All tournament details, rules, and registration processes are managed by the individual organizers.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="how-to-list" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  How can I list my tournament on your platform?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Simply create a free account on our platform and add your tournament details through your profile. 
+                  Once submitted, your tournament will appear on our map and in search results immediately. 
+                  There's no approval process or waiting time.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="who-can-participate" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  Who can participate in the tournaments?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Any youth football team, academy, school, or club can participate in the tournaments listed on our platform. 
+                  Specific age groups, eligibility criteria, and participation requirements are set by each individual tournament organizer.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="contracts" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  Are there any contracts or terms with your platform?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  No, there are no binding contracts or complicated terms with our platform. Tournament organizers set their own 
+                  entry fees, terms and conditions, and registration processes. We simply provide the free listing platform 
+                  to connect organizers with teams.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="how-it-works" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  How does registration for tournaments work?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Each tournament organizer handles their own registration process. When you find a tournament you're interested in, 
+                  you'll see the organizer's contact details and registration instructions. Some may have online forms, 
+                  others prefer email or phone contact. We simply connect you with the organizer.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="support" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-left font-semibold">
+                  What if I have issues with a tournament or organizer?
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Since we're just a listing platform, any issues with tournaments, registrations, or rules should be resolved 
+                  directly with the tournament organizer. We provide the platform for discovery, but all tournament operations 
+                  are handled independently by the organizers.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </div>
       </section>
