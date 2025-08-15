@@ -101,6 +101,89 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
 
+      {/* What We Are Section */}
+      <section className="py-16 bg-surface/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              What is UK Youth Football?
+            </h2>
+            <p className="text-xl text-muted-foreground mb-12">
+              We are simply a <strong>free bulletin board</strong> for youth football tournaments across the UK. 
+              No fees, no contracts, no complications.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">📋</span>
+                </div>
+                <h3 className="text-lg font-semibold">What We Are</h3>
+                <p className="text-muted-foreground">
+                  A free listing platform where tournament organizers can advertise their events 
+                  and teams can discover opportunities. Think of us as a community noticeboard.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <h3 className="text-lg font-semibold">No Fees, Ever</h3>
+                <p className="text-muted-foreground">
+                  Completely free for organizers to list tournaments and for teams to browse. 
+                  No hidden charges, no premium listings, no commission on registrations.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🚫</span>
+                </div>
+                <h3 className="text-lg font-semibold">We Don't Organize</h3>
+                <p className="text-muted-foreground">
+                  We don't run tournaments ourselves. Each event is independently organized. 
+                  Contact details are provided for direct communication with organizers.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">📝</span>
+                </div>
+                <h3 className="text-lg font-semibold">How to List</h3>
+                <p className="text-muted-foreground">
+                  Simply create a free account and add your tournament details. 
+                  Your event will appear on our map and in search results immediately.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">⚽</span>
+                </div>
+                <h3 className="text-lg font-semibold">Who Can Join</h3>
+                <p className="text-muted-foreground">
+                  Any youth football team, academy, school, or club can participate in listed tournaments. 
+                  Age groups and eligibility are set by individual organizers.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🤝</span>
+                </div>
+                <h3 className="text-lg font-semibold">No Contracts</h3>
+                <p className="text-muted-foreground">
+                  No binding agreements with us. Organizers set their own terms, 
+                  entry fees, and registration processes. We just provide the platform.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Organizer CTA Section */}
       <OrganizerCTA />
 
