@@ -56,12 +56,26 @@ serve(async (req: Request) => {
       });
     }
     
-    // Prepare email
+    // Prepare email (using default Resend sender)
     const emailPayload = {
-      from: 'Support <info@footballtournamentsuk.co.uk>',
+      from: 'Football Tournaments UK <onboarding@resend.dev>',
       to: ['info@footballtournamentsuk.co.uk'],
+      reply_to: email, // User can reply directly to the sender
       subject: `Support: ${subject} — from ${name}`,
-      html: `<p><b>Name:</b> ${name}</p><p><b>Email:</b> ${email}</p><p><b>Subject:</b> ${subject}</p><div style="white-space:pre-wrap">${message}</div>`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>New Support Message</h2>
+          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>From:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+          </div>
+          <div style="background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h3>Message:</h3>
+            <div style="white-space: pre-wrap; line-height: 1.5;">${message}</div>
+          </div>
+        </div>
+      `,
     };
     
     console.log("📧 Sending to Resend...");
