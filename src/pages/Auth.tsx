@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, DollarSign, Clock, Shield } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, PoundSterling, Clock, Shield } from 'lucide-react';
 
 const AuthPage = () => {
   const [name, setName] = useState('');
@@ -135,8 +135,8 @@ const AuthPage = () => {
         {/* Logo and Branding */}
         <div className="text-center mb-8">
           <div className="mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">
-              Football Tournaments
+            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-white via-primary to-football-primary bg-clip-text text-transparent drop-shadow-lg">
+              FOOTBALL TOURNAMENTS
             </h1>
           </div>
         </div>
@@ -156,7 +156,7 @@ const AuthPage = () => {
           <TabsContent value="signin">
             <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Welcome Back</CardTitle>
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Welcome Back</CardTitle>
                 <CardDescription>
                   Sign in to your organizer account
                 </CardDescription>
@@ -228,7 +228,7 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Create Account</CardTitle>
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Create Account</CardTitle>
                 <CardDescription className="text-base font-medium text-muted-foreground">
                   Reach thousands of players and teams — free and easy.
                 </CardDescription>
@@ -317,7 +317,7 @@ const AuthPage = () => {
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-white" strokeWidth={2.5} />
+                        <PoundSterling className="w-5 h-5 text-white" strokeWidth={2.5} />
                       </div>
                       <div>
                         <div className="font-semibold text-sm text-foreground">Free</div>
