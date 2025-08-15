@@ -38,7 +38,7 @@ const OrganizerCTA = () => {
             <Button
               asChild
               size="lg"
-              className="w-full bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-105 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg px-8 py-6 h-auto rounded-xl font-bold border-4 border-accent/30 relative overflow-hidden group ring-4 ring-accent/20 animate-[pulse_6s_ease-in-out_infinite] hover:animate-none"
+              className="w-full bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-105 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg px-8 py-6 h-auto rounded-xl font-bold border-4 border-accent/30 relative overflow-hidden group ring-4 ring-accent/20 animate-[pulse_10s_ease-in-out_infinite] hover:animate-none"
               style={{
                 background: 'linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-hover, var(--accent))) 100%)',
                 boxShadow: '0 0 30px hsl(var(--accent) / 0.3), 0 20px 40px rgba(0,0,0,0.15)'
@@ -50,7 +50,7 @@ const OrganizerCTA = () => {
                 {/* Enhanced glow effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out rounded-xl" />
                 {/* Very subtle pulsing ring effect */}
-                <div className="absolute inset-0 rounded-xl border-2 border-white/20 animate-ping opacity-50" style={{ animationDuration: '6s' }} />
+                <div className="absolute inset-0 rounded-xl border-2 border-white/20 animate-ping opacity-50" style={{ animationDuration: '10s' }} />
               </Link>
             </Button>
           </div>
