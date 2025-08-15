@@ -346,11 +346,12 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
       
       {/* Mobile-first bottom sheet with responsive centering */}
       <DialogContent 
-        className="p-0 gap-0 border-0 bg-transparent shadow-none max-w-none w-full h-full flex items-end justify-center 
-                   sm:items-center sm:justify-center sm:h-auto fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out 
-                   data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full 
-                   data-[state=open]:slide-in-from-bottom-full sm:data-[state=closed]:slide-out-to-bottom-0 
-                   sm:data-[state=open]:slide-in-from-bottom-0"
+        className="p-0 gap-0 border-0 bg-transparent shadow-none w-full h-full fixed inset-0 z-50 
+                   flex items-end justify-center sm:items-center sm:justify-center
+                   data-[state=open]:animate-in data-[state=closed]:animate-out 
+                   data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 
+                   data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full
+                   sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=open]:slide-in-from-bottom-0"
         onPointerDownOutside={() => setIsOpen(false)}
         onInteractOutside={() => setIsOpen(false)}
         aria-modal="true"
@@ -359,20 +360,29 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
       >
         {/* Backdrop */}
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[-1]" 
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
         
-        {/* Modal content */}
-        <div className="relative bg-background border border-border rounded-t-[20px] sm:rounded-[20px] shadow-lg w-full 
-                        max-w-[480px] max-h-[80vh] sm:max-h-[90vh] mx-4 sm:mx-auto mb-0 sm:mb-auto overflow-hidden
-                        animate-in slide-in-from-bottom-4 duration-200 ease-out
-                        [padding:16px_16px_max(16px,env(safe-area-inset-bottom))_16px]
-                        [width:calc(100vw-32px)]">
+        {/* Modal content container - properly constrained */}
+        <div className="relative z-10 w-full max-w-[480px] mx-4 mb-0 sm:mx-4 sm:mb-auto sm:mt-auto
+                        bg-background border border-border shadow-xl
+                        rounded-t-[20px] sm:rounded-[20px] 
+                        max-h-[85vh] sm:max-h-[90vh] 
+                        overflow-hidden flex flex-col
+                        animate-in slide-in-from-bottom-4 duration-200 ease-out"
+             style={{
+               width: 'calc(100vw - 32px)',
+               maxWidth: '480px',
+               paddingLeft: 'max(16px, env(safe-area-inset-left))',
+               paddingRight: 'max(16px, env(safe-area-inset-right))',
+               paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+               paddingTop: '16px'
+             }}>
           
-          {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-border">
+          {/* Header - fixed height */}
+          <div className="flex items-center justify-between pb-4 border-b border-border px-4 flex-shrink-0">
             <h2 className="text-lg font-semibold text-foreground">Add to Calendar</h2>
             <Button
               variant="ghost"
@@ -385,8 +395,8 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
             </Button>
           </div>
           
-          {/* Scrollable content */}
-          <div className="max-h-[calc(80vh-120px)] sm:max-h-[calc(90vh-120px)] overflow-y-auto overscroll-contain">
+          {/* Scrollable content with proper padding */}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4">
             {/* Tournament Info */}
             <div className="py-4 border-b border-border">
               <h3 className="font-semibold text-base mb-2 line-clamp-2 text-foreground">{tournament.name}</h3>
