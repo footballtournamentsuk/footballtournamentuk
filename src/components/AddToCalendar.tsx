@@ -279,6 +279,22 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
     }
   ];
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = 'var(--scrollbar-width, 0px)';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isOpen]);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -293,98 +309,128 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
         </Button>
       </DialogTrigger>
       
+      {/* Mobile-first bottom sheet with responsive centering */}
       <DialogContent 
-        className="sm:max-w-md w-full mx-0 mb-0 rounded-t-xl rounded-b-none fixed bottom-0 left-0 right-0 max-h-[80vh] overflow-hidden translate-y-0 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom animate-in"
+        className="p-0 gap-0 border-0 bg-transparent shadow-none max-w-none w-full h-full flex items-end justify-center 
+                   sm:items-center sm:justify-center sm:h-auto fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out 
+                   data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full 
+                   data-[state=open]:slide-in-from-bottom-full sm:data-[state=closed]:slide-out-to-bottom-0 
+                   sm:data-[state=open]:slide-in-from-bottom-0"
         onPointerDownOutside={() => setIsOpen(false)}
+        onInteractOutside={() => setIsOpen(false)}
+        aria-modal="true"
+        role="dialog"
         ref={modalRef}
       >
-        <DialogHeader className="pb-4 border-b">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-semibold">Add to Calendar</DialogTitle>
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[-1]" 
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+        
+        {/* Modal content */}
+        <div className="relative bg-background border border-border rounded-t-[20px] sm:rounded-[20px] shadow-lg w-full 
+                        max-w-[480px] max-h-[80vh] sm:max-h-[90vh] mx-4 sm:mx-auto mb-0 sm:mb-auto overflow-hidden
+                        animate-in slide-in-from-bottom-4 duration-200 ease-out
+                        [padding:16px_16px_max(16px,env(safe-area-inset-bottom))_16px]
+                        [width:calc(100vw-32px)]">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between pb-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">Add to Calendar</h2>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(false)}
-              className="h-6 w-6 p-0 rounded-full"
-              aria-label="Close"
+              className="h-8 w-8 p-0 rounded-full hover:bg-muted"
+              aria-label="Close dialog"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
-        </DialogHeader>
-        
-        <div className="max-h-[60vh] overflow-y-auto">
-          {/* Tournament Info */}
-          <div className="py-4 border-b">
-            <h3 className="font-semibold text-sm mb-1 line-clamp-2">{tournament.name}</h3>
-            <p className="text-xs text-muted-foreground">
-              {format(tournament.dates.start, 'PPP')} - {format(tournament.dates.end, 'PPP')}
-            </p>
-          </div>
           
-          {/* Main Tournament Event */}
-          <div className="py-4 space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <CalendarPlus className="h-4 w-4 text-primary" />
-              <span className="font-medium text-sm">Tournament Event</span>
+          {/* Scrollable content */}
+          <div className="max-h-[calc(80vh-120px)] sm:max-h-[calc(90vh-120px)] overflow-y-auto overscroll-contain">
+            {/* Tournament Info */}
+            <div className="py-4 border-b border-border">
+              <h3 className="font-semibold text-base mb-2 line-clamp-2 text-foreground">{tournament.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {format(tournament.dates.start, 'PPP')} - {format(tournament.dates.end, 'PPP')}
+              </p>
             </div>
             
-            <div className="grid grid-cols-1 gap-3">
-              {calendarOptions.map((option) => (
-                <Button
-                  key={option.name}
-                  variant="outline"
-                  className={`${option.bgColor} ${option.textColor} border-0 justify-start gap-3 h-12 rounded-xl font-medium transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
-                  onClick={() => {
-                    option.action(false);
-                    setIsOpen(false);
-                  }}
-                >
-                  <span className="text-lg">{option.icon}</span>
-                  <div className="text-left">
-                    <div className="text-sm font-medium">{option.name}</div>
-                    <div className="text-xs opacity-80">Tournament dates</div>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Registration Deadline (if exists) */}
-          {tournament.dates.registrationDeadline && (
-            <div className="py-4 border-t space-y-3">
-              <div className="flex items-center gap-2 mb-3">
-                <Calendar className="h-4 w-4 text-orange-500" />
-                <span className="font-medium text-sm">Registration Deadline</span>
+            {/* Main Tournament Event */}
+            <div className="py-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <CalendarPlus className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-base text-foreground">Tournament Event</span>
               </div>
               
-              <div className="bg-orange-50 dark:bg-orange-950 p-3 rounded-lg mb-3">
-                <p className="text-xs text-orange-800 dark:text-orange-200">
-                  Deadline: {format(tournament.dates.registrationDeadline, 'PPPp')}
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-3">
+              <div className="space-y-3">
                 {calendarOptions.map((option) => (
                   <Button
-                    key={`reg-${option.name}`}
+                    key={option.name}
                     variant="outline"
-                    className="border-orange-200 hover:bg-orange-50 justify-start gap-3 h-12 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                    className="w-full h-12 justify-start gap-4 rounded-xl border-2 hover:border-primary
+                               hover:bg-primary/5 active:scale-[0.98] transition-all duration-200
+                               focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
                     onClick={() => {
-                      option.action(true);
+                      option.action(false);
                       setIsOpen(false);
                     }}
                   >
-                    <span className="text-lg">{option.icon}</span>
-                    <div className="text-left">
-                      <div className="text-sm font-medium text-orange-800 dark:text-orange-200">{option.name}</div>
-                      <div className="text-xs text-orange-600 dark:text-orange-300">Registration reminder</div>
+                    <span className="text-xl">{option.icon}</span>
+                    <div className="text-left flex-1">
+                      <div className="font-semibold text-sm text-foreground">{option.name}</div>
+                      <div className="text-xs text-muted-foreground">Tournament dates</div>
                     </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 ))}
               </div>
             </div>
-          )}
+
+            {/* Registration Deadline (if exists) */}
+            {tournament.dates.registrationDeadline && (
+              <div className="py-6 border-t border-border space-y-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-orange-500" />
+                  <span className="font-semibold text-base text-foreground">Registration Deadline</span>
+                </div>
+                
+                <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-4 rounded-xl">
+                  <p className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                    Deadline: {format(tournament.dates.registrationDeadline, 'PPPp')}
+                  </p>
+                </div>
+                
+                <div className="space-y-3">
+                  {calendarOptions.map((option) => (
+                    <Button
+                      key={`reg-${option.name}`}
+                      variant="outline"
+                      className="w-full h-12 justify-start gap-4 rounded-xl border-2 border-orange-200 
+                                 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30
+                                 active:scale-[0.98] transition-all duration-200
+                                 focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:outline-none"
+                      onClick={() => {
+                        option.action(true);
+                        setIsOpen(false);
+                      }}
+                    >
+                      <span className="text-xl">{option.icon}</span>
+                      <div className="text-left flex-1">
+                        <div className="font-semibold text-sm text-orange-800 dark:text-orange-200">{option.name}</div>
+                        <div className="text-xs text-orange-600 dark:text-orange-300">Registration reminder</div>
+                      </div>
+                      <Download className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
