@@ -344,140 +344,140 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
         </Button>
       </DialogTrigger>
       
-      {/* Mobile-first bottom sheet with responsive centering */}
-      <DialogContent 
-        className="p-0 gap-0 border-0 bg-transparent shadow-none w-full h-full fixed inset-0 z-50 
-                   flex items-end justify-center sm:items-center sm:justify-center
-                   data-[state=open]:animate-in data-[state=closed]:animate-out 
-                   data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 
-                   data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full
-                   sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=open]:slide-in-from-bottom-0"
-        onPointerDownOutside={() => setIsOpen(false)}
-        onInteractOutside={() => setIsOpen(false)}
-        aria-modal="true"
-        role="dialog"
-        ref={modalRef}
-      >
-        {/* Backdrop */}
-        <div 
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
-          onClick={() => setIsOpen(false)}
+      {/* Modal overlay with backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(2px)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsOpen(false);
+          }}
           aria-hidden="true"
-        />
-        
-        {/* Modal content container - properly constrained */}
-        <div className="relative z-10 w-full max-w-[480px] mx-4 mb-0 sm:mx-4 sm:mb-auto sm:mt-auto
-                        bg-background border border-border shadow-xl
-                        rounded-t-[20px] sm:rounded-[20px] 
-                        max-h-[85vh] sm:max-h-[90vh] 
-                        overflow-hidden flex flex-col
-                        animate-in slide-in-from-bottom-4 duration-200 ease-out"
-             style={{
-               width: 'calc(100vw - 32px)',
-               maxWidth: '480px',
-               paddingLeft: 'max(16px, env(safe-area-inset-left))',
-               paddingRight: 'max(16px, env(safe-area-inset-right))',
-               paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
-               paddingTop: '16px'
-             }}>
-          
-          {/* Header - fixed height */}
-          <div className="flex items-center justify-between pb-4 border-b border-border px-4 flex-shrink-0">
-            <h2 className="text-lg font-semibold text-foreground">Add to Calendar</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsOpen(false)}
-              className="h-8 w-8 p-0 rounded-full hover:bg-muted"
-              aria-label="Close dialog"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          {/* Scrollable content with proper padding */}
-          <div className="flex-1 overflow-y-auto overscroll-contain px-4">
-            {/* Tournament Info */}
-            <div className="py-4 border-b border-border">
-              <h3 className="font-semibold text-base mb-2 line-clamp-2 text-foreground">{tournament.name}</h3>
-              <p className="text-sm text-muted-foreground">
-                {format(tournament.dates.start, 'PPP')} - {format(tournament.dates.end, 'PPP')}
-              </p>
-            </div>
-            
-            {/* Main Tournament Event */}
-            <div className="py-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <CalendarPlus className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-base text-foreground">Tournament Event</span>
-              </div>
-              
-              <div className="space-y-3">
-                {calendarOptions.map((option) => (
-                  <Button
-                    key={option.name}
-                    variant="outline"
-                    className="w-full h-12 justify-start gap-4 rounded-xl border-2 hover:border-primary
-                               hover:bg-primary/5 active:scale-[0.98] transition-all duration-200
-                               focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
-                    onClick={() => {
-                      option.action(false);
-                      setIsOpen(false);
-                    }}
-                  >
-                    <span className="text-xl">{option.icon}</span>
-                    <div className="text-left flex-1">
-                      <div className="font-semibold text-sm text-foreground">{option.name}</div>
-                      <div className="text-xs text-muted-foreground">Tournament dates</div>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                ))}
-              </div>
+        >
+          {/* Modal Content */}
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calendar-modal-title"
+            className="relative w-full max-w-md mx-auto bg-background dark:bg-gray-900 shadow-xl transform transition-all duration-200 ease-out
+                       sm:rounded-lg sm:max-h-[85vh] sm:my-auto
+                       max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:max-h-[85vh] max-sm:animate-in max-sm:slide-in-from-bottom"
+            style={{
+              width: 'calc(100vw - 32px)',
+              maxWidth: '480px',
+              paddingLeft: 'max(16px, env(safe-area-inset-left))',
+              paddingRight: 'max(16px, env(safe-area-inset-right))',
+              paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+              marginLeft: '16px',
+              marginRight: '16px',
+            }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 id="calendar-modal-title" className="text-lg font-semibold text-foreground">
+                Add to Calendar
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+                className="h-8 w-8 p-0 rounded-full hover:bg-muted"
+                aria-label="Close calendar dialog"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
 
-            {/* Registration Deadline (if exists) */}
-            {tournament.dates.registrationDeadline && (
-              <div className="py-6 border-t border-border space-y-4">
+            {/* Content with scroll */}
+            <div className="max-h-[calc(85vh-80px)] overflow-y-auto">
+              {/* Tournament Info */}
+              <div className="p-4 border-b border-border">
+                <h3 className="font-semibold text-base mb-2 line-clamp-2 text-foreground">
+                  {tournament.name}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {format(tournament.dates.start, 'PPP')} - {format(tournament.dates.end, 'PPP')}
+                </p>
+              </div>
+              
+              {/* Main Tournament Event */}
+              <div className="p-4 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-orange-500" />
-                  <span className="font-semibold text-base text-foreground">Registration Deadline</span>
-                </div>
-                
-                <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-4 rounded-xl">
-                  <p className="text-sm font-medium text-orange-800 dark:text-orange-200">
-                    Deadline: {format(tournament.dates.registrationDeadline, 'PPPp')}
-                  </p>
+                  <CalendarPlus className="h-5 w-5 text-primary" />
+                  <span className="font-semibold text-base text-foreground">Tournament Event</span>
                 </div>
                 
                 <div className="space-y-3">
                   {calendarOptions.map((option) => (
                     <Button
-                      key={`reg-${option.name}`}
+                      key={option.name}
                       variant="outline"
-                      className="w-full h-12 justify-start gap-4 rounded-xl border-2 border-orange-200 
-                                 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30
-                                 active:scale-[0.98] transition-all duration-200
-                                 focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:outline-none"
+                      className="w-full h-12 justify-start gap-4 rounded-xl border-2 hover:border-primary
+                                 hover:bg-primary/5 active:scale-[0.98] transition-all duration-200
+                                 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none text-base font-medium"
                       onClick={() => {
-                        option.action(true);
+                        option.action(false);
                         setIsOpen(false);
                       }}
                     >
                       <span className="text-xl">{option.icon}</span>
                       <div className="text-left flex-1">
-                        <div className="font-semibold text-sm text-orange-800 dark:text-orange-200">{option.name}</div>
-                        <div className="text-xs text-orange-600 dark:text-orange-300">Registration reminder</div>
+                        <div className="font-semibold text-sm text-foreground">{option.name}</div>
+                        <div className="text-xs text-muted-foreground">Tournament dates</div>
                       </div>
-                      <Download className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   ))}
                 </div>
               </div>
-            )}
+
+              {/* Registration Deadline (if exists) */}
+              {tournament.dates.registrationDeadline && (
+                <div className="p-4 border-t border-border space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-orange-500" />
+                    <span className="font-semibold text-base text-foreground">Registration Deadline</span>
+                  </div>
+                  
+                  <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-4 rounded-xl">
+                    <p className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                      Deadline: {format(tournament.dates.registrationDeadline, 'PPPp')}
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {calendarOptions.map((option) => (
+                      <Button
+                        key={`reg-${option.name}`}
+                        variant="outline"
+                        className="w-full h-12 justify-start gap-4 rounded-xl border-2 border-orange-200 
+                                   hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30
+                                   active:scale-[0.98] transition-all duration-200
+                                   focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:outline-none text-base font-medium"
+                        onClick={() => {
+                          option.action(true);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <span className="text-xl">{option.icon}</span>
+                        <div className="text-left flex-1">
+                          <div className="font-semibold text-sm text-orange-800 dark:text-orange-200">{option.name}</div>
+                          <div className="text-xs text-orange-600 dark:text-orange-300">Registration reminder</div>
+                        </div>
+                        <Download className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </DialogContent>
+      )}
     </Dialog>
   );
 };
