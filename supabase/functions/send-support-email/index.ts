@@ -18,7 +18,14 @@ function corsHeaders(origin?: string) {
 
 serve(async (req: Request) => {
   console.log("🚀 Function called:", req.method, req.url);
-  console.log('HAS_RESEND_KEY:', !!RESEND_API_KEY); // should log true in prod
+  
+  // Explicit env check with detailed logging
+  const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+  console.log('HAS_RESEND_KEY:', !!RESEND_API_KEY);
+  if (RESEND_API_KEY) {
+    console.log('RESEND_KEY_LENGTH:', RESEND_API_KEY.length);
+    console.log('RESEND_KEY_PREFIX:', RESEND_API_KEY.substring(0, 8) + '...');
+  }
   
   const origin = req.headers.get("origin") ?? "*";
 
@@ -37,15 +44,13 @@ serve(async (req: Request) => {
       });
     }
 
-    console.log("🔑 Checking RESEND_API_KEY...");
     if (!RESEND_API_KEY) {
-      console.error("❌ RESEND_API_KEY not found");
-      return new Response(JSON.stringify({ error: "Missing RESEND_API_KEY" }), {
+      console.error("❌ RESEND_API_KEY not found in environment");
+      return new Response(JSON.stringify({ stage: "env_check", error: "Missing RESEND_API_KEY" }), {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
       });
     }
-    console.log("✅ RESEND_API_KEY found, length:", RESEND_API_KEY.length);
 
     console.log("📝 Parsing request body...");
     const { name, email, subject, message } = await req.json().catch(() => ({}));
@@ -53,27 +58,25 @@ serve(async (req: Request) => {
     
     if (!name || !email || !subject || !message) {
       console.log("❌ Missing required fields");
-      return new Response(JSON.stringify({ error: "Missing fields" }), {
+      return new Response(JSON.stringify({ stage: "validation", error: "Missing fields" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
       });
     }
 
+    // Minimal payload with verified From address
     const body = {
-      from: FROM,
-      to: TO,
+      from: 'Support <info@footballtournamentsuk.co.uk>', // must match verified domain
+      to: ['info@footballtournamentsuk.co.uk'],
       subject: `Support: ${subject} — from ${name}`,
-      html: `
-        <h2>New Support Request</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Subject:</b> ${subject}</p>
-        <p><b>Message:</b></p>
-        <div style="white-space:pre-wrap">${String(message)}</div>
-      `,
+      html: `<p><b>Name:</b> ${name}</p>
+             <p><b>Email:</b> ${email}</p>
+             <p><b>Subject:</b> ${subject}</p>
+             <div style="white-space:pre-wrap">${message}</div>`,
     };
 
-    console.log("📧 Sending email to Resend API...");
+    console.log("📧 Sending to Resend API with payload:", JSON.stringify(body, null, 2));
+    
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -84,11 +87,12 @@ serve(async (req: Request) => {
     });
 
     const text = await r.text();
-    console.log("📨 Resend response:", r.status, text);
+    console.log('RESEND_STATUS:', r.status, 'RESEND_BODY:', text);
     
     if (!r.ok) {
-      console.error("❌ Resend API error:", r.status, text);
-      return new Response(JSON.stringify({ error: "Resend error", status: r.status, body: text }), {
+      console.error("❌ Resend API error - Status:", r.status, "Body:", text);
+      // Return full error to client for debugging
+      return new Response(JSON.stringify({ stage: "resend", status: r.status, body: text }), {
         status: 502,
         headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
       });
@@ -96,13 +100,13 @@ serve(async (req: Request) => {
 
     const json = JSON.parse(text);
     console.log("✅ Email sent successfully:", json);
-    return new Response(JSON.stringify({ id: json?.id ?? null }), {
+    return new Response(JSON.stringify({ id: json?.id ?? null, success: true }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
     });
   } catch (e) {
     console.error("💥 Function error:", e);
-    return new Response(JSON.stringify({ error: e?.message ?? "Server error" }), {
+    return new Response(JSON.stringify({ stage: "exception", error: e?.message ?? "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
     });
