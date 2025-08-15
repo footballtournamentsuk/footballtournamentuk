@@ -59,8 +59,7 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
         name: formData.name.trim(),
         email: formData.email.trim(),
         subject: formData.subject.trim(),
-        message: formData.message.trim(),
-        pageUrl: window.location.href
+        message: formData.message.trim()
       });
 
       const { data, error } = await supabase.functions.invoke('send-support-email', {
@@ -68,8 +67,7 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
           name: formData.name.trim(),
           email: formData.email.trim(),
           subject: formData.subject.trim(),
-          message: formData.message.trim(),
-          pageUrl: window.location.href
+          message: formData.message.trim()
         }
       });
 
