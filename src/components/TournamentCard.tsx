@@ -20,6 +20,7 @@ import {
   Navigation
 } from 'lucide-react';
 import { ShareButton } from './ShareButton';
+import { AddToCalendar } from './AddToCalendar';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -280,6 +281,13 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          
+          <AddToCalendar
+            tournament={tournament}
+            size="sm"
+            variant="default"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white border-0 transition-colors duration-200"
+          />
           
           <div className="w-full">
             <ShareButton
