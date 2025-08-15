@@ -77,11 +77,20 @@ export default function Policies() {
                     </section>
 
                     <section>
-                      <h3 className="text-xl font-semibold mb-3">5. Data Sharing</h3>
+                      <h3 className="text-xl font-semibold mb-3">5. Data Sharing & Public Display</h3>
                       <p>
                         We do not sell or rent your personal information.
                         We only share data if required by law or with your explicit consent.
                       </p>
+                      <p className="mt-3 font-medium">
+                        <strong>Important Notice About Tournament Organizer Information:</strong>
+                      </p>
+                      <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li>Any personal information (full name, email address, phone number) entered by tournament organizers in their profile may be publicly displayed on their tournament listings.</li>
+                        <li>By publishing their profile and tournament details, organizers voluntarily consent to making these contact details publicly available and take full responsibility for the accuracy and sharing of this information.</li>
+                        <li>Organizers can edit or remove their contact details at any time through their profile settings.</li>
+                        <li>Our platform is not responsible for how third parties may use or contact organizers using the published contact details.</li>
+                      </ul>
                     </section>
 
                     <section>
@@ -144,6 +153,8 @@ export default function Policies() {
                         <li>We do not guarantee event availability, quality, or safety.</li>
                         <li>Participation in any event found on our site is entirely at your own risk.</li>
                         <li>We are not liable for cancellations, injuries, losses, or disputes between organizers and participants.</li>
+                        <li><strong>We are not responsible for how third parties may use, contact, or interact with tournament organizers using the publicly displayed contact information.</strong></li>
+                        <li>Any misuse of organizer contact details by third parties is beyond our control and responsibility.</li>
                       </ul>
                     </section>
 
@@ -152,6 +163,9 @@ export default function Policies() {
                       <ul className="list-disc list-inside space-y-1">
                         <li>Organizers must ensure their listings are accurate and lawful.</li>
                         <li>Users must verify event details with organizers before participating.</li>
+                        <li><strong>Tournament organizers acknowledge and agree that by creating a profile and publishing tournament listings, their contact information (name, email, phone number) will be publicly displayed and accessible to all users of the platform.</strong></li>
+                        <li>Organizers are solely responsible for the accuracy of their contact information and any consequences arising from making this information publicly available.</li>
+                        <li>Organizers understand they can modify or remove their contact details at any time through their profile settings.</li>
                       </ul>
                     </section>
 
