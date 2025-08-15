@@ -54,6 +54,7 @@ serve(async (req: Request) => {
     }
 
     console.log("📝 Processing support request from:", email, "Subject:", subject);
+    console.log("🔑 About to send with API key length:", RESEND_API_KEY?.length);
 
     const payload = {
       from: FROM,
