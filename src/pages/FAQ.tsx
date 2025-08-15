@@ -147,9 +147,11 @@ const FAQ = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="default" size="lg" className="flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              Contact Support
+            <Button variant="default" size="lg" className="flex items-center gap-2" asChild>
+              <a href="mailto:info@footballtournamentsuk.co.uk">
+                <Mail className="w-5 h-5" />
+                Contact Support
+              </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <Link to="/">
