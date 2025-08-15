@@ -40,6 +40,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AttachmentViewer } from '@/components/AttachmentViewer';
 import { useAttachments } from '@/hooks/useAttachments';
+import { ShareButton } from '@/components/ShareButton';
 
 const TournamentDetails = () => {
   const { id, param } = useParams<{ id?: string; param?: string }>();
@@ -189,14 +190,23 @@ const TournamentDetails = () => {
         )}
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative container mx-auto px-4 h-full flex flex-col justify-between py-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="self-start text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Tournaments
-          </Button>
+          <div className="flex justify-between items-start">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="self-start text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Tournaments
+            </Button>
+            <ShareButton
+              url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`}
+              title={tournament.name}
+              description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
+              size="sm"
+              variant="ghost"
+            />
+          </div>
         </div>
       </div>
 

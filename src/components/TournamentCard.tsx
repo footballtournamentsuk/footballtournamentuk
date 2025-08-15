@@ -19,6 +19,7 @@ import {
   ChevronDown,
   Navigation
 } from 'lucide-react';
+import { ShareButton } from './ShareButton';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -276,16 +277,26 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="px-3"
-            asChild
-          >
-            <Link to={`/tournaments/${tournament.id}`}>
-              Details
-            </Link>
-          </Button>
+          
+          <div className="flex gap-2">
+            <ShareButton
+              url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`}
+              title={tournament.name}
+              description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
+              size="sm"
+              variant="outline"
+            />
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="px-3"
+              asChild
+            >
+              <Link to={`/tournaments/${tournament.id}`}>
+                Details
+              </Link>
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
