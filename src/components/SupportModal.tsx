@@ -7,8 +7,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface SupportModalProps {
   isOpen: boolean;
@@ -26,7 +24,6 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
     subject: "",
     message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reset form when modal opens/closes
   React.useEffect(() => {
@@ -52,66 +49,11 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      console.log('🚀 Invoking send-support-email function with data:', {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        subject: formData.subject.trim(),
-        message: formData.message.trim()
-      });
-
-      const { data, error } = await supabase.functions.invoke('send-support-email', {
-        body: {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          subject: formData.subject.trim(),
-          message: formData.message.trim()
-        }
-      });
-
-      console.log('📧 Function response - Data:', data);
-      console.log('📧 Function response - Error:', error);
-      
-      // Log the full error object for debugging
-      if (error) {
-        console.error('📧 Full error object:', JSON.stringify(error, null, 2));
-        console.error('📧 Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-      }
-
-      if (error) throw error;
-
-      toast({
-        title: "Message sent!",
-        description: "Your message has been sent. We'll contact you via info@footballtournamentsuk.co.uk.",
-      });
-
-      // Reset form and close modal
-      setFormData({
-        name: profile?.full_name || "",
-        email: user?.email || "",
-        subject: "",
-        message: "",
-      });
-      onClose();
-    } catch (error: any) {
-      console.error("❌ Error sending support message:", error);
-      toast({
-        title: "Error",
-        description: error?.message?.includes('Too many requests') 
-          ? "Too many requests. Please try again later."
-          : "Failed to send message. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    toast({
+      title: "Support temporarily unavailable",
+      description: "Please contact us directly at info@footballtournamentsuk.co.uk",
+      variant: "destructive",
+    });
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -185,22 +127,13 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
               type="button" 
               variant="outline" 
               onClick={onClose}
-              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button 
-              type="submit" 
-              disabled={isSubmitting}
+              type="submit"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                "Send Message"
-              )}
+              Send Message
             </Button>
           </div>
         </form>
