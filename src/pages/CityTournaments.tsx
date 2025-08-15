@@ -37,6 +37,29 @@ const CityTournaments = () => {
       return tournament.location.region === city.region ||
              tournament.location.name.toLowerCase().includes(city.displayName.toLowerCase()) ||
              tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase());
+    }).map(tournament => {
+      // Fix coordinates for tournaments that have incorrect coordinates
+      // If tournament location name or region matches this city but coordinates are far away,
+      // use the city's coordinates instead
+      const [tournamentLng, tournamentLat] = tournament.location.coordinates;
+      const [cityLng, cityLat] = city.coordinates;
+      
+      // Calculate rough distance (simplified)
+      const lngDiff = Math.abs(tournamentLng - cityLng);
+      const latDiff = Math.abs(tournamentLat - cityLat);
+      
+      // If coordinates are more than ~1 degree away (roughly 100km), they're likely wrong
+      if (lngDiff > 1 || latDiff > 1) {
+        return {
+          ...tournament,
+          location: {
+            ...tournament.location,
+            coordinates: city.coordinates as [number, number]
+          }
+        };
+      }
+      
+      return tournament;
     });
 
     // Apply search query
