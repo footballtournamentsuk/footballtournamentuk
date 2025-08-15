@@ -103,11 +103,17 @@ async function sendEmail(to: string, subject: string, html: string, replyTo?: st
 }
 
 serve(async (req) => {
+  console.log('=== Send Support Email Function Started ===')
+  console.log('Request method:', req.method)
+  console.log('Request URL:', req.url)
+  
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request')
     return new Response(null, { headers: corsHeaders })
   }
 
   if (req.method !== 'POST') {
+    console.log('Method not allowed:', req.method)
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
       { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -115,25 +121,35 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Processing POST request...')
+    
     // Rate limiting
     const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
+    console.log('Client IP:', clientIP)
+    
     if (!checkRateLimit(clientIP)) {
+      console.log('Rate limit exceeded for IP:', clientIP)
       return new Response(
         JSON.stringify({ error: 'Too many requests. Please try again later.' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    console.log('Parsing request body...')
     const body = await req.json()
+    console.log('Request body parsed successfully')
+    
     const supportRequest = validateSupportRequest(body)
     
     if (!supportRequest) {
+      console.log('Validation failed - returning 400')
       return new Response(
         JSON.stringify({ error: 'Invalid request data' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    console.log('Validation passed, preparing to send emails...')
     const { name, email, subject, message, pageUrl } = supportRequest
     const sanitizedName = sanitizeHtml(name)
     const sanitizedSubject = sanitizeHtml(subject)
@@ -184,19 +200,26 @@ serve(async (req) => {
       </div>
     `
 
+    console.log('Attempting to send emails...')
     // Send both emails
     await Promise.all([
       sendEmail('info@footballtournamentsuk.co.uk', internalSubject, internalHtml, email),
       sendEmail(email, replySubject, replyHtml, 'info@footballtournamentsuk.co.uk')
     ])
 
+    console.log('Emails sent successfully!')
     return new Response(
       JSON.stringify({ success: true, message: 'Support request sent successfully' }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
-    console.error('Support email error:', error)
+    console.error('=== SUPPORT EMAIL ERROR ===')
+    console.error('Error type:', error.constructor.name)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
+    console.error('================================')
+    
     return new Response(
       JSON.stringify({ error: 'Failed to send support request' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
