@@ -1,58 +1,65 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-console.log("🚀 EMAIL FUNCTION DEPLOY - send-support-email");
+console.log("🚀 MINIMAL TEST - send-support-email");
 
-// Deno Edge Function (Supabase) — real send, no SDK
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-const FROM = 'Football Tournaments UK <onboarding@resend.dev>';
-const TO = ['info@footballtournamentsuk.co.uk'];
-
-async function handler(req: Request) {
-  const origin = req.headers.get('origin') ?? '*';
-  const cors = {
-    'Access-Control-Allow-Origin': origin,
+serve(async (req: Request) => {
+  console.log("📞 Function called:", req.method);
+  
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Content-Type': 'application/json',
   };
 
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-  if (req.method !== 'POST')  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405, headers: cors });
-  if (!RESEND_API_KEY)        return new Response(JSON.stringify({ error: 'Missing RESEND_API_KEY' }), { status: 500, headers: cors });
-
-  const { name, email, subject, message } = await req.json().catch(() => ({}));
-  if (!name || !email || !subject || !message) {
-    return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: cors });
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    console.log("✅ CORS preflight handled");
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
-  const payload = {
-    from: FROM,
-    to: TO,
-    subject: `Support: ${subject} — from ${name}`,
-    html: `
-      <h2>New Support Request</h2>
-      <p><b>Name:</b> ${name}</p>
-      <p><b>Email:</b> ${email}</p>
-      <p><b>Subject:</b> ${subject}</p>
-      <div style="white-space:pre-wrap">${String(message)}</div>
-    `,
-    reply_to: email,
-  };
+  try {
+    console.log("🔍 Processing request...");
+    
+    // Test environment variable access
+    const hasApiKey = !!Deno.env.get('RESEND_API_KEY');
+    console.log("🔑 Has API Key:", hasApiKey);
+    
+    // Test request parsing
+    let requestData;
+    try {
+      requestData = await req.json();
+      console.log("📝 Request parsed successfully");
+    } catch (error) {
+      console.log("❌ JSON parse error:", error.message);
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { 
+        status: 400, 
+        headers: corsHeaders 
+      });
+    }
+    
+    // Return success with debug info
+    const response = {
+      success: true,
+      timestamp: new Date().toISOString(),
+      hasApiKey,
+      requestReceived: !!requestData
+    };
+    
+    console.log("✅ Returning success response");
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: corsHeaders,
+    });
 
-  const r = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  const text = await r.text();
-  console.log('RESEND_STATUS', r.status, 'RESEND_BODY', text);
-  if (!r.ok) {
-    return new Response(JSON.stringify({ stage: 'resend', status: r.status, body: text }), { status: 502, headers: cors });
+  } catch (error) {
+    console.error("💥 Function error:", error);
+    return new Response(JSON.stringify({ 
+      error: 'Function error',
+      message: error?.message || 'Unknown error'
+    }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
-
-  const data = JSON.parse(text);
-  return new Response(JSON.stringify({ id: data?.id ?? null }), { status: 200, headers: cors });
-}
-
-serve(handler);
+});
