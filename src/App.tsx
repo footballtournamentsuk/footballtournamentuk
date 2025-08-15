@@ -9,7 +9,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { LogOut, User, UserCircle, Settings } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare } from "lucide-react";
+import { SupportModal } from "@/components/SupportModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -32,6 +33,7 @@ const queryClient = new QueryClient();
 const Navigation = () => {
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
+  const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
 
   const getInitials = (name: string | undefined, email: string | undefined) => {
     if (name && name.trim()) {
@@ -52,7 +54,7 @@ const Navigation = () => {
   const initials = getInitials(profile?.full_name, user?.email);
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-xl font-bold text-primary">
           Football Tournaments UK
@@ -73,7 +75,7 @@ const Navigation = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
-                className="w-56 bg-popover border border-border shadow-lg" 
+                className="w-56 bg-background border border-border shadow-lg z-50" 
                 align="end" 
                 forceMount
               >
@@ -88,6 +90,20 @@ const Navigation = () => {
                   <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
                     <Settings className="h-4 w-4" />
                     View / Edit Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Support
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/faq" className="flex items-center gap-2 cursor-pointer">
+                    <HelpCircle className="h-4 w-4" />
+                    FAQ
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -109,6 +125,12 @@ const Navigation = () => {
           )}
         </div>
       </div>
+      
+      {/* Support Modal */}
+      <SupportModal 
+        isOpen={isSupportModalOpen} 
+        onClose={() => setIsSupportModalOpen(false)} 
+      />
     </nav>
   );
 };
@@ -121,7 +143,9 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Navigation />
-        <Routes>
+        {/* Add top padding to prevent header overlap */}
+        <div className="pt-16">
+          <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
@@ -135,9 +159,10 @@ const App = () => (
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Footer />
-        <CookieConsent />
+          </Routes>
+          <Footer />
+          <CookieConsent />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
