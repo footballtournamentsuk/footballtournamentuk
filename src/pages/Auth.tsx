@@ -135,7 +135,7 @@ const AuthPage = () => {
         {/* Logo and Branding */}
         <div className="text-center mb-8">
           <div className="mb-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-white via-primary to-football-primary bg-clip-text text-transparent drop-shadow-lg">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-football-primary drop-shadow-lg">
               FOOTBALL TOURNAMENTS
             </h1>
           </div>
@@ -156,7 +156,7 @@ const AuthPage = () => {
           <TabsContent value="signin">
             <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Welcome Back</CardTitle>
+                <CardTitle className="text-3xl font-bold text-football-primary">Welcome Back</CardTitle>
                 <CardDescription>
                   Sign in to your organizer account
                 </CardDescription>
@@ -228,7 +228,7 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Create Account</CardTitle>
+                <CardTitle className="text-3xl font-bold text-football-primary">Create Account</CardTitle>
                 <CardDescription className="text-base font-medium text-muted-foreground">
                   Reach thousands of players and teams — free and easy.
                 </CardDescription>
