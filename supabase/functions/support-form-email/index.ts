@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const FROM = "Support <info@footballtournamentsuk.co.uk>";
 const TO = ["info@footballtournamentsuk.co.uk"];
 
@@ -22,9 +21,14 @@ serve(async (req: Request) => {
   }
 
   try {
-    console.log("🚀 Support Form Email Function - Production v1");
+    console.log("🚀 Support Form Email Function - Production v2");
+    
+    // Get the API key at runtime
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    console.log("📧 All env vars:", Object.keys(Deno.env.toObject()));
     console.log("📧 RESEND_API_KEY Available:", !!RESEND_API_KEY);
     console.log("📧 RESEND_API_KEY Length:", RESEND_API_KEY ? RESEND_API_KEY.length : 0);
+    console.log("📧 First 10 chars:", RESEND_API_KEY ? RESEND_API_KEY.substring(0, 10) + "..." : "null");
 
     if (req.method !== "POST") {
       console.error("❌ Invalid method:", req.method);
@@ -34,8 +38,8 @@ serve(async (req: Request) => {
       });
     }
 
-    if (!RESEND_API_KEY) {
-      console.error("❌ RESEND_API_KEY not configured");
+    if (!RESEND_API_KEY || RESEND_API_KEY.trim() === '') {
+      console.error("❌ RESEND_API_KEY not configured or empty");
       return new Response(JSON.stringify({ error: "Email service not configured" }), { 
         status: 500, 
         headers: cors(origin) 
@@ -54,7 +58,7 @@ serve(async (req: Request) => {
     }
 
     console.log("📝 Processing support request from:", email, "Subject:", subject);
-    console.log("🔑 About to send with API key length:", RESEND_API_KEY?.length);
+    console.log("🔑 About to send with API key length:", RESEND_API_KEY.length);
 
     const payload = {
       from: FROM,
@@ -87,6 +91,8 @@ serve(async (req: Request) => {
     };
 
     console.log("📤 Sending email to Resend API...");
+    console.log("📤 Payload:", JSON.stringify({ ...payload, html: "[HTML_CONTENT]" }));
+    
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
