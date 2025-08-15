@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SupportModalProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+    if (!formData.name?.trim() || !formData.email?.trim() || !formData.subject?.trim() || !formData.message?.trim()) {
       toast({
         title: "Missing required fields",
         description: "Please fill in all required fields.",
@@ -54,19 +55,21 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call - replace with actual endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In a real implementation, you would send this to your support endpoint:
-      // const response = await fetch('/api/support', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
+      const { data, error } = await supabase.functions.invoke('send-support-email', {
+        body: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+          pageUrl: window.location.href
+        }
+      });
+
+      if (error) throw error;
 
       toast({
         title: "Message sent!",
-        description: "We've received your message and will get back to you soon.",
+        description: "Your message has been sent. We'll contact you via info@footballtournamentsuk.co.uk.",
       });
 
       // Reset form and close modal
@@ -77,11 +80,13 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
         message: "",
       });
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending support message:", error);
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: error?.message?.includes('Too many requests') 
+          ? "Too many requests. Please try again later."
+          : "Failed to send message. Please try again.",
         variant: "destructive",
       });
     } finally {
