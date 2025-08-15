@@ -139,7 +139,7 @@ const AuthPage = () => {
             <img 
               src={logo} 
               alt="Football Tournaments UK" 
-              className="mx-auto h-28 md:h-32 w-auto drop-shadow-lg"
+              className="mx-auto h-36 md:h-40 w-auto drop-shadow-lg"
             />
           </div>
         </div>
