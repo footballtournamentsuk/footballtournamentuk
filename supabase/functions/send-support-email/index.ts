@@ -22,7 +22,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    console.log("BOOT send-support-email");
+    console.log("BOOT send-support-email v2");
     console.log("HAS_RESEND_KEY", !!RESEND_API_KEY);
 
     if (req.method !== "POST") {
