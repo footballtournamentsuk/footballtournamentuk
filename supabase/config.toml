@@ -3,8 +3,5 @@ project_id = "yknmcddrfkggphrktivd"
 [functions.mapbox-token]
 verify_jwt = false
 
-[functions.send-support-email]
-verify_jwt = false
-
 [functions.test-deploy]
 verify_jwt = false
