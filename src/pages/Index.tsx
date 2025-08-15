@@ -11,242 +11,79 @@ import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Search, Plus, Filter, Settings, HelpCircle } from 'lucide-react';
-
+import { Search, Plus, Filter, Settings } from 'lucide-react';
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const { tournaments, loading, error } = useTournaments();
-  const { user } = useAuth();
+  const {
+    tournaments,
+    loading,
+    error
+  } = useTournaments();
+  const {
+    user
+  } = useAuth();
 
   // Filter and separate tournaments
-  const { upcomingTournaments, pastTournaments } = useMemo(() => {
+  const {
+    upcomingTournaments,
+    pastTournaments
+  } = useMemo(() => {
     let filtered = tournaments;
 
     // Apply search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(tournament =>
-        tournament.name.toLowerCase().includes(query) ||
-        tournament.description?.toLowerCase().includes(query) ||
-        tournament.location.name.toLowerCase().includes(query) ||
-        tournament.location.region.toLowerCase().includes(query)
-      );
+      filtered = filtered.filter(tournament => tournament.name.toLowerCase().includes(query) || tournament.description?.toLowerCase().includes(query) || tournament.location.name.toLowerCase().includes(query) || tournament.location.region.toLowerCase().includes(query));
     }
 
     // Apply filters
     if (filters.format?.length) {
       filtered = filtered.filter(t => filters.format!.includes(t.format));
     }
-    
     if (filters.ageGroups?.length) {
-      filtered = filtered.filter(t => 
-        t.ageGroups.some(age => filters.ageGroups!.includes(age))
-      );
+      filtered = filtered.filter(t => t.ageGroups.some(age => filters.ageGroups!.includes(age)));
     }
-    
     if (filters.teamTypes?.length) {
-      filtered = filtered.filter(t => 
-        t.teamTypes.some(type => filters.teamTypes!.includes(type))
-      );
+      filtered = filtered.filter(t => t.teamTypes.some(type => filters.teamTypes!.includes(type)));
     }
-    
     if (filters.type?.length) {
       filtered = filtered.filter(t => filters.type!.includes(t.type));
     }
-    
     if (filters.regions?.length) {
       filtered = filtered.filter(t => filters.regions!.includes(t.location.region));
     }
-    
     if (filters.status?.length) {
       filtered = filtered.filter(t => filters.status!.includes(t.status));
     }
 
     // Separate upcoming and past tournaments
-    const upcoming = filtered.filter(t => 
-      !['completed', 'cancelled'].includes(t.status)
-    ).sort((a, b) => {
+    const upcoming = filtered.filter(t => !['completed', 'cancelled'].includes(t.status)).sort((a, b) => {
       // Sort upcoming by start date ascending (soonest first)
       return new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime();
     });
-
-    const past = filtered.filter(t => 
-      ['completed', 'cancelled'].includes(t.status)
-    ).sort((a, b) => {
+    const past = filtered.filter(t => ['completed', 'cancelled'].includes(t.status)).sort((a, b) => {
       // Sort past by start date descending (most recent first)
       return new Date(b.dates.start).getTime() - new Date(a.dates.start).getTime();
     });
-
-    return { upcomingTournaments: upcoming, pastTournaments: past };
+    return {
+      upcomingTournaments: upcoming,
+      pastTournaments: past
+    };
   }, [tournaments, filters, searchQuery]);
-
   const handleTournamentSelect = (tournament: Tournament | null) => {
     setSelectedTournament(tournament);
   };
-
   const clearFilters = () => {
     setFilters({});
     setSearchQuery('');
   };
-
-  const hasActiveFilters = Object.values(filters).some(value => 
-    value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
-  ) || searchQuery.trim();
-
-  // FAQ structured data for SEO
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is UK Youth Football?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "UK Youth Football is a free bulletin board platform for youth football tournaments across the UK. We provide a simple listing service where tournament organizers can advertise their events and teams can discover opportunities. We don't charge any fees, require contracts, or organize tournaments ourselves."
-        }
-      },
-      {
-        "@type": "Question", 
-        "name": "Do you charge any fees?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No, our platform is completely free. There are no charges for organizers to list tournaments, no fees for teams to browse events, no hidden costs, no premium listings, and no commission on registrations. Everything is free forever."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do you organize tournaments?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No, we don't organize or run tournaments ourselves. We are simply a listing platform. Each tournament is independently organized by clubs, academies, schools, or other organizations. All tournament details, rules, and registration processes are managed by the individual organizers."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How can I list my tournament on your platform?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Simply create a free account on our platform and add your tournament details through your profile. Once submitted, your tournament will appear on our map and in search results immediately. There's no approval process or waiting time."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Who can participate in the tournaments?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Any youth football team, academy, school, or club can participate in the tournaments listed on our platform. Specific age groups, eligibility criteria, and participation requirements are set by each individual tournament organizer."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Are there any contracts or terms with your platform?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No, there are no binding contracts or complicated terms with our platform. Tournament organizers set their own entry fees, terms and conditions, and registration processes. We simply provide the free listing platform to connect organizers with teams."
-        }
-      }
-    ]
-  };
-
-  return (
-    <div className="min-h-screen bg-background">
-      {/* SEO structured data for FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqStructuredData)
-        }}
-      />
+  const hasActiveFilters = Object.values(filters).some(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)) || searchQuery.trim();
+  return <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <Hero />
-
-      {/* What We Are Section */}
-      <section className="py-16 bg-surface/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              What is UK Youth Football?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-12">
-              We are simply a <strong>free bulletin board</strong> for youth football tournaments across the UK. 
-              No fees, no contracts, no complications.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">📋</span>
-                </div>
-                <h3 className="text-lg font-semibold">What We Are</h3>
-                <p className="text-muted-foreground">
-                  A free listing platform where tournament organizers can advertise their events 
-                  and teams can discover opportunities. Think of us as a community noticeboard.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">💰</span>
-                </div>
-                <h3 className="text-lg font-semibold">No Fees, Ever</h3>
-                <p className="text-muted-foreground">
-                  Completely free for organizers to list tournaments and for teams to browse. 
-                  No hidden charges, no premium listings, no commission on registrations.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🚫</span>
-                </div>
-                <h3 className="text-lg font-semibold">We Don't Organize</h3>
-                <p className="text-muted-foreground">
-                  We don't run tournaments ourselves. Each event is independently organized. 
-                  Contact details are provided for direct communication with organizers.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">📝</span>
-                </div>
-                <h3 className="text-lg font-semibold">How to List</h3>
-                <p className="text-muted-foreground">
-                  Simply create a free account and add your tournament details. 
-                  Your event will appear on our map and in search results immediately.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">⚽</span>
-                </div>
-                <h3 className="text-lg font-semibold">Who Can Join</h3>
-                <p className="text-muted-foreground">
-                  Any youth football team, academy, school, or club can participate in listed tournaments. 
-                  Age groups and eligibility are set by individual organizers.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🤝</span>
-                </div>
-                <h3 className="text-lg font-semibold">No Contracts</h3>
-                <p className="text-muted-foreground">
-                  No binding agreements with us. Organizers set their own terms, 
-                  entry fees, and registration processes. We just provide the platform.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Organizer CTA Section */}
       <OrganizerCTA />
@@ -264,11 +101,7 @@ const Index = () => {
             </p>
           </div>
           
-          <Map 
-            tournaments={upcomingTournaments}
-            selectedTournament={selectedTournament}
-            onTournamentSelect={handleTournamentSelect}
-          />
+          <Map tournaments={upcomingTournaments} selectedTournament={selectedTournament} onTournamentSelect={handleTournamentSelect} />
         </div>
       </section>
 
@@ -284,102 +117,60 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold">Find Tournaments</h2>
                     <div className="flex gap-2">
-                      {user ? (
-                        <Button variant="default" size="sm" asChild>
+                      {user ? <Button variant="default" size="sm" asChild>
                           <a href="/profile">
                             <Settings className="w-4 h-4 mr-2" />
                             Profile
                           </a>
-                        </Button>
-                      ) : (
-                        <Button variant="default" size="sm" asChild>
+                        </Button> : <Button variant="default" size="sm" asChild>
                           <a href="/auth">
                             <Plus className="w-4 h-4 mr-2" />
                             Sign In to Add
                           </a>
-                        </Button>
-                      )}
+                        </Button>}
                     </div>
                   </div>
                   
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input
-                      placeholder="Search tournaments, locations, leagues..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
+                    <Input placeholder="Search tournaments, locations, leagues..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
                   </div>
 
                   {/* Mobile Filter Toggle */}
-                  <div className="lg:hidden">
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowFilters(!showFilters)}
-                      className="w-full"
-                    >
-                      <Filter className="w-4 h-4 mr-2" />
-                      {showFilters ? 'Hide Filters' : 'Show Filters'}
-                      {hasActiveFilters && (
-                        <Badge variant="secondary" className="ml-2">
-                          Active
-                        </Badge>
-                      )}
-                    </Button>
-                  </div>
+                  
                 </div>
 
                 {/* Filters */}
                 <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
-                  <TournamentFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    onClearFilters={clearFilters}
-                  />
+                  <TournamentFilters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
                 </div>
               </div>
             </div>
 
             {/* Main Content - Tournament Cards */}
             <div className="lg:w-2/3">
-              {error && (
-                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              {error && <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-destructive text-sm">Error loading tournaments: {error}</p>
-                </div>
-              )}
+                </div>}
               
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">
                     {loading ? 'Loading...' : `${upcomingTournaments.length + pastTournaments.length} Tournament${upcomingTournaments.length + pastTournaments.length !== 1 ? 's' : ''} Found`}
                   </h3>
-                  {hasActiveFilters && !loading && (
-                    <p className="text-sm text-muted-foreground">
+                  {hasActiveFilters && !loading && <p className="text-sm text-muted-foreground">
                       Showing filtered results
-                    </p>
-                  )}
+                    </p>}
                 </div>
                 
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearFilters}
-                  >
+                {hasActiveFilters && <Button variant="ghost" size="sm" onClick={clearFilters}>
                     Clear All Filters
-                  </Button>
-                )}
+                  </Button>}
               </div>
 
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>
-                  ))}
-                </div>
-              ) : upcomingTournaments.length === 0 && pastTournaments.length === 0 ? (
-                <div className="text-center py-12">
+              {loading ? <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[...Array(6)].map((_, i) => <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>)}
+                </div> : upcomingTournaments.length === 0 && pastTournaments.length === 0 ? <div className="text-center py-12">
                   <div className="text-6xl mb-4">⚽</div>
                   <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
                   <p className="text-muted-foreground mb-4">
@@ -388,12 +179,9 @@ const Index = () => {
                   <Button onClick={clearFilters} variant="outline">
                     Clear Filters
                   </Button>
-                </div>
-              ) : (
-                <div className="space-y-8">
+                </div> : <div className="space-y-8">
                   {/* Upcoming Tournaments */}
-                  {upcomingTournaments.length > 0 && (
-                    <div>
+                  {upcomingTournaments.length > 0 && <div>
                       <div className="mb-4">
                         <h4 className="text-lg font-semibold text-foreground">
                           Upcoming Tournaments ({upcomingTournaments.length})
@@ -403,20 +191,12 @@ const Index = () => {
                         </p>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {upcomingTournaments.map(tournament => (
-                          <TournamentCard
-                            key={tournament.id}
-                            tournament={tournament}
-                            onSelect={handleTournamentSelect}
-                          />
-                        ))}
+                        {upcomingTournaments.map(tournament => <TournamentCard key={tournament.id} tournament={tournament} onSelect={handleTournamentSelect} />)}
                       </div>
-                    </div>
-                  )}
+                    </div>}
 
                   {/* Past Tournaments - Collapsible */}
-                  {pastTournaments.length > 0 && (
-                    <div className="border-t pt-8">
+                  {pastTournaments.length > 0 && <div className="border-t pt-8">
                       <details className="group">
                         <summary className="cursor-pointer mb-4 flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-muted transition-colors">
                           <div>
@@ -432,126 +212,12 @@ const Index = () => {
                           </div>
                         </summary>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                          {pastTournaments.map(tournament => (
-                            <TournamentCard
-                              key={tournament.id}
-                              tournament={tournament}
-                              onSelect={handleTournamentSelect}
-                            />
-                          ))}
+                          {pastTournaments.map(tournament => <TournamentCard key={tournament.id} tournament={tournament} onSelect={handleTournamentSelect} />)}
                         </div>
                       </details>
-                    </div>
-                  )}
-                </div>
-              )}
+                    </div>}
+                </div>}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 bg-surface/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <HelpCircle className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Get answers to common questions about our platform
-              </p>
-            </div>
-            
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="what-is" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  What is UK Youth Football?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  UK Youth Football is a free bulletin board platform for youth football tournaments across the UK. 
-                  We provide a simple listing service where tournament organizers can advertise their events and teams 
-                  can discover opportunities. We don't charge any fees, require contracts, or organize tournaments ourselves.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="fees" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  Do you charge any fees?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  No, our platform is completely free. There are no charges for organizers to list tournaments, 
-                  no fees for teams to browse events, no hidden costs, no premium listings, and no commission on registrations. 
-                  Everything is free forever.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="organize" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  Do you organize tournaments?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  No, we don't organize or run tournaments ourselves. We are simply a listing platform. 
-                  Each tournament is independently organized by clubs, academies, schools, or other organizations. 
-                  All tournament details, rules, and registration processes are managed by the individual organizers.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="how-to-list" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  How can I list my tournament on your platform?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Simply create a free account on our platform and add your tournament details through your profile. 
-                  Once submitted, your tournament will appear on our map and in search results immediately. 
-                  There's no approval process or waiting time.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="who-can-participate" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  Who can participate in the tournaments?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Any youth football team, academy, school, or club can participate in the tournaments listed on our platform. 
-                  Specific age groups, eligibility criteria, and participation requirements are set by each individual tournament organizer.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="contracts" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  Are there any contracts or terms with your platform?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  No, there are no binding contracts or complicated terms with our platform. Tournament organizers set their own 
-                  entry fees, terms and conditions, and registration processes. We simply provide the free listing platform 
-                  to connect organizers with teams.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="how-it-works" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  How does registration for tournaments work?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Each tournament organizer handles their own registration process. When you find a tournament you're interested in, 
-                  you'll see the organizer's contact details and registration instructions. Some may have online forms, 
-                  others prefer email or phone contact. We simply connect you with the organizer.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="support" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold">
-                  What if I have issues with a tournament or organizer?
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Since we're just a listing platform, any issues with tournaments, registrations, or rules should be resolved 
-                  directly with the tournament organizer. We provide the platform for discovery, but all tournament operations 
-                  are handled independently by the organizers.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </div>
         </div>
       </section>
@@ -619,8 +285,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
