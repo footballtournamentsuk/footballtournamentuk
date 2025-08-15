@@ -54,15 +54,23 @@ serve(async (req: Request) => {
       });
     }
 
+    console.log("📋 Received data:", JSON.stringify(requestData, null, 2));
+    
     const { name, email, subject, message } = requestData || {};
     if (!name || !email || !subject || !message) {
-      console.log("❌ Missing fields:", { name: !!name, email: !!email, subject: !!subject, message: !!message });
-      return new Response(JSON.stringify({ error: "Missing fields" }), { 
+      console.log("❌ Missing fields:", { 
+        name: !!name, 
+        email: !!email, 
+        subject: !!subject, 
+        message: !!message,
+        receivedFields: Object.keys(requestData || {})
+      });
+      return new Response(JSON.stringify({ error: "Missing required fields" }), { 
         status: 400, 
         headers: corsHeaders 
       });
     }
-    console.log("✅ All fields present");
+    console.log("✅ All required fields present");
 
     // Prepare email payload
     const payload = {
