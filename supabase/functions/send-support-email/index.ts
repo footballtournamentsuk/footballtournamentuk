@@ -68,6 +68,7 @@ function sanitizeHtml(text: string): string {
 async function sendEmail(to: string, subject: string, html: string, replyTo?: string) {
   const resendKey = Deno.env.get('RESEND_API_KEY')
   if (!resendKey) {
+    console.error('RESEND_API_KEY environment variable not found')
     throw new Error('RESEND_API_KEY not found')
   }
 
