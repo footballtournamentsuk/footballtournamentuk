@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, DollarSign, Clock, Shield } from 'lucide-react';
 
 const AuthPage = () => {
   const [name, setName] = useState('');
@@ -132,6 +132,15 @@ const AuthPage = () => {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }} />
       
       <div className="w-full max-w-md relative z-10">
+        {/* Logo and Branding */}
+        <div className="text-center mb-8">
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">
+              Football Tournaments
+            </h1>
+          </div>
+        </div>
+        
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/20 backdrop-blur-sm border border-white/30">
             <TabsTrigger value="signin" className="flex items-center gap-2 data-[state=active]:bg-white/90 data-[state=active]:text-primary transition-all duration-300">
@@ -220,8 +229,8 @@ const AuthPage = () => {
             <Card className="bg-white/90 backdrop-blur-md border border-white/20 shadow-xl">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl bg-gradient-to-r from-primary to-football-primary bg-clip-text text-transparent">Create Account</CardTitle>
-                <CardDescription>
-                  Sign up as a tournament organizer
+                <CardDescription className="text-base font-medium text-muted-foreground">
+                  Reach thousands of players and teams — free and easy.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -302,6 +311,39 @@ const AuthPage = () => {
                     {isLoading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
+                
+                {/* Benefits Section */}
+                <div className="mt-6 pt-6 border-t border-white/20">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                        <DollarSign className="w-5 h-5 text-white" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm text-foreground">Free</div>
+                        <div className="text-xs text-muted-foreground">No hidden costs</div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-white" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm text-foreground">5 min</div>
+                        <div className="text-xs text-muted-foreground">Quick setup</div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-white" strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm text-foreground">24/7</div>
+                        <div className="text-xs text-muted-foreground">Always accessible</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
