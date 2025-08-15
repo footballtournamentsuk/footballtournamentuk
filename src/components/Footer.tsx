@@ -13,7 +13,7 @@ export const Footer = () => {
               Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.
               From grassroots to elite level competitions.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex flex-wrap gap-4">
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                 <Link to="/about">About Us</Link>
               </Button>
@@ -22,6 +22,9 @@ export const Footer = () => {
               </Button>
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                 <Link to="/faq">FAQ</Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Link to="/policies">Policies</Link>
               </Button>
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                 <a href="mailto:info@footballtournamentsuk.co.uk">Contact</a>
