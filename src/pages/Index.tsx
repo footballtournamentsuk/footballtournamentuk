@@ -436,6 +436,9 @@ const Index = () => {
                   <Link to="/about">About Us</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/support">Support Us</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                   <Link to="/faq">FAQ</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground">
