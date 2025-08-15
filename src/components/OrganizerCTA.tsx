@@ -34,23 +34,23 @@ const OrganizerCTA = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="mb-12">
+          <div className="mb-12 w-full max-w-md mx-auto">
             <Button
               asChild
               size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-110 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg px-12 py-8 h-auto rounded-xl font-bold border-4 border-accent/30 relative overflow-hidden group ring-4 ring-accent/20 animate-[pulse_2s_ease-in-out_infinite] hover:animate-none"
+              className="w-full bg-accent text-accent-foreground hover:bg-accent-hover hover:scale-105 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg px-8 py-6 h-auto rounded-xl font-bold border-4 border-accent/30 relative overflow-hidden group ring-4 ring-accent/20 animate-[pulse_4s_ease-in-out_infinite] hover:animate-none"
               style={{
                 background: 'linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent-hover, var(--accent))) 100%)',
-                boxShadow: '0 0 30px hsl(var(--accent) / 0.5), 0 20px 40px rgba(0,0,0,0.3)'
+                boxShadow: '0 0 30px hsl(var(--accent) / 0.4), 0 20px 40px rgba(0,0,0,0.2)'
               }}
             >
-              <Link to="/auth" className="relative z-10 flex items-center">
-                <Plus className="w-6 h-6 mr-3 animate-bounce" />
+              <Link to="/auth" className="relative z-10 flex items-center justify-center w-full">
+                <Plus className="w-6 h-6 mr-3" />
                 Register & Add Tournament
                 {/* Enhanced glow effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out rounded-xl" />
-                {/* Pulsing ring effect */}
-                <div className="absolute inset-0 rounded-xl border-2 border-white/40 animate-ping" style={{ animationDuration: '2s' }} />
+                {/* Subtle pulsing ring effect */}
+                <div className="absolute inset-0 rounded-xl border-2 border-white/30 animate-ping opacity-75" style={{ animationDuration: '4s' }} />
               </Link>
             </Button>
           </div>
