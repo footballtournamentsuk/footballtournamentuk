@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts'
-import { Resend } from 'npm:resend@2.0.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -46,7 +45,7 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Resend
+    // Get Resend API key
     const resendKey = Deno.env.get('RESEND_API_KEY')
     if (!resendKey) {
       console.error('RESEND_API_KEY not found in environment')
@@ -56,31 +55,40 @@ serve(async (req) => {
       )
     }
 
-    const resend = new Resend(resendKey)
-
-    // Send email using Resend
-    const { data, error } = await resend.emails.send({
-      from: 'Support <info@footballtournamentsuk.co.uk>',
-      to: ['info@footballtournamentsuk.co.uk'],
-      reply_to: email.trim(),
-      subject: `Support request from ${name.trim()}`,
-      html: `
-        <h2>New Support Request</h2>
-        <p><b>Name:</b> ${name.trim()}</p>
-        <p><b>Email:</b> ${email.trim()}</p>
-        <p><b>Subject:</b> ${subject.trim()}</p>
-        ${pageUrl ? `<p><b>Page URL:</b> ${pageUrl}</p>` : ''}
-        <p><b>Message:</b><br/>${message.trim().replace(/\n/g, '<br/>')}</p>
-      `,
+    // Send email using direct fetch to Resend API
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Support <info@footballtournamentsuk.co.uk>',
+        to: ['info@footballtournamentsuk.co.uk'],
+        reply_to: email.trim(),
+        subject: `Support request from ${name.trim()}`,
+        html: `
+          <h2>New Support Request</h2>
+          <p><b>Name:</b> ${name.trim()}</p>
+          <p><b>Email:</b> ${email.trim()}</p>
+          <p><b>Subject:</b> ${subject.trim()}</p>
+          ${pageUrl ? `<p><b>Page URL:</b> ${pageUrl}</p>` : ''}
+          <p><b>Message:</b><br/>${message.trim().replace(/\n/g, '<br/>')}</p>
+        `,
+      }),
     })
 
-    if (error) {
-      console.error('Resend error:', error)
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Resend API error:', response.status, errorText)
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ error: `Email service error: ${errorText}` }),
         { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    const data = await response.json()
+    console.log('Email sent successfully:', data)
 
     return new Response(
       JSON.stringify({ id: data?.id }),
