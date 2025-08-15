@@ -6,7 +6,7 @@ import { SEO } from '@/components/SEO';
 import heroBackground from '@/assets/hero-football.jpg';
 const Support = () => {
   return <div className="min-h-screen bg-background">
-      <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="https://footballtournaments.uk/support" />
+      <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="/support" />
       
       {/* Hero Section */}
       <section className="relative bg-cover bg-center bg-no-repeat py-32 px-4 flex items-center justify-center" style={{
@@ -97,7 +97,7 @@ const Support = () => {
               Whether you want to sponsor events, volunteer your time, or simply spread the word about our platform, we'd love to hear from you.
             </p>
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3" asChild>
-              <a href="mailto:support@footballtournaments.uk">
+              <a href="mailto:info@footballtournamentsuk.co.uk">
                 Contact Us to Support
               </a>
             </Button>

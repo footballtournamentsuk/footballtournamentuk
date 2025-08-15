@@ -19,7 +19,7 @@ export const SEO: React.FC<SEOProps> = ({
   cityName,
   isHomePage = false
 }) => {
-  const siteUrl = 'https://uk-youth-football.com'; // Replace with actual domain
+  const siteUrl = 'https://footballtournamentsuk.co.uk';
   const fullCanonicalUrl = canonicalUrl ? `${siteUrl}${canonicalUrl}` : undefined;
 
   // Generate tournament schema markup
@@ -68,19 +68,19 @@ export const SEO: React.FC<SEOProps> = ({
   const organizationSchema = isHomePage ? {
     '@type': 'Organization',
     '@context': 'https://schema.org',
-    name: 'UK Youth Football',
-    description: 'The UK\'s premier platform for youth football tournaments, leagues, and camps',
+    name: 'Football Tournaments UK',
+    description: 'Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.',
     url: siteUrl,
     logo: `${siteUrl}/logo.png`,
     sameAs: [
-      'https://facebook.com/ukyouthfootball',
-      'https://twitter.com/ukyouthfootball',
-      'https://instagram.com/ukyouthfootball'
+      'https://facebook.com/footballtournamentsuk',
+      'https://twitter.com/footballtournamentsuk',
+      'https://instagram.com/footballtournamentsuk'
     ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'hello@uk-youth-football.com'
+      email: 'info@footballtournamentsuk.co.uk'
     }
   } : null;
 
@@ -131,7 +131,7 @@ export const SEO: React.FC<SEOProps> = ({
       <meta property="og:type" content="website" />
       <meta property="og:url" content={fullCanonicalUrl || siteUrl} />
       <meta property="og:image" content={`${siteUrl}/og-image.jpg`} />
-      <meta property="og:site_name" content="UK Youth Football" />
+      <meta property="og:site_name" content="Football Tournaments UK" />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />

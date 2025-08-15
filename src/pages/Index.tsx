@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { SEO } from '@/components/SEO';
 import Hero from '@/components/Hero';
 import OrganizerCTA from '@/components/OrganizerCTA';
 import Map from '@/components/Map';
@@ -83,6 +84,14 @@ const Index = () => {
   };
   const hasActiveFilters = Object.values(filters).some(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)) || searchQuery.trim();
   return <div className="min-h-screen bg-background">
+      <SEO 
+        title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
+        description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."
+        canonicalUrl="/"
+        tournaments={upcomingTournaments.slice(0, 5)}
+        isHomePage={true}
+      />
+      
       {/* Hero Section */}
       <Hero />
 
@@ -248,12 +257,12 @@ const Index = () => {
           <div className="space-y-4">
             <Collapsible>
               <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                <h3 className="text-lg font-semibold">What is UK Youth Football?</h3>
+                <h3 className="text-lg font-semibold">What is Football Tournaments UK?</h3>
                 <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
               </CollapsibleTrigger>
               <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
                 <p className="text-muted-foreground">
-                  UK Youth Football is a completely free bulletin board platform for youth football tournaments across the United Kingdom. 
+                  Football Tournaments UK is a completely free bulletin board platform for football tournaments across the United Kingdom. 
                   We connect tournament organizers with teams, players, and families looking for competitive opportunities. Think of us as 
                   a digital noticeboard where organizers can list their events and teams can discover tournaments in their area.
                 </p>
@@ -370,10 +379,10 @@ const Index = () => {
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "What is UK Youth Football?",
+                "name": "What is Football Tournaments UK?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "UK Youth Football is a completely free bulletin board platform for youth football tournaments across the United Kingdom. We connect tournament organizers with teams, players, and families looking for competitive opportunities."
+                  "text": "Football Tournaments UK is a completely free bulletin board platform for football tournaments across the United Kingdom. We connect tournament organizers with teams, players, and families looking for competitive opportunities."
                 }
               },
               {
@@ -426,9 +435,9 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">UK Youth Football</h3>
+              <h3 className="text-2xl font-bold mb-4">Football Tournaments UK</h3>
               <p className="text-primary-foreground/80 mb-4">
-                Connecting young football talent with tournaments, leagues, and camps across the United Kingdom. 
+                Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.
                 From grassroots to elite level competitions.
               </p>
               <div className="flex space-x-4">
@@ -486,7 +495,7 @@ const Index = () => {
           </div>
           
           <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-sm text-primary-foreground/60">
-            <p>© 2024 UK Youth Football Platform. All rights reserved.</p>
+            <p>© 2024 Football Tournaments UK. All rights reserved.</p>
           </div>
         </div>
       </footer>
