@@ -138,7 +138,17 @@ const Index = () => {
                   </div>
 
                   {/* Mobile Filter Toggle */}
-                  
+                  <div className="lg:hidden">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="w-full"
+                    >
+                      <Filter className="w-4 h-4 mr-2" />
+                      {showFilters ? 'Hide Filters' : 'Show Filters'}
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Filters */}
