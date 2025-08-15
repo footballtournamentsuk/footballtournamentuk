@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, PoundSterling, Clock, Shield } from 'lucide-react';
-import logo from '/lovable-uploads/a9e56598-3ccc-4aad-b362-b4ab94515156.png';
+import logo from '/lovable-uploads/f1fdb453-4b11-40bf-b3eb-a673e0cccac8.png';
 
 const AuthPage = () => {
   const [name, setName] = useState('');
@@ -139,7 +139,7 @@ const AuthPage = () => {
             <img 
               src={logo} 
               alt="Football Tournaments UK" 
-              className="mx-auto h-20 md:h-24 w-auto drop-shadow-lg"
+              className="mx-auto h-28 md:h-32 w-auto drop-shadow-lg"
             />
           </div>
         </div>
