@@ -92,3 +92,5 @@ export const PartnersCarousel = ({
     </div>
   );
 };
+
+export default PartnersCarousel;
