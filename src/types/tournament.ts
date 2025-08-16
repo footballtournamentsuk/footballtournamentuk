@@ -117,6 +117,11 @@ export interface TournamentFilters {
     start?: Date;
     end?: Date;
   };
+  priceRange?: {
+    min?: number;
+    max?: number;
+    includeFree?: boolean;
+  };
   type?: string[];
   status?: string[];
 }

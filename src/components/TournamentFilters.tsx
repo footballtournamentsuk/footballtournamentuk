@@ -11,6 +11,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { LocationFilter } from '@/components/LocationFilter';
 import { DateRangePicker } from '@/components/DateRangePicker';
 import { DateRange } from 'react-day-picker';
+import { Slider } from '@/components/ui/slider';
 interface TournamentFiltersProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -98,6 +99,29 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
       } : undefined
     });
   };
+
+  const handlePriceRangeChange = (values: number[]) => {
+    const [min, max] = values;
+    onFiltersChange({
+      ...filters,
+      priceRange: {
+        min: min === 0 ? undefined : min,
+        max: max === 500 ? undefined : max,
+        includeFree: min === 0,
+      },
+    });
+  };
+
+  const handleFreeTournamentToggle = () => {
+    const currentIncludesFree = filters.priceRange?.includeFree || false;
+    onFiltersChange({
+      ...filters,
+      priceRange: {
+        ...filters.priceRange,
+        includeFree: !currentIncludesFree,
+      },
+    });
+  };
   const removeFilter = (key: keyof Filters, value?: string) => {
     if (value && Array.isArray(filters[key])) {
       const currentArray = filters[key] as string[] || [];
@@ -118,6 +142,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     if (filters.search) count++;
     if (filters.location?.postcode) count++;
     if (filters.dateRange?.start || filters.dateRange?.end) count++;
+    if (filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined || filters.priceRange?.includeFree) count++;
     
     // Count array filters
     Object.values(filters).forEach(value => {
@@ -204,6 +229,89 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           </div>
         </div>
 
+        {/* Price Range Filter */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-green-500/10 rounded-md">
+              <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs border-green-500/20 text-green-600">
+                £
+              </Badge>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-foreground">Price Range</label>
+              <p className="text-xs text-muted-foreground">Filter by tournament cost</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Free Tournament Toggle */}
+            <div className="flex items-center space-x-2">
+              <Button
+                type="button"
+                variant={filters.priceRange?.includeFree ? "default" : "outline"}
+                size="sm"
+                onClick={handleFreeTournamentToggle}
+                className="text-xs bg-green-600 hover:bg-green-700 text-white"
+              >
+                Free Tournaments
+              </Button>
+            </div>
+
+            {/* Price Range Slider */}
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>£{filters.priceRange?.min || 0}</span>
+                <span>£{filters.priceRange?.max || 500}{filters.priceRange?.max === 500 || !filters.priceRange?.max ? '+' : ''}</span>
+              </div>
+              <Slider
+                min={0}
+                max={500}
+                step={10}
+                value={[
+                  filters.priceRange?.min || 0,
+                  filters.priceRange?.max || 500
+                ]}
+                onValueChange={handlePriceRangeChange}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>£0</span>
+                <span>£50</span>
+                <span>£100</span>
+                <span>£200</span>
+                <span>£500+</span>
+              </div>
+            </div>
+
+            {/* Quick Price Range Buttons */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: '£0-25', min: 0, max: 25 },
+                { label: '£25-50', min: 25, max: 50 },
+                { label: '£50-100', min: 50, max: 100 },
+                { label: '£100-200', min: 100, max: 200 },
+                { label: '£200+', min: 200, max: 500 },
+              ].map((range) => (
+                <Button
+                  key={range.label}
+                  type="button"
+                  variant={
+                    filters.priceRange?.min === range.min && 
+                    filters.priceRange?.max === range.max
+                      ? "default" 
+                      : "outline"
+                  }
+                  size="sm"
+                  onClick={() => handlePriceRangeChange([range.min, range.max])}
+                  className="text-xs"
+                >
+                  {range.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Active Filters */}
         {hasActiveFilters && <>
             <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -227,9 +335,22 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                     <CalendarDays className="w-3 h-3 mr-1" />
                     Date Filter
                     <button onClick={() => handleDateRangeChange(undefined)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>}
+                     <X className="w-3 h-3" />
+                   </button>
+                 </Badge>}
+                {(filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined || filters.priceRange?.includeFree) && <Badge className="bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500 hover:text-white transition-all duration-200 cursor-pointer">
+                     <Badge variant="outline" className="h-3 w-3 rounded-full p-0 flex items-center justify-center text-xs mr-1 border-green-500/20">
+                       £
+                     </Badge>
+                     Price: {filters.priceRange?.includeFree && (!filters.priceRange?.min && !filters.priceRange?.max) ? 'Free only' : 
+                       filters.priceRange?.includeFree && (filters.priceRange?.min || filters.priceRange?.max) ? `Free + £${filters.priceRange?.min || 0}-${filters.priceRange?.max || '500+'}` :
+                       filters.priceRange?.min && filters.priceRange?.max ? `£${filters.priceRange.min}-${filters.priceRange.max}` : 
+                       filters.priceRange?.min ? `£${filters.priceRange.min}+` : 
+                       filters.priceRange?.max ? `Up to £${filters.priceRange.max}` : 'Custom'}
+                     <button onClick={() => removeFilter('priceRange')} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                       <X className="w-3 h-3" />
+                     </button>
+                   </Badge>}
                 {filters.format?.map(format => <Badge key={format} className="bg-football-primary/20 text-football-primary border-football-primary/30 hover:bg-football-primary hover:text-white transition-all duration-200 cursor-pointer group">
                     <Target className="w-3 h-3 mr-1" />
                     {format}

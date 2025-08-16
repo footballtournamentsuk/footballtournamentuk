@@ -128,6 +128,36 @@ const CityTournaments = () => {
       });
     }
 
+    // Apply price range filter
+    if (filters.priceRange) {
+      filtered = filtered.filter(tournament => {
+        const cost = tournament.cost?.amount;
+        
+        // If includeFree is true and tournament is free, include it
+        if (filters.priceRange!.includeFree && (!cost || cost === 0)) {
+          return true;
+        }
+        
+        // If tournament is free but includeFree is false, exclude it
+        if ((!cost || cost === 0) && !filters.priceRange!.includeFree) {
+          return false;
+        }
+        
+        // Apply min/max price filters for paid tournaments
+        if (cost && cost > 0) {
+          const min = filters.priceRange!.min;
+          const max = filters.priceRange!.max;
+          
+          if (min !== undefined && cost < min) return false;
+          if (max !== undefined && max < 500 && cost > max) return false;
+          
+          return true;
+        }
+        
+        return false;
+      });
+    }
+
     // Apply other filters
     if (filters.format?.length) {
       filtered = filtered.filter(t => filters.format!.includes(t.format));
