@@ -437,7 +437,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 <p className="text-xs text-muted-foreground">Event format</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2" key={`tournament-types-${tournamentTypes.length}`}>
               {typesLoading ? (
                 <div className="text-xs text-muted-foreground">Loading tournament types...</div>
               ) : tournamentTypes.length > 0 ? (
