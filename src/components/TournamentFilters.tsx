@@ -105,9 +105,9 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     onFiltersChange({
       ...filters,
       priceRange: {
-        min: min === 0 ? undefined : min,
-        max: max === 500 ? undefined : max,
-        includeFree: min === 0,
+        min: min > 0 ? min : undefined,
+        max: max < 500 ? max : undefined,
+        includeFree: filters.priceRange?.includeFree || false, // Preserve existing includeFree state
       },
     });
   };
@@ -117,7 +117,8 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     onFiltersChange({
       ...filters,
       priceRange: {
-        ...filters.priceRange,
+        min: filters.priceRange?.min,
+        max: filters.priceRange?.max,
         includeFree: !currentIncludesFree,
       },
     });
@@ -251,7 +252,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 variant={filters.priceRange?.includeFree ? "default" : "outline"}
                 size="sm"
                 onClick={handleFreeTournamentToggle}
-                className="text-xs bg-green-600 hover:bg-green-700 text-white"
+                className={`text-xs ${filters.priceRange?.includeFree ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'}`}
               >
                 Free Tournaments
               </Button>
