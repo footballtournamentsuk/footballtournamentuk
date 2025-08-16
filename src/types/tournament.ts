@@ -102,6 +102,12 @@ export interface League {
 }
 
 export interface TournamentFilters {
+  search?: string;
+  location?: {
+    postcode?: string;
+    coordinates?: [number, number]; // [longitude, latitude]
+    radius?: number; // in miles
+  };
   format?: string[];
   ageGroups?: AgeGroup[];
   teamTypes?: TeamType[];

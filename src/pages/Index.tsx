@@ -10,15 +10,13 @@ import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Filter, Settings, ChevronDown } from 'lucide-react';
+import { Plus, Filter, Settings, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ReviewsSection } from '@/components/ReviewsSection';
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
-  const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const {
     tournaments,
@@ -36,10 +34,15 @@ const Index = () => {
   } = useMemo(() => {
     let filtered = tournaments;
 
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(tournament => tournament.name.toLowerCase().includes(query) || tournament.description?.toLowerCase().includes(query) || tournament.location.name.toLowerCase().includes(query) || tournament.location.region.toLowerCase().includes(query));
+    // Apply search query from filters
+    if (filters.search?.trim()) {
+      const query = filters.search.toLowerCase();
+      filtered = filtered.filter(tournament => 
+        tournament.name.toLowerCase().includes(query) || 
+        tournament.description?.toLowerCase().includes(query) || 
+        tournament.location.name.toLowerCase().includes(query) || 
+        tournament.location.region.toLowerCase().includes(query)
+      );
     }
 
     // Apply filters
@@ -75,15 +78,14 @@ const Index = () => {
       upcomingTournaments: upcoming,
       pastTournaments: past
     };
-  }, [tournaments, filters, searchQuery]);
+  }, [tournaments, filters]);
   const handleTournamentSelect = (tournament: Tournament | null) => {
     setSelectedTournament(tournament);
   };
   const clearFilters = () => {
     setFilters({});
-    setSearchQuery('');
   };
-  const hasActiveFilters = Object.values(filters).some(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)) || searchQuery.trim();
+  const hasActiveFilters = Object.values(filters).some(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true));
   return <div className="min-h-screen bg-background">
       <SEO 
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
@@ -141,24 +143,18 @@ const Index = () => {
                         </Button>}
                     </div>
                   </div>
-                  
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input placeholder="Search tournaments, locations, leagues..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
-                  </div>
-
-                  {/* Mobile Filter Toggle */}
-                  <div className="lg:hidden">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setShowFilters(!showFilters)}
-                      className="w-full"
-                    >
-                      <Filter className="w-4 h-4 mr-2" />
-                      {showFilters ? 'Hide Filters' : 'Show Filters'}
-                    </Button>
-                  </div>
+                {/* Mobile Filter Toggle */}
+                <div className="lg:hidden">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="w-full"
+                  >
+                    <Filter className="w-4 h-4 mr-2" />
+                    {showFilters ? 'Hide Filters' : 'Show Filters'}
+                  </Button>
+                </div>
                 </div>
 
                 {/* Filters */}

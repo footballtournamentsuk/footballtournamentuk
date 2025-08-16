@@ -11,9 +11,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { getCityBySlug, UK_CITIES } from '@/data/cities';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Filter, Settings, ArrowLeft, MapPin, Calendar, Trophy } from 'lucide-react';
+import { Plus, Filter, Settings, ArrowLeft, MapPin, Calendar, Trophy, Search } from 'lucide-react';
 
 const CityTournaments = () => {
   const { citySlug, param } = useParams<{ citySlug?: string; param?: string }>();
@@ -22,7 +21,6 @@ const CityTournaments = () => {
   
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
-  const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const { tournaments, loading, error } = useTournaments();
   const { user } = useAuth();
@@ -62,12 +60,12 @@ const CityTournaments = () => {
       return tournament;
     });
 
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(tournament =>
-        tournament.name.toLowerCase().includes(query) ||
-        tournament.description?.toLowerCase().includes(query) ||
+    // Apply search query from filters
+    if (filters.search?.trim()) {
+      const query = filters.search.toLowerCase();
+      filtered = filtered.filter(tournament => 
+        tournament.name.toLowerCase().includes(query) || 
+        tournament.description?.toLowerCase().includes(query) || 
         tournament.location.name.toLowerCase().includes(query)
       );
     }
@@ -115,7 +113,7 @@ const CityTournaments = () => {
       upcomingTournaments: upcoming, 
       pastTournaments: past 
     };
-  }, [tournaments, filters, searchQuery, city]);
+  }, [tournaments, city, filters]);
 
   const handleTournamentSelect = (tournament: Tournament | null) => {
     setSelectedTournament(tournament);
@@ -123,12 +121,11 @@ const CityTournaments = () => {
 
   const clearFilters = () => {
     setFilters({});
-    setSearchQuery('');
   };
 
   const hasActiveFilters = Object.values(filters).some(value => 
     value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
-  ) || searchQuery.trim();
+  );
 
   const scrollToMap = () => {
     const mapSection = document.getElementById('tournament-map');
@@ -291,16 +288,6 @@ const CityTournaments = () => {
                           </Button>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                      <Input
-                        placeholder={`Search tournaments in ${city.displayName}...`}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10"
-                      />
                     </div>
 
                     {/* Mobile Filter Toggle */}
