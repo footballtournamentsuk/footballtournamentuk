@@ -9,6 +9,7 @@ import { ReviewsSection } from '@/components/ReviewsSection';
 import { SEO } from '@/components/SEO';
 import { CookieConsent } from '@/components/CookieConsent';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { PartnersCarousel } from '@/components/PartnersCarousel';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -221,6 +222,13 @@ const Index = () => {
       
       {/* Hero Section */}
       <Hero />
+
+      {/* Partners Section */}
+      <section className="py-12 bg-surface/50">
+        <div className="container mx-auto px-4">
+          <PartnersCarousel />
+        </div>
+      </section>
 
       {/* Organizer CTA Section */}
       <OrganizerCTA />

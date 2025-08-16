@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { PartnersCarousel } from '@/components/PartnersCarousel';
 
 export const Footer = () => {
   return (
@@ -83,6 +84,11 @@ export const Footer = () => {
               <li><Link to="/tournaments/brighton" className="hover:text-primary-foreground">Brighton Tournaments</Link></li>
             </ul>
           </div>
+        </div>
+        
+        {/* Partners Section */}
+        <div className="border-t border-primary-foreground/20 mt-8 pt-8">
+          <PartnersCarousel showTitle={true} showButton={false} compact={true} />
         </div>
         
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-sm text-primary-foreground/60">
