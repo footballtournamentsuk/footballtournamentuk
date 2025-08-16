@@ -10,18 +10,23 @@ export const useTournamentTypes = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('Fetching tournament types...');
 
       const { data, error: supabaseError } = await supabase
         .from('tournaments')
         .select('type')
         .not('type', 'is', null);
 
+      console.log('Raw tournament data:', data);
+
       if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
         throw supabaseError;
       }
 
       // Extract unique tournament types, capitalize them, and sort
       const uniqueTypes = [...new Set(data.map(item => item.type))].sort();
+      console.log('Processed unique types:', uniqueTypes);
       setTournamentTypes(uniqueTypes);
     } catch (err) {
       console.error('Error fetching tournament types:', err);

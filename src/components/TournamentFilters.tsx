@@ -441,9 +441,12 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               {typesLoading ? (
                 <div className="text-xs text-muted-foreground">Loading tournament types...</div>
               ) : tournamentTypes.length > 0 ? (
-                tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}>
-                    {type}
-                  </Button>)
+                <>
+                  <div className="text-xs text-muted-foreground mb-2">Found {tournamentTypes.length} types: {tournamentTypes.join(', ')}</div>
+                  {tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}>
+                      {type}
+                    </Button>)}
+                </>
               ) : (
                 <div className="text-xs text-muted-foreground">No tournament types found</div>
               )}
