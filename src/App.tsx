@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -24,6 +24,7 @@ import TournamentRouter from "./components/TournamentRouter";
 import Policies from "./pages/Policies";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
+import { Admin } from "./pages/Admin";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -52,6 +53,9 @@ const Navigation = () => {
 
   const displayName = profile?.full_name || user?.email || 'User';
   const initials = getInitials(profile?.full_name, user?.email);
+  
+  // Simple admin check - in production, you'd check roles from a profiles table
+  const isAdmin = user?.email?.includes("admin") || user?.email?.includes("owner");
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -98,6 +102,17 @@ const Navigation = () => {
                     Create Tournament
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
+                        <Shield className="h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <a 
@@ -160,6 +175,7 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/support" element={<Support />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/teams/:id" element={<TeamView />} />
           <Route path="/city/:citySlug" element={<CityTournaments />} />
           <Route path="/tournaments/:param" element={<TournamentRouter />} />
