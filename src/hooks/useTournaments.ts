@@ -4,6 +4,24 @@ import { Tournament, DatabaseTournament, AgeGroup, TeamType } from '@/types/tour
 
 // Transform database tournament to frontend tournament format
 export const transformTournament = (dbTournament: DatabaseTournament): Tournament => {
+  // Calculate status based on dates if computed_status is not available
+  const now = new Date();
+  const startDate = new Date(dbTournament.start_date);
+  const endDate = new Date(dbTournament.end_date);
+  
+  let calculatedStatus = dbTournament.computed_status || dbTournament.status;
+  
+  // If no computed status, calculate based on dates
+  if (!dbTournament.computed_status) {
+    if (now > endDate) {
+      calculatedStatus = 'completed';
+    } else if (now >= startDate && now <= endDate) {
+      calculatedStatus = 'ongoing';
+    } else if (startDate > now) {
+      calculatedStatus = 'upcoming';
+    }
+  }
+
   return {
     id: dbTournament.id,
     name: dbTournament.name,
@@ -25,7 +43,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     ageGroups: dbTournament.age_groups as AgeGroup[],
     teamTypes: dbTournament.team_types as TeamType[],
     type: dbTournament.type as 'league' | 'tournament' | 'camp' | 'holiday',
-    status: (dbTournament.computed_status || dbTournament.status) as 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled',
+    status: calculatedStatus as 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled',
     maxTeams: dbTournament.max_teams || undefined,
     registeredTeams: dbTournament.registered_teams || undefined,
     cost: dbTournament.cost_amount ? {
