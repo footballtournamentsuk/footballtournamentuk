@@ -204,24 +204,20 @@ const TournamentDetails = () => {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Tournaments
             </Button>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <div className="flex-1 sm:flex-none min-w-0">
-                <AddToCalendar
-                  tournament={tournament}
-                  size="sm"
-                  variant="outline"
-                  className="w-full"
-                />
-              </div>
-              <div className="flex-1 sm:flex-none min-w-0">
-                <ShareButton
-                  url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
-                  title={tournament.name}
-                  description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
-                  size="sm"
-                  variant="outline"
-                />
-              </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <AddToCalendar
+                tournament={tournament}
+                size="sm"
+                variant="outline"
+                className="w-full"
+              />
+              <ShareButton
+                url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
+                title={tournament.name}
+                description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
+                size="sm"
+                variant="outline"
+              />
             </div>
           </div>
         </div>
