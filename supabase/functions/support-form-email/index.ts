@@ -21,7 +21,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    console.log("🚀 Support Form Email Function - Production v2");
+    console.log("🚀 Support Form Email Function - Production v3");
     
     // Get the API key at runtime
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
