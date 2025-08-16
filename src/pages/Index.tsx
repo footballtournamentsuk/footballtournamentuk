@@ -5,10 +5,10 @@ import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
 import Map from '@/components/Map';
 import Hero from '@/components/Hero';
 import OrganizerCTA from '@/components/OrganizerCTA';
-import ReviewsSection from '@/components/ReviewsSection';
-import SEO from '@/components/SEO';
-import CookieConsent from '@/components/CookieConsent';
-import ScrollToTop from '@/components/ScrollToTop';
+import { ReviewsSection } from '@/components/ReviewsSection';
+import { SEO } from '@/components/SEO';
+import { CookieConsent } from '@/components/CookieConsent';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -315,7 +315,7 @@ const Index = () => {
                             <TournamentCard
                               key={tournament.id}
                               tournament={tournament}
-                              onLocationClick={() => handleTournamentSelect(tournament)}
+                              onSelect={() => handleTournamentSelect(tournament)}
                             />
                           ))}
                         </div>
@@ -340,7 +340,7 @@ const Index = () => {
                               <TournamentCard
                                 key={tournament.id}
                                 tournament={tournament}
-                                onLocationClick={() => handleTournamentSelect(tournament)}
+                                onSelect={() => handleTournamentSelect(tournament)}
                               />
                             ))}
                           </div>
