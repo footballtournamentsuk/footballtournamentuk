@@ -107,19 +107,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
       priceRange: {
         min: min > 0 ? min : undefined,
         max: max < 500 ? max : undefined,
-        includeFree: filters.priceRange?.includeFree || false, // Preserve existing includeFree state
-      },
-    });
-  };
-
-  const handleFreeTournamentToggle = () => {
-    const currentIncludesFree = filters.priceRange?.includeFree || false;
-    onFiltersChange({
-      ...filters,
-      priceRange: {
-        min: filters.priceRange?.min,
-        max: filters.priceRange?.max,
-        includeFree: !currentIncludesFree,
+        includeFree: min === 0, // Include free tournaments if slider starts at 0
       },
     });
   };
@@ -143,7 +131,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     if (filters.search) count++;
     if (filters.location?.postcode) count++;
     if (filters.dateRange?.start || filters.dateRange?.end) count++;
-    if (filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined || filters.priceRange?.includeFree) count++;
+    if (filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined) count++;
     
     // Count array filters
     Object.values(filters).forEach(value => {
@@ -245,19 +233,6 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           </div>
           
           <div className="space-y-4">
-            {/* Free Tournament Toggle */}
-            <div className="flex items-center space-x-2">
-              <Button
-                type="button"
-                variant={filters.priceRange?.includeFree ? "default" : "outline"}
-                size="sm"
-                onClick={handleFreeTournamentToggle}
-                className={`text-xs ${filters.priceRange?.includeFree ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'}`}
-              >
-                Free Tournaments
-              </Button>
-            </div>
-
             {/* Price Range Slider */}
             <div className="space-y-3">
               <div className="flex justify-between text-sm text-muted-foreground">
@@ -339,13 +314,11 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                      <X className="w-3 h-3" />
                    </button>
                  </Badge>}
-                {(filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined || filters.priceRange?.includeFree) && <Badge className="bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500 hover:text-white transition-all duration-200 cursor-pointer">
+                {(filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined) && <Badge className="bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500 hover:text-white transition-all duration-200 cursor-pointer">
                      <Badge variant="outline" className="h-3 w-3 rounded-full p-0 flex items-center justify-center text-xs mr-1 border-green-500/20">
                        £
                      </Badge>
-                     Price: {filters.priceRange?.includeFree && (!filters.priceRange?.min && !filters.priceRange?.max) ? 'Free only' : 
-                       filters.priceRange?.includeFree && (filters.priceRange?.min || filters.priceRange?.max) ? `Free + £${filters.priceRange?.min || 0}-${filters.priceRange?.max || '500+'}` :
-                       filters.priceRange?.min && filters.priceRange?.max ? `£${filters.priceRange.min}-${filters.priceRange.max}` : 
+                     Price: {filters.priceRange?.min && filters.priceRange?.max ? `£${filters.priceRange.min}-${filters.priceRange.max}` : 
                        filters.priceRange?.min ? `£${filters.priceRange.min}+` : 
                        filters.priceRange?.max ? `Up to £${filters.priceRange.max}` : 'Custom'}
                      <button onClick={() => removeFilter('priceRange')} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
