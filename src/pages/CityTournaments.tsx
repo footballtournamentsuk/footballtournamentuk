@@ -132,28 +132,40 @@ const CityTournaments = () => {
     if (filters.priceRange) {
       filtered = filtered.filter(tournament => {
         const cost = tournament.cost?.amount;
+        const isFree = !cost || cost === 0;
         
         // If includeFree is true and tournament is free, include it
-        if (filters.priceRange!.includeFree && (!cost || cost === 0)) {
+        if (filters.priceRange!.includeFree && isFree) {
+          return true;
+        }
+        
+        // If we only want free tournaments and this is free
+        if (filters.priceRange!.includeFree && !filters.priceRange!.min && !filters.priceRange!.max && isFree) {
           return true;
         }
         
         // If tournament is free but includeFree is false, exclude it
-        if ((!cost || cost === 0) && !filters.priceRange!.includeFree) {
+        if (isFree && !filters.priceRange!.includeFree) {
           return false;
         }
         
         // Apply min/max price filters for paid tournaments
-        if (cost && cost > 0) {
+        if (!isFree) {
           const min = filters.priceRange!.min;
           const max = filters.priceRange!.max;
           
-          if (min !== undefined && cost < min) return false;
-          if (max !== undefined && max < 500 && cost > max) return false;
+          if (min !== undefined && cost! < min) {
+            return false;
+          }
+          if (max !== undefined && max < 500 && cost! > max) {
+            return false;
+          }
           
           return true;
         }
         
+        // If we get here and only have price range without includeFree, 
+        // and the tournament is free, exclude it
         return false;
       });
     }
