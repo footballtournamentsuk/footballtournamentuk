@@ -290,7 +290,8 @@ const ProfilePage = () => {
       // Validate required fields
       if (!editingTournament.name || !editingTournament.location_name || !editingTournament.postcode || 
           !editingTournament.start_date || !editingTournament.end_date || 
-          editingTournament.age_groups.length === 0 || editingTournament.team_types.length === 0) {
+          editingTournament.age_groups.length === 0 || editingTournament.team_types.length === 0 ||
+          editingTournament.format.length === 0) {
         toast({
           title: "Missing required fields",
           description: "Please fill in all required fields before saving.",
