@@ -111,6 +111,14 @@ const ProfilePage = () => {
     }
   }, [searchParams]);
 
+  // Load profile and tournaments when user is available
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      loadTournaments();
+    }
+  }, [user]);
+
   // Function to generate slug from tournament name
   const generateSlugFromName = async (name: string): Promise<string> => {
     const { data, error } = await supabase.rpc('generate_tournament_slug', { tournament_name: name });
@@ -143,13 +151,6 @@ const ProfilePage = () => {
   if (!loading && !user) {
     return <Navigate to="/auth" replace />;
   }
-
-  useEffect(() => {
-    if (user) {
-      loadProfile();
-      loadTournaments();
-    }
-  }, [user]);
 
   const loadProfile = async () => {
     try {
