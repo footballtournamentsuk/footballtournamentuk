@@ -52,7 +52,7 @@ interface Tournament {
   location_name: string;
   postcode: string;
   region: string;
-  format: string;
+  format: string[];
   age_groups: string[];
   team_types: string[];
   type: string;
@@ -104,7 +104,7 @@ const ProfilePage = () => {
     location_name: '',
     postcode: '',
     region: '',
-    format: '11v11',
+    format: [],
     age_groups: [],
     team_types: [],
     type: 'tournament',
@@ -188,7 +188,13 @@ const ProfilePage = () => {
         throw error;
       }
 
-      setTournaments(data || []);
+      // Convert format from string to array for UI
+      const processedTournaments = (data || []).map(tournament => ({
+        ...tournament,
+        format: tournament.format ? tournament.format.split(',').map(f => f.trim()) : []
+      }));
+      
+      setTournaments(processedTournaments);
     } catch (error: any) {
       toast({
         title: "Error loading tournaments",
@@ -310,6 +316,7 @@ const ProfilePage = () => {
 
       const tournamentData = {
         ...editingTournament,
+        format: editingTournament.format.join(','), // Convert array to comma-separated string
         organizer_id: user.id,
         latitude: latitude || 51.5074, // Default to London
         longitude: longitude || -0.1278,
@@ -347,7 +354,7 @@ const ProfilePage = () => {
         location_name: '',
         postcode: '',
         region: '',
-        format: '11v11',
+        format: [],
         age_groups: [],
         team_types: [],
         type: 'tournament',
@@ -755,22 +762,33 @@ const ProfilePage = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="format">Format *</Label>
-                        <Select
-                          value={editingTournament.format}
-                          onValueChange={(value) => setEditingTournament(prev => ({ ...prev, format: value }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {FORMATS.map((format) => (
-                              <SelectItem key={format} value={format}>
+                        <Label>Format *</Label>
+                        <div className="grid grid-cols-5 gap-2 mt-2">
+                          {FORMATS.map((format) => (
+                            <div key={format} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`format-${format}`}
+                                checked={editingTournament.format.includes(format)}
+                                onCheckedChange={(checked) => {
+                                  const newFormats = checked 
+                                    ? [...editingTournament.format, format]
+                                    : editingTournament.format.filter(f => f !== format);
+                                  setEditingTournament(prev => ({ ...prev, format: newFormats }));
+                                }}
+                              />
+                              <Label htmlFor={`format-${format}`} className="text-sm font-medium">{format}</Label>
+                            </div>
+                          ))}
+                        </div>
+                        {editingTournament.format.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {editingTournament.format.map((format) => (
+                              <span key={format} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                                 {format}
-                              </SelectItem>
+                              </span>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
