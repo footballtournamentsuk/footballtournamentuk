@@ -14,6 +14,19 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Filter, Settings, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ReviewsSection } from '@/components/ReviewsSection';
+
+// Haversine formula to calculate distance between two coordinates in miles
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+};
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
@@ -45,7 +58,52 @@ const Index = () => {
       );
     }
 
-    // Apply filters
+    // Apply date range filter
+    if (filters.dateRange?.start || filters.dateRange?.end) {
+      filtered = filtered.filter(tournament => {
+        const tournamentStart = new Date(tournament.dates.start);
+        const tournamentEnd = new Date(tournament.dates.end);
+        
+        // If only 'start' date is set, check if tournament starts on or after this date
+        if (filters.dateRange!.start && !filters.dateRange!.end) {
+          return tournamentStart >= filters.dateRange!.start;
+        }
+        
+        // If only 'end' date is set, check if tournament starts on or before this date
+        if (!filters.dateRange!.start && filters.dateRange!.end) {
+          return tournamentStart <= filters.dateRange!.end;
+        }
+        
+        // If both dates are set, check if tournament overlaps with the date range
+        if (filters.dateRange!.start && filters.dateRange!.end) {
+          return tournamentStart <= filters.dateRange!.end && tournamentEnd >= filters.dateRange!.start;
+        }
+        
+        return true;
+      });
+    }
+
+    // Apply location and radius filter
+    if (filters.location?.postcode && filters.location?.coordinates && filters.location?.radius) {
+      const userCoords = filters.location.coordinates;
+      const maxDistance = filters.location.radius;
+      
+      filtered = filtered.filter(tournament => {
+        if (!tournament.location.coordinates || tournament.location.coordinates.length !== 2) {
+          return false;
+        }
+        
+        const tournamentCoords = tournament.location.coordinates;
+        const distance = calculateDistance(
+          userCoords[1], userCoords[0], // lat, lng for user
+          tournamentCoords[1], tournamentCoords[0] // lat, lng for tournament
+        );
+        
+        return distance <= maxDistance;
+      });
+    }
+
+    // Apply other filters
     if (filters.format?.length) {
       filtered = filtered.filter(t => filters.format!.includes(t.format));
     }
