@@ -15,6 +15,9 @@ export const Footer = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Link to="/">Home</Link>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
                 <Link to="/about">About Us</Link>
               </Button>
               <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
