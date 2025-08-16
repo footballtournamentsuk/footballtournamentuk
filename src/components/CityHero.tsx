@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Users, Trophy, Search, List } from 'lucide-react';
+import { MapPin, Calendar, Users, Trophy, List } from 'lucide-react';
 import heroImage from '@/assets/hero-football.jpg';
 import { CityConfig } from '@/data/cities';
 
