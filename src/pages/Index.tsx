@@ -47,7 +47,8 @@ const Index = () => {
   // Filter and separate tournaments
   const {
     upcomingTournaments,
-    pastTournaments
+    pastTournaments,
+    allFilteredTournaments
   } = useMemo(() => {
     let filtered = tournaments;
 
@@ -178,7 +179,8 @@ const Index = () => {
     });
     return {
       upcomingTournaments: upcoming,
-      pastTournaments: past
+      pastTournaments: past,
+      allFilteredTournaments: [...upcoming, ...past]
     };
   }, [tournaments, filters]);
 
@@ -236,7 +238,7 @@ const Index = () => {
             </p>
           </div>
           
-          <Map tournaments={upcomingTournaments} selectedTournament={selectedTournament} onTournamentSelect={handleTournamentSelect} />
+          <Map tournaments={allFilteredTournaments} selectedTournament={selectedTournament} onTournamentSelect={handleTournamentSelect} />
         </div>
       </section>
 
