@@ -547,27 +547,27 @@ const ProfilePage = () => {
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Vertical Tabs Navigation */}
             <div className="w-full lg:w-64 flex-shrink-0">
-              <TabsList className="flex flex-col h-auto w-full bg-muted p-1 space-y-1">
+              <TabsList className="flex flex-col h-auto w-full bg-gradient-to-b from-background to-muted/30 p-2 space-y-2 border rounded-lg shadow-sm">
                 <TabsTrigger 
                   value="personal" 
-                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  className="w-full flex items-center justify-start gap-3 p-4 rounded-lg transition-all duration-200 data-[state=active]:bg-blue-50 data-[state=active]:border-blue-200 data-[state=active]:shadow-md data-[state=active]:text-blue-700 hover:bg-blue-25 border border-transparent"
                 >
-                  <User className="w-4 h-4" />
-                  Personal Details
+                  <User className="w-5 h-5" />
+                  <span className="font-medium">Personal Details</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="tournaments" 
-                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  className="w-full flex items-center justify-start gap-3 p-4 rounded-lg transition-all duration-200 data-[state=active]:bg-green-50 data-[state=active]:border-green-200 data-[state=active]:shadow-md data-[state=active]:text-green-700 hover:bg-green-25 border border-transparent"
                 >
-                  <Trophy className="w-4 h-4" />
-                  Tournament Management
+                  <Trophy className="w-5 h-5" />
+                  <span className="font-medium">Create Tournament</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="extended-details" 
-                  className="w-full flex items-center justify-start gap-2 p-3 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                  className="w-full flex items-center justify-start gap-3 p-4 rounded-lg transition-all duration-200 data-[state=active]:bg-purple-50 data-[state=active]:border-purple-200 data-[state=active]:shadow-md data-[state=active]:text-purple-700 hover:bg-purple-25 border border-transparent"
                 >
-                  <Globe className="w-4 h-4" />
-                  Extended Tournament Details
+                  <Globe className="w-5 h-5" />
+                  <span className="font-medium">Extended Tournament Details</span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -1089,7 +1089,7 @@ const ProfilePage = () => {
                   <CardContent>
                     {tournaments.length === 0 ? (
                       <p className="text-muted-foreground text-sm">
-                        Create a tournament first in the Tournament Management tab.
+                        Create a tournament first in the Create Tournament tab.
                       </p>
                     ) : (
                       <div className="space-y-2">
