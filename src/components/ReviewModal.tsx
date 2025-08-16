@@ -202,7 +202,7 @@ export const ReviewModal = ({ isOpen, onClose }: ReviewModalProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || !formData.consent}>
               {isSubmitting ? "Submitting..." : "Submit Review"}
             </Button>
           </div>
