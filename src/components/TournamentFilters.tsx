@@ -29,8 +29,6 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
 }) => {
   const { tournamentTypes, loading: typesLoading } = useTournamentTypes();
   
-  console.log('TournamentFilters render - tournamentTypes:', tournamentTypes, 'loading:', typesLoading);
-  
   // Sample search suggestions - in real app, these would come from API
   const searchSuggestions = [
     { id: '1', text: 'Manchester United Academy', type: 'tournament' as const },

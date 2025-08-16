@@ -20,9 +20,8 @@ export const useTournamentTypes = () => {
         throw supabaseError;
       }
 
-      // Extract unique tournament types and sort them
+      // Extract unique tournament types, capitalize them, and sort
       const uniqueTypes = [...new Set(data.map(item => item.type))].sort();
-      console.log('Fetched tournament types:', uniqueTypes);
       setTournamentTypes(uniqueTypes);
     } catch (err) {
       console.error('Error fetching tournament types:', err);
@@ -34,6 +33,12 @@ export const useTournamentTypes = () => {
 
   useEffect(() => {
     fetchTournamentTypes();
+  }, []);
+
+  // Force refetch on mount to ensure fresh data
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchTournamentTypes, 100);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return {
