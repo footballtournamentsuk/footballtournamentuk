@@ -238,7 +238,7 @@ const Index = () => {
             </p>
           </div>
           
-          <Map tournaments={allFilteredTournaments} selectedTournament={selectedTournament} onTournamentSelect={handleTournamentSelect} />
+          <Map tournaments={upcomingTournaments} selectedTournament={selectedTournament} onTournamentSelect={handleTournamentSelect} />
         </div>
       </section>
 
