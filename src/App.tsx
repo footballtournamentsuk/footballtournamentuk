@@ -28,6 +28,7 @@ import { Admin } from "./pages/Admin";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
+import BottomNavigation from "./components/BottomNavigation";
 
 const queryClient = new QueryClient();
 
@@ -166,8 +167,8 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Navigation />
-        {/* Add top padding to prevent header overlap */}
-        <div className="pt-16">
+        {/* Add top padding to prevent header overlap and bottom padding for mobile nav */}
+        <div className="pt-16 pb-20 md:pb-0">
           <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
@@ -187,6 +188,7 @@ const App = () => (
           <Footer />
           <CookieConsent />
         </div>
+        <BottomNavigation />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
