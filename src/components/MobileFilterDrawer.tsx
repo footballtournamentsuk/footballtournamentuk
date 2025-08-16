@@ -328,7 +328,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
           <Collapsible open={expandedSections.teamTypes} onOpenChange={() => toggleSection('teamTypes')}>
             <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-secondary-foreground" />
+                <Users className="w-5 h-5 text-secondary-foreground bg-violet-100" />
                 <span className="font-medium">Team Types</span>
                 {filters.teamTypes && filters.teamTypes.length > 0 && <Badge variant="secondary" className="ml-2 text-xs">
                     {filters.teamTypes.length}
