@@ -37,11 +37,14 @@ export const Admin = () => {
   });
   const [loading, setLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
-  const { user, session } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   // Simple admin check - in a real app, you'd check roles in a profiles table
   const isAdmin = user?.email?.includes("admin") || user?.email?.includes("owner");
+
+  // Add debugging
+  console.log("Admin component - Auth state:", { user: user?.email, session: !!session, authLoading, isAdmin });
 
   useEffect(() => {
     if (user && isAdmin) {
@@ -189,6 +192,18 @@ export const Admin = () => {
       });
     }
   };
+
+  // Show loading while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user || !session) {
     return <Navigate to="/auth" replace />;
