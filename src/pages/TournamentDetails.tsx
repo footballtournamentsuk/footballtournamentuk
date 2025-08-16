@@ -190,12 +190,16 @@ const TournamentDetails = () => {
           />
         )}
         <div className="absolute inset-0 bg-black/40" />
-        <div className="relative container mx-auto px-4 h-full flex flex-col justify-between py-6">
+      </div>
+
+      {/* Action Buttons */}
+      <div className="border-b bg-background">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row gap-2 justify-between items-start">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="self-start text-white hover:bg-white/20"
+              className="self-start"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Tournaments
@@ -204,15 +208,14 @@ const TournamentDetails = () => {
               <AddToCalendar
                 tournament={tournament}
                 size="sm"
-                variant="ghost"
-                className="text-white hover:bg-white/20"
+                variant="outline"
               />
               <ShareButton
                 url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
                 title={tournament.name}
                 description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
                 size="sm"
-                variant="ghost"
+                variant="outline"
               />
             </div>
           </div>
