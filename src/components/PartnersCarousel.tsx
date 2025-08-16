@@ -2,16 +2,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 
-// Placeholder partner logos (we'll replace with real ones later)
+// Placeholder partner data with color schemes
 const placeholderPartners = [
-  { id: 1, name: 'FootballHub', logo: '/api/placeholder/120/60' },
-  { id: 2, name: 'YouthSports', logo: '/api/placeholder/140/60' },
-  { id: 3, name: 'LocalLeagues', logo: '/api/placeholder/110/60' },
-  { id: 4, name: 'SportsTech', logo: '/api/placeholder/130/60' },
-  { id: 5, name: 'GameDay', logo: '/api/placeholder/120/60' },
-  { id: 6, name: 'MatchMaker', logo: '/api/placeholder/125/60' },
-  { id: 7, name: 'TeamConnect', logo: '/api/placeholder/135/60' },
-  { id: 8, name: 'PlayBall', logo: '/api/placeholder/115/60' },
+  { id: 1, name: 'SportsTech', bgColor: 'bg-blue-500', textColor: 'text-white' },
+  { id: 2, name: 'GameDay', bgColor: 'bg-green-500', textColor: 'text-white' },
+  { id: 3, name: 'FootballHub', bgColor: 'bg-red-500', textColor: 'text-white' },
+  { id: 4, name: 'YouthSports', bgColor: 'bg-purple-500', textColor: 'text-white' },
+  { id: 5, name: 'LocalLeagues', bgColor: 'bg-teal-500', textColor: 'text-white' },
+  { id: 6, name: 'MatchMaker', bgColor: 'bg-pink-500', textColor: 'text-white' },
+  { id: 7, name: 'TeamConnect', bgColor: 'bg-indigo-500', textColor: 'text-white' },
+  { id: 8, name: 'PlayBall', bgColor: 'bg-orange-500', textColor: 'text-white' },
 ];
 
 interface PartnersCarouselProps {
@@ -20,7 +20,7 @@ interface PartnersCarouselProps {
   compact?: boolean;
 }
 
-export const PartnersCarousel = ({ 
+const PartnersCarousel = ({ 
   showTitle = true, 
   showButton = true, 
   compact = false 
@@ -41,7 +41,7 @@ export const PartnersCarousel = ({
           </h2>
           {!compact && (
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              Trusted by leading organizations in football and youth sports
+              Trusted by leading football organizations
             </p>
           )}
         </div>
@@ -51,7 +51,7 @@ export const PartnersCarousel = ({
         <div 
           className="flex gap-8 items-center hover:pause"
           style={{
-            width: `${duplicatedPartners.length * 160}px`,
+            width: `${duplicatedPartners.length * 180}px`,
             animation: `scroll-continuous ${placeholderPartners.length * 8}s linear infinite`,
           }}
           onMouseEnter={(e) => {
@@ -64,12 +64,25 @@ export const PartnersCarousel = ({
           {duplicatedPartners.map((partner, index) => (
             <div 
               key={`${partner.id}-${index}`} 
-              className={`flex-shrink-0 ${compact ? "w-32" : "w-40"} flex items-center justify-center`}
+              className={`flex-shrink-0 ${compact ? "w-36" : "w-44"} flex items-center justify-center`}
             >
-              <div className="bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-lg p-4 w-full h-16 flex items-center justify-center">
-                {/* Placeholder logo - replace with actual logos later */}
-                <div className="bg-muted/20 rounded px-3 py-2 text-xs font-medium text-muted-foreground">
-                  {partner.name}
+              <div className={`
+                ${partner.bgColor} ${partner.textColor}
+                hover:grayscale hover:opacity-70 
+                transition-all duration-300 
+                rounded-lg px-6 py-4 w-full 
+                ${compact ? "h-16" : "h-20"} 
+                flex items-center justify-center 
+                shadow-md hover:shadow-lg
+                transform hover:scale-105
+              `}>
+                <div className="text-center">
+                  <div className={`font-bold ${compact ? "text-sm" : "text-base"}`}>
+                    {partner.name}
+                  </div>
+                  <div className={`text-xs opacity-90 ${compact ? "hidden" : "block"}`}>
+                    PARTNER
+                  </div>
                 </div>
               </div>
             </div>
@@ -80,9 +93,8 @@ export const PartnersCarousel = ({
       {showButton && (
         <div className="text-center">
           <Button 
-            variant="outline" 
             onClick={handleBecomePartner}
-            className="gap-2"
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold px-6 py-3 gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
           >
             <ExternalLink className="h-4 w-4" />
             Become a Partner
