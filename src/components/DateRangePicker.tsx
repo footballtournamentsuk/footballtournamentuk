@@ -44,10 +44,10 @@ export function DateRangePicker({
     if (!value?.from) return placeholder;
     
     if (value.to) {
-      return `${format(value.from, "dd MMM yyyy")} - ${format(value.to, "dd MMM yyyy")}`;
+      return `${format(value.from, "dd MMM")} - ${format(value.to, "dd MMM")}`;
     }
     
-    return `${format(value.from, "dd MMM yyyy")} - Select end date`;
+    return `${format(value.from, "dd MMM")} - End date`;
   };
 
   return (

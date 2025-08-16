@@ -187,7 +187,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
         <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
 
         {/* Location & Date Filters */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Location Filter */}
           <LocationFilter
             postcode={filters.location?.postcode || ''}
@@ -215,7 +215,8 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 to: filters.dateRange?.end
               }}
               onChange={handleDateRangeChange}
-              placeholder="Select date range"
+              placeholder="Pick dates"
+              className="min-w-0"
             />
           </div>
         </div>
@@ -361,7 +362,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
 
         <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Match Format */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 mb-3">
