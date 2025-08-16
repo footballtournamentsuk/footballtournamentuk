@@ -107,8 +107,8 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     onFiltersChange({
       ...filters,
       priceRange: {
-        min: min > 0 ? min : undefined,
-        max: max < 500 ? max : undefined,
+        min: min,
+        max: max,
         includeFree: min === 0, // Include free tournaments if slider starts at 0
       },
     });

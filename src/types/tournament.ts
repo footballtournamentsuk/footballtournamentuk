@@ -18,7 +18,7 @@ export interface Tournament {
   ageGroups: AgeGroup[];
   teamTypes: TeamType[];
   league?: League;
-  type: 'league' | 'tournament' | 'camp' | 'holiday';
+  type: string;
   status: 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled';
   maxTeams?: number;
   registeredTeams?: number;

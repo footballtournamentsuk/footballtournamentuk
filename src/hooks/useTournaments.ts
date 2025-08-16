@@ -43,7 +43,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     format: dbTournament.format as '3v3' | '5v5' | '7v7' | '9v9' | '11v11',
     ageGroups: dbTournament.age_groups as AgeGroup[],
     teamTypes: dbTournament.team_types as TeamType[],
-    type: dbTournament.type as 'league' | 'tournament' | 'camp' | 'holiday',
+    type: dbTournament.type,
     status: calculatedStatus as 'upcoming' | 'ongoing' | 'today' | 'tomorrow' | 'registration_open' | 'registration_closes_soon' | 'registration_closed' | 'completed' | 'cancelled',
     maxTeams: dbTournament.max_teams || undefined,
     registeredTeams: dbTournament.registered_teams || undefined,
