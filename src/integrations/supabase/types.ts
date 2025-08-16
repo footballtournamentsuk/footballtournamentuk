@@ -224,6 +224,7 @@ export type Database = {
           registration_deadline: string | null
           rules_and_regulations: string | null
           schedule_details: string | null
+          slug: string | null
           social_media_links: Json | null
           sponsor_info: string | null
           start_date: string
@@ -267,6 +268,7 @@ export type Database = {
           registration_deadline?: string | null
           rules_and_regulations?: string | null
           schedule_details?: string | null
+          slug?: string | null
           social_media_links?: Json | null
           sponsor_info?: string | null
           start_date: string
@@ -310,6 +312,7 @@ export type Database = {
           registration_deadline?: string | null
           rules_and_regulations?: string | null
           schedule_details?: string | null
+          slug?: string | null
           social_media_links?: Json | null
           sponsor_info?: string | null
           start_date?: string
@@ -334,6 +337,10 @@ export type Database = {
           registration_deadline: string
           start_date: string
         }
+        Returns: string
+      }
+      generate_tournament_slug: {
+        Args: { tournament_name: string }
         Returns: string
       }
       update_tournament_status: {
