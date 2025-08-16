@@ -742,6 +742,19 @@ const TournamentDetails = () => {
             )}
           </div>
         </div>
+
+        {/* Back to Home Button */}
+        <div className="text-center py-8 border-t">
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => navigate('/')}
+            className="gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Back to Home
+          </Button>
+        </div>
       </div>
     </div>
   );
