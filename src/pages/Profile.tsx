@@ -12,11 +12,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText, ChevronDown } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
 import { AttachmentUploader } from '@/components/AttachmentUploader';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
@@ -762,33 +764,68 @@ const ProfilePage = () => {
                       </div>
 
                       <div>
-                        <Label>Format *</Label>
-                        <div className="grid grid-cols-5 gap-2 mt-2">
-                          {FORMATS.map((format) => (
-                            <div key={format} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`format-${format}`}
-                                checked={editingTournament.format.includes(format)}
-                                onCheckedChange={(checked) => {
-                                  const newFormats = checked 
-                                    ? [...editingTournament.format, format]
-                                    : editingTournament.format.filter(f => f !== format);
-                                  setEditingTournament(prev => ({ ...prev, format: newFormats }));
-                                }}
-                              />
-                              <Label htmlFor={`format-${format}`} className="text-sm font-medium">{format}</Label>
+                        <Label htmlFor="format">Format *</Label>
+                        <div className="space-y-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className="w-full justify-between"
+                              >
+                                Select formats...
+                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandList>
+                                  <CommandGroup>
+                                    {FORMATS.map((format) => (
+                                      <CommandItem
+                                        key={format}
+                                        onSelect={() => {
+                                          const isSelected = editingTournament.format.includes(format);
+                                          const newFormats = isSelected 
+                                            ? editingTournament.format.filter(f => f !== format)
+                                            : [...editingTournament.format, format];
+                                          setEditingTournament(prev => ({ ...prev, format: newFormats }));
+                                        }}
+                                      >
+                                        <Checkbox
+                                          checked={editingTournament.format.includes(format)}
+                                          className="mr-2"
+                                        />
+                                        {format}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          
+                          {/* Selected formats as tags */}
+                          {editingTournament.format.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {editingTournament.format.map((format) => (
+                                <span 
+                                  key={format} 
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary"
+                                >
+                                  {format}
+                                  <X 
+                                    className="h-3 w-3 cursor-pointer hover:text-primary/70" 
+                                    onClick={() => {
+                                      const newFormats = editingTournament.format.filter(f => f !== format);
+                                      setEditingTournament(prev => ({ ...prev, format: newFormats }));
+                                    }}
+                                  />
+                                </span>
+                              ))}
                             </div>
-                          ))}
+                          )}
                         </div>
-                        {editingTournament.format.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {editingTournament.format.map((format) => (
-                              <span key={format} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                {format}
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </CardContent>
