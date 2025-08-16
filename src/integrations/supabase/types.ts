@@ -343,6 +343,10 @@ export type Database = {
         Args: { tournament_name: string }
         Returns: string
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       update_tournament_status: {
         Args: Record<PropertyKey, never>
         Returns: string
