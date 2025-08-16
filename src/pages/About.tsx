@@ -4,12 +4,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SEO } from '@/components/SEO';
 import { Users, Target, Heart, Globe, CheckCircle, Star, Trophy, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import heroImage from '@/assets/about-hero-bg.jpg';
 import communityImage from '@/assets/community-training.jpg';
 import stadiumImage from '@/assets/stadium-view.jpg';
 
 const About = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Handle Add Event button clicks
+  const handleAddEvent = () => {
+    if (user) {
+      // User is logged in - redirect to profile tournaments tab
+      navigate('/profile?tab=tournaments');
+    } else {
+      // User is not logged in - redirect to auth page
+      navigate('/auth');
+    }
+  };
+
   const stats = [
     { number: "50+", label: "Upcoming Tournaments" },
     { number: "1,000+", label: "Players Connected" },
@@ -78,7 +93,13 @@ const About = () => {
               <Button size="lg" variant="secondary" asChild>
                 <Link to="/">Find Tournaments</Link>
               </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="bg-white/10 border-white text-white hover:bg-white hover:text-primary"
+                onClick={handleAddEvent}
+                disabled={loading}
+              >
                 Add Your Event
               </Button>
             </div>
@@ -256,7 +277,12 @@ const About = () => {
                 Join hundreds of organizers who trust us to promote their events across the UK.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="secondary">
+                <Button 
+                  size="lg" 
+                  variant="secondary"
+                  onClick={handleAddEvent}
+                  disabled={loading}
+                >
                   Add Your Event
                 </Button>
                 <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
