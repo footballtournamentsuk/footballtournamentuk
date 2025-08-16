@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,33 +42,10 @@ interface Review {
 export const ReviewsCarousel = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
     fetchReviews();
   }, []);
-
-  // Auto-rotation logic
-  useEffect(() => {
-    if (!api || reviews.length === 0) return;
-
-    let autoRotateInterval: NodeJS.Timeout;
-
-    const startAutoRotation = () => {
-      autoRotateInterval = setInterval(() => {
-        api.scrollNext();
-      }, 6000); // Reduced speed: change slide every 6 seconds
-    };
-
-    // Start auto-rotation
-    startAutoRotation();
-
-    return () => {
-      if (autoRotateInterval) {
-        clearInterval(autoRotateInterval);
-      }
-    };
-  }, [api, reviews.length]);
 
   const fetchReviews = async () => {
     try {
@@ -110,6 +86,9 @@ export const ReviewsCarousel = () => {
       .toUpperCase()
       .slice(0, 2);
   };
+
+  // Create duplicated reviews for seamless loop
+  const duplicatedReviews = reviews.length > 0 ? [...reviews, ...reviews] : [];
 
   if (isLoading) {
     return (
@@ -154,19 +133,22 @@ export const ReviewsCarousel = () => {
         <p className="text-muted-foreground">Real feedback from teams and hosts using our free listings.</p>
       </div>
 
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "start",
-          loop: true,
-          duration: 25, // Smooth transition duration
-          dragFree: true,
-        }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-2 md:-ml-4">
-          {reviews.map((review) => (
-            <CarouselItem key={review.id} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+      <div className="relative overflow-hidden">
+        <div 
+          className="flex gap-4 hover:pause"
+          style={{
+            width: `${duplicatedReviews.length * 320}px`,
+            animation: `scroll-continuous ${reviews.length * 10}s linear infinite`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.animationPlayState = 'paused';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.animationPlayState = 'running';
+          }}
+        >
+          {duplicatedReviews.map((review, index) => (
+            <div key={`${review.id}-${index}`} className="w-80 flex-shrink-0">
               <Card className="h-full hover:shadow-md transition-shadow duration-200">
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Rating Stars */}
@@ -202,27 +184,22 @@ export const ReviewsCarousel = () => {
                       <p className="font-medium text-foreground text-sm truncate">
                         {review.author_name}
                       </p>
-                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                         <span>{formatDate(review.created_at)}</span>
-                         <span>•</span>
-                         <div className="flex items-center gap-1">
-                           <GoogleIcon />
-                           <span>Google Review</span>
-                         </div>
-                       </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{formatDate(review.created_at)}</span>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                          <GoogleIcon />
+                          <span>Google Review</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </CarouselItem>
+            </div>
           ))}
-        </CarouselContent>
-        
-        <div className="flex justify-center gap-2 mt-4">
-          <CarouselPrevious className="relative top-0 left-0 translate-y-0" />
-          <CarouselNext className="relative top-0 right-0 translate-y-0" />
         </div>
-      </Carousel>
+      </div>
     </div>
   );
 };
