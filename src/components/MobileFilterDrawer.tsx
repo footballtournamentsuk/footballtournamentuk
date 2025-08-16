@@ -12,6 +12,7 @@ import { DateRangePicker } from './DateRangePicker';
 import { DateRange } from 'react-day-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { useTournamentTypes } from '@/hooks/useTournamentTypes';
 interface MobileFilterDrawerProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -21,13 +22,13 @@ interface MobileFilterDrawerProps {
 const matchFormats = ['3v3', '5v5', '7v7', '9v9', '11v11'];
 const ageGroups: AgeGroup[] = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const teamTypes: TeamType[] = ['boys', 'girls', 'mixed'];
-const tournamentTypes = ['league', 'tournament', 'camp', 'holiday'];
 export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
   filters,
   onFiltersChange,
   onClearFilters,
   activeCount
 }) => {
+  const { tournamentTypes, loading: typesLoading } = useTournamentTypes();
   const [isOpen, setIsOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     search: true,
@@ -359,9 +360,15 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
               <div className="flex flex-wrap gap-2">
-                {tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className="text-xs capitalize">
-                    {type}
-                  </Button>)}
+                {typesLoading ? (
+                  <div className="text-xs text-muted-foreground">Loading...</div>
+                ) : tournamentTypes.length > 0 ? (
+                  tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className="text-xs capitalize">
+                      {type}
+                    </Button>)
+                ) : (
+                  <div className="text-xs text-muted-foreground">No types found</div>
+                )}
               </div>
             </CollapsibleContent>
           </Collapsible>

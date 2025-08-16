@@ -10,24 +10,37 @@ export const useTournamentTypes = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching tournament types...');
 
       const { data, error: supabaseError } = await supabase
         .from('tournaments')
         .select('type')
         .not('type', 'is', null);
 
-      console.log('Raw tournament data:', data);
-
       if (supabaseError) {
-        console.error('Supabase error:', supabaseError);
         throw supabaseError;
       }
 
-      // Extract unique tournament types, capitalize them, and sort
-      const uniqueTypes = [...new Set(data.map(item => item.type))].sort();
-      console.log('Processed unique types:', uniqueTypes);
-      setTournamentTypes(uniqueTypes);
+      // Define the desired order and extract unique tournament types
+      const desiredOrder = ['league', 'tournament', 'camp', 'holiday', 'cup', 'festival', 'showcase'];
+      const uniqueTypes = [...new Set(data.map(item => item.type))];
+      
+      // Sort according to desired order, then alphabetically for any not in the list
+      const sortedTypes = uniqueTypes.sort((a, b) => {
+        const indexA = desiredOrder.indexOf(a);
+        const indexB = desiredOrder.indexOf(b);
+        
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        } else if (indexA !== -1) {
+          return -1;
+        } else if (indexB !== -1) {
+          return 1;
+        } else {
+          return a.localeCompare(b);
+        }
+      });
+      
+      setTournamentTypes(sortedTypes);
     } catch (err) {
       console.error('Error fetching tournament types:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch tournament types');
@@ -38,12 +51,6 @@ export const useTournamentTypes = () => {
 
   useEffect(() => {
     fetchTournamentTypes();
-  }, []);
-
-  // Force refetch on mount to ensure fresh data
-  useEffect(() => {
-    const timeoutId = setTimeout(fetchTournamentTypes, 100);
-    return () => clearTimeout(timeoutId);
   }, []);
 
   return {
