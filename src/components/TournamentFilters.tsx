@@ -12,6 +12,7 @@ import { LocationFilter } from '@/components/LocationFilter';
 import { DateRangePicker } from '@/components/DateRangePicker';
 import { DateRange } from 'react-day-picker';
 import { Slider } from '@/components/ui/slider';
+import { useTournamentTypes } from '@/hooks/useTournamentTypes';
 interface TournamentFiltersProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -20,13 +21,14 @@ interface TournamentFiltersProps {
 const matchFormats = ['3v3', '5v5', '7v7', '9v9', '11v11'];
 const ageGroups: AgeGroup[] = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const teamTypes: TeamType[] = ['boys', 'girls', 'mixed'];
-const tournamentTypes = ['league', 'tournament', 'camp', 'holiday'];
 const regions = ['London', 'Kent', 'Surrey', 'Manchester', 'Birmingham', 'Liverpool', 'Yorkshire'];
 const TournamentFilters: React.FC<TournamentFiltersProps> = ({
   filters,
   onFiltersChange,
   onClearFilters
 }) => {
+  const { tournamentTypes } = useTournamentTypes();
+  
   // Sample search suggestions - in real app, these would come from API
   const searchSuggestions = [
     { id: '1', text: 'Manchester United Academy', type: 'tournament' as const },
