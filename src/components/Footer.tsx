@@ -13,28 +13,50 @@ export const Footer = () => {
               Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.
               From grassroots to elite level competitions.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/">Home</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/about">About Us</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/support">Support Us</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/faq">FAQ</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/policies">Policies</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <Link to="/cookie-policy">Cookie Policy</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
-                <a href="mailto:info@footballtournamentsuk.co.uk">Contact</a>
-              </Button>
+            
+            {/* Contact Info for Trust & SEO */}
+            <div className="mb-4">
+              <p className="text-primary-foreground/90 font-medium">
+                📧 info@footballtournamentsuk.co.uk
+              </p>
+            </div>
+
+            {/* Quick Links - Conversion Priority */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-primary-foreground">Quick Links</h4>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground" asChild>
+                  <Link to="/">🏠 Home</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground bg-primary-foreground/10" asChild>
+                  <Link to="/auth">⚽ List Your Tournament</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground" asChild>
+                  <a href="mailto:info@footballtournamentsuk.co.uk">📞 Contact</a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Other Links */}
+            <div>
+              <h4 className="font-semibold mb-3 text-primary-foreground">More Info</h4>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/about">About Us</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/support">Support Us</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/faq">FAQ</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/policies">Policies</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                  <Link to="/cookie-policy">Cookie Policy</Link>
+                </Button>
+              </div>
             </div>
           </div>
           
