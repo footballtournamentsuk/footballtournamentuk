@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Plus, UserPlus, ClipboardList, Zap } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const OrganizerCTA = () => {
+  const { user } = useAuth();
   return (
     <section className="py-16 bg-gradient-to-br from-primary via-secondary to-accent relative overflow-hidden">
       {/* Background Pattern */}
@@ -45,9 +47,9 @@ const OrganizerCTA = () => {
                 animation: 'breathe 4s ease-in-out infinite'
               }}
             >
-              <Link to="/auth" className="relative z-10 flex items-center justify-center w-full">
+              <Link to={user ? "/profile" : "/auth"} className="relative z-10 flex items-center justify-center w-full">
                 <Plus className="w-6 h-6 mr-3" />
-                Register & Add Tournament
+                {user ? "Create Tournament" : "Register & Add Tournament"}
                 {/* Enhanced glow effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out rounded-xl" />
               </Link>
