@@ -60,7 +60,7 @@ export const ReviewsSection = () => {
   const structuredData = generateStructuredData();
 
   return (
-    <section className="container mx-auto px-4 py-16" id="reviews">
+    <section className="container mx-auto px-4 py-8" id="reviews">
       {/* Add structured data for SEO */}
       {structuredData && (
         <script
@@ -75,9 +75,11 @@ export const ReviewsSection = () => {
           <Button
             onClick={() => setIsModalOpen(true)}
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-4 text-lg font-semibold relative overflow-hidden group transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
           >
-            Leave a Review
+            <span className="relative z-10">Leave a Review</span>
+            {/* Gradient shimmer effect */}
+            <div className="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
           </Button>
         </div>
 
