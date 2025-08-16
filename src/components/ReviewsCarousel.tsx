@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,10 +17,33 @@ interface Review {
 export const ReviewsCarousel = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
     fetchReviews();
   }, []);
+
+  // Auto-rotation logic
+  useEffect(() => {
+    if (!api || reviews.length === 0) return;
+
+    let autoRotateInterval: NodeJS.Timeout;
+
+    const startAutoRotation = () => {
+      autoRotateInterval = setInterval(() => {
+        api.scrollNext();
+      }, 4000); // Change slide every 4 seconds
+    };
+
+    // Start auto-rotation
+    startAutoRotation();
+
+    return () => {
+      if (autoRotateInterval) {
+        clearInterval(autoRotateInterval);
+      }
+    };
+  }, [api, reviews.length]);
 
   const fetchReviews = async () => {
     try {
@@ -106,6 +129,7 @@ export const ReviewsCarousel = () => {
       </div>
 
       <Carousel
+        setApi={setApi}
         opts={{
           align: "start",
           loop: true,
