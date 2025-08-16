@@ -45,15 +45,19 @@ export function PostcodeAutocomplete({
   useEffect(() => {
     const fetchMapboxToken = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('mapbox-token', {
+        const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token', {
           method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         
-        if (error) {
-          console.error('Error fetching Mapbox token:', error);
+        if (!response.ok) {
+          console.error('Error fetching Mapbox token:', response.status);
           return;
         }
         
+        const data = await response.json();
         if (data?.token) {
           setMapboxToken(data.token);
         }
