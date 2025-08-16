@@ -23,7 +23,7 @@ import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui
 const AGE_GROUPS = ['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18', 'U19', 'U20', 'U21'];
 const TEAM_TYPES = ['boys', 'girls', 'mixed'];
 const FORMATS = ['3v3', '5v5', '7v7', '9v9', '11v11'];
-const TOURNAMENT_TYPES = ['tournament', 'league', 'camp', 'friendly'];
+const TOURNAMENT_TYPES = ['tournament', 'league', 'camp', 'friendly', 'cup', 'festival', 'showcase'];
 const AVAILABLE_FEATURES = [
   'Professional coaching',
   'Equipment provided',
