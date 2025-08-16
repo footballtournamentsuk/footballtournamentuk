@@ -27,7 +27,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
   onFiltersChange,
   onClearFilters
 }) => {
-  const { tournamentTypes } = useTournamentTypes();
+  const { tournamentTypes, loading: typesLoading } = useTournamentTypes();
   
   // Sample search suggestions - in real app, these would come from API
   const searchSuggestions = [
@@ -438,9 +438,15 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}>
-                  {type}
-                </Button>)}
+              {typesLoading ? (
+                <div className="text-xs text-muted-foreground">Loading tournament types...</div>
+              ) : tournamentTypes.length > 0 ? (
+                tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}>
+                    {type}
+                  </Button>)
+              ) : (
+                <div className="text-xs text-muted-foreground">No tournament types found</div>
+              )}
             </div>
           </div>
         </div>
