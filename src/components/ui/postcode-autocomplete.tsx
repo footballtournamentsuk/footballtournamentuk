@@ -188,7 +188,7 @@ export function PostcodeAutocomplete({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-md"
+          className="absolute z-[100] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-lg"
         >
           {suggestions.map((suggestion) => {
             const formatted = formatSuggestionText(suggestion);

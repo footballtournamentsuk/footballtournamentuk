@@ -843,7 +843,7 @@ const ProfilePage = () => {
                         id="location_name"
                         value={editingTournament.location_name}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, location_name: value }))}
-                        placeholder="e.g., Etihad Campus"
+                        placeholder="Enter venue name"
                         onAddressSelect={(suggestion) => {
                           // Extract region and postcode from selected address if available
                           const parts = suggestion.place_name.split(', ');
@@ -867,7 +867,7 @@ const ProfilePage = () => {
                         id="postcode"
                         value={editingTournament.postcode}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, postcode: value }))}
-                        placeholder="Enter postcode (e.g., TN62HR)"
+                        placeholder="Enter postcode"
                         onAddressSelect={(suggestion) => {
                           // Extract location details from the selected address
                           const context = suggestion.context || [];
@@ -891,7 +891,7 @@ const ProfilePage = () => {
                         id="region"
                         value={editingTournament.region}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, region: value }))}
-                        placeholder="Greater Manchester"
+                        placeholder="Enter region"
                         onAddressSelect={(suggestion) => {
                           setEditingTournament(prev => ({ 
                             ...prev, 
