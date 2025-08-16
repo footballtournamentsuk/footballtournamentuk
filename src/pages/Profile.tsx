@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -92,6 +92,7 @@ interface Tournament {
 const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [saving, setSaving] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
@@ -101,6 +102,14 @@ const ProfilePage = () => {
   const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
   const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
+
+  // Set active tab from URL parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && ['personal', 'tournaments', 'extended-details'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   // Function to generate slug from tournament name
   const generateSlugFromName = async (name: string): Promise<string> => {

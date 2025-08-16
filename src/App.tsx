@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -90,6 +90,12 @@ const Navigation = () => {
                   <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
                     <Settings className="h-4 w-4" />
                     View / Edit Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile?tab=tournaments" className="flex items-center gap-2 cursor-pointer">
+                    <Plus className="h-4 w-4" />
+                    Create Tournament
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
