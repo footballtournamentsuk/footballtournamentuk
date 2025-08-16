@@ -334,21 +334,39 @@ const ProfilePage = () => {
           }
           
           if (!latitude || !longitude) {
-            console.warn('All geocoding attempts failed, using fallback coordinates');
+            console.error('❌ Geocoding failed for all attempts. Cannot save tournament without valid coordinates.');
+            toast({
+              title: "Location Error",
+              description: "Unable to find the location you entered. Please check your venue, postcode, and region.",
+              variant: "destructive",
+            });
+            return; // Don't save the tournament if we can't geocode the location
           }
         } else {
           console.error('Failed to get Mapbox token');
+          toast({
+            title: "Location Service Error",
+            description: "Unable to verify location. Please try again.",
+            variant: "destructive",
+          });
+          return;
         }
       } catch (error) {
         console.error('Geocoding failed:', error);
+        toast({
+          title: "Location Service Error",
+          description: "Unable to verify location. Please try again.",
+          variant: "destructive",
+        });
+        return;
       }
 
       const tournamentData = {
         ...editingTournament,
         format: editingTournament.format.join(','), // Convert array to comma-separated string
         organizer_id: user.id,
-        latitude: latitude || 51.5074, // Default to London
-        longitude: longitude || -0.1278,
+        latitude, // Use the geocoded latitude
+        longitude, // Use the geocoded longitude
         contact_name: profile.full_name,
         contact_email: profile.contact_email,
         contact_phone: profile.contact_phone
