@@ -2,16 +2,14 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 
-// Placeholder partner data with color schemes
-const placeholderPartners = [
-  { id: 1, name: 'SportsTech', bgColor: 'bg-blue-500', textColor: 'text-white' },
-  { id: 2, name: 'GameDay', bgColor: 'bg-green-500', textColor: 'text-white' },
-  { id: 3, name: 'FootballHub', bgColor: 'bg-red-500', textColor: 'text-white' },
-  { id: 4, name: 'YouthSports', bgColor: 'bg-purple-500', textColor: 'text-white' },
-  { id: 5, name: 'LocalLeagues', bgColor: 'bg-teal-500', textColor: 'text-white' },
-  { id: 6, name: 'MatchMaker', bgColor: 'bg-pink-500', textColor: 'text-white' },
-  { id: 7, name: 'TeamConnect', bgColor: 'bg-indigo-500', textColor: 'text-white' },
-  { id: 8, name: 'PlayBall', bgColor: 'bg-orange-500', textColor: 'text-white' },
+// Real partner logos
+const partnerLogos = [
+  { id: 1, name: 'ClubNest', logo: '/lovable-uploads/7d145396-e936-49e5-87e4-6c29729c64fc.png', alt: 'ClubNest Partner' },
+  { id: 2, name: 'GoalForge', logo: '/lovable-uploads/992c1347-f37c-49d5-864c-ba97953328de.png', alt: 'GoalForge Partner' },
+  { id: 3, name: 'KickLabs', logo: '/lovable-uploads/9a3deff3-483c-4ce2-aed1-7f8c5ded605d.png', alt: 'KickLabs Partner' },
+  { id: 4, name: 'PitchWave', logo: '/lovable-uploads/d42568b2-fa20-4b81-86c4-baaf774b0912.png', alt: 'PitchWave Partner' },
+  { id: 5, name: 'Play', logo: '/lovable-uploads/d9754e35-ee1d-4d36-a0d0-876e4ea0f618.png', alt: 'Play Partner' },
+  { id: 6, name: 'YouthPro', logo: '/lovable-uploads/1c2164c6-5657-40fd-b65d-7a581c0ffddb.png', alt: 'YouthPro Partner' },
 ];
 
 interface PartnersCarouselProps {
@@ -26,7 +24,7 @@ const PartnersCarousel = ({
   compact = false 
 }: PartnersCarouselProps) => {
   // Create duplicated partners for seamless loop
-  const duplicatedPartners = [...placeholderPartners, ...placeholderPartners];
+  const duplicatedPartners = [...partnerLogos, ...partnerLogos];
 
   const handleBecomePartner = () => {
     window.location.href = 'mailto:info@footballtournamentsuk.co.uk?subject=Partnership Inquiry';
@@ -52,7 +50,7 @@ const PartnersCarousel = ({
           className="flex gap-8 items-center hover:pause"
           style={{
             width: `${duplicatedPartners.length * 180}px`,
-            animation: `scroll-continuous ${placeholderPartners.length * 8}s linear infinite`,
+            animation: `scroll-continuous ${partnerLogos.length * 8}s linear infinite`,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.animationPlayState = 'paused';
@@ -66,24 +64,18 @@ const PartnersCarousel = ({
               key={`${partner.id}-${index}`} 
               className={`flex-shrink-0 ${compact ? "w-36" : "w-44"} flex items-center justify-center`}
             >
-              <div className={`
-                ${partner.bgColor} ${partner.textColor}
-                hover:grayscale hover:opacity-70 
+              <div className="
+                bg-transparent hover:grayscale hover:opacity-70 
                 transition-all duration-300 
-                rounded-lg px-6 py-4 w-full 
-                ${compact ? "h-16" : "h-20"} 
+                rounded-lg p-4 w-full 
                 flex items-center justify-center 
-                shadow-md hover:shadow-lg
-                transform hover:scale-105
-              `}>
-                <div className="text-center">
-                  <div className={`font-bold ${compact ? "text-sm" : "text-base"}`}>
-                    {partner.name}
-                  </div>
-                  <div className={`text-xs opacity-90 ${compact ? "hidden" : "block"}`}>
-                    PARTNER
-                  </div>
-                </div>
+                transform hover:scale-105 cursor-pointer
+              ">
+                <img 
+                  src={partner.logo} 
+                  alt={partner.alt}
+                  className={`max-w-full max-h-full object-contain ${compact ? "h-12" : "h-16"}`}
+                />
               </div>
             </div>
           ))}
