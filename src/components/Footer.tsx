@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export const Footer = () => {
   return (
-    <footer className="bg-primary text-primary-foreground py-12">
+    <footer className="bg-football-green-dark text-primary-foreground py-12" style={{ backgroundColor: 'hsl(122, 39%, 32%)' }}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
@@ -32,7 +32,7 @@ export const Footer = () => {
                   <Link to="/auth">⚽ List Your Tournament</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground" asChild>
-                  <a href="mailto:info@footballtournamentsuk.co.uk">📞 Contact</a>
+                  <a href="mailto:info@footballtournamentsuk.co.uk">📧 Contact</a>
                 </Button>
               </div>
             </div>
