@@ -22,6 +22,7 @@ export const useTournamentTypes = () => {
 
       // Extract unique tournament types and sort them
       const uniqueTypes = [...new Set(data.map(item => item.type))].sort();
+      console.log('Fetched tournament types:', uniqueTypes);
       setTournamentTypes(uniqueTypes);
     } catch (err) {
       console.error('Error fetching tournament types:', err);
