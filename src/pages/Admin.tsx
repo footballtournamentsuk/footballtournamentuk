@@ -27,8 +27,20 @@ interface AdminStats {
   publishedReviews: number;
 }
 
+interface UserProfile {
+  id: string;
+  user_id: string;
+  full_name: string;
+  contact_email: string;
+  contact_phone: string | null;
+  role: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export const Admin = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     totalTournaments: 0,
@@ -57,6 +69,7 @@ export const Admin = () => {
     try {
       await Promise.all([
         fetchTestimonials(),
+        fetchUsers(),
         fetchStats()
       ]);
     } catch (error) {
@@ -79,6 +92,16 @@ export const Admin = () => {
 
     if (error) throw error;
     setTestimonials(data || []);
+  };
+
+  const fetchUsers = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    setUsers(data || []);
   };
 
   const fetchStats = async () => {
@@ -307,21 +330,32 @@ export const Admin = () => {
           </Card>
         </div>
 
-        {/* Review Management */}
+        {/* Management Tabs */}
         <Card>
           <CardHeader>
-            <CardTitle>Review Management</CardTitle>
+            <CardTitle>Platform Management</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="pending" className="w-full">
+            <Tabs defaultValue="reviews" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="pending">
-                  Pending ({pendingTestimonials.length})
+                <TabsTrigger value="reviews">
+                  Reviews ({testimonials.length})
                 </TabsTrigger>
-                <TabsTrigger value="published">
-                  Published ({publishedTestimonials.length})
+                <TabsTrigger value="users">
+                  Users ({users.length})
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="reviews" className="space-y-4">
+                <Tabs defaultValue="pending" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="pending">
+                      Pending ({pendingTestimonials.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="published">
+                      Published ({publishedTestimonials.length})
+                    </TabsTrigger>
+                  </TabsList>
 
               <TabsContent value="pending" className="space-y-4">
                 {pendingTestimonials.length === 0 ? (
@@ -412,6 +446,50 @@ export const Admin = () => {
                       </CardContent>
                     </Card>
                   ))
+                )}
+                  </TabsContent>
+                </Tabs>
+              </TabsContent>
+
+              <TabsContent value="users" className="space-y-4">
+                {users.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No users registered yet
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {users.map((userProfile) => (
+                      <Card key={userProfile.id}>
+                        <CardContent className="pt-6">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-2">
+                              <div>
+                                <h4 className="font-semibold">
+                                  {userProfile.full_name || 'No name provided'}
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {userProfile.contact_email}
+                                </p>
+                                {userProfile.contact_phone && (
+                                  <p className="text-sm text-muted-foreground">
+                                    📞 {userProfile.contact_phone}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline">
+                                  {userProfile.role}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  Joined {new Date(userProfile.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 )}
               </TabsContent>
             </Tabs>
