@@ -303,8 +303,14 @@ const ProfilePage = () => {
       // Geocode the location
       let latitude, longitude;
       try {
-        const response = await supabase.functions.invoke('mapbox-token');
-        if (response.data?.token) {
+        const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const tokenData = response.ok ? await response.json() : null;
+        if (tokenData?.token) {
           // Try multiple geocoding strategies for better accuracy
           const queries = [
             `${editingTournament.postcode}, UK`, // Postcode first (most accurate)
@@ -315,7 +321,7 @@ const ProfilePage = () => {
           for (const query of queries) {
             console.log(`Trying geocoding query: ${query}`);
             const geocodeResponse = await fetch(
-              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${response.data.token}&country=GB&limit=1`
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${tokenData.token}&country=GB&limit=1`
             );
             
             if (!geocodeResponse.ok) {
