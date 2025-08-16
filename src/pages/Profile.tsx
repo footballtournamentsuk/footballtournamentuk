@@ -305,13 +305,39 @@ const ProfilePage = () => {
       try {
         const response = await supabase.functions.invoke('mapbox-token');
         if (response.data?.token) {
-          const geocodeResponse = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(editingTournament.location_name + ', ' + editingTournament.postcode)}.json?access_token=${response.data.token}`
-          );
-          const data = await geocodeResponse.json();
-          if (data.features && data.features.length > 0) {
-            [longitude, latitude] = data.features[0].center;
+          // Try multiple geocoding strategies for better accuracy
+          const queries = [
+            `${editingTournament.postcode}, UK`, // Postcode first (most accurate)
+            `${editingTournament.location_name}, ${editingTournament.postcode}`,
+            `${editingTournament.location_name}, ${editingTournament.region}, UK`
+          ];
+          
+          for (const query of queries) {
+            console.log(`Trying geocoding query: ${query}`);
+            const geocodeResponse = await fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${response.data.token}&country=GB&limit=1`
+            );
+            
+            if (!geocodeResponse.ok) {
+              console.error(`Geocoding request failed: ${geocodeResponse.status} ${geocodeResponse.statusText}`);
+              continue;
+            }
+            
+            const data = await geocodeResponse.json();
+            console.log(`Geocoding response for "${query}":`, data);
+            
+            if (data.features && data.features.length > 0) {
+              [longitude, latitude] = data.features[0].center;
+              console.log(`Successfully geocoded "${query}" to: ${latitude}, ${longitude}`);
+              break; // Stop trying once we get a result
+            }
           }
+          
+          if (!latitude || !longitude) {
+            console.warn('All geocoding attempts failed, using fallback coordinates');
+          }
+        } else {
+          console.error('Failed to get Mapbox token');
         }
       } catch (error) {
         console.error('Geocoding failed:', error);
