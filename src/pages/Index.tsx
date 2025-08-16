@@ -1,19 +1,21 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { SEO } from '@/components/SEO';
+import { useState, useMemo } from 'react';
+import TournamentCard from '@/components/TournamentCard';
+import TournamentFilters from '@/components/TournamentFilters';
+import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
+import Map from '@/components/Map';
 import Hero from '@/components/Hero';
 import OrganizerCTA from '@/components/OrganizerCTA';
-import Map from '@/components/Map';
-import TournamentFilters from '@/components/TournamentFilters';
-import TournamentCard from '@/components/TournamentCard';
+import ReviewsSection from '@/components/ReviewsSection';
+import SEO from '@/components/SEO';
+import CookieConsent from '@/components/CookieConsent';
+import ScrollToTop from '@/components/ScrollToTop';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Filter, Settings, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ReviewsSection } from '@/components/ReviewsSection';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, Filter } from 'lucide-react';
 
 // Haversine formula to calculate distance between two coordinates in miles
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -27,10 +29,12 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R * c;
 };
+
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [filters, setFilters] = useState<Filters>({});
   const [showFilters, setShowFilters] = useState(false);
+  const isMobile = useIsMobile();
   const {
     tournaments,
     loading,
@@ -177,14 +181,34 @@ const Index = () => {
       pastTournaments: past
     };
   }, [tournaments, filters]);
+
   const handleTournamentSelect = (tournament: Tournament | null) => {
     setSelectedTournament(tournament);
   };
+
   const clearFilters = () => {
     setFilters({});
   };
-  const hasActiveFilters = Object.values(filters).some(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true));
-  return <div className="min-h-screen bg-background">
+
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (filters.search) count++;
+    if (filters.location?.postcode) count++;
+    if (filters.dateRange?.start || filters.dateRange?.end) count++;
+    if (filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined) count++;
+    
+    // Count array filters
+    Object.values(filters).forEach(value => {
+      if (Array.isArray(value) && value.length > 0) count++;
+    });
+    
+    return count;
+  };
+  
+  const hasActiveFilters = getActiveFiltersCount() > 0;
+
+  return (
+    <div className="min-h-screen bg-background">
       <SEO 
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
         description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."
@@ -216,122 +240,129 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Tournaments Section */}
-      <section id="tournaments" className="py-16">
+      {/* Tournament Listings */}
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar - Filters */}
-            <div className="lg:w-1/3">
-              <div className="sticky top-4 space-y-6">
-                {/* Search and Add Tournament */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">Find Tournaments</h2>
-                    <div className="flex gap-2">
-                      {user ? <Button variant="default" size="sm" asChild>
-                          <a href="/profile">
-                            <Settings className="w-4 h-4 mr-2" />
-                            Profile
-                          </a>
-                        </Button> : <Button variant="default" size="sm" asChild>
-                          <a href="/auth">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Sign In to Add
-                          </a>
-                        </Button>}
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Mobile Filter Button */}
+              {isMobile ? (
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl md:text-3xl font-bold">
+                    Football Tournaments
+                  </h2>
+                  <MobileFilterDrawer
+                    filters={filters}
+                    onFiltersChange={setFilters}
+                    onClearFilters={clearFilters}
+                    activeCount={getActiveFiltersCount()}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* Desktop Filter Sidebar */}
+                  <div className="lg:w-1/3 xl:w-1/4">
+                    <div className="mb-6">
+                      <TournamentFilters
+                        filters={filters}
+                        onFiltersChange={setFilters}
+                        onClearFilters={clearFilters}
+                      />
                     </div>
                   </div>
-                {/* Mobile Filter Toggle */}
-                <div className="lg:hidden">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="w-full"
-                  >
-                    <Filter className="w-4 h-4 mr-2" />
-                    {showFilters ? 'Hide Filters' : 'Show Filters'}
-                  </Button>
-                </div>
-                </div>
+                </>
+              )}
 
-                {/* Filters */}
-                <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
-                  <TournamentFilters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
-                </div>
-              </div>
-            </div>
+              {/* Tournament Results */}
+              <div className={isMobile ? "w-full" : "lg:w-2/3 xl:w-3/4"}>
+                {!isMobile && (
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl md:text-3xl font-bold">
+                      Football Tournaments
+                    </h2>
+                  </div>
+                )}
 
-            {/* Main Content - Tournament Cards */}
-            <div className="lg:w-2/3">
-              {error && <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-destructive text-sm">Error loading tournaments: {error}</p>
-                </div>}
-              
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">
-                    {loading ? 'Loading...' : `${upcomingTournaments.length + pastTournaments.length} Tournament${upcomingTournaments.length + pastTournaments.length !== 1 ? 's' : ''} Found`}
-                  </h3>
-                  {hasActiveFilters && !loading && <p className="text-sm text-muted-foreground">
-                      Showing filtered results
-                    </p>}
-                </div>
-                
-                {hasActiveFilters && <Button variant="ghost" size="sm" onClick={clearFilters}>
-                    Clear All Filters
-                  </Button>}
-              </div>
+                {loading && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="bg-gray-200 rounded-lg h-64"></div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {loading ? <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[...Array(6)].map((_, i) => <div key={i} className="animate-pulse bg-muted rounded-lg h-48"></div>)}
-                </div> : upcomingTournaments.length === 0 && pastTournaments.length === 0 ? <div className="text-center py-12">
-                  <div className="text-6xl mb-4">⚽</div>
-                  <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Try adjusting your search criteria or filters
-                  </p>
-                  <Button onClick={clearFilters} variant="outline">
-                    Clear Filters
-                  </Button>
-                </div> : <div className="space-y-8">
-                  {/* Upcoming Tournaments */}
-                  {upcomingTournaments.length > 0 && <div>
-                      <div className="mb-4">
-                        <h4 className="text-lg font-semibold text-foreground">
+                {error && (
+                  <div className="text-center py-12">
+                    <p className="text-red-600 mb-4">Error loading tournaments: {error}</p>
+                    <Button onClick={() => window.location.reload()}>
+                      Try Again
+                    </Button>
+                  </div>
+                )}
+
+                {!loading && !error && (
+                  <>
+                    {/* Upcoming Tournaments */}
+                    {upcomingTournaments.length > 0 && (
+                      <div className="mb-12">
+                        <h3 className="text-xl font-semibold mb-6 text-foreground">
                           Upcoming Tournaments ({upcomingTournaments.length})
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Sorted by start date - soonest first
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {upcomingTournaments.map(tournament => <TournamentCard key={tournament.id} tournament={tournament} onSelect={handleTournamentSelect} />)}
-                      </div>
-                    </div>}
-
-                  {/* Past Tournaments - Collapsible */}
-                  {pastTournaments.length > 0 && <div className="border-t pt-8">
-                      <details className="group">
-                        <summary className="cursor-pointer mb-4 flex items-center justify-between p-4 bg-surface rounded-lg hover:bg-muted transition-colors">
-                          <div>
-                            <h4 className="text-lg font-semibold text-foreground">
-                              Past Tournaments ({pastTournaments.length})
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              Completed and cancelled tournaments
-                            </p>
-                          </div>
-                          <div className="text-muted-foreground group-open:rotate-90 transition-transform">
-                            ▶
-                          </div>
-                        </summary>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                          {pastTournaments.map(tournament => <TournamentCard key={tournament.id} tournament={tournament} onSelect={handleTournamentSelect} />)}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                          {upcomingTournaments.map((tournament) => (
+                            <TournamentCard
+                              key={tournament.id}
+                              tournament={tournament}
+                              onLocationClick={() => handleTournamentSelect(tournament)}
+                            />
+                          ))}
                         </div>
-                      </details>
-                    </div>}
-                </div>}
+                      </div>
+                    )}
+
+                    {/* Past Tournaments */}
+                    {pastTournaments.length > 0 && (
+                      <Collapsible>
+                        <CollapsibleTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2 text-lg font-medium mb-4 hover:bg-accent/50"
+                          >
+                            <ChevronDown className="w-5 h-5" />
+                            Past Tournaments ({pastTournaments.length})
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                            {pastTournaments.map((tournament) => (
+                              <TournamentCard
+                                key={tournament.id}
+                                tournament={tournament}
+                                onLocationClick={() => handleTournamentSelect(tournament)}
+                              />
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+
+                    {upcomingTournaments.length === 0 && pastTournaments.length === 0 && (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground mb-4">
+                          No tournaments found matching your criteria.
+                        </p>
+                        {hasActiveFilters && (
+                          <Button variant="outline" onClick={clearFilters}>
+                            Clear Filters
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -388,20 +419,6 @@ const Index = () => {
 
                 <Collapsible>
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                    <h3 className="text-lg font-semibold">Do you organize tournaments?</h3>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                    <p className="text-muted-foreground">
-                      <strong>No, we don't organize tournaments.</strong> We are purely a listing platform - a digital bulletin board. 
-                      Independent tournament organizers, clubs, leagues, and associations use our platform to promote their events. 
-                      All tournament organization, management, registration, and customer service is handled directly by the individual organizers.
-                    </p>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
                     <h3 className="text-lg font-semibold">How can organizers list their tournaments?</h3>
                     <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
                   </CollapsibleTrigger>
@@ -411,63 +428,6 @@ const Index = () => {
                       You can include all the important details like dates, location, age groups, team format, entry fees, 
                       contact information, and registration deadlines. Once submitted, tournaments are immediately visible to 
                       teams and families searching our platform.
-                    </p>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                    <h3 className="text-lg font-semibold">Who can participate in tournaments?</h3>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                    <p className="text-muted-foreground">
-                      Our platform features tournaments for youth players of all levels and age groups across the UK. 
-                      Participation requirements vary by tournament - some are open to all teams, others may have specific 
-                      eligibility criteria set by the organizer. Always check the tournament details and contact the organizer 
-                      directly for registration information and specific requirements.
-                    </p>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                    <h3 className="text-lg font-semibold">Are there any contracts or commitments?</h3>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                    <p className="text-muted-foreground">
-                      <strong>No contracts, no commitments.</strong> Organizers can list and remove tournaments at any time. 
-                      Teams can browse and contact organizers without any obligations. Our platform is designed to be flexible 
-                      and user-friendly, with no long-term commitments required from anyone.
-                    </p>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                    <h3 className="text-lg font-semibold">How do I contact tournament organizers?</h3>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                    <p className="text-muted-foreground">
-                      Each tournament listing includes the organizer's contact information. You can reach out to them directly 
-                      via the provided email, phone number, or website links. All registration, questions about the tournament, 
-                      and customer service should be handled directly with the tournament organizer.
-                    </p>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-6 bg-background border border-border rounded-lg hover:bg-muted transition-colors text-left">
-                    <h3 className="text-lg font-semibold">What if I have issues with a tournament?</h3>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="px-6 pb-6 bg-background border-x border-b border-border rounded-b-lg">
-                    <p className="text-muted-foreground">
-                      Since we're a listing platform, all tournament-related issues should be resolved directly with the organizer. 
-                      However, if you encounter any problems with our website or have concerns about a listing, please contact us 
-                      and we'll do our best to help. We maintain quality standards for listings on our platform.
                     </p>
                   </CollapsibleContent>
                 </Collapsible>
@@ -497,44 +457,16 @@ const Index = () => {
                   "@type": "Answer",
                   "text": "No, never. Our platform is completely free for both tournament organizers and teams. There are no listing fees, no commission charges, no subscription costs, and no hidden charges."
                 }
-              },
-              {
-                "@type": "Question",
-                "name": "Do you organize tournaments?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "No, we don't organize tournaments. We are purely a listing platform - a digital bulletin board. Independent tournament organizers, clubs, leagues, and associations use our platform to promote their events."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "How can organizers list their tournaments?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Tournament organizers can create a free account and add their events through our simple online form. You can include all the important details like dates, location, age groups, team format, entry fees, contact information, and registration deadlines."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Who can participate in tournaments?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Our platform features tournaments for youth players of all levels and age groups across the UK. Participation requirements vary by tournament - some are open to all teams, others may have specific eligibility criteria set by the organizer."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Are there any contracts or commitments?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "No contracts, no commitments. Organizers can list and remove tournaments at any time. Teams can browse and contact organizers without any obligations."
-                }
               }
             ]
           })}
         </script>
       </section>
 
-    </div>;
+      <CookieConsent />
+      <ScrollToTop />
+    </div>
+  );
 };
+
 export default Index;
