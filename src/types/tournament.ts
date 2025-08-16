@@ -1,5 +1,6 @@
 export interface Tournament {
   id: string;
+  slug?: string;
   name: string;
   description?: string;
   location: {
@@ -49,6 +50,7 @@ export interface Tournament {
 // Database tournament type from Supabase
 export interface DatabaseTournament {
   id: string;
+  slug?: string | null;
   name: string;
   description: string | null;
   location_name: string;

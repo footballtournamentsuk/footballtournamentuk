@@ -24,6 +24,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
 
   return {
     id: dbTournament.id,
+    slug: dbTournament.slug || undefined,
     name: dbTournament.name,
     description: dbTournament.description || undefined,
     location: {

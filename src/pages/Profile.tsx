@@ -49,6 +49,7 @@ interface Profile {
 
 interface Tournament {
   id?: string;
+  slug?: string;
   name: string;
   description: string;
   location_name: string;
@@ -100,6 +101,16 @@ const ProfilePage = () => {
   const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
   const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
+
+  // Function to generate slug from tournament name
+  const generateSlugFromName = async (name: string): Promise<string> => {
+    const { data, error } = await supabase.rpc('generate_tournament_slug', { tournament_name: name });
+    if (error) {
+      console.error('Error generating slug:', error);
+      return name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
+    }
+    return data;
+  };
   const [editingTournament, setEditingTournament] = useState<Tournament>({
     name: '',
     description: '',
@@ -380,17 +391,28 @@ const ProfilePage = () => {
 
       if (editingTournament.id) {
         // Update existing tournament
+        // Generate new slug if name changed
+        const existingTournament = tournaments.find(t => t.id === editingTournament.id);
+        let updatedData = tournamentData;
+        if (existingTournament && existingTournament.name !== editingTournament.name) {
+          const newSlug = await generateSlugFromName(editingTournament.name);
+          updatedData = { ...tournamentData, slug: newSlug };
+        }
+
         const { error } = await supabase
           .from('tournaments')
-          .update(tournamentData)
+          .update(updatedData)
           .eq('id', editingTournament.id);
 
         if (error) throw error;
       } else {
         // Create new tournament
+        const slug = await generateSlugFromName(tournamentData.name);
+        const tournamentWithSlug = { ...tournamentData, slug };
+
         const { error } = await supabase
           .from('tournaments')
-          .insert([tournamentData]);
+          .insert([tournamentWithSlug]);
 
         if (error) throw error;
       }

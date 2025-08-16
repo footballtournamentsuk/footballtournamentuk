@@ -44,11 +44,13 @@ import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
 
 const TournamentDetails = () => {
-  const { id, param } = useParams<{ id?: string; param?: string }>();
-  const tournamentId = id || param;
+  const { param } = useParams<{ param: string }>();
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
-  const { attachments } = useAttachments(tournamentId || '');
+  
+  // Find tournament by slug first (preferred), then by ID for backward compatibility
+  const tournament = tournaments.find(t => t.slug === param) || tournaments.find(t => t.id === param);
+  const { attachments } = useAttachments(tournament?.id || '');
 
   // Function to get appropriate icon for each feature
   const getFeatureIcon = (feature: string) => {
@@ -86,8 +88,6 @@ const TournamentDetails = () => {
     // Default icon for unmatched features
     return <Star className="w-4 h-4 text-gray-500/70" />;
   };
-
-  const tournament = tournaments.find(t => t.id === tournamentId);
 
   if (loading) {
     return (
@@ -208,7 +208,7 @@ const TournamentDetails = () => {
                 className="text-white hover:bg-white/20"
               />
               <ShareButton
-                url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`}
+                url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
                 title={tournament.name}
                 description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
                 size="sm"

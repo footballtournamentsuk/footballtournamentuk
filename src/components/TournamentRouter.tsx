@@ -15,7 +15,7 @@ const TournamentRouter: React.FC = () => {
     return <CityTournaments />;
   }
   
-  // Otherwise, treat it as a tournament ID and render TournamentDetails
+  // Otherwise, treat it as a tournament slug or ID and render TournamentDetails
   return <TournamentDetails />;
 };
 

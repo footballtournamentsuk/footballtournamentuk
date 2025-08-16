@@ -44,8 +44,8 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   // Generate QR code when needed
   useEffect(() => {
     if (showQR && !qrDataUrl) {
-      const utmUrl = `${url}?utm_source=qr&utm_medium=share&utm_campaign=tournament`;
-      QRCode.toDataURL(utmUrl, {
+      const { url: trackingUrl } = createShareMessage('qr');
+      QRCode.toDataURL(trackingUrl, {
         width: 200,
         margin: 2,
         color: {
@@ -104,17 +104,29 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     setTimeout(() => triggerRef.current?.focus(), 100);
   };
 
-  const createUtmUrl = (platform: string) => {
-    return `${url}?utm_source=${platform}&utm_medium=share&utm_campaign=tournament`;
+  const createShareMessage = (platform: string) => {
+    const baseMessage = `Check out ${title}! ⚽`;
+    const utmParams = new URLSearchParams({
+      utm_source: platform,
+      utm_medium: 'social',
+      utm_campaign: 'tournament_share',
+    });
+    const trackingUrl = `${url}?${utmParams.toString()}`;
+    
+    return {
+      message: baseMessage,
+      url: trackingUrl
+    };
   };
 
   const handleNativeShare = async () => {
     if (canShare) {
       try {
+        const { message, url: trackingUrl } = createShareMessage('native');
         await navigator.share({
           title,
-          text: description,
-          url: createUtmUrl('native')
+          text: message,
+          url: trackingUrl
         });
         return;
       } catch (error) {
@@ -125,9 +137,9 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   };
 
   const handleCopyLink = async () => {
-    const utmUrl = createUtmUrl('copy');
     try {
-      await navigator.clipboard.writeText(utmUrl);
+      const { url: trackingUrl } = createShareMessage('copy_link');
+      await navigator.clipboard.writeText(trackingUrl);
       setCopied(true);
       toast({
         title: "Link copied!",
@@ -171,31 +183,46 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   const shareOptions = [
     {
       name: 'WhatsApp',
-      url: `https://wa.me/?text=${encodeURIComponent(`${title} ${createUtmUrl('whatsapp')}`)}`,
+      url: () => {
+        const { message, url: trackingUrl } = createShareMessage('whatsapp');
+        return `https://wa.me/?text=${encodeURIComponent(`${message} ${trackingUrl}`)}`;
+      },
       icon: <WhatsAppIcon />,
       iconColor: '#25D366'
     },
     {
       name: 'Telegram',
-      url: `https://t.me/share/url?url=${encodeURIComponent(createUtmUrl('telegram'))}&text=${encodeURIComponent(title)}`,
+      url: () => {
+        const { message, url: trackingUrl } = createShareMessage('telegram');
+        return `https://t.me/share/url?url=${encodeURIComponent(trackingUrl)}&text=${encodeURIComponent(message)}`;
+      },
       icon: <TelegramIcon />,
       iconColor: '#26A5E4'
     },
     {
       name: 'X (Twitter)',
-      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(createUtmUrl('twitter'))}&text=${encodeURIComponent(title)}`,
+      url: () => {
+        const { message, url: trackingUrl } = createShareMessage('twitter');
+        return `https://x.com/intent/tweet?text=${encodeURIComponent(`${message} ${trackingUrl}`)}`;
+      },
       icon: <XIcon />,
       iconColor: 'currentColor'
     },
     {
       name: 'Facebook',
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(createUtmUrl('facebook'))}`,
+      url: () => {
+        const { url: trackingUrl } = createShareMessage('facebook');
+        return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(trackingUrl)}`;
+      },
       icon: <FacebookIcon />,
       iconColor: '#1877F2'
     },
     {
       name: 'Email',
-      url: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`Check out this tournament: ${createUtmUrl('email')}`)}`,
+      url: () => {
+        const { message, url: trackingUrl } = createShareMessage('email');
+        return `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${message} ${trackingUrl}`)}`;
+      },
       icon: <Mail className="w-5 h-5" />,
       iconColor: '#6B7280'
     }
@@ -299,7 +326,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
                       className="w-full justify-start gap-4 h-12 rounded-xl border border-border hover:bg-muted active:scale-[0.98] 
                                  transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-primary text-base font-medium"
                       onClick={() => {
-                        window.open(option.url, '_blank', 'noopener,noreferrer');
+                        window.open(option.url(), '_blank', 'noopener,noreferrer');
                         closeModal();
                       }}
                     >

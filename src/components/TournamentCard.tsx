@@ -291,7 +291,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           
           <div className="w-full">
             <ShareButton
-              url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.id}`}
+              url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
               title={tournament.name}
               description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
               size="sm"
@@ -304,7 +304,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             size="sm"
             asChild
           >
-            <Link to={`/tournaments/${tournament.id}`}>
+            <Link to={`/tournaments/${tournament.slug || tournament.id}`}>
               <ExternalLink className="w-4 h-4 mr-2" />
               View Details
             </Link>
