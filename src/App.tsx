@@ -16,6 +16,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Support from "./pages/Support";
+import Partners from "./pages/Partners";
 import TeamView from "./pages/TeamView";
 import TournamentDetails from "./pages/TournamentDetails";
 import CityTournaments from "./pages/CityTournaments";
@@ -175,6 +176,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<About />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/partners" element={<Partners />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/teams/:id" element={<TeamView />} />

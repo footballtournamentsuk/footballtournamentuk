@@ -27,7 +27,7 @@ const PartnersCarousel = ({
   const duplicatedPartners = [...partnerLogos, ...partnerLogos];
 
   const handleBecomePartner = () => {
-    window.location.href = 'mailto:info@footballtournamentsuk.co.uk?subject=Partnership Inquiry';
+    window.location.href = '/partners';
   };
 
   return (
