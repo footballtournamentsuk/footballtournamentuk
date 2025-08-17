@@ -138,9 +138,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md h-[100dvh] sm:h-[90dvh] max-h-[100svh] p-0 overflow-hidden safe-area-padding">
+      <DialogContent className="sm:max-w-md h-[100dvh] sm:h-[90dvh] max-h-[100svh] p-0 overflow-hidden">
         <div className="flex flex-col h-full">
-          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b">
+          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b bg-background">
             <DialogTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-primary" />
               Contact Tournament Organizer
@@ -151,7 +151,14 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-y-auto px-6" style={{ overscrollBehavior: 'contain' }}>
+          <div 
+            className="flex-1 overflow-y-auto overflow-x-hidden px-6 touch-pan-y"
+            style={{ 
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch',
+              touchAction: 'pan-y'
+            }}
+          >
             <Form {...form}>
               <form id="contact-form" onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-4 py-4">
                 <FormField
