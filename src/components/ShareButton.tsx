@@ -10,6 +10,7 @@ interface ShareButtonProps {
   description?: string;
   size?: 'sm' | 'default' | 'lg';
   variant?: 'default' | 'outline' | 'ghost';
+  className?: string;
 }
 
 export const ShareButton: React.FC<ShareButtonProps> = ({
@@ -17,7 +18,8 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   title,
   description,
   size = 'sm',
-  variant = 'outline'
+  variant = 'outline',
+  className = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -237,7 +239,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
         variant={variant}
         size={size}
         onClick={handleNativeShare}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 transition-colors duration-200 gap-2"
+        className={`gap-2 ${className || "w-full bg-blue-600 hover:bg-blue-700 text-white border-0 transition-colors duration-200"}`}
         aria-label={`Share ${title}`}
       >
         <Share2 className="h-4 w-4" />

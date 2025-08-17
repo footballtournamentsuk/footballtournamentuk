@@ -231,7 +231,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
-                className="w-full bg-green-600 hover:bg-green-700 text-white border-0 transition-colors duration-200" 
+                className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300" 
                 size="sm"
               >
                 <Navigation className="w-4 h-4 mr-2" />
@@ -267,7 +267,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           
           <ContactOrganizerModal tournament={tournament}>
             <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 transition-colors duration-200" 
+              className="w-full bg-green-200/60 backdrop-blur-sm hover:bg-green-300/70 hover:shadow-lg hover:shadow-green-500/25 text-green-900 border border-green-300/40 rounded-xl transition-all duration-300 font-medium" 
               size="sm"
             >
               <Mail className="w-4 h-4 mr-2" />
@@ -279,7 +279,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             tournament={tournament}
             size="sm"
             variant="default"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white border-0 transition-colors duration-200"
+            className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
           />
           
           <div className="w-full">
@@ -288,12 +288,13 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               title={tournament.name}
               description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
               size="sm"
-              variant="default"
+              variant="outline"
+              className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
             />
           </div>
           
           <Button 
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white border-0 transition-colors duration-200"
+            className="w-full bg-green-300/70 backdrop-blur-sm hover:bg-green-400/80 hover:shadow-xl hover:shadow-green-500/30 text-green-950 border border-green-400/50 rounded-xl transition-all duration-300 font-semibold shadow-md"
             size="sm"
             asChild
           >
