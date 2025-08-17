@@ -405,6 +405,14 @@ export type Database = {
         Args: { tournament_name: string }
         Returns: string
       }
+      get_email_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          pending_review_emails: number
+          total_tournaments: number
+          tournaments_with_review_emails: number
+        }[]
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
