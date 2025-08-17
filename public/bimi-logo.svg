@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <title>Football Tournaments UK Logo</title>
+  
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="180" fill="#1a472a" stroke="#22c55e" stroke-width="8"/>
+  
+  <!-- Football/Soccer ball -->
+  <g transform="translate(200,200)">
+    <!-- Ball base -->
+    <circle cx="0" cy="0" r="80" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+    
+    <!-- Pentagon pattern -->
+    <polygon points="0,-30 -28.5,-9.3 -17.6,24.3 17.6,24.3 28.5,-9.3" 
+             fill="#000000" stroke="#000000" stroke-width="1"/>
+    
+    <!-- Hexagon segments -->
+    <polygon points="0,-30 -28.5,-9.3 -45,-45 -15,-60" 
+             fill="none" stroke="#000000" stroke-width="1.5"/>
+    <polygon points="28.5,-9.3 0,-30 15,-60 45,-45" 
+             fill="none" stroke="#000000" stroke-width="1.5"/>
+    <polygon points="17.6,24.3 28.5,-9.3 60,0 45,30" 
+             fill="none" stroke="#000000" stroke-width="1.5"/>
+    <polygon points="-17.6,24.3 17.6,24.3 0,60 -30,45" 
+             fill="none" stroke="#000000" stroke-width="1.5"/>
+    <polygon points="-28.5,-9.3 -17.6,24.3 -45,30 -60,0" 
+             fill="none" stroke="#000000" stroke-width="1.5"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="320" text-anchor="middle" font-family="Arial, sans-serif" 
+        font-size="28" font-weight="bold" fill="#ffffff">FTU</text>
+  
+  <!-- UK Flag elements -->
+  <g transform="translate(320,80)">
+    <rect x="-20" y="-15" width="40" height="30" fill="#012169" rx="3"/>
+    <polygon points="-20,-15 20,-15 0,0" fill="#ffffff"/>
+    <polygon points="-20,15 20,15 0,0" fill="#ffffff"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke="#ffffff" stroke-width="6"/>
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#ffffff" stroke-width="6"/>
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#C8102E" stroke-width="2"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke="#C8102E" stroke-width="2"/>
+  </g>
+</svg>
