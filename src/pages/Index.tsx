@@ -10,9 +10,11 @@ import { SEO } from '@/components/SEO';
 import { CookieConsent } from '@/components/CookieConsent';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import PartnersCarousel from '@/components/PartnersCarousel';
+import OnboardingModal from '@/components/OnboardingModal';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -44,6 +46,7 @@ const Index = () => {
   const {
     user
   } = useAuth();
+  const { isOnboardingOpen, closeOnboarding } = useOnboarding();
 
   // Filter and separate tournaments
   const {
@@ -475,6 +478,12 @@ const Index = () => {
 
       <CookieConsent />
       <ScrollToTop />
+      
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={isOnboardingOpen} 
+        onClose={closeOnboarding} 
+      />
     </div>
   );
 };

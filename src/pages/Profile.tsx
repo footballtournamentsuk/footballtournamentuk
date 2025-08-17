@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import OnboardingModal from '@/components/OnboardingModal';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -92,6 +94,7 @@ interface Tournament {
 const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
+  const { isOnboardingOpen, closeOnboarding } = useOnboarding();
   const [searchParams] = useSearchParams();
   const [saving, setSaving] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -1488,6 +1491,12 @@ const ProfilePage = () => {
           </div>
         </Tabs>
       </div>
+      
+      {/* Onboarding Modal */}
+      <OnboardingModal 
+        isOpen={isOnboardingOpen} 
+        onClose={closeOnboarding} 
+      />
     </div>
   );
 };
