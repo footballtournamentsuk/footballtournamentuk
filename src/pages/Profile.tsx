@@ -116,6 +116,9 @@ const ProfilePage = () => {
   
   // GDPR consent state
   const [hasConsent, setHasConsent] = useState(false);
+  
+  // Tournament contact details states
+  const [tournamentConsent, setTournamentConsent] = useState(false);
 
   // Set active tab from URL parameter
   useEffect(() => {
@@ -711,7 +714,7 @@ const ProfilePage = () => {
   const canSave = editingTournament.name && editingTournament.location_name && 
                   editingTournament.postcode && editingTournament.start_date && 
                   editingTournament.end_date && editingTournament.age_groups.length > 0 && 
-                  editingTournament.team_types.length > 0;
+                  editingTournament.team_types.length > 0 && tournamentConsent;
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
@@ -1313,11 +1316,75 @@ const ProfilePage = () => {
                   </CardContent>
                 </Card>
 
+                {/* Contact Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Contact Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="contact_name">Full Name *</Label>
+                      <Input
+                        id="contact_name"
+                        value={editingTournament.contact_name}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, contact_name: e.target.value }))}
+                        placeholder="Enter organizer full name"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="contact_email">Email Address *</Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={editingTournament.contact_email}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, contact_email: e.target.value }))}
+                        placeholder="organizer@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="contact_phone">Phone Number</Label>
+                      <Input
+                        id="contact_phone"
+                        type="tel"
+                        value={editingTournament.contact_phone || ''}
+                        onChange={(e) => setEditingTournament(prev => ({ ...prev, contact_phone: e.target.value }))}
+                        placeholder="+44 7700 900123"
+                      />
+                    </div>
+
+                    {/* GDPR Consent for Tournament */}
+                    <div className="border-t pt-4">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="tournament_consent"
+                          checked={tournamentConsent}
+                          onCheckedChange={(checked) => setTournamentConsent(checked as boolean)}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label
+                            htmlFor="tournament_consent"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Data Processing Consent *
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            I agree to the processing of my personal data in accordance with the Privacy Policy. 
+                            This includes displaying my contact information to tournament participants and 
+                            using it for tournament organization purposes.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {!canSave && (
                   <Card className="border-warning bg-warning/5">
                     <CardContent className="pt-6">
                       <p className="text-warning-foreground text-sm">
-                        <strong>Required fields missing:</strong> Complete Tournament Name, Venue, Postcode, Dates, Age Groups, and Team Types to save.
+                        <strong>Required fields missing:</strong> Complete Tournament Name, Venue, Postcode, Dates, Age Groups, Team Types, and Contact Consent to save.
                       </p>
                     </CardContent>
                   </Card>

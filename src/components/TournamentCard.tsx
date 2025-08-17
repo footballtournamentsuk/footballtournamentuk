@@ -218,12 +218,18 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
         )}
 
         {/* Organizer Info */}
-        <div className="space-y-1 text-xs text-muted-foreground">
+        <div className="space-y-1 text-xs text-muted-foreground border-t pt-3 mt-3">
           <div className="font-medium text-foreground">Organized by:</div>
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
             <span>{tournament.contact.name}</span>
           </div>
+          {tournament.contact.email && (
+            <div className="flex items-center gap-1">
+              <Mail className="w-3 h-3" />
+              <span className="truncate">{tournament.contact.email}</span>
+            </div>
+          )}
         </div>
 
         {/* Actions */}
