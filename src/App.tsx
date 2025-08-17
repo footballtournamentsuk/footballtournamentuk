@@ -116,14 +116,12 @@ const Navigation = () => {
                   </>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <a 
-                    href="mailto:info@footballtournamentsuk.co.uk?subject=Support Request"
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Support
-                  </a>
+                <DropdownMenuItem 
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Support
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/faq" className="flex items-center gap-2 cursor-pointer">
