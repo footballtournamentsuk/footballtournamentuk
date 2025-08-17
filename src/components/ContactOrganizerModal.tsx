@@ -60,6 +60,22 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  // Prevent body scroll when modal is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = 'var(--scrollbar-width, 0px)';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isOpen]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -138,9 +154,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-full max-w-md mx-auto my-8 p-0 rounded-lg sm:my-16">
-        <div className="flex flex-col max-h-[80vh]">
-          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b bg-background">
+      <DialogContent className="w-[92vw] max-w-md max-h-[85vh] p-0 m-0 rounded-lg safe-area-padding">
+        <div className="flex flex-col h-full max-h-[85vh]">
+          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b bg-background rounded-t-lg">
             <DialogTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-primary" />
               Contact Tournament Organizer
@@ -152,7 +168,7 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </DialogHeader>
           
           <div 
-            className="flex-1 overflow-y-auto overflow-x-hidden px-6"
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 touch-pan-y"
             style={{ 
               overscrollBehavior: 'contain',
               WebkitOverflowScrolling: 'touch',
