@@ -11,6 +11,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import PartnersCarousel from '@/components/PartnersCarousel';
 import OnboardingModal from '@/components/OnboardingModal';
+import FeedbackBlock from '@/components/FeedbackBlock';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -475,6 +476,9 @@ const Index = () => {
           })}
         </script>
       </section>
+
+      {/* Feedback Block */}
+      <FeedbackBlock />
 
       <CookieConsent />
       <ScrollToTop />
