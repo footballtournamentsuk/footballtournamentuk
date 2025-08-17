@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SupportModalProps {
   isOpen: boolean;
@@ -17,12 +19,15 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
     name: profile?.full_name || "",
     email: user?.email || "",
     subject: "",
+    category: "",
     message: "",
+    honeypot: "", // Hidden spam protection field
   });
 
   // Reset form when modal opens/closes
@@ -32,7 +37,9 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
         name: profile?.full_name || "",
         email: user?.email || "",
         subject: "",
+        category: "",
         message: "",
+        honeypot: "",
       });
     }
   }, [isOpen, profile?.full_name, user?.email]);
@@ -40,7 +47,7 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name?.trim() || !formData.email?.trim() || !formData.subject?.trim() || !formData.message?.trim()) {
+    if (!formData.name?.trim() || !formData.email?.trim() || !formData.subject?.trim() || !formData.category?.trim() || !formData.message?.trim()) {
       toast({
         title: "Missing required fields",
         description: "Please fill in all required fields.",
@@ -49,37 +56,52 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/support-form-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data: session } = await supabase.auth.getSession();
+      
+      if (!session?.session) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to submit a support request.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('support-request', {
+        body: {
           name: formData.name.trim(),
           email: formData.email.trim(),
           subject: formData.subject.trim(),
+          category: formData.category,
           message: formData.message.trim(),
-        }),
+          honeypot: formData.honeypot,
+        },
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
       });
 
-      if (response.ok) {
-        toast({
-          title: "Message sent successfully",
-          description: "We'll get back to you as soon as possible.",
-        });
-        onClose();
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to send message');
+      if (error) {
+        throw new Error(error.message);
       }
-    } catch (error) {
+
+      toast({
+        title: "Support request submitted",
+        description: `Your request has been submitted successfully. Ticket ID: ${data?.ticketId?.split('-')[0] || 'N/A'}`,
+      });
+      onClose();
+    } catch (error: any) {
       console.error('Support form error:', error);
       toast({
-        title: "Failed to send message",
-        description: "Please try again or contact us directly at info@footballtournamentsuk.co.uk",
+        title: "Failed to submit request",
+        description: error.message || "Please try again or contact us directly at support@footballtournamentsuk.co.uk",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -134,6 +156,45 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
           </div>
 
           <div>
+            <Label htmlFor="category">Category *</Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) => handleInputChange("category", value)}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="General">General</SelectItem>
+                <SelectItem value="Bug Report">Bug Report</SelectItem>
+                <SelectItem value="Feature Request">Feature Request</SelectItem>
+                <SelectItem value="Billing">Billing</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Hidden honeypot field for spam protection */}
+          <input
+            type="text"
+            name="honeypot"
+            value={formData.honeypot}
+            onChange={(e) => handleInputChange("honeypot", e.target.value)}
+            style={{
+              position: 'absolute',
+              left: '-9999px',
+              width: '1px',
+              height: '1px',
+              opacity: 0,
+              pointerEvents: 'none',
+            }}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
+
+          <div>
             <Label htmlFor="message">Message *</Label>
             <Textarea
               id="message"
@@ -154,13 +215,15 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
               type="button" 
               variant="outline" 
               onClick={onClose}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button 
               type="submit"
+              disabled={isSubmitting}
             >
-              Send Message
+              {isSubmitting ? "Submitting..." : "Send Message"}
             </Button>
           </div>
         </form>

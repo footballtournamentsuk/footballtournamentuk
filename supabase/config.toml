@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.support-form-email]
 verify_jwt = false
 
+[functions.support-request]
+verify_jwt = false
+
 [functions.test-deploy]
 verify_jwt = false
 
