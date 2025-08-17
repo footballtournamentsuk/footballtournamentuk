@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import OnboardingModal from '@/components/OnboardingModal';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,6 +20,7 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
 import { AttachmentUploader } from '@/components/AttachmentUploader';
+import { Progress } from '@/components/ui/progress';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 
@@ -1501,6 +1503,79 @@ const ProfilePage = () => {
               <div className="lg:col-span-2">
                 {selectedTournamentForDetails ? (
                   <div className="space-y-6">
+                    {/* Progress Indicator */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <span>Extended Tournament Details</span>
+                          <Badge variant="outline" className="ml-2">
+                            {(() => {
+                              const completedFields = [
+                                selectedTournamentForDetails.banner_url,
+                                selectedTournamentForDetails.extended_description,
+                                selectedTournamentForDetails.venue_details,
+                                selectedTournamentForDetails.rules_and_regulations,
+                                selectedTournamentForDetails.schedule_details,
+                                selectedTournamentForDetails.what_to_bring,
+                                selectedTournamentForDetails.accommodation_info,
+                                selectedTournamentForDetails.prize_information,
+                                selectedTournamentForDetails.sponsor_info,
+                                selectedTournamentForDetails.additional_notes
+                              ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
+                              const totalFields = 10;
+                              const percentage = Math.round((completedFields.length / totalFields) * 100);
+                              return `${percentage}% Complete`;
+                            })()}
+                          </Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Profile Completion</span>
+                            <span className="font-medium">
+                              {(() => {
+                                const completedFields = [
+                                  selectedTournamentForDetails.banner_url,
+                                  selectedTournamentForDetails.extended_description,
+                                  selectedTournamentForDetails.venue_details,
+                                  selectedTournamentForDetails.rules_and_regulations,
+                                  selectedTournamentForDetails.schedule_details,
+                                  selectedTournamentForDetails.what_to_bring,
+                                  selectedTournamentForDetails.accommodation_info,
+                                  selectedTournamentForDetails.prize_information,
+                                  selectedTournamentForDetails.sponsor_info,
+                                  selectedTournamentForDetails.additional_notes
+                                ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
+                                return `${completedFields.length}/10 fields`;
+                              })()}
+                            </span>
+                          </div>
+                          <Progress 
+                            value={(() => {
+                              const completedFields = [
+                                selectedTournamentForDetails.banner_url,
+                                selectedTournamentForDetails.extended_description,
+                                selectedTournamentForDetails.venue_details,
+                                selectedTournamentForDetails.rules_and_regulations,
+                                selectedTournamentForDetails.schedule_details,
+                                selectedTournamentForDetails.what_to_bring,
+                                selectedTournamentForDetails.accommodation_info,
+                                selectedTournamentForDetails.prize_information,
+                                selectedTournamentForDetails.sponsor_info,
+                                selectedTournamentForDetails.additional_notes
+                              ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
+                              const totalFields = 10;
+                              return Math.round((completedFields.length / totalFields) * 100);
+                            })()} 
+                            className="w-full"
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Complete more details to make your tournament more attractive to teams
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                     {/* Banner Upload Section */}
                     <Card>
                       <CardHeader>

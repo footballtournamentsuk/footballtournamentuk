@@ -219,7 +219,37 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
         {/* Organizer Info */}
         <div className="space-y-1 text-xs text-muted-foreground border-t pt-3 mt-3">
-          <div className="font-medium text-foreground">Organized by:</div>
+          <div className="flex items-center justify-between">
+            <div className="font-medium text-foreground">Organized by:</div>
+            {(() => {
+              const completedFields = [
+                tournament.banner_url,
+                tournament.extended_description,
+                tournament.venue_details,
+                tournament.rules_and_regulations,
+                tournament.schedule_details,
+                tournament.what_to_bring,
+                tournament.accommodation_info,
+                tournament.prize_information,
+                tournament.sponsor_info,
+                tournament.additional_notes
+              ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
+              const totalFields = 10;
+              const percentage = Math.round((completedFields.length / totalFields) * 100);
+              
+              const getVariant = () => {
+                if (percentage >= 80) return 'default';
+                if (percentage >= 50) return 'secondary';
+                return 'outline';
+              };
+              
+              return (
+                <Badge variant={getVariant()} className="text-xs">
+                  {percentage}% Complete
+                </Badge>
+              );
+            })()}
+          </div>
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
             <span>{tournament.contact.name}</span>
