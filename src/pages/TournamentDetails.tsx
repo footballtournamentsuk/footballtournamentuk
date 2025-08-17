@@ -1,6 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTournaments } from '@/hooks/useTournaments';
+import { SEO } from '@/components/SEO';
+import { HelmetProvider } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -179,7 +181,14 @@ const TournamentDetails = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <HelmetProvider>
+      <SEO
+        title={`${tournament.name} | Football Tournaments UK`}
+        description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}. ${tournament.description || ''}`}
+        canonicalUrl={`/tournaments/${tournament.slug || tournament.id}`}
+        tournaments={[tournament]}
+      />
+      <div className="min-h-screen bg-background">
       {/* Hero Section with Banner */}
       <div className="relative h-64 bg-gradient-to-r from-primary to-primary-glow overflow-hidden">
         {tournament.banner_url && (
@@ -757,6 +766,7 @@ const TournamentDetails = () => {
         </div>
       </div>
     </div>
+    </HelmetProvider>
   );
 };
 

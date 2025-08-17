@@ -116,6 +116,18 @@ export const SEO: React.FC<SEOProps> = ({
     breadcrumbSchema
   ].filter(Boolean);
 
+  // Generate dynamic OG image URL for tournaments
+  const getOgImageUrl = () => {
+    if (tournaments.length === 1) {
+      // Single tournament page - use dynamic OG image
+      return `${siteUrl}/functions/v1/generate-og-image?tournamentId=${tournaments[0].id}`;
+    }
+    // Default OG image for other pages
+    return `${siteUrl}/og-image.jpg`;
+  };
+
+  const ogImageUrl = getOgImageUrl();
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -130,14 +142,16 @@ export const SEO: React.FC<SEOProps> = ({
       <meta property="og:description" content={description} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={fullCanonicalUrl || siteUrl} />
-      <meta property="og:image" content={`${siteUrl}/og-image.jpg`} />
+      <meta property="og:image" content={ogImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content="Football Tournaments UK" />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${siteUrl}/og-image.jpg`} />
+      <meta name="twitter:image" content={ogImageUrl} />
       
       {/* Additional SEO tags */}
       <meta name="robots" content="index, follow" />
