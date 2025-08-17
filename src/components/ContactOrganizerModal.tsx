@@ -138,8 +138,8 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-full h-[100vh] max-w-none p-0 m-0 rounded-none sm:w-auto sm:h-auto sm:max-w-md sm:max-h-[90vh] sm:m-4 sm:rounded-lg inset-0 sm:inset-auto">
-        <div className="flex flex-col h-full">
+      <DialogContent className="w-full max-w-md mx-auto my-8 p-0 rounded-lg sm:my-16">
+        <div className="flex flex-col max-h-[80vh]">
           <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b bg-background">
             <DialogTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-primary" />
