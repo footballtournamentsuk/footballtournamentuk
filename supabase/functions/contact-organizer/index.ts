@@ -15,6 +15,7 @@ interface ContactOrganizerRequest {
   email: string;
   phone?: string;
   clubTeamName?: string;
+  ageGroup?: string;
   subject: string;
   message: string;
 }
@@ -33,7 +34,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { tournamentId, name, email, phone, clubTeamName, subject, message }: ContactOrganizerRequest = await req.json();
+    const { tournamentId, name, email, phone, clubTeamName, ageGroup, subject, message }: ContactOrganizerRequest = await req.json();
 
     console.log("Contact organizer request:", { tournamentId, name, email, subject });
 
@@ -106,6 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="margin: 5px 0; color: #374151;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #2563eb;">${email}</a></p>
               ${phone ? `<p style="margin: 5px 0; color: #374151;"><strong>Phone:</strong> ${phone}</p>` : ''}
               ${clubTeamName ? `<p style="margin: 5px 0; color: #374151;"><strong>Club/Team:</strong> ${clubTeamName}</p>` : ''}
+              ${ageGroup ? `<p style="margin: 5px 0; color: #374151;"><strong>Age Group:</strong> ${ageGroup}</p>` : ''}
               <p style="margin: 15px 0 5px 0; color: #6b7280; font-size: 14px;">You can reply directly to this email to respond to ${name}.</p>
             </div>
           </div>
