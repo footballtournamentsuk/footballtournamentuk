@@ -138,8 +138,8 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md h-[100vh] sm:h-[90vh] max-h-[100vh] p-0 overflow-hidden fixed inset-0 sm:inset-auto sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] w-full sm:w-auto sm:max-w-md">
-        <div className="flex flex-col h-full max-h-full">
+      <DialogContent className="w-full h-[100vh] max-w-none p-0 m-0 rounded-none sm:w-auto sm:h-auto sm:max-w-md sm:max-h-[90vh] sm:m-4 sm:rounded-lg inset-0 sm:inset-auto">
+        <div className="flex flex-col h-full">
           <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b bg-background">
             <DialogTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-primary" />
@@ -152,7 +152,7 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </DialogHeader>
           
           <div 
-            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6"
+            className="flex-1 overflow-y-auto overflow-x-hidden px-6"
             style={{ 
               overscrollBehavior: 'contain',
               WebkitOverflowScrolling: 'touch',
