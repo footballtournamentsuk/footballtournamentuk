@@ -230,6 +230,12 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               <span className="truncate">{tournament.contact.email}</span>
             </div>
           )}
+          {tournament.contact.phone && (
+            <div className="flex items-center gap-1">
+              <Phone className="w-3 h-3" />
+              <span>{tournament.contact.phone}</span>
+            </div>
+          )}
         </div>
 
         {/* Actions */}
