@@ -254,7 +254,7 @@ const Index = () => {
       </section>
 
       {/* Tournament Listings */}
-      <section className="py-16 bg-background">
+      <section id="tournaments" className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <div className="flex flex-col lg:flex-row gap-6">
