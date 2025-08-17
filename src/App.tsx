@@ -66,7 +66,7 @@ const Navigation = () => {
           <img 
             src="/bimi-logo.svg" 
             alt="Football Tournaments UK" 
-            className="h-8 w-auto"
+            className="h-12 w-auto"
           />
           <span className="text-xl font-bold text-primary hidden sm:inline">
             Football Tournaments UK
