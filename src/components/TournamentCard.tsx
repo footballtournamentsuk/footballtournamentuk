@@ -228,6 +228,30 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
         {/* Actions */}
         <div className="space-y-3 pt-4">
+          {/* Primary Action - View Details */}
+          <Button 
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 hover:shadow-xl hover:shadow-green-600/40 text-white border-0 rounded-xl transition-all duration-300 font-semibold shadow-lg"
+            size="sm"
+            asChild
+          >
+            <Link to={`/tournaments/${tournament.slug || tournament.id}`}>
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Details
+            </Link>
+          </Button>
+
+          {/* Secondary Action - Contact Organizer */}
+          <ContactOrganizerModal tournament={tournament}>
+            <Button 
+              className="w-full bg-green-500/80 backdrop-blur-sm hover:bg-green-600/90 hover:shadow-lg hover:shadow-green-500/30 text-white border border-green-400/30 rounded-xl transition-all duration-300 font-medium" 
+              size="sm"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Contact Organizer
+            </Button>
+          </ContactOrganizerModal>
+
+          {/* Tertiary Actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
@@ -264,16 +288,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <ContactOrganizerModal tournament={tournament}>
-            <Button 
-              className="w-full bg-green-200/60 backdrop-blur-sm hover:bg-green-300/70 hover:shadow-lg hover:shadow-green-500/25 text-green-900 border border-green-300/40 rounded-xl transition-all duration-300 font-medium" 
-              size="sm"
-            >
-              <Mail className="w-4 h-4 mr-2" />
-              Contact Organizer
-            </Button>
-          </ContactOrganizerModal>
 
           <AddToCalendar
             tournament={tournament}
@@ -292,17 +306,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
               className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
             />
           </div>
-          
-          <Button 
-            className="w-full bg-green-300/70 backdrop-blur-sm hover:bg-green-400/80 hover:shadow-xl hover:shadow-green-500/30 text-green-950 border border-green-400/50 rounded-xl transition-all duration-300 font-semibold shadow-md"
-            size="sm"
-            asChild
-          >
-            <Link to={`/tournaments/${tournament.slug || tournament.id}`}>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View Details
-            </Link>
-          </Button>
         </div>
       </CardContent>
     </Card>
