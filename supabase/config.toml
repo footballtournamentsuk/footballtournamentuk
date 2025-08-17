@@ -1,5 +1,8 @@
 project_id = "yknmcddrfkggphrktivd"
 
+[functions.contact-organizer]
+verify_jwt = false
+
 [functions.mapbox-token]
 verify_jwt = false
 

@@ -44,6 +44,7 @@ import { AttachmentViewer } from '@/components/AttachmentViewer';
 import { useAttachments } from '@/hooks/useAttachments';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
+import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
 
 const TournamentDetails = () => {
   const { param } = useParams<{ param: string }>();
@@ -685,31 +686,15 @@ const TournamentDetails = () => {
               <CardContent className="space-y-3">
                 <div>
                   <div className="font-medium">{tournament.contact.name}</div>
+                  <div className="text-sm text-muted-foreground">Tournament Organizer</div>
                 </div>
                 
-                {tournament.contact.email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <a 
-                      href={`mailto:${tournament.contact.email}`}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {tournament.contact.email}
-                    </a>
-                  </div>
-                )}
-                
-                {tournament.contact.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
-                    <a 
-                      href={`tel:${tournament.contact.phone}`}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {tournament.contact.phone}
-                    </a>
-                  </div>
-                )}
+                <ContactOrganizerModal tournament={tournament}>
+                  <Button className="w-full" size="sm">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Contact Organizer
+                  </Button>
+                </ContactOrganizerModal>
                 
                 {tournament.website && (
                   <div className="flex items-center gap-2">

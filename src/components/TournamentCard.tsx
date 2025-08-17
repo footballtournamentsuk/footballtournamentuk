@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { ShareButton } from './ShareButton';
 import { AddToCalendar } from './AddToCalendar';
+import { ContactOrganizerModal } from './ContactOrganizerModal';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -216,31 +217,13 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           </p>
         )}
 
-        {/* Contact Info */}
+        {/* Organizer Info */}
         <div className="space-y-1 text-xs text-muted-foreground">
           <div className="font-medium text-foreground">Organized by:</div>
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
             <span>{tournament.contact.name}</span>
           </div>
-          {tournament.contact.email && (
-            <div className="flex items-center gap-1">
-              <Mail className="w-3 h-3" />
-              <span>{tournament.contact.email}</span>
-            </div>
-          )}
-          {tournament.contact.phone && (
-            <div className="flex items-center gap-1">
-              <Phone className="w-3 h-3" />
-              <span>{tournament.contact.phone}</span>
-            </div>
-          )}
-          {tournament.website && (
-            <div className="flex items-center gap-1">
-              <ExternalLink className="w-3 h-3" />
-              <span>Website</span>
-            </div>
-          )}
         </div>
 
         {/* Actions */}
@@ -282,6 +265,16 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             </DropdownMenuContent>
           </DropdownMenu>
           
+          <ContactOrganizerModal tournament={tournament}>
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 transition-colors duration-200" 
+              size="sm"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Contact Organizer
+            </Button>
+          </ContactOrganizerModal>
+
           <AddToCalendar
             tournament={tournament}
             size="sm"
