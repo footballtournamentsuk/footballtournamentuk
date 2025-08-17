@@ -29,6 +29,8 @@ import { Tournament } from '@/types/tournament';
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
+  phone: z.string().optional(),
+  clubTeamName: z.string().optional(),
   subject: z.string().min(5, 'Subject must be at least 5 characters'),
   message: z.string().min(20, 'Message must be at least 20 characters'),
 });
@@ -53,6 +55,8 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
+      clubTeamName: '',
       subject: '',
       message: '',
     },
@@ -67,6 +71,8 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           tournamentId: tournament.id,
           name: data.name,
           email: data.email,
+          phone: data.phone,
+          clubTeamName: data.clubTeamName,
           subject: data.subject,
           message: data.message,
         },
@@ -148,6 +154,36 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
                     <FormLabel>Your Email</FormLabel>
                     <FormControl>
                       <Input placeholder="your@email.com" type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number <span className="text-muted-foreground">(optional)</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="+44 7700 900123" type="tel" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="clubTeamName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Club / Team Name <span className="text-muted-foreground">(optional)</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your club or team name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
