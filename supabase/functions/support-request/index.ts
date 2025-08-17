@@ -144,8 +144,8 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const { error: emailError } = await resend.emails.send({
-      from: 'Football Tournaments UK <support@footballtournamentsuk.co.uk>',
-      to: ['support@footballtournamentsuk.co.uk'], // Replace with actual support inbox
+      from: 'Football Tournaments UK <info@footballtournamentsuk.co.uk>',
+      to: ['info@footballtournamentsuk.co.uk'],
       subject: `[Support] ${requestData.category}: ${requestData.subject}`,
       html: supportEmailHtml,
       replyTo: requestData.email,
@@ -186,7 +186,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const { error: confirmationError } = await resend.emails.send({
-      from: 'Football Tournaments UK <support@footballtournamentsuk.co.uk>',
+      from: 'Football Tournaments UK <info@footballtournamentsuk.co.uk>',
       to: [requestData.email],
       subject: `Support Request Confirmed - Ticket #${ticket.id.split('-')[0]}`,
       html: confirmationHtml,
