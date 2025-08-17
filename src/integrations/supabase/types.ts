@@ -227,6 +227,32 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_review_emails_sent: {
+        Row: {
+          id: string
+          sent_at: string
+          tournament_id: string
+        }
+        Insert: {
+          id?: string
+          sent_at?: string
+          tournament_id: string
+        }
+        Update: {
+          id?: string
+          sent_at?: string
+          tournament_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_review_emails_sent_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: true
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           accommodation_info: string | null
@@ -382,6 +408,10 @@ export type Database = {
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      send_review_request_emails: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       update_tournament_status: {
         Args: Record<PropertyKey, never>
