@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, PoundSterling, Clock, Shield } from 'lucide-react';
+import { PasswordStrengthIndicator } from '@/components/PasswordStrengthIndicator';
 import logo from '/bimi-logo.svg';
 
 const AuthPage = () => {
@@ -33,6 +34,15 @@ const AuthPage = () => {
       toast({
         title: "Error",
         description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 8) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 8 characters long",
         variant: "destructive",
       });
       return;
@@ -275,10 +285,11 @@ const AuthPage = () => {
                       <Input
                         id="signup-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Create a password"
+                        placeholder="Create a password (min. 8 characters)"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="pl-10 pr-10 h-12 bg-white/80 border-2 border-transparent focus:border-primary/50 focus:bg-white transition-all duration-300"
+                        minLength={8}
                         required
                       />
                       <button
@@ -289,6 +300,8 @@ const AuthPage = () => {
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
+                    {/* Password Strength Indicator */}
+                    <PasswordStrengthIndicator password={password} className="mt-2" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
