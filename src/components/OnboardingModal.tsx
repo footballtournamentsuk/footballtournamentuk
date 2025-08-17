@@ -57,90 +57,92 @@ const OnboardingModal = ({ isOpen, onClose }: OnboardingModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-gradient-to-br from-background via-background to-secondary/5">
-        <div className="relative">
-          {/* Progress dots */}
-          <div className="flex justify-center gap-2 mb-6">
-            {slides.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-primary' : 'bg-muted'
-                }`}
-              />
-            ))}
-          </div>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden bg-gradient-to-br from-background via-background to-secondary/5">
+        <div className="flex flex-col max-h-full">
+          <div className="relative flex-shrink-0">
+            {/* Progress dots */}
+            <div className="flex justify-center gap-2 mb-6">
+              {slides.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentSlide ? 'bg-primary' : 'bg-muted'
+                  }`}
+                />
+              ))}
+            </div>
 
-          <Card className="border-0 shadow-none bg-transparent">
-            <CardContent className="p-8 text-center">
-              <div className="mb-6">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-football-primary rounded-full flex items-center justify-center mb-4">
-                  {React.createElement(slides[currentSlide].icon, {
-                    className: "w-8 h-8 text-white"
-                  })}
+            <Card className="border-0 shadow-none bg-transparent">
+              <CardContent className="p-8 text-center">
+                <div className="mb-6">
+                  <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-football-primary rounded-full flex items-center justify-center mb-4">
+                    {React.createElement(slides[currentSlide].icon, {
+                      className: "w-8 h-8 text-white"
+                    })}
+                  </div>
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-center mb-2">
+                      {slides[currentSlide].title}
+                    </DialogTitle>
+                    <p className="text-lg text-muted-foreground font-medium">
+                      {slides[currentSlide].subtitle}
+                    </p>
+                  </DialogHeader>
                 </div>
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-center mb-2">
-                    {slides[currentSlide].title}
-                  </DialogTitle>
-                  <p className="text-lg text-muted-foreground font-medium">
-                    {slides[currentSlide].subtitle}
+
+                <div className="mb-8">
+                  <p className="text-foreground leading-relaxed text-base">
+                    {slides[currentSlide].content}
                   </p>
-                </DialogHeader>
-              </div>
+                </div>
 
-              <div className="mb-8">
-                <p className="text-foreground leading-relaxed text-base">
-                  {slides[currentSlide].content}
-                </p>
-              </div>
-
-              <div className="flex gap-3 justify-center">
-                {currentSlide > 0 && (
+                <div className="flex gap-3 justify-center">
+                  {currentSlide > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={skipOnboarding}
+                      className="px-6"
+                    >
+                      Skip Tour
+                    </Button>
+                  )}
                   <Button
-                    variant="outline"
-                    onClick={skipOnboarding}
-                    className="px-6"
+                    onClick={nextSlide}
+                    className="px-6 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90"
                   >
-                    Skip Tour
+                    {slides[currentSlide].buttonText}
+                    {currentSlide < slides.length - 1 && (
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    )}
+                    {currentSlide === slides.length - 1 && (
+                      <CheckCircle className="w-4 h-4 ml-1" />
+                    )}
                   </Button>
+                </div>
+
+                {/* Create Tournament CTA on last slide */}
+                {currentSlide === slides.length - 1 && (
+                  <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 to-football-primary/10 rounded-lg border border-primary/20">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Ready to get started?
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        onClose();
+                        // Navigate to tournaments tab
+                        window.location.href = '/profile?tab=tournaments';
+                      }}
+                      className="text-primary border-primary hover:bg-primary hover:text-white"
+                    >
+                      <Trophy className="w-4 h-4 mr-2" />
+                      Create Your First Tournament
+                    </Button>
+                  </div>
                 )}
-                <Button
-                  onClick={nextSlide}
-                  className="px-6 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90"
-                >
-                  {slides[currentSlide].buttonText}
-                  {currentSlide < slides.length - 1 && (
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  )}
-                  {currentSlide === slides.length - 1 && (
-                    <CheckCircle className="w-4 h-4 ml-1" />
-                  )}
-                </Button>
-              </div>
-
-              {/* Create Tournament CTA on last slide */}
-              {currentSlide === slides.length - 1 && (
-                <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 to-football-primary/10 rounded-lg border border-primary/20">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Ready to get started?
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      onClose();
-                      // Navigate to tournaments tab
-                      window.location.href = '/profile?tab=tournaments';
-                    }}
-                    className="text-primary border-primary hover:bg-primary hover:text-white"
-                  >
-                    <Trophy className="w-4 h-4 mr-2" />
-                    Create Your First Tournament
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

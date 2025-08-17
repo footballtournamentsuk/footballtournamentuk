@@ -111,122 +111,126 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Contact Support</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="Your name"
-                required
-                maxLength={100}
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden">
+        <div className="flex flex-col max-h-full">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle>Contact Support</DialogTitle>
+          </DialogHeader>
+          
+          <div className="overflow-y-auto overscroll-contain flex-1 pr-2">
+            <form onSubmit={handleSubmit} className="space-y-4 py-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    placeholder="Your name"
+                    required
+                    maxLength={100}
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="subject">Subject *</Label>
+                <Input
+                  id="subject"
+                  value={formData.subject}
+                  onChange={(e) => handleInputChange("subject", e.target.value)}
+                  placeholder="Brief description of your issue"
+                  required
+                  maxLength={200}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => handleInputChange("category", value)}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="General">General</SelectItem>
+                    <SelectItem value="Bug Report">Bug Report</SelectItem>
+                    <SelectItem value="Feature Request">Feature Request</SelectItem>
+                    <SelectItem value="Billing">Billing</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Hidden honeypot field for spam protection */}
+              <input
+                type="text"
+                name="honeypot"
+                value={formData.honeypot}
+                onChange={(e) => handleInputChange("honeypot", e.target.value)}
+                style={{
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: '1px',
+                  height: '1px',
+                  opacity: 0,
+                  pointerEvents: 'none',
+                }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
               />
-            </div>
-            
-            <div>
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="your@email.com"
-                required
-              />
-            </div>
-          </div>
 
-          <div>
-            <Label htmlFor="subject">Subject *</Label>
-            <Input
-              id="subject"
-              value={formData.subject}
-              onChange={(e) => handleInputChange("subject", e.target.value)}
-              placeholder="Brief description of your issue"
-              required
-              maxLength={200}
-            />
-          </div>
+              <div>
+                <Label htmlFor="message">Message *</Label>
+                <Textarea
+                  id="message"
+                  value={formData.message}
+                  onChange={(e) => handleInputChange("message", e.target.value)}
+                  placeholder="Please describe your issue or question in detail..."
+                  required
+                  maxLength={1000}
+                  rows={5}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {formData.message.length}/1000 characters
+                </p>
+              </div>
 
-          <div>
-            <Label htmlFor="category">Category *</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => handleInputChange("category", value)}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="General">General</SelectItem>
-                <SelectItem value="Bug Report">Bug Report</SelectItem>
-                <SelectItem value="Feature Request">Feature Request</SelectItem>
-                <SelectItem value="Billing">Billing</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+              <div className="flex gap-2 justify-end pt-4 flex-shrink-0">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Send Message"}
+                </Button>
+              </div>
+            </form>
           </div>
-
-          {/* Hidden honeypot field for spam protection */}
-          <input
-            type="text"
-            name="honeypot"
-            value={formData.honeypot}
-            onChange={(e) => handleInputChange("honeypot", e.target.value)}
-            style={{
-              position: 'absolute',
-              left: '-9999px',
-              width: '1px',
-              height: '1px',
-              opacity: 0,
-              pointerEvents: 'none',
-            }}
-            tabIndex={-1}
-            autoComplete="off"
-            aria-hidden="true"
-          />
-
-          <div>
-            <Label htmlFor="message">Message *</Label>
-            <Textarea
-              id="message"
-              value={formData.message}
-              onChange={(e) => handleInputChange("message", e.target.value)}
-              placeholder="Please describe your issue or question in detail..."
-              required
-              maxLength={1000}
-              rows={5}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {formData.message.length}/1000 characters
-            </p>
-          </div>
-
-          <div className="flex gap-2 justify-end pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Send Message"}
-            </Button>
-          </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

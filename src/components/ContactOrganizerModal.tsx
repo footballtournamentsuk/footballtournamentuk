@@ -129,153 +129,157 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="w-5 h-5 text-primary" />
-            Contact Tournament Organizer
-          </DialogTitle>
-          <DialogDescription>
-            Send a message to the organizer of <strong>{tournament.name}</strong>. 
-            They will receive your message and can reply directly to your email.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="your@email.com" type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number <span className="text-muted-foreground">(optional)</span></FormLabel>
-                  <FormControl>
-                    <Input placeholder="+44 7700 900123" type="tel" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="clubTeamName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Club / Team Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your club or team name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="ageGroup"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Age Group <span className="text-muted-foreground">(optional)</span></FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select age group" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {AGE_GROUPS.map((age) => (
-                        <SelectItem key={age} value={age}>
-                          {age}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subject</FormLabel>
-                  <FormControl>
-                    <Input placeholder="What is your inquiry about?" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Please provide details about your inquiry..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsOpen(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden">
+        <div className="flex flex-col max-h-full">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-primary" />
+              Contact Tournament Organizer
+            </DialogTitle>
+            <DialogDescription>
+              Send a message to the organizer of <strong>{tournament.name}</strong>. 
+              They will receive your message and can reply directly to your email.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="overflow-y-auto overscroll-contain flex-1 pr-2">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="your@email.com" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number <span className="text-muted-foreground">(optional)</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="+44 7700 900123" type="tel" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="clubTeamName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Club / Team Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your club or team name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="ageGroup"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Age Group <span className="text-muted-foreground">(optional)</span></FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select age group" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {AGE_GROUPS.map((age) => (
+                            <SelectItem key={age} value={age}>
+                              {age}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject</FormLabel>
+                      <FormControl>
+                        <Input placeholder="What is your inquiry about?" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please provide details about your inquiry..."
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="flex gap-3 pt-4 flex-shrink-0">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
