@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 
-// Real partner logos
+// Partner logos for the carousel
 const partnerLogos = [
   { id: 1, name: 'ClubNest', logo: '/lovable-uploads/7d145396-e936-49e5-87e4-6c29729c64fc.png', alt: 'ClubNest Partner' },
   { id: 2, name: 'GoalForge', logo: '/lovable-uploads/992c1347-f37c-49d5-864c-ba97953328de.png', alt: 'GoalForge Partner' },
