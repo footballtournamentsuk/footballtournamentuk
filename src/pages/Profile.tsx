@@ -47,6 +47,9 @@ interface Profile {
   contact_email: string;
   contact_phone: string;
   full_name: string;
+  data_processing_consent: boolean;
+  consent_date?: string;
+  pending_email_change?: string;
 }
 
 interface Tournament {
@@ -105,6 +108,14 @@ const ProfilePage = () => {
   const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
   const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
+  
+  // Email change states
+  const [changingEmail, setChangingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [showEmailChange, setShowEmailChange] = useState(false);
+  
+  // GDPR consent state
+  const [hasConsent, setHasConsent] = useState(false);
 
   // Set active tab from URL parameter
   useEffect(() => {
@@ -170,6 +181,7 @@ const ProfilePage = () => {
 
       if (data) {
         setProfile(data);
+        setHasConsent(data.data_processing_consent || false);
         setEditingTournament(prev => ({
           ...prev,
           contact_name: data.full_name || '',
@@ -183,7 +195,8 @@ const ProfilePage = () => {
           role: 'organizer',
           contact_email: user?.email || '',
           contact_phone: '',
-          full_name: userName
+          full_name: userName,
+          data_processing_consent: false
         };
         setProfile(newProfile);
         setEditingTournament(prev => ({
@@ -233,6 +246,16 @@ const ProfilePage = () => {
   const saveProfile = async () => {
     if (!user || !profile) return;
 
+    // Check GDPR consent requirement
+    if (!hasConsent) {
+      toast({
+        title: "Consent Required",
+        description: "Please accept the data processing consent to save your profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSavingProfile(true);
     try {
       const profileData = {
@@ -240,7 +263,9 @@ const ProfilePage = () => {
         full_name: profile.full_name,
         contact_email: profile.contact_email,
         contact_phone: profile.contact_phone || '',
-        role: profile.role || 'organizer'
+        role: profile.role || 'organizer',
+        data_processing_consent: hasConsent,
+        consent_date: hasConsent ? new Date().toISOString() : null
       };
 
       if (profile.id) {
@@ -275,6 +300,70 @@ const ProfilePage = () => {
       });
     } finally {
       setSavingProfile(false);
+    }
+  };
+
+  const changeEmail = async () => {
+    if (!user || !newEmail) return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newEmail === user.email) {
+      toast({
+        title: "Same Email",
+        description: "The new email is the same as your current email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setChangingEmail(true);
+    try {
+      // Use Supabase auth to update email (requires confirmation)
+      const { error } = await supabase.auth.updateUser({
+        email: newEmail
+      });
+
+      if (error) throw error;
+
+      // Update pending email in profile
+      if (profile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            pending_email_change: newEmail 
+          })
+          .eq('user_id', user.id);
+
+        if (profileError) {
+          console.error('Error updating pending email:', profileError);
+        }
+      }
+
+      toast({
+        title: "Email change initiated",
+        description: "Please check both your current and new email addresses for confirmation links.",
+      });
+
+      setShowEmailChange(false);
+      setNewEmail('');
+    } catch (error: any) {
+      toast({
+        title: "Error changing email",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setChangingEmail(false);
     }
   };
 
@@ -694,14 +783,78 @@ const ProfilePage = () => {
 
                     <div>
                       <Label htmlFor="contact_email">Email Address</Label>
-                      <Input
-                        id="contact_email"
-                        type="email"
-                        value={profile?.contact_email || ''}
-                        onChange={(e) => setProfile(prev => prev ? { ...prev, contact_email: e.target.value } : null)}
-                        placeholder="your.email@example.com"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          id="contact_email"
+                          type="email"
+                          value={user?.email || ''}
+                          disabled
+                          className="flex-1"
+                        />
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setShowEmailChange(true)}
+                        >
+                          Change
+                        </Button>
+                      </div>
+                      {profile?.pending_email_change && (
+                        <p className="text-sm text-amber-600 mt-1">
+                          Pending email change to: {profile.pending_email_change}
+                        </p>
+                      )}
                     </div>
+
+                    {/* Email Change Modal/Section */}
+                    {showEmailChange && (
+                      <div className="border rounded-lg p-4 bg-muted/50">
+                        <h4 className="font-medium mb-2">Change Email Address</h4>
+                        <div className="space-y-3">
+                          <div>
+                            <Label htmlFor="current_email">Current Email</Label>
+                            <Input
+                              id="current_email"
+                              value={user?.email || ''}
+                              disabled
+                              className="bg-muted"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="new_email">New Email Address</Label>
+                            <Input
+                              id="new_email"
+                              type="email"
+                              value={newEmail}
+                              onChange={(e) => setNewEmail(e.target.value)}
+                              placeholder="Enter new email address"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              onClick={changeEmail} 
+                              disabled={changingEmail || !newEmail}
+                              size="sm"
+                            >
+                              {changingEmail ? 'Sending...' : 'Send Verification'}
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setShowEmailChange(false);
+                                setNewEmail('');
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            You'll receive confirmation emails at both your current and new email addresses.
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     <div>
                       <Label htmlFor="contact_phone">Phone Number</Label>
@@ -714,9 +867,33 @@ const ProfilePage = () => {
                       />
                     </div>
 
+                    {/* GDPR Consent */}
+                    <div className="border-t pt-4">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="data_consent"
+                          checked={hasConsent}
+                          onCheckedChange={(checked) => setHasConsent(checked as boolean)}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label
+                            htmlFor="data_consent"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Data Processing Consent
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            I consent to the processing of my personal data for tournament organization, 
+                            communication, and service improvement purposes. You can withdraw this consent at any time 
+                            by contacting us or deleting your account.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <Button 
                       onClick={saveProfile} 
-                      disabled={savingProfile}
+                      disabled={savingProfile || !hasConsent}
                       className="w-full"
                     >
                       <Save className="w-4 h-4 mr-2" />

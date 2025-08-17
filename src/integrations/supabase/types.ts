@@ -16,31 +16,43 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          consent_date: string | null
           contact_email: string
           contact_phone: string | null
           created_at: string
+          data_processing_consent: boolean | null
+          email_change_token: string | null
           full_name: string | null
           id: string
+          pending_email_change: string | null
           role: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          consent_date?: string | null
           contact_email: string
           contact_phone?: string | null
           created_at?: string
+          data_processing_consent?: boolean | null
+          email_change_token?: string | null
           full_name?: string | null
           id?: string
+          pending_email_change?: string | null
           role?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          consent_date?: string | null
           contact_email?: string
           contact_phone?: string | null
           created_at?: string
+          data_processing_consent?: boolean | null
+          email_change_token?: string | null
           full_name?: string | null
           id?: string
+          pending_email_change?: string | null
           role?: string
           updated_at?: string
           user_id?: string
