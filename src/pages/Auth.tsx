@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, UserPlus, LogIn, User, PoundSterling, Clock, Shield } from 'lucide-react';
-import logo from '/lovable-uploads/f1fdb453-4b11-40bf-b3eb-a673e0cccac8.png';
+import logo from '/bimi-logo.svg';
 
 const AuthPage = () => {
   const [name, setName] = useState('');
