@@ -119,6 +119,15 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
     }
   };
 
+  const onInvalid = (errors: any) => {
+    // Focus first invalid field for better UX
+    const firstErrorField = Object.keys(errors)[0];
+    if (firstErrorField) {
+      const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+      element?.focus();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -129,9 +138,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden">
-        <div className="flex flex-col max-h-full">
-          <DialogHeader className="flex-shrink-0">
+      <DialogContent className="sm:max-w-md h-[100dvh] sm:h-[90dvh] max-h-[100svh] p-0 overflow-hidden safe-area-padding">
+        <div className="flex flex-col h-full">
+          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b">
             <DialogTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-primary" />
               Contact Tournament Organizer
@@ -142,9 +151,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
             </DialogDescription>
           </DialogHeader>
           
-          <div className="overflow-y-auto overscroll-contain flex-1 pr-2">
+          <div className="flex-1 overflow-y-auto px-6" style={{ overscrollBehavior: 'contain' }}>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+              <form id="contact-form" onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-4 py-4">
                 <FormField
                   control={form.control}
                   name="name"
@@ -257,27 +266,31 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
                     </FormItem>
                   )}
                 />
-                
-                <div className="flex gap-3 pt-4 flex-shrink-0">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsOpen(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                  </Button>
-                </div>
               </form>
             </Form>
+          </div>
+          
+          {/* Sticky footer with actions */}
+          <div className="flex-shrink-0 p-6 pt-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                form="contact-form"
+                disabled={isSubmitting}
+                className="flex-1"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
