@@ -78,7 +78,7 @@ const Navigation = () => {
               className="flex items-center gap-2"
             >
               <Smartphone className="h-4 w-4" />
-              Install App
+              Download App
             </Button>
           )}
           {user ? (

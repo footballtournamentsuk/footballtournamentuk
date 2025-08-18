@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { X, Download, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
@@ -152,93 +152,68 @@ export const PWAInstallPrompt: React.FC = () => {
 
   return (
     <>
-      {/* Android/Chrome Install Prompt */}
-      {showInstallPrompt && deferredPrompt && (
-        <div className="fixed bottom-4 left-4 right-4 z-40 md:left-auto md:right-4 md:w-80">
-          <Card className="border-primary/20 bg-card/95 backdrop-blur-sm shadow-lg">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-sm">Add to Home Screen</CardTitle>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDismiss}
-                  className="h-6 w-6 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <CardDescription className="text-xs">
-                Get quick access to football tournaments with our app
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleInstallClick}
-                  size="sm"
-                  className="flex-1"
-                >
-                  <Download className="h-4 w-4 mr-1" />
-                  Install App
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDismiss}
-                >
-                  Later
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Android/Chrome Install Modal */}
+      <Dialog open={showInstallPrompt && !!deferredPrompt} onOpenChange={(open) => !open && handleDismiss()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              <DialogTitle>Add to Home Screen</DialogTitle>
+            </div>
+            <DialogDescription>
+              Get quick access to football tournaments with our app. Install it for a faster, more convenient experience.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-4">
+            <Button
+              onClick={handleInstallClick}
+              className="w-full"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download App
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDismiss}
+              className="w-full"
+            >
+              Maybe Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      {/* iOS Safari Instructions */}
-      {isIOS && showInstallPrompt && (
-        <div className="fixed bottom-4 left-4 right-4 z-40 md:left-auto md:right-4 md:w-80">
-          <Card className="border-primary/20 bg-card/95 backdrop-blur-sm shadow-lg">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-sm">Add to Home Screen</CardTitle>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDismiss}
-                  className="h-6 w-6 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <CardDescription className="text-xs mb-3">
-                To install this app on your iOS device:
-              </CardDescription>
-              <div className="text-xs space-y-1 mb-3">
-                <p>1. Tap the Share button in Safari</p>
+      {/* iOS Safari Instructions Modal */}
+      <Dialog open={isIOS && showInstallPrompt && !deferredPrompt} onOpenChange={(open) => !open && handleDismiss()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              <DialogTitle>Add to Home Screen</DialogTitle>
+            </div>
+            <DialogDescription>
+              Install this app on your iOS device for the best experience.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p className="font-medium">To install this app:</p>
+              <div className="space-y-1 pl-4">
+                <p>1. Tap the Share button (square with arrow up) in Safari</p>
                 <p>2. Scroll down and tap "Add to Home Screen"</p>
-                <p>3. Tap "Add" to install</p>
+                <p>3. Tap "Add" to confirm installation</p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDismiss}
-                className="w-full"
-              >
-                Got it
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleDismiss}
+              className="w-full"
+            >
+              Got It
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
