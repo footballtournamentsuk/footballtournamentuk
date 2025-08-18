@@ -22,24 +22,35 @@ export interface TournamentThumbnail {
 }
 
 /**
- * Get the appropriate thumbnail image for a tournament based on its type and format
+ * Get the appropriate thumbnail image for a tournament based on custom banner or type/format
  */
 export const getTournamentThumbnail = (tournament: Tournament): TournamentThumbnail => {
-  // First try to match by type for more specific categorization
+  // First priority: custom banner uploaded by organizer
+  if (tournament.banner_url) {
+    return {
+      src: tournament.banner_url,
+      alt: `${tournament.name} - ${tournament.format} ${tournament.type} tournament in ${tournament.location.name}`,
+      priority: shouldPrioritizeTournament(tournament),
+    };
+  }
+
+  // Second priority: match by type for more specific categorization
   const typeImage = getImageByType(tournament.type);
   if (typeImage) {
     return {
       src: typeImage.src,
       alt: `${tournament.format} ${tournament.type} in ${tournament.location.name} - ${typeImage.description}`,
+      priority: shouldPrioritizeTournament(tournament),
     };
   }
 
-  // Fall back to format-based images
+  // Third priority: fall back to format-based images
   const formatImage = getImageByFormat(tournament.format);
   if (formatImage) {
     return {
       src: formatImage.src,
       alt: `${tournament.format} tournament in ${tournament.location.name} - ${formatImage.description}`,
+      priority: shouldPrioritizeTournament(tournament),
     };
   }
 
@@ -47,6 +58,7 @@ export const getTournamentThumbnail = (tournament: Tournament): TournamentThumbn
   return {
     src: defaultTournamentImage,
     alt: `Football tournament in ${tournament.location.name} - ${tournament.name}`,
+    priority: shouldPrioritizeTournament(tournament),
   };
 };
 

@@ -84,7 +84,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
     : null;
 
   const thumbnail = getTournamentThumbnail(tournament);
-  const shouldPrioritize = shouldPrioritizeTournament(tournament);
 
   return (
     <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden">
@@ -93,7 +92,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
         <TournamentImage
           src={thumbnail.src}
           alt={thumbnail.alt}
-          priority={shouldPrioritize}
+          priority={thumbnail.priority}
           className="w-full h-full group-hover:scale-105 transition-transform duration-300"
           width={640}
           height={512}
