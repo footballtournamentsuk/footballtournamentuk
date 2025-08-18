@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 import { Tournament } from '@/types/tournament';
 import { 
   MapPin, 
@@ -31,6 +33,8 @@ interface TournamentCardProps {
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
       day: 'numeric',
@@ -243,138 +247,167 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           </p>
         )}
 
-        {/* Organizer Info */}
-        <div className="space-y-1 text-xs text-muted-foreground border-t pt-3 mt-3">
-          <div className="flex items-center justify-between">
-            <div className="font-medium text-foreground">Organized by:</div>
-            {(() => {
-              const completedFields = [
-                tournament.banner_url,
-                tournament.extended_description,
-                tournament.venue_details,
-                tournament.rules_and_regulations,
-                tournament.schedule_details,
-                tournament.what_to_bring,
-                tournament.accommodation_info,
-                tournament.prize_information,
-                tournament.sponsor_info,
-                tournament.additional_notes
-              ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
-              const totalFields = 10;
-              const percentage = Math.round((completedFields.length / totalFields) * 100);
-              
-              const getVariant = () => {
-                if (percentage >= 80) return 'default';
-                if (percentage >= 50) return 'secondary';
-                return 'outline';
-              };
-              
-              return (
-                <Badge variant={getVariant()} className="text-xs">
-                  {percentage}% Complete
-                </Badge>
-              );
-            })()}
-          </div>
-          <div className="flex items-center gap-1">
-            <User className="w-3 h-3" />
-            <span>{tournament.contact.name}</span>
-          </div>
-          {tournament.contact.email && (
-            <div className="flex items-center gap-1">
-              <Mail className="w-3 h-3" />
-              <span className="truncate">{tournament.contact.email}</span>
-            </div>
-          )}
-          {tournament.contact.phone && (
-            <div className="flex items-center gap-1">
-              <Phone className="w-3 h-3" />
-              <span>{tournament.contact.phone}</span>
-            </div>
-          )}
-        </div>
+        {/* Progressive Disclosure Divider */}
+        <Separator className="my-4" />
 
-        {/* Actions */}
-        <div className="space-y-3 pt-4">
-          {/* Primary Action - View Details */}
-          <Button 
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 hover:shadow-xl hover:shadow-green-600/40 text-white border-0 rounded-xl transition-all duration-300 font-semibold shadow-lg"
-            size="sm"
-            asChild
-          >
-            <Link to={`/tournaments/${tournament.slug || tournament.id}`}>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View Details
-            </Link>
-          </Button>
-
-          {/* Secondary Action - Contact Organizer */}
-          <ContactOrganizerModal tournament={tournament}>
-            <Button 
-              className="w-full bg-green-500/80 backdrop-blur-sm hover:bg-green-600/90 hover:shadow-lg hover:shadow-green-500/30 text-white border border-green-400/30 rounded-xl transition-all duration-300 font-medium" 
-              size="sm"
+        {/* Collapsible section for organizer info and actions */}
+        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-between p-2 hover:bg-accent rounded-lg transition-colors"
+              aria-expanded={isExpanded}
+              aria-controls="tournament-details"
             >
-              <Mail className="w-4 h-4 mr-2" />
-              Contact Organizer
+              <span className="text-sm font-medium">
+                {isExpanded ? 'Less details' : 'More details'}
+              </span>
+              <ChevronDown 
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isExpanded ? 'rotate-180' : ''
+                }`} 
+              />
             </Button>
-          </ContactOrganizerModal>
-
-          {/* Tertiary Actions */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300" 
-                size="sm"
-              >
-                <Navigation className="w-4 h-4 mr-2" />
-                View Location
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-full bg-popover border border-border shadow-lg z-50">
-              <DropdownMenuItem asChild>
-                <a
-                  href={`https://waze.com/ul?q=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 cursor-pointer w-full"
-                >
-                  <Navigation className="w-4 h-4" />
-                  Open in Waze
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(tournament.location.coordinates[1] + ',' + tournament.location.coordinates[0])}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 cursor-pointer w-full"
-                >
-                  <MapPin className="w-4 h-4" />
-                  Open in Google Maps
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <AddToCalendar
-            tournament={tournament}
-            size="sm"
-            variant="default"
-            className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
-          />
+          </CollapsibleTrigger>
           
-          <div className="w-full">
-            <ShareButton
-              url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
-              title={tournament.name}
-              description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
-              size="sm"
-              variant="outline"
-              className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
-            />
-          </div>
-        </div>
+          <CollapsibleContent 
+            id="tournament-details"
+            className="space-y-4 mt-3 animate-accordion-down data-[state=closed]:animate-accordion-up"
+          >
+            {/* Organizer Info */}
+            <div className="space-y-1 text-xs text-muted-foreground border-t pt-3">
+              <div className="flex items-center justify-between">
+                <div className="font-medium text-foreground">Organized by:</div>
+                {(() => {
+                  const completedFields = [
+                    tournament.banner_url,
+                    tournament.extended_description,
+                    tournament.venue_details,
+                    tournament.rules_and_regulations,
+                    tournament.schedule_details,
+                    tournament.what_to_bring,
+                    tournament.accommodation_info,
+                    tournament.prize_information,
+                    tournament.sponsor_info,
+                    tournament.additional_notes
+                  ].filter(field => field && (typeof field === 'string' ? field.trim().length > 0 : true));
+                  const totalFields = 10;
+                  const percentage = Math.round((completedFields.length / totalFields) * 100);
+                  
+                  const getVariant = () => {
+                    if (percentage >= 80) return 'default';
+                    if (percentage >= 50) return 'secondary';
+                    return 'outline';
+                  };
+                  
+                  return (
+                    <Badge variant={getVariant()} className="text-xs">
+                      {percentage}% Complete
+                    </Badge>
+                  );
+                })()}
+              </div>
+              <div className="flex items-center gap-1">
+                <User className="w-3 h-3" />
+                <span>{tournament.contact.name}</span>
+              </div>
+              {tournament.contact.email && (
+                <div className="flex items-center gap-1">
+                  <Mail className="w-3 h-3" />
+                  <span className="truncate">{tournament.contact.email}</span>
+                </div>
+              )}
+              {tournament.contact.phone && (
+                <div className="flex items-center gap-1">
+                  <Phone className="w-3 h-3" />
+                  <span>{tournament.contact.phone}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3 pt-4">
+              {/* Primary Action - View Details */}
+              <Button 
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 hover:shadow-xl hover:shadow-green-600/40 text-white border-0 rounded-xl transition-all duration-300 font-semibold shadow-lg"
+                size="sm"
+                asChild
+              >
+                <Link to={`/tournaments/${tournament.slug || tournament.id}`}>
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Details
+                </Link>
+              </Button>
+
+              {/* Secondary Action - Contact Organizer */}
+              <ContactOrganizerModal tournament={tournament}>
+                <Button 
+                  className="w-full bg-green-500/80 backdrop-blur-sm hover:bg-green-600/90 hover:shadow-lg hover:shadow-green-500/30 text-white border border-green-400/30 rounded-xl transition-all duration-300 font-medium" 
+                  size="sm"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Contact Organizer
+                </Button>
+              </ContactOrganizerModal>
+
+              {/* Tertiary Actions */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300" 
+                    size="sm"
+                  >
+                    <Navigation className="w-4 h-4 mr-2" />
+                    View Location
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full bg-popover border border-border shadow-lg z-50">
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`https://waze.com/ul?q=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 cursor-pointer w-full"
+                    >
+                      <Navigation className="w-4 h-4" />
+                      Open in Waze
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(tournament.location.coordinates[1] + ',' + tournament.location.coordinates[0])}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 cursor-pointer w-full"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Open in Google Maps
+                    </a>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <AddToCalendar
+                tournament={tournament}
+                size="sm"
+                variant="default"
+                className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
+              />
+              
+              <div className="w-full">
+                <ShareButton
+                  url={`https://footballtournamentsuk.co.uk/tournaments/${tournament.slug || tournament.id}`}
+                  title={tournament.name}
+                  description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}`}
+                  size="sm"
+                  variant="outline"
+                  className="w-full bg-green-100/60 backdrop-blur-sm hover:bg-green-200/70 hover:shadow-lg hover:shadow-green-500/20 text-green-800 border border-green-200/30 rounded-xl transition-all duration-300"
+                />
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
