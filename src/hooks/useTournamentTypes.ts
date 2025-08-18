@@ -20,27 +20,17 @@ export const useTournamentTypes = () => {
         throw supabaseError;
       }
 
-      // Define the desired order and extract unique tournament types
-      const desiredOrder = ['league', 'tournament', 'camp', 'holiday', 'cup', 'festival', 'showcase'];
-      const uniqueTypes = [...new Set(data.map(item => item.type))];
+      // Define all available tournament types (always show these regardless of database content)
+      const allTournamentTypes = ['tournament', 'league', 'camp', 'cup', 'festival', 'showcase', 'friendly'];
       
-      // Sort according to desired order, then alphabetically for any not in the list
-      const sortedTypes = uniqueTypes.sort((a, b) => {
-        const indexA = desiredOrder.indexOf(a);
-        const indexB = desiredOrder.indexOf(b);
-        
-        if (indexA !== -1 && indexB !== -1) {
-          return indexA - indexB;
-        } else if (indexA !== -1) {
-          return -1;
-        } else if (indexB !== -1) {
-          return 1;
-        } else {
-          return a.localeCompare(b);
-        }
-      });
+      // Get unique types from database
+      const existingTypes = [...new Set(data.map(item => item.type))];
       
-      setTournamentTypes(sortedTypes);
+      // Combine predefined types with any additional types found in database
+      const additionalTypes = existingTypes.filter(type => !allTournamentTypes.includes(type));
+      const finalTypes = [...allTournamentTypes, ...additionalTypes];
+      
+      setTournamentTypes(finalTypes);
     } catch (err) {
       console.error('Error fetching tournament types:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch tournament types');
