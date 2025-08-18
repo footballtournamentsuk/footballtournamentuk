@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import CityHero from '@/components/CityHero';
+import CityOrganizerCTA from '@/components/CityOrganizerCTA';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
@@ -617,6 +618,9 @@ const CityTournaments = () => {
             </div>
           </div>
         </section>
+
+        {/* City-Specific Organizer CTA */}
+        <CityOrganizerCTA city={city} />
 
         {/* Enhanced City Content Section */}
         <CityContent city={city} tournamentCount={upcomingTournaments.length} />
