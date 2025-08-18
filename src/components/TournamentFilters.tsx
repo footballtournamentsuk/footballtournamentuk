@@ -13,7 +13,6 @@ import { DateRangePicker } from '@/components/DateRangePicker';
 import { DateRange } from 'react-day-picker';
 import { Slider } from '@/components/ui/slider';
 import { useTournamentTypes } from '@/hooks/useTournamentTypes';
-import { TournamentTypeMultiSelect } from '@/components/TournamentTypeMultiSelect';
 interface TournamentFiltersProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -45,13 +44,6 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     onFiltersChange({
       ...filters,
       [key]: newArray.length > 0 ? newArray : undefined
-    });
-  };
-
-  const handleTournamentTypeChange = (types: string[]) => {
-    onFiltersChange({
-      ...filters,
-      type: types.length > 0 ? types : undefined
     });
   };
 
@@ -446,12 +438,27 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 <p className="text-xs text-muted-foreground">Event format</p>
               </div>
             </div>
-            <TournamentTypeMultiSelect
-              selectedTypes={filters.type || []}
-              onSelectionChange={handleTournamentTypeChange}
-              placeholder="Select event types..."
-              className="w-full"
-            />
+            <div className="flex flex-wrap gap-2">
+              {typesLoading ? (
+                <div className="text-xs text-muted-foreground">Loading types...</div>
+              ) : (
+                tournamentTypes.map(type => (
+                  <Button
+                    key={type}
+                    variant={filters.type?.includes(type) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleArrayFilterChange('type', type)}
+                    className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${
+                      filters.type?.includes(type)
+                        ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105"
+                        : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+                    }`}
+                  >
+                    {type}
+                  </Button>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

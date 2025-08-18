@@ -13,7 +13,6 @@ import { DateRange } from 'react-day-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { useTournamentTypes } from '@/hooks/useTournamentTypes';
-import { TournamentTypeMultiSelect } from '@/components/TournamentTypeMultiSelect';
 interface MobileFilterDrawerProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -76,12 +75,6 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
     onFiltersChange({
       ...filters,
       [key]: newArray.length > 0 ? newArray : undefined
-    });
-  };
-  const handleTournamentTypeChange = (types: string[]) => {
-    onFiltersChange({
-      ...filters,
-      type: types.length > 0 ? types : undefined
     });
   };
   
@@ -367,12 +360,23 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
               <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.type ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
-              <TournamentTypeMultiSelect
-                selectedTypes={filters.type || []}
-                onSelectionChange={handleTournamentTypeChange}
-                placeholder="Select event types..."
-                className="w-full"
-              />
+              <div className="flex flex-wrap gap-2">
+                {typesLoading ? (
+                  <div className="text-xs text-muted-foreground p-2">Loading types...</div>
+                ) : (
+                  tournamentTypes.map(type => (
+                    <Button
+                      key={type}
+                      variant={filters.type?.includes(type) ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleArrayFilterChange('type', type)}
+                      className="text-xs capitalize"
+                    >
+                      {type}
+                    </Button>
+                  ))
+                )}
+              </div>
             </CollapsibleContent>
           </Collapsible>
         </div>
