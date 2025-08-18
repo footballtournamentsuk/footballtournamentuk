@@ -18,6 +18,7 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
 }) => {
   const siteUrl = 'https://footballtournamentsuk.co.uk';
   const canonicalUrl = `${siteUrl}/city/${city.slug}`;
+  const heroImageUrl = city.heroImage ? `${siteUrl}/assets/cities/${city.heroImage}` : `${siteUrl}/og-image.jpg`;
 
   // Enhanced structured data for city pages
   const generateLocalBusinessSchema = () => ({
@@ -25,6 +26,7 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
     '@context': 'https://schema.org',
     name: `Youth Football Tournaments ${city.displayName}`,
     description: `Professional youth football tournament services in ${city.displayName}, ${city.region}. Organizing quality tournaments for age groups U6 to U21.`,
+    image: heroImageUrl,
     address: {
       '@type': 'PostalAddress',
       addressLocality: city.displayName,
@@ -210,14 +212,26 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
       {/* Enhanced Open Graph */}
       <meta property="og:locale" content="en_GB" />
       <meta property="og:type" content="website" />
+      <meta property="og:title" content={`Youth Football Tournaments in ${city.displayName} | Football Tournaments UK`} />
+      <meta property="og:description" content={city.seoDescription} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={heroImageUrl} />
+      <meta property="og:image:alt" content={city.heroAltText || `Youth football in ${city.displayName}`} />
+      <meta property="og:image:width" content="1920" />
+      <meta property="og:image:height" content="1080" />
       <meta property="og:site_name" content="Football Tournaments UK" />
       <meta property="article:publisher" content="Football Tournaments UK" />
       <meta property="article:author" content="Football Tournaments UK" />
       
       {/* Twitter Card Enhanced */}
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@footballtournamentsuk" />
       <meta name="twitter:creator" content="@footballtournamentsuk" />
       <meta name="twitter:domain" content="footballtournamentsuk.co.uk" />
+      <meta name="twitter:title" content={`Youth Football Tournaments in ${city.displayName}`} />
+      <meta name="twitter:description" content={city.seoDescription} />
+      <meta name="twitter:image" content={heroImageUrl} />
+      <meta name="twitter:image:alt" content={city.heroAltText || `Youth football in ${city.displayName}`} />
       
       {/* Schema.org JSON-LD */}
       {schemas.map((schema, index) => (

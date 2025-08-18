@@ -7,6 +7,22 @@ import londonHero from '@/assets/cities/london-hero.webp';
 import manchesterHero from '@/assets/cities/manchester-hero.webp';
 import oxfordHero from '@/assets/cities/oxford-hero.webp';
 import liverpoolHero from '@/assets/cities/liverpool-hero.webp';
+import birminghamHero from '@/assets/cities/birmingham-hero.webp';
+import leedsHero from '@/assets/cities/leeds-hero.webp';
+import newcastleHero from '@/assets/cities/newcastle-hero.webp';
+import sheffieldHero from '@/assets/cities/sheffield-hero.webp';
+import bristolHero from '@/assets/cities/bristol-hero.webp';
+import nottinghamHero from '@/assets/cities/nottingham-hero.webp';
+import southamptonHero from '@/assets/cities/southampton-hero.webp';
+import glasgowHero from '@/assets/cities/glasgow-hero.webp';
+import edinburghHero from '@/assets/cities/edinburgh-hero.webp';
+import cardiffHero from '@/assets/cities/cardiff-hero.webp';
+import swanseaHero from '@/assets/cities/swansea-hero.webp';
+import belfastHero from '@/assets/cities/belfast-hero.webp';
+import leicesterHero from '@/assets/cities/leicester-hero.webp';
+import portsmouthHero from '@/assets/cities/portsmouth-hero.webp';
+import brightonHero from '@/assets/cities/brighton-hero.webp';
+import cambridgeHero from '@/assets/cities/cambridge-hero.webp';
 import { CityConfig } from '@/data/cities';
 
 interface CityHeroProps {
@@ -28,6 +44,22 @@ const CityHero: React.FC<CityHeroProps> = ({
     'manchester': manchesterHero,
     'oxford': oxfordHero,
     'liverpool': liverpoolHero,
+    'birmingham': birminghamHero,
+    'leeds': leedsHero,
+    'newcastle-upon-tyne': newcastleHero,
+    'sheffield': sheffieldHero,
+    'bristol': bristolHero,
+    'nottingham': nottinghamHero,
+    'southampton': southamptonHero,
+    'glasgow': glasgowHero,
+    'edinburgh': edinburghHero,
+    'cardiff': cardiffHero,
+    'swansea': swanseaHero,
+    'belfast': belfastHero,
+    'leicester': leicesterHero,
+    'portsmouth': portsmouthHero,
+    'brighton': brightonHero,
+    'cambridge': cambridgeHero,
   };
 
   // Get city-specific image or fallback to generic
