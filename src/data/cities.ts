@@ -5,6 +5,9 @@ export interface CityConfig {
   coordinates: [number, number]; // [longitude, latitude]
   seoDescription: string;
   introText: string;
+  heroImage?: string;
+  fallbackHeroImage?: string;
+  heroAltText?: string;
 }
 
 export const UK_CITIES: CityConfig[] = [
@@ -14,7 +17,9 @@ export const UK_CITIES: CityConfig[] = [
     region: 'Greater London',
     coordinates: [-0.1276, 51.5074],
     seoDescription: 'Discover youth football tournaments in London. Find 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Greater London for all age groups from U6 to U21.',
-    introText: 'London offers the most diverse selection of youth football tournaments in the UK. From grassroots community events in local parks to elite academy competitions at professional venues, the capital provides opportunities for every young player. With world-class facilities including Wembley Stadium, The Den, and numerous training grounds, London tournaments attract teams from across the country seeking top-level competition and unforgettable experiences.'
+    introText: 'London offers the most diverse selection of youth football tournaments in the UK. From grassroots community events in local parks to elite academy competitions at professional venues, the capital provides opportunities for every young player. With world-class facilities including Wembley Stadium, The Den, and numerous training grounds, London tournaments attract teams from across the country seeking top-level competition and unforgettable experiences.',
+    heroImage: 'london-hero.webp',
+    heroAltText: 'Youth football training in London — young players practicing at a stadium with the London skyline in the background'
   },
   {
     slug: 'manchester',
@@ -22,7 +27,9 @@ export const UK_CITIES: CityConfig[] = [
     region: 'Greater Manchester',
     coordinates: [-2.2426, 53.4808],
     seoDescription: 'Find youth football tournaments in Manchester. Browse 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Greater Manchester for all age groups and skill levels.',
-    introText: 'Manchester is a footballing powerhouse with a rich heritage of developing young talent. Home to Manchester United and Manchester City, the region offers exceptional tournament opportunities at iconic venues and modern training facilities. Youth tournaments in Manchester combine competitive excellence with the chance to play where football legends were made, making every match feel special for aspiring players.'
+    introText: 'Manchester is a footballing powerhouse with a rich heritage of developing young talent. Home to Manchester United and Manchester City, the region offers exceptional tournament opportunities at iconic venues and modern training facilities. Youth tournaments in Manchester combine competitive excellence with the chance to play where football legends were made, making every match feel special for aspiring players.',
+    heroImage: 'manchester-hero.webp',
+    heroAltText: 'Youth football in Manchester — young players training with the Manchester city skyline and industrial architecture in the background'
   },
   {
     slug: 'birmingham',
@@ -38,7 +45,9 @@ export const UK_CITIES: CityConfig[] = [
     region: 'Merseyside',
     coordinates: [-2.9916, 53.4084],
     seoDescription: 'Discover youth football tournaments in Liverpool. Browse 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Merseyside for all age groups from U6 to U21.',
-    introText: 'Liverpool\'s passionate football culture creates an electric atmosphere for youth tournaments. Playing in the city that produced legendary players and hosts two Premier League clubs offers young footballers inspiration and motivation. Liverpool tournaments are known for their competitive spirit, excellent organization, and the warm Merseyside welcome that makes every team feel at home.'
+    introText: 'Liverpool\'s passionate football culture creates an electric atmosphere for youth tournaments. Playing in the city that produced legendary players and hosts two Premier League clubs offers young footballers inspiration and motivation. Liverpool tournaments are known for their competitive spirit, excellent organization, and the warm Merseyside welcome that makes every team feel at home.',
+    heroImage: 'liverpool-hero.webp',
+    heroAltText: 'Youth football tournament in Liverpool — young players celebrating on the pitch with the Liverpool waterfront and Liver Building in the background'
   },
   {
     slug: 'leeds',
@@ -158,7 +167,9 @@ export const UK_CITIES: CityConfig[] = [
     region: 'Oxfordshire',
     coordinates: [-1.2577, 51.7520],
     seoDescription: 'Find youth football tournaments in Oxford. Explore 3v3, 5v5, 7v7, 9v9 and 11v11 competitions across Oxfordshire for all age groups and skill levels.',
-    introText: 'Oxford combines academic excellence with football passion in its youth tournaments. The historic university city offers unique tournament experiences that emphasize both sporting and educational values. Oxford tournaments are particularly noted for their focus on fair play and intellectual approach to the game.'
+    introText: 'Oxford combines academic excellence with football passion in its youth tournaments. The historic university city offers unique tournament experiences that emphasize both sporting and educational values. Oxford tournaments are particularly noted for their focus on fair play and intellectual approach to the game.',
+    heroImage: 'oxford-hero.webp',
+    heroAltText: 'Youth football training in Oxford — young players on a grass pitch with the historic Oxford university spires in the background'
   },
   {
     slug: 'cambridge',

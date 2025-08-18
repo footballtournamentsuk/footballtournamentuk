@@ -3,6 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar, Users, Trophy, List } from 'lucide-react';
 import heroImage from '@/assets/hero-football.jpg';
+import londonHero from '@/assets/cities/london-hero.webp';
+import manchesterHero from '@/assets/cities/manchester-hero.webp';
+import oxfordHero from '@/assets/cities/oxford-hero.webp';
+import liverpoolHero from '@/assets/cities/liverpool-hero.webp';
 import { CityConfig } from '@/data/cities';
 
 interface CityHeroProps {
@@ -18,14 +22,35 @@ const CityHero: React.FC<CityHeroProps> = ({
   onScrollToMap, 
   onScrollToTournaments 
 }) => {
+  // Map city-specific hero images
+  const cityHeroImages: Record<string, string> = {
+    'london': londonHero,
+    'manchester': manchesterHero,
+    'oxford': oxfordHero,
+    'liverpool': liverpoolHero,
+  };
+
+  // Get city-specific image or fallback to generic
+  const currentHeroImage = city.heroImage && cityHeroImages[city.slug] 
+    ? cityHeroImages[city.slug] 
+    : heroImage;
+  
+  const currentAltText = city.heroAltText 
+    ? city.heroAltText
+    : `Youth football players in ${city.displayName}`;
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src={heroImage} 
-          alt={`Youth football players in ${city.displayName}`} 
+          src={currentHeroImage} 
+          alt={currentAltText}
           className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          width={1920}
+          height={1080}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
       </div>
