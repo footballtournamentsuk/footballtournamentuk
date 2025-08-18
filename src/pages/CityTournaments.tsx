@@ -6,6 +6,9 @@ import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
 import { SEO } from '@/components/SEO';
+import { CityContent } from '@/components/CityContent';
+import { EnhancedSEO } from '@/components/EnhancedSEO';
+import { InternalLinking } from '@/components/InternalLinking';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
@@ -266,6 +269,18 @@ const CityTournaments = () => {
           canonicalUrl={`/city/${city.slug}`}
           tournaments={upcomingTournaments.slice(0, 5)}
           cityName={city.displayName}
+        />
+        
+        <EnhancedSEO 
+          city={city}
+          tournaments={upcomingTournaments}
+          pageType="city"
+          additionalKeywords={[
+            `${city.displayName} youth football`,
+            `${city.displayName} football clubs`,
+            `${city.displayName} sports tournaments`,
+            `youth development ${city.region}`
+          ]}
         />
 
         {/* City Hero Section */}
@@ -602,6 +617,12 @@ const CityTournaments = () => {
             </div>
           </div>
         </section>
+
+        {/* Enhanced City Content Section */}
+        <CityContent city={city} tournamentCount={upcomingTournaments.length} />
+        
+        {/* Internal Linking Section */}
+        <InternalLinking currentCity={city} tournamentCount={upcomingTournaments.length} />
 
       </div>
     </HelmetProvider>
