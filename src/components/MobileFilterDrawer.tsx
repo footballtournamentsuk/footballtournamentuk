@@ -13,6 +13,7 @@ import { DateRange } from 'react-day-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { useTournamentTypes } from '@/hooks/useTournamentTypes';
+import { TournamentTypeMultiSelect } from '@/components/TournamentTypeMultiSelect';
 interface MobileFilterDrawerProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -77,6 +78,13 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
       [key]: newArray.length > 0 ? newArray : undefined
     });
   };
+  const handleTournamentTypeChange = (types: string[]) => {
+    onFiltersChange({
+      ...filters,
+      type: types.length > 0 ? types : undefined
+    });
+  };
+  
   const handleSearchChange = (search: string) => {
     onFiltersChange({
       ...filters,
@@ -359,43 +367,12 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
               <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.type ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
-              <div 
-                className="flex flex-wrap gap-2"
-                role="group"
-                aria-labelledby="mobile-tournament-type-label"
-              >
-                <span id="mobile-tournament-type-label" className="sr-only">Tournament Type Filter</span>
-                {typesLoading ? (
-                  <div className="text-xs text-muted-foreground">Loading...</div>
-                ) : tournamentTypes.length > 0 ? (
-                  tournamentTypes.map((type, index) => (
-                    <Button 
-                      key={type} 
-                      variant={filters.type?.includes(type) ? "default" : "outline"} 
-                      size="sm" 
-                      onClick={() => handleArrayFilterChange('type', type)} 
-                      className="text-xs capitalize"
-                      role="checkbox"
-                      aria-checked={filters.type?.includes(type) || false}
-                      aria-describedby={`mobile-tournament-type-${type}-desc`}
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleArrayFilterChange('type', type);
-                        }
-                      }}
-                    >
-                      {type}
-                      <span id={`mobile-tournament-type-${type}-desc`} className="sr-only">
-                        {filters.type?.includes(type) ? 'Currently selected' : 'Not selected'} tournament type filter for {type}
-                      </span>
-                    </Button>
-                  ))
-                ) : (
-                  <div className="text-xs text-muted-foreground">No types found</div>
-                )}
-              </div>
+              <TournamentTypeMultiSelect
+                selectedTypes={filters.type || []}
+                onSelectionChange={handleTournamentTypeChange}
+                placeholder="Select event types..."
+                className="w-full"
+              />
             </CollapsibleContent>
           </Collapsible>
         </div>
