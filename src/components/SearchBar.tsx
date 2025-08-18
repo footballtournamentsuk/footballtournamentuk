@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 
 interface SearchSuggestion {
   id: string;
@@ -29,6 +30,7 @@ export function SearchBar({
   const [filteredSuggestions, setFilteredSuggestions] = useState<SearchSuggestion[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const { trackMeaningfulAction } = useEngagementTracker();
 
   // Filter suggestions based on input value
   useEffect(() => {
@@ -62,12 +64,19 @@ export function SearchBar({
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+    const newValue = e.target.value;
+    onChange(newValue);
+    
+    // Track meaningful action when user starts searching
+    if (newValue.length >= 3 && value.length < 3) {
+      trackMeaningfulAction('search-performed');
+    }
   };
 
   const handleSuggestionSelect = (suggestion: SearchSuggestion) => {
     onChange(suggestion.text);
     setShowSuggestions(false);
+    trackMeaningfulAction('search-suggestion-selected');
   };
 
   const handleClear = () => {

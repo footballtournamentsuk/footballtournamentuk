@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTournaments } from '@/hooks/useTournaments';
+import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 import { SEO } from '@/components/SEO';
 import { HelmetProvider } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -50,10 +51,18 @@ const TournamentDetails = () => {
   const { param } = useParams<{ param: string }>();
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
+  const { trackMeaningfulAction } = useEngagementTracker();
   
   // Find tournament by slug first (preferred), then by ID for backward compatibility
   const tournament = tournaments.find(t => t.slug === param) || tournaments.find(t => t.id === param);
   const { attachments } = useAttachments(tournament?.id || '');
+
+  // Track meaningful action when tournament details are viewed
+  React.useEffect(() => {
+    if (tournament) {
+      trackMeaningfulAction('tournament-details-viewed');
+    }
+  }, [tournament, trackMeaningfulAction]);
 
   // Function to get appropriate icon for each feature
   const getFeatureIcon = (feature: string) => {

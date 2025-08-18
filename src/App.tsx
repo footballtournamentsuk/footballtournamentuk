@@ -9,9 +9,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
 import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
+import { usePWAInstall } from "@/components/PWAInstallPrompt";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -39,6 +40,7 @@ const Navigation = () => {
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
+  const { canInstall, triggerInstall } = usePWAInstall();
 
   const getInitials = (name: string | undefined, email: string | undefined) => {
     if (name && name.trim()) {
@@ -131,6 +133,18 @@ const Navigation = () => {
                     FAQ
                   </Link>
                 </DropdownMenuItem>
+                {canInstall && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={triggerInstall}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <Smartphone className="h-4 w-4" />
+                      Install App
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={() => signOut()}
