@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useFilterSync } from '@/hooks/useFilterSync';
 import { HelmetProvider } from 'react-helmet-async';
 import CityHero from '@/components/CityHero';
 import CityOrganizerCTA from '@/components/CityOrganizerCTA';
@@ -37,7 +38,7 @@ const CityTournaments = () => {
   const city = getCityBySlug(slugToUse || '');
   
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
-  const [filters, setFilters] = useState<Filters>({});
+  const { filters, setFilters, clearFilters } = useFilterSync();
   const [showFilters, setShowFilters] = useState(false);
   const { tournaments, loading, error } = useTournaments();
   const { user } = useAuth();
@@ -223,9 +224,7 @@ const CityTournaments = () => {
     setSelectedTournament(tournament);
   };
 
-  const clearFilters = () => {
-    setFilters({});
-  };
+  // clearFilters is now provided by useFilterSync hook
 
   const hasActiveFilters = Object.values(filters).some(value => 
     value !== undefined && (Array.isArray(value) ? value.length > 0 : true)

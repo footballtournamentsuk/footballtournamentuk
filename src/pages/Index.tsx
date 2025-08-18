@@ -16,6 +16,7 @@ import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { useFilterSync } from '@/hooks/useFilterSync';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -36,7 +37,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 
 const Index = () => {
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
-  const [filters, setFilters] = useState<Filters>({});
+  const { filters, setFilters, clearFilters } = useFilterSync();
   const [showFilters, setShowFilters] = useState(false);
   const isMobile = useIsMobile();
   const {
@@ -193,9 +194,7 @@ const Index = () => {
     setSelectedTournament(tournament);
   };
 
-  const clearFilters = () => {
-    setFilters({});
-  };
+  // clearFilters is now provided by useFilterSync hook
 
   const getActiveFiltersCount = () => {
     let count = 0;

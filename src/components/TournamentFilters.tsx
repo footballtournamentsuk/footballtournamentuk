@@ -438,13 +438,40 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 <p className="text-xs text-muted-foreground">Event format</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2" key={`tournament-types-${tournamentTypes.length}`}>
+            <div 
+              className="flex flex-wrap gap-2" 
+              role="group" 
+              aria-labelledby="tournament-type-label"
+              key={`tournament-types-${tournamentTypes.length}`}
+            >
+              <span id="tournament-type-label" className="sr-only">Tournament Type Filter</span>
               {typesLoading ? (
                 <div className="text-xs text-muted-foreground">Loading tournament types...</div>
               ) : tournamentTypes.length > 0 ? (
-                tournamentTypes.map(type => <Button key={type} variant={filters.type?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('type', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}>
+                tournamentTypes.map((type, index) => (
+                  <Button 
+                    key={type} 
+                    variant={filters.type?.includes(type) ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => handleArrayFilterChange('type', type)} 
+                    className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.type?.includes(type) ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105" : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"}`}
+                    role="checkbox"
+                    aria-checked={filters.type?.includes(type) || false}
+                    aria-describedby={`tournament-type-${type}-desc`}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleArrayFilterChange('type', type);
+                      }
+                    }}
+                  >
                     {type}
-                  </Button>)
+                    <span id={`tournament-type-${type}-desc`} className="sr-only">
+                      {filters.type?.includes(type) ? 'Currently selected' : 'Not selected'} tournament type filter for {type}
+                    </span>
+                  </Button>
+                ))
               ) : (
                 <div className="text-xs text-muted-foreground">No tournament types found</div>
               )}
