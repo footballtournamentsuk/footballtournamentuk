@@ -123,20 +123,16 @@ export const InternalLinking: React.FC<InternalLinkingProps> = ({ currentCity, t
           
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {['3v3', '5v5', '7v7', '9v9', '11v11'].map((format) => (
-              <Link
-                key={format}
-                to={`/tournaments?city=${currentCity.slug}&format=${format}`}
-                className="group"
-              >
-                <Card className="p-4 text-center hover:shadow-md transition-all group-hover:bg-primary/5">
-                  <div className="text-lg font-bold text-primary group-hover:scale-110 transition-transform">
+              <div key={format} className="group">
+                <Card className="p-4 text-center transition-all">
+                  <div className="text-lg font-bold text-primary">
                     {format}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Football
                   </div>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
           
@@ -144,13 +140,9 @@ export const InternalLinking: React.FC<InternalLinkingProps> = ({ currentCity, t
             <p className="text-muted-foreground mb-4">
               Looking for a specific tournament format? Use our advanced filters to find exactly what you need.
             </p>
-            <Link 
-              to={`/city/${currentCity.slug}#tournaments`}
-              className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
-            >
-              Use Tournament Filters
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <span className="inline-flex items-center gap-2 text-muted-foreground font-medium">
+              Tournament filtering coming soon
+            </span>
           </div>
         </div>
       </section>
@@ -164,17 +156,13 @@ export const InternalLinking: React.FC<InternalLinkingProps> = ({ currentCity, t
           
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             {['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U18'].map((age) => (
-              <Link
-                key={age}
-                to={`/tournaments?city=${currentCity.slug}&age=${age}`}
-                className="group"
-              >
-                <div className="bg-surface hover:bg-primary/10 rounded-lg p-3 text-center transition-all group-hover:shadow-md">
-                  <div className="font-semibold text-primary group-hover:scale-110 transition-transform">
+              <div key={age} className="group">
+                <div className="bg-surface rounded-lg p-3 text-center transition-all">
+                  <div className="font-semibold text-primary">
                     {age}
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
