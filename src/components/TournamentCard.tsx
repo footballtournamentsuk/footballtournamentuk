@@ -100,30 +100,42 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
             aspectRatio: '640/512',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        
-        {/* Tournament Type and Status Badges - Overlay on image */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-          <Badge className={getStatusColor(tournament.status)} variant="secondary">
-            {tournament.status.replace(/_/g, ' ')}
-          </Badge>
-          <Badge className={getTypeColor(tournament.type)} variant="secondary">
-            {tournament.type}
-          </Badge>
-        </div>
-        
-        {/* Cost - Overlay on image */}
-        {tournament.cost && (
-          <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-lg p-2 text-center border">
-            <div className="font-bold text-lg text-primary">
-              £{tournament.cost.amount}
-            </div>
-            <div className="text-xs text-muted-foreground">per team</div>
-          </div>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
       </div>
 
       <CardHeader className="pb-3">
+        {/* Header row with badges and price */}
+        <div className="flex flex-col gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 min-h-[32px]">
+            {/* Status and Type Badges */}
+            <div className="flex flex-wrap gap-2">
+              <Badge className={getStatusColor(tournament.status)} variant="secondary">
+                {tournament.status.replace(/_/g, ' ')}
+              </Badge>
+              <Badge className={getTypeColor(tournament.type)} variant="secondary">
+                {tournament.type}
+              </Badge>
+            </div>
+            
+            {/* Price pill - aligned to right on desktop, wraps on mobile */}
+            {tournament.cost && (
+              <div className="ml-auto bg-surface border rounded-lg px-3 py-1.5 text-center">
+                <div className="font-semibold text-primary">
+                  £{tournament.cost.amount}
+                </div>
+                <div className="text-xs text-muted-foreground">per team</div>
+              </div>
+            )}
+          </div>
+          
+          {/* Format and Age Groups - Secondary info */}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="w-4 h-4 text-primary flex-shrink-0" />
+            <span>{tournament.format} • {tournament.ageGroups.join(', ')}</span>
+          </div>
+        </div>
+        
+        {/* Tournament Title */}
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
@@ -165,13 +177,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
         {/* Tournament Details */}
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-sm">
-              {tournament.format} • {tournament.ageGroups.join(', ')}
-            </span>
-          </div>
-
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-primary flex-shrink-0" />
             <span className="text-sm capitalize">
