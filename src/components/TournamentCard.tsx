@@ -105,49 +105,39 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
       <CardHeader className="pb-3">
         {/* Header row with badges and price */}
-        <div className="flex flex-col gap-2 mb-3">
-          <div className="flex flex-wrap items-center gap-2 min-h-[32px]">
-            {/* Status and Type Badges */}
-            <div className="flex flex-wrap gap-2">
-              <Badge className={getStatusColor(tournament.status)} variant="secondary">
-                {tournament.status.replace(/_/g, ' ')}
-              </Badge>
-              <Badge className={getTypeColor(tournament.type)} variant="secondary">
-                {tournament.type}
-              </Badge>
-            </div>
-            
-            {/* Price pill - aligned to right on desktop, wraps on mobile */}
-            {tournament.cost && (
-              <div className="ml-auto bg-surface border rounded-lg px-3 py-1.5 text-center">
-                <div className="font-semibold text-primary">
-                  £{tournament.cost.amount}
-                </div>
-                <div className="text-xs text-muted-foreground">per team</div>
-              </div>
-            )}
+        <div className="flex flex-wrap items-center gap-2 mb-4 min-h-[32px]">
+          {/* Status and Type Badges */}
+          <div className="flex flex-wrap gap-2">
+            <Badge className={getStatusColor(tournament.status)} variant="secondary">
+              {tournament.status.replace(/_/g, ' ')}
+            </Badge>
+            <Badge className={getTypeColor(tournament.type)} variant="secondary">
+              {tournament.type}
+            </Badge>
           </div>
           
-          {/* Format and Age Groups - Secondary info */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="w-4 h-4 text-primary flex-shrink-0" />
-            <span>{tournament.format} • {tournament.ageGroups.join(', ')}</span>
-          </div>
+          {/* Price pill - aligned to right on desktop, wraps on mobile */}
+          {tournament.cost && (
+            <div className="ml-auto bg-surface border rounded-lg px-3 py-1.5 text-center">
+              <div className="font-semibold text-primary">
+                £{tournament.cost.amount}
+              </div>
+              <div className="text-xs text-muted-foreground">per team</div>
+            </div>
+          )}
         </div>
         
-        {/* Tournament Title */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
-              {tournament.name}
-            </h3>
-          </div>
+        {/* Tournament Title - Most prominent */}
+        <div className="mb-4">
+          <h3 className="font-semibold text-xl leading-tight group-hover:text-primary transition-colors">
+            {tournament.name}
+          </h3>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Location & Date */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-start gap-2">
             <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
             <div className="text-sm">
@@ -175,8 +165,15 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           )}
         </div>
 
-        {/* Tournament Details */}
+        {/* Participant Details */}
         <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-primary flex-shrink-0" />
+            <span className="text-sm">
+              {tournament.format} • {tournament.ageGroups.join(', ')}
+            </span>
+          </div>
+
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-primary flex-shrink-0" />
             <span className="text-sm capitalize">
