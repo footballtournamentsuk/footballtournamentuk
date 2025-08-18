@@ -71,11 +71,21 @@ const CityOrganizerCTA: React.FC<CityOrganizerCTAProps> = ({ city }) => {
               <Button 
                 asChild 
                 size="lg" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl px-8 py-3 text-lg font-semibold"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl px-6 md:px-8 py-3 text-base md:text-lg font-semibold w-full max-w-md mx-auto"
               >
-                <Link to={user ? "/profile?tab=tournaments" : "/auth"} className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  {user ? `Add Your ${city.displayName} Tournament` : "Register & Add Tournament"}
+                <Link 
+                  to={user ? "/profile?tab=tournaments" : "/auth"} 
+                  className="flex items-center justify-center gap-2 text-center leading-tight"
+                >
+                  <Plus className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                  <span className="break-words">
+                    {user 
+                      ? (city.displayName.length > 12 
+                          ? `Add Tournament in ${city.displayName}` 
+                          : `Add Your ${city.displayName} Tournament`)
+                      : "Register & Add Tournament"
+                    }
+                  </span>
                 </Link>
               </Button>
               
