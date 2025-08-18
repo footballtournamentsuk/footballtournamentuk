@@ -70,6 +70,17 @@ const Navigation = () => {
           Football Tournaments UK
         </Link>
         <div className="flex items-center gap-4">
+          {canInstall && (
+            <Button
+              onClick={triggerInstall}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Smartphone className="h-4 w-4" />
+              Install App
+            </Button>
+          )}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -133,18 +144,6 @@ const Navigation = () => {
                     FAQ
                   </Link>
                 </DropdownMenuItem>
-                {canInstall && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={triggerInstall}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <Smartphone className="h-4 w-4" />
-                      Install App
-                    </DropdownMenuItem>
-                  </>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={() => signOut()}
