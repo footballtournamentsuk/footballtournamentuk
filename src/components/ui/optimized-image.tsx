@@ -25,17 +25,11 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Generate responsive image sources
+  // Generate responsive image sources - only if variants exist
   const generateSrcSet = (baseSrc: string) => {
-    const ext = baseSrc.split('.').pop();
-    const basePath = baseSrc.replace(`.${ext}`, '');
-    
-    return [
-      `${basePath}-400w.webp 400w`,
-      `${basePath}-800w.webp 800w`,
-      `${basePath}-1200w.webp 1200w`,
-      `${basePath}-1600w.webp 1600w`
-    ].join(', ');
+    // For now, just return the original source since we don't have responsive variants yet
+    // TODO: Implement actual responsive image generation or CDN integration
+    return baseSrc;
   };
 
   const handleLoad = () => {
@@ -65,34 +59,24 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
       {/* Optimized Image */}
       {!hasError && (
-        <picture>
-          {/* Modern formats first */}
-          <source
-            srcSet={generateSrcSet(src)}
-            sizes={sizes}
-            type="image/webp"
-          />
-          
-          {/* Fallback */}
-          <img
-            src={src}
-            alt={alt}
-            width={width}
-            height={height}
-            loading={priority ? "eager" : "lazy"}
-            decoding={priority ? "sync" : "async"}
-            onLoad={handleLoad}
-            onError={handleError}
-            className={cn(
-              "transition-opacity duration-300",
-              isLoading ? "opacity-0" : "opacity-100",
-              "w-full h-full object-cover"
-            )}
-            style={{
-              contentVisibility: priority ? "visible" : "auto",
-            }}
-          />
-        </picture>
+        <img
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          loading={priority ? "eager" : "lazy"}
+          decoding={priority ? "sync" : "async"}
+          onLoad={handleLoad}
+          onError={handleError}
+          className={cn(
+            "transition-opacity duration-300",
+            isLoading ? "opacity-0" : "opacity-100",
+            "w-full h-full object-cover"
+          )}
+          style={{
+            contentVisibility: priority ? "visible" : "auto",
+          }}
+        />
       )}
 
       {/* Error fallback */}

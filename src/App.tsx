@@ -190,8 +190,6 @@ const App = () => (
           <CookieConsent />
         </div>
         <BottomNavigation />
-        {/* Performance monitoring - only in development */}
-        <WebVitalsDebugger />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

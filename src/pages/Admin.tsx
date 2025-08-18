@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
 
 interface Testimonial {
   id: string;
@@ -496,6 +497,8 @@ export const Admin = () => {
           </CardContent>
         </Card>
       </div>
+      {/* Performance monitoring - admin only */}
+      <WebVitalsDebugger />
     </div>
   );
 };
