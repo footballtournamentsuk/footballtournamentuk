@@ -2,10 +2,15 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar, Users, Trophy, List, FileText } from 'lucide-react';
-import heroImage from '@/assets/hero-football.jpg';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useCounterAnimation } from '@/hooks/useCounterAnimation';
+import { usePreloadHeroImages } from '@/hooks/usePreloadCriticalResources';
+import heroImage from '@/assets/hero-football.jpg';
 
 const Hero: React.FC = () => {
+  // Preload critical hero images
+  usePreloadHeroImages();
+  
   // TODO: Replace with actual database values when available
   // These are realistic starter numbers for a growing platform
   const tournamentsCounter = useCounterAnimation({ 
@@ -38,10 +43,15 @@ const Hero: React.FC = () => {
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={heroImage} 
-          alt="Youth football players in action" 
-          className="w-full h-full object-cover"
+        <OptimizedImage
+          src={heroImage}
+          alt="Youth football players in action"
+          priority={true}
+          className="w-full h-full"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          placeholderColor="bg-emerald-900/20"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
       </div>

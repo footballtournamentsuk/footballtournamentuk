@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
+import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -189,6 +190,8 @@ const App = () => (
           <CookieConsent />
         </div>
         <BottomNavigation />
+        {/* Performance monitoring - only in development */}
+        <WebVitalsDebugger />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
