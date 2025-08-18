@@ -31,6 +31,7 @@ import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
 import BottomNavigation from "./components/BottomNavigation";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
 const queryClient = new QueryClient();
 
@@ -188,6 +189,7 @@ const App = () => (
           </Routes>
           <Footer />
           <CookieConsent />
+          <PWAInstallPrompt />
         </div>
         <BottomNavigation />
       </BrowserRouter>
