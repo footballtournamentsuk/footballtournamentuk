@@ -22,6 +22,8 @@ import {
 import { ShareButton } from './ShareButton';
 import { AddToCalendar } from './AddToCalendar';
 import { ContactOrganizerModal } from './ContactOrganizerModal';
+import { getTournamentThumbnail, shouldPrioritizeTournament } from '@/utils/tournamentThumbnails';
+import { TournamentImage } from '@/components/ui/tournament-image';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -81,31 +83,54 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
     ? tournament.maxTeams - tournament.registeredTeams 
     : null;
 
+  const thumbnail = getTournamentThumbnail(tournament);
+  const shouldPrioritize = shouldPrioritizeTournament(tournament);
+
   return (
-    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden">
+      {/* Tournament Thumbnail */}
+      <div className="relative w-full h-48">
+        <TournamentImage
+          src={thumbnail.src}
+          alt={thumbnail.alt}
+          priority={shouldPrioritize}
+          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+          width={640}
+          height={512}
+          style={{
+            aspectRatio: '640/512',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        
+        {/* Tournament Type and Status Badges - Overlay on image */}
+        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+          <Badge className={getStatusColor(tournament.status)} variant="secondary">
+            {tournament.status.replace(/_/g, ' ')}
+          </Badge>
+          <Badge className={getTypeColor(tournament.type)} variant="secondary">
+            {tournament.type}
+          </Badge>
+        </div>
+        
+        {/* Cost - Overlay on image */}
+        {tournament.cost && (
+          <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-lg p-2 text-center border">
+            <div className="font-bold text-lg text-primary">
+              £{tournament.cost.amount}
+            </div>
+            <div className="text-xs text-muted-foreground">per team</div>
+          </div>
+        )}
+      </div>
+
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
               {tournament.name}
             </h3>
-            <div className="flex flex-wrap gap-2">
-              <Badge className={getStatusColor(tournament.status)} variant="secondary">
-                {tournament.status.replace(/_/g, ' ')}
-              </Badge>
-              <Badge className={getTypeColor(tournament.type)} variant="secondary">
-                {tournament.type}
-              </Badge>
-            </div>
           </div>
-          {tournament.cost && (
-            <div className="text-right">
-              <div className="font-bold text-lg text-primary">
-                £{tournament.cost.amount}
-              </div>
-              <div className="text-xs text-muted-foreground">per team</div>
-            </div>
-          )}
         </div>
       </CardHeader>
 

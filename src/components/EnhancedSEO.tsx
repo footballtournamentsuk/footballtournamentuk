@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tournament } from '@/types/tournament';
 import { CityConfig } from '@/data/cities';
+import { getTournamentThumbnail } from '@/utils/tournamentThumbnails';
 
 interface EnhancedSEOProps {
   city: CityConfig;
@@ -79,61 +80,67 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
   });
 
   // Enhanced tournament events schema
-  const generateTournamentEventsSchema = () => tournaments.slice(0, 5).map(tournament => ({
-    '@type': 'SportsEvent',
-    '@context': 'https://schema.org',
-    name: tournament.name,
-    description: `${tournament.format} youth football tournament in ${city.displayName}. ${tournament.description || `Professional youth football competition in ${tournament.location.name}.`}`,
-    startDate: tournament.dates.start.toISOString(),
-    endDate: tournament.dates.end.toISOString(),
-    location: {
-      '@type': 'Place',
-      name: tournament.location.name,
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: city.displayName,
-        addressRegion: city.region,
-        postalCode: tournament.location.postcode,
-        addressCountry: 'GB'
+  const generateTournamentEventsSchema = () => tournaments.slice(0, 5).map(tournament => {
+    const thumbnail = getTournamentThumbnail(tournament);
+    const tournamentImageUrl = `${siteUrl}/${thumbnail.src}`;
+    
+    return {
+      '@type': 'SportsEvent',
+      '@context': 'https://schema.org',
+      name: tournament.name,
+      description: `${tournament.format} youth football tournament in ${city.displayName}. ${tournament.description || `Professional youth football competition in ${tournament.location.name}.`}`,
+      image: tournamentImageUrl,
+      startDate: tournament.dates.start.toISOString(),
+      endDate: tournament.dates.end.toISOString(),
+      location: {
+        '@type': 'Place',
+        name: tournament.location.name,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: city.displayName,
+          addressRegion: city.region,
+          postalCode: tournament.location.postcode,
+          addressCountry: 'GB'
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: tournament.location.coordinates[1],
+          longitude: tournament.location.coordinates[0]
+        }
       },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: tournament.location.coordinates[1],
-        longitude: tournament.location.coordinates[0]
+      organizer: {
+        '@type': 'Organization',
+        name: tournament.contact.name,
+        email: tournament.contact.email,
+        telephone: tournament.contact.phone
+      },
+      sport: 'Association Football',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      url: `${siteUrl}/tournaments/${tournament.id}`,
+      offers: tournament.cost ? {
+        '@type': 'Offer',
+        price: tournament.cost.amount,
+        priceCurrency: tournament.cost.currency,
+        availability: 'https://schema.org/InStock',
+        validFrom: new Date().toISOString(),
+        url: `${siteUrl}/tournaments/${tournament.id}`
+      } : {
+        '@type': 'Offer',
+        price: 0,
+        priceCurrency: 'GBP',
+        availability: 'https://schema.org/InStock'
+      },
+      audience: {
+        '@type': 'Audience',
+        audienceType: 'Youth Football Players',
+        geographicArea: {
+          '@type': 'City',
+          name: city.displayName
+        }
       }
-    },
-    organizer: {
-      '@type': 'Organization',
-      name: tournament.contact.name,
-      email: tournament.contact.email,
-      telephone: tournament.contact.phone
-    },
-    sport: 'Association Football',
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    eventStatus: 'https://schema.org/EventScheduled',
-    url: `${siteUrl}/tournaments/${tournament.id}`,
-    offers: tournament.cost ? {
-      '@type': 'Offer',
-      price: tournament.cost.amount,
-      priceCurrency: tournament.cost.currency,
-      availability: 'https://schema.org/InStock',
-      validFrom: new Date().toISOString(),
-      url: `${siteUrl}/tournaments/${tournament.id}`
-    } : {
-      '@type': 'Offer',
-      price: 0,
-      priceCurrency: 'GBP',
-      availability: 'https://schema.org/InStock'
-    },
-    audience: {
-      '@type': 'Audience',
-      audienceType: 'Youth Football Players',
-      geographicArea: {
-        '@type': 'City',
-        name: city.displayName
-      }
-    }
-  }));
+    };
+  });
 
   // Breadcrumb schema
   const generateBreadcrumbSchema = () => ({
