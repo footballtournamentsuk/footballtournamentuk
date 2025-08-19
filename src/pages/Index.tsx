@@ -224,7 +224,29 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <Hero />
+      <Hero onHeroSearch={(searchTerm, postcode, coordinates) => {
+        const newFilters: Filters = { ...filters };
+        
+        if (searchTerm) {
+          newFilters.search = searchTerm;
+        }
+        
+        if (postcode && coordinates) {
+          newFilters.location = {
+            postcode,
+            coordinates,
+            radius: 25 // Default 25 mile radius
+          };
+        }
+        
+        setFilters(newFilters);
+        
+        // Scroll to tournaments section after search
+        setTimeout(() => {
+          const tournamentsSection = document.getElementById('tournaments');
+          tournamentsSection?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }} />
 
       {/* Partners Section */}
       <section className="py-12 bg-surface/50">

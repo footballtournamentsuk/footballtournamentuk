@@ -5,9 +5,14 @@ import { MapPin, Calendar, Users, Trophy, List, FileText } from 'lucide-react';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useCounterAnimation } from '@/hooks/useCounterAnimation';
 import { usePreloadHeroImages } from '@/hooks/usePreloadCriticalResources';
+import { HeroSearch } from '@/components/HeroSearch';
 import heroImage from '@/assets/hero-football.jpg';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  onHeroSearch?: (searchTerm: string, postcode?: string, coordinates?: [number, number]) => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onHeroSearch }) => {
   // Preload critical hero images
   usePreloadHeroImages();
   
@@ -110,12 +115,21 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
+        {/* Hero Search */}
+        <div className="mb-8">
+          <HeroSearch 
+            onSearch={(searchTerm, postcode, coordinates) => {
+              onHeroSearch?.(searchTerm, postcode, coordinates);
+            }}
+          />
+        </div>
+
         {/* Call to Action */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button 
             size="lg" 
             onClick={scrollToMap}
-            className="bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-xl font-semibold px-8 py-4 text-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+            className="bg-white/20 text-white hover:bg-white/30 hover:shadow-xl font-semibold px-6 py-3 text-base shadow-lg transition-all duration-300 transform hover:scale-105 border border-white/30 backdrop-blur-sm"
           >
             <MapPin className="w-5 h-5 mr-2" />
             Explore Map
@@ -123,10 +137,10 @@ const Hero: React.FC = () => {
           <Button 
             size="lg" 
             onClick={scrollToTournaments}
-            className="bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl font-semibold px-8 py-4 text-lg shadow-lg transition-all duration-300 transform hover:scale-105 border-0"
+            className="bg-white/20 text-white hover:bg-white/30 hover:shadow-xl font-semibold px-6 py-3 text-base shadow-lg transition-all duration-300 transform hover:scale-105 border border-white/30 backdrop-blur-sm"
           >
             <List className="w-5 h-5 mr-2" />
-            Browse Tournaments
+            Browse All
           </Button>
         </div>
 
