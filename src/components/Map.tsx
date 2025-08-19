@@ -5,6 +5,7 @@ import { Tournament } from '@/types/tournament';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar, Users, Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MapProps {
   tournaments: Tournament[];
@@ -34,27 +35,47 @@ const Map: React.FC<MapProps> = ({
     const fetchToken = async () => {
       try {
         console.log('🔑 Fetching Mapbox token...');
-        const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token', {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        
+        const { data, error } = await supabase.functions.invoke('mapbox-token', {
+          method: 'GET',
         });
 
-        if (!response.ok) {
-          throw new Error(`Token fetch failed: ${response.status}`);
+        if (error) {
+          console.error('❌ Supabase function error:', error);
+          throw new Error(`Token fetch failed: ${error.message}`);
         }
 
-        const data = await response.json();
-        if (data.token) {
+        if (data?.token) {
           console.log('✅ Token fetched successfully');
           setMapboxToken(data.token);
           mapboxgl.accessToken = data.token;
         } else {
+          console.error('❌ No token in response:', data);
           throw new Error('No token in response');
         }
       } catch (err) {
         console.error('❌ Token fetch error:', err);
-        setError('Failed to load map token');
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.log('🔄 Attempting direct fallback...');
+        
+        // Fallback: try direct fetch as last resort
+        try {
+          const fallbackResponse = await fetch('/api/mapbox-token').catch(() => null);
+          if (!fallbackResponse?.ok) {
+            throw new Error('All token sources failed');
+          }
+          const fallbackData = await fallbackResponse.json();
+          if (fallbackData?.token) {
+            console.log('✅ Fallback token successful');
+            setMapboxToken(fallbackData.token);
+            mapboxgl.accessToken = fallbackData.token;
+            return;
+          }
+        } catch (fallbackErr) {
+          console.log('❌ Fallback also failed');
+        }
+        
+        setError(`Unable to load map: ${errorMessage}`);
         setIsLoading(false);
       }
     };
@@ -281,50 +302,62 @@ const Map: React.FC<MapProps> = ({
   // Always render the container, regardless of loading/error state
   return (
     <div 
-      className="relative w-full rounded-lg overflow-hidden shadow-lg border"
-      style={{ height: '520px', width: '100%' }}
+      className="relative w-full rounded-lg overflow-hidden shadow-lg border bg-muted"
+      style={{ height: '520px', width: '100%', minHeight: '520px' }}
     >
-      {/* Map container - ALWAYS rendered */}
+      {/* Map container - ALWAYS rendered with guaranteed dimensions */}
       <div 
         ref={mapRef}
         id="map"
         className="w-full h-full absolute inset-0"
         style={{ 
           width: '100%',
-          height: '520px',
+          height: '100%',
+          minHeight: '520px',
           position: 'absolute',
           top: 0,
-          left: 0
+          left: 0,
+          zIndex: 1
         }}
       />
       
       {/* Loading overlay */}
       {isLoading && (
-        <div className="absolute inset-0 bg-surface/90 flex items-center justify-center z-20">
+        <div className="absolute inset-0 bg-background/95 backdrop-blur-sm flex items-center justify-center z-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading map...</p>
+            <p className="text-muted-foreground font-medium">Loading map...</p>
+            <p className="text-xs text-muted-foreground/70 mt-2">Fetching location data</p>
           </div>
         </div>
       )}
 
-      {/* Error overlay */}
+      {/* Error overlay with better UX */}
       {error && (
-        <div className="absolute inset-0 bg-surface/90 flex items-center justify-center z-20">
+        <div className="absolute inset-0 bg-background/95 backdrop-blur-sm flex items-center justify-center z-20">
           <Card className="w-full max-w-md mx-4">
             <CardContent className="p-6">
               <div className="text-center">
                 <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-2" />
-                <h3 className="text-lg font-semibold mb-2">Map Error</h3>
-                <p className="text-sm text-muted-foreground mb-4">{error}</p>
-                <Button 
-                  onClick={() => window.location.reload()} 
-                  variant="default"
-                  size="sm"
-                  className="w-full"
-                >
-                  Reload Page
-                </Button>
+                <h3 className="text-lg font-semibold mb-2">Map Unavailable</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  The map service is temporarily unavailable. You can still browse tournaments in the list view.
+                </p>
+                <div className="space-y-2">
+                  <Button 
+                    onClick={() => {
+                      setError(null);
+                      setIsLoading(true);
+                      window.location.reload();
+                    }} 
+                    variant="default"
+                    size="sm"
+                    className="w-full"
+                  >
+                    Try Again
+                  </Button>
+                  <p className="text-xs text-muted-foreground">{error}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
