@@ -67,28 +67,28 @@ export const generateDemoTournaments = (): Tournament[] => {
     
     const ageGroups = ageGroupsByFormat[format];
     
-    // Generate venue name based on city
+    // Generate generic venue names
     const venueNames = {
-      'london': 'Wembley Youth Academy',
-      'manchester': 'Manchester City Training Ground',
-      'birmingham': 'Aston Villa Academy',
-      'liverpool': 'Liverpool FC Youth Centre',
-      'leeds': 'Leeds United Training Centre',
-      'newcastle-upon-tyne': 'Newcastle United Academy',
-      'sheffield': 'Sheffield United Training Ground',
-      'bristol': 'Bristol City Academy',
-      'nottingham': 'Nottingham Forest Training Centre',
-      'southampton': 'Southampton FC Academy',
-      'glasgow': 'Celtic FC Youth Academy',
-      'edinburgh': 'Hearts FC Training Ground',
-      'cardiff': 'Cardiff City Academy',
-      'swansea': 'Swansea City Training Centre',
-      'belfast': 'Windsor Park Youth Centre',
-      'leicester': 'Leicester City Training Ground',
-      'portsmouth': 'Portsmouth FC Academy',
-      'brighton': 'Brighton & Hove Albion Training Centre',
-      'oxford': 'Oxford United Academy',
-      'cambridge': 'Cambridge United Training Ground'
+      'london': 'Example Sports Centre',
+      'manchester': 'Example Sports Centre',
+      'birmingham': 'Example Sports Centre',
+      'liverpool': 'Example Sports Centre',
+      'leeds': 'Example Sports Centre',
+      'newcastle-upon-tyne': 'Example Sports Centre',
+      'sheffield': 'Example Sports Centre',
+      'bristol': 'Example Sports Centre',
+      'nottingham': 'Example Sports Centre',
+      'southampton': 'Example Sports Centre',
+      'glasgow': 'Example Sports Centre',
+      'edinburgh': 'Example Sports Centre',
+      'cardiff': 'Example Sports Centre',
+      'swansea': 'Example Sports Centre',
+      'belfast': 'Example Sports Centre',
+      'leicester': 'Example Sports Centre',
+      'portsmouth': 'Example Sports Centre',
+      'brighton': 'Example Sports Centre',
+      'oxford': 'Example Sports Centre',
+      'cambridge': 'Example Sports Centre'
     };
 
     const demoTournament: Tournament = {
@@ -119,7 +119,7 @@ export const generateDemoTournaments = (): Tournament[] => {
         currency: 'GBP'
       },
       contact: {
-        name: `${city.displayName} Football Development`,
+        name: 'Demo Organizer',
         email: `demo@footballtournamentsuk.co.uk`
       },
       features: generateDemoFeatures(eventType),
