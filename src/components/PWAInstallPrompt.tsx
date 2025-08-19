@@ -64,14 +64,31 @@ export const PWAInstallPrompt: React.FC = () => {
 
   // Check engagement and show prompt when conditions are met
   useEffect(() => {
+    // Debug logging for engagement conditions
+    const engagementStatus = isEngaged();
+    const cookieStatus = isCookieConsentActive();
+    const promptDismissed = sessionStorage.getItem('pwa-prompt-dismissed');
+    const promptShown = sessionStorage.getItem('pwa-prompt-shown');
+    
+    console.log('PWA Prompt Check:', {
+      deferredPrompt: !!deferredPrompt,
+      isEngaged: engagementStatus,
+      isCookieConsentActive: cookieStatus,
+      promptDismissed: !!promptDismissed,
+      promptShown: !!promptShown,
+      isInstalled,
+      isIOS
+    });
+
     if (
       deferredPrompt &&
-      isEngaged() &&
-      !isCookieConsentActive() &&
-      !sessionStorage.getItem('pwa-prompt-dismissed') &&
-      !sessionStorage.getItem('pwa-prompt-shown') &&
+      engagementStatus &&
+      !cookieStatus &&
+      !promptDismissed &&
+      !promptShown &&
       !isInstalled
     ) {
+      console.log('PWA prompt will show for Android/Chrome in 2 seconds');
       // Additional delay to ensure cookie consent has settled
       const timer = setTimeout(() => {
         setShowInstallPrompt(true);
@@ -85,12 +102,13 @@ export const PWAInstallPrompt: React.FC = () => {
     // For iOS, show after engagement without needing deferredPrompt
     if (
       isIOS &&
-      isEngaged() &&
-      !isCookieConsentActive() &&
-      !sessionStorage.getItem('pwa-prompt-dismissed') &&
-      !sessionStorage.getItem('pwa-prompt-shown') &&
+      engagementStatus &&
+      !cookieStatus &&
+      !promptDismissed &&
+      !promptShown &&
       !isInstalled
     ) {
+      console.log('PWA prompt will show for iOS in 2 seconds');
       const timer = setTimeout(() => {
         setShowInstallPrompt(true);
         sessionStorage.setItem('pwa-prompt-shown', 'true');

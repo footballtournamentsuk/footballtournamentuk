@@ -73,12 +73,12 @@ const Navigation = () => {
           {canInstall && (
             <Button
               onClick={triggerInstall}
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="flex items-center gap-2"
+              className="h-8 w-8 p-0"
+              title="Download App"
             >
               <Smartphone className="h-4 w-4" />
-              Download App
             </Button>
           )}
           {user ? (
