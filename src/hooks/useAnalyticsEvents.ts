@@ -78,6 +78,55 @@ export const trackUserActivity = () => {
   });
 };
 
+// Funnel tracking functions
+export const trackTournamentListView = (filters: Record<string, any> = {}) => {
+  trackEvent('tournament_list_view', {
+    filters_applied: filters,
+    results_count: filters.results_count || 0,
+  });
+};
+
+export const trackTournamentDetailView = (tournamentId: string, tournamentName?: string) => {
+  trackEvent('tournament_detail_view', {
+    tournament_id: tournamentId,
+    tournament_name: tournamentName,
+  });
+};
+
+export const trackRegistrationStart = (tournamentId: string, registrationMethod?: string) => {
+  trackEvent('registration_start', {
+    tournament_id: tournamentId,
+    registration_method: registrationMethod || 'contact_organizer',
+  });
+};
+
+export const trackRegistrationComplete = (tournamentId: string, completionMethod?: string) => {
+  trackEvent('registration_complete', {
+    tournament_id: tournamentId,
+    completion_method: completionMethod || 'contact_sent',
+  });
+};
+
+// Performance tracking functions
+export const trackCoreWebVitals = (metrics: { lcp?: number; fid?: number; cls?: number }) => {
+  trackEvent('core_web_vitals', {
+    lcp: metrics.lcp,
+    fid: metrics.fid,
+    cls: metrics.cls,
+    connection_type: (navigator as any).connection?.effectiveType || 'unknown',
+  });
+};
+
+export const trackAPICall = (endpoint: string, method: string, duration: number, success: boolean) => {
+  trackEvent('api_call', {
+    endpoint,
+    method,
+    duration_ms: duration,
+    success,
+    status_category: success ? 'success' : 'error',
+  });
+};
+
 // Hook for automatic page view tracking
 export const usePageTracking = () => {
   const trackPageView = (pathname: string) => {
