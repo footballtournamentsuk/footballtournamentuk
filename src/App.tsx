@@ -29,6 +29,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 import Verify from "./pages/Verify";
 import CheckEmail from "./pages/CheckEmail";
+import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
@@ -187,6 +188,7 @@ const App = () => (
         <div className="pt-16 pb-20 md:pb-0">
           <Routes>
            <Route path="/" element={<Index />} />
+           <Route path="/tournaments" element={<Tournaments />} />
            <Route path="/auth" element={<Auth />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/check-email" element={<CheckEmail />} />

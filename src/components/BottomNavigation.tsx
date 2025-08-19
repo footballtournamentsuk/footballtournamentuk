@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 import { Home, Search, HelpCircle, Mail, User, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -10,6 +11,7 @@ const BottomNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { trackMeaningfulAction } = useEngagementTracker();
 
   // Only show on mobile devices
   if (!isMobile) return null;
@@ -24,6 +26,15 @@ const BottomNavigation = () => {
 
   const handleContact = () => {
     window.location.href = 'mailto:info@footballtournamentsuk.co.uk';
+  };
+
+  const handleSearchClick = () => {
+    trackMeaningfulAction('nav_search_clicked');
+    console.log('Navigation search clicked', { 
+      auth: user ? 'user' : 'guest',
+      timestamp: new Date().toISOString()
+    });
+    navigate('/tournaments');
   };
 
   const isActive = (path: string) => {
@@ -42,8 +53,8 @@ const BottomNavigation = () => {
     {
       icon: Search,
       label: 'Search',
-      action: () => navigate('/?search=true'),
-      isActive: location.search.includes('search=true')
+      action: handleSearchClick,
+      isActive: location.pathname === '/tournaments'
     },
     {
       icon: HelpCircle,
@@ -81,8 +92,8 @@ const BottomNavigation = () => {
     {
       icon: Search,
       label: 'Search',
-      action: () => navigate('/?search=true'),
-      isActive: location.search.includes('search=true')
+      action: handleSearchClick,
+      isActive: location.pathname === '/tournaments'
     }
   ];
 
@@ -99,6 +110,7 @@ const BottomNavigation = () => {
               variant="ghost"
               size="sm"
               onClick={tab.action}
+              aria-label={tab.label === 'Search' ? 'Search tournaments' : tab.label}
               className={`flex flex-col items-center gap-1 h-auto py-2 px-3 ${
                 tab.isActive 
                   ? 'text-primary bg-primary/10' 
