@@ -56,25 +56,6 @@ const Map: React.FC<MapProps> = ({
       } catch (err) {
         console.error('❌ Token fetch error:', err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-        console.log('🔄 Attempting direct fallback...');
-        
-        // Fallback: try direct fetch as last resort
-        try {
-          const fallbackResponse = await fetch('/api/mapbox-token').catch(() => null);
-          if (!fallbackResponse?.ok) {
-            throw new Error('All token sources failed');
-          }
-          const fallbackData = await fallbackResponse.json();
-          if (fallbackData?.token) {
-            console.log('✅ Fallback token successful');
-            setMapboxToken(fallbackData.token);
-            mapboxgl.accessToken = fallbackData.token;
-            return;
-          }
-        } catch (fallbackErr) {
-          console.log('❌ Fallback also failed');
-        }
-        
         setError(`Unable to load map: ${errorMessage}`);
         setIsLoading(false);
       }
