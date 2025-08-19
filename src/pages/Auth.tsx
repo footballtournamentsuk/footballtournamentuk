@@ -285,7 +285,7 @@ const AuthPage = () => {
                 <img 
                   src={logo} 
                   alt="Football Tournaments UK" 
-                  className="w-14 h-14 sm:w-16 sm:h-16 mx-auto" 
+                  className="w-20 h-20 sm:w-24 sm:h-24 mx-auto" 
                 />
               </div>
               <div className="space-y-2">
