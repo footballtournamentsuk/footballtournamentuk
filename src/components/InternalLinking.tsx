@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { CityConfig, UK_CITIES } from '@/data/cities';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, ArrowRight, Trophy, Target } from 'lucide-react';
+import { MapPin, ArrowRight, Trophy, Target, Users, Calendar } from 'lucide-react';
+import tournamentFormatsImage from '@/assets/tournament-formats-card.webp';
+import ageGroupsImage from '@/assets/age-groups-card.webp';
 
 interface InternalLinkingProps {
   currentCity: CityConfig;
@@ -113,57 +115,106 @@ export const InternalLinking: React.FC<InternalLinkingProps> = ({ currentCity, t
         </div>
       </section>
 
-      {/* Tournament Format Links */}
-      <section className="py-8 bg-surface rounded-lg">
+      {/* Tournament Format Card */}
+      <section className="py-8">
         <div className="container mx-auto px-6">
           <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
             <Trophy className="w-6 h-6 text-primary" />
             Popular Tournament Formats in {currentCity.displayName}
           </h3>
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {['3v3', '5v5', '7v7', '9v9', '11v11'].map((format) => (
-              <div key={format} className="group">
-                <Card className="p-4 text-center transition-all">
-                  <div className="text-lg font-bold text-primary">
-                    {format}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Football
-                  </div>
-                </Card>
+          {/* Visual Card */}
+          <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="relative h-64 md:h-80">
+              <img
+                src={tournamentFormatsImage}
+                alt="Multiple football tournament formats including 3v3, 5v5, 7v7, 9v9, and 11v11 matches being played on various sized pitches"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <h4 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  Multiple Formats Available
+                </h4>
+                <p className="text-lg text-white/90 mb-4">
+                  3v3 • 5v5 • 7v7 • 9v9 • 11v11 Football Tournaments
+                </p>
+                <div className="flex items-center gap-2 text-white/80">
+                  <Users className="w-5 h-5" />
+                  <span className="text-sm">All skill levels welcome</span>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          </Card>
           
-          <div className="mt-6 text-center">
-            <p className="text-muted-foreground mb-4">
-              Looking for a specific tournament format? Use our advanced filters to find exactly what you need.
-            </p>
-            <span className="inline-flex items-center gap-2 text-muted-foreground font-medium">
-              Tournament filtering coming soon
-            </span>
+          {/* SEO Hidden Content */}
+          <div className="sr-only" aria-hidden="true">
+            <h4>Available Tournament Formats in {currentCity.displayName}</h4>
+            <ul>
+              <li>3v3 Football Tournaments - Small-sided games perfect for young players</li>
+              <li>5v5 Football Tournaments - Popular format for youth development</li>
+              <li>7v7 Football Tournaments - Standard format for junior leagues</li>
+              <li>9v9 Football Tournaments - Semi-professional youth format</li>
+              <li>11v11 Football Tournaments - Full-size pitch professional format</li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* Age Group Links */}
-      <section className="py-8">
+      {/* Age Groups Card */}
+      <section className="py-8 bg-surface rounded-lg">
         <div className="container mx-auto px-6">
-          <h3 className="text-2xl font-bold mb-6">
+          <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+            <Calendar className="w-6 h-6 text-primary" />
             Tournament Age Groups Available
           </h3>
           
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            {['U6', 'U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U18'].map((age) => (
-              <div key={age} className="group">
-                <div className="bg-surface rounded-lg p-3 text-center transition-all">
-                  <div className="font-semibold text-primary">
-                    {age}
-                  </div>
+          {/* Visual Card */}
+          <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div className="relative h-64 md:h-80">
+              <img
+                src={ageGroupsImage}
+                alt="Youth football players of all ages from U6 to U21 training together on a football pitch, showing progression from children to young adults"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <h4 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  All Age Groups Available
+                </h4>
+                <p className="text-lg text-white/90 mb-4">
+                  U6 to U21 Youth Football Development
+                </p>
+                <div className="flex items-center gap-2 text-white/80">
+                  <Users className="w-5 h-5" />
+                  <span className="text-sm">Comprehensive youth development programs</span>
                 </div>
               </div>
-            ))}
+            </div>
+          </Card>
+          
+          {/* SEO Hidden Content */}
+          <div className="sr-only" aria-hidden="true">
+            <h4>Available Age Groups in {currentCity.displayName} Football Tournaments</h4>
+            <ul>
+              <li>U6 Football Tournaments - Under 6 years old football development</li>
+              <li>U7 Football Tournaments - Under 7 years old youth football</li>
+              <li>U8 Football Tournaments - Under 8 years old junior tournaments</li>
+              <li>U9 Football Tournaments - Under 9 years old competitive football</li>
+              <li>U10 Football Tournaments - Under 10 years old youth development</li>
+              <li>U11 Football Tournaments - Under 11 years old junior competitions</li>
+              <li>U12 Football Tournaments - Under 12 years old youth tournaments</li>
+              <li>U13 Football Tournaments - Under 13 years old teenage football</li>
+              <li>U14 Football Tournaments - Under 14 years old junior leagues</li>
+              <li>U15 Football Tournaments - Under 15 years old youth competitions</li>
+              <li>U16 Football Tournaments - Under 16 years old teenage tournaments</li>
+              <li>U18 Football Tournaments - Under 18 years old youth football</li>
+              <li>U21 Football Tournaments - Under 21 years old development leagues</li>
+            </ul>
           </div>
         </div>
       </section>

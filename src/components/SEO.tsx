@@ -9,6 +9,7 @@ interface SEOProps {
   tournaments?: Tournament[];
   cityName?: string;
   isHomePage?: boolean;
+  isCityPage?: boolean;
 }
 
 export const SEO: React.FC<SEOProps> = ({
@@ -17,7 +18,8 @@ export const SEO: React.FC<SEOProps> = ({
   canonicalUrl,
   tournaments = [],
   cityName,
-  isHomePage = false
+  isHomePage = false,
+  isCityPage = false
 }) => {
   const siteUrl = 'https://footballtournamentsuk.co.uk';
   const fullCanonicalUrl = canonicalUrl ? `${siteUrl}${canonicalUrl}` : undefined;
@@ -110,10 +112,64 @@ export const SEO: React.FC<SEOProps> = ({
     ]
   } : null;
 
+  // Generate tournament formats schema for city pages
+  const tournamentFormatsSchema = isCityPage && cityName ? {
+    '@type': 'Event',
+    '@context': 'https://schema.org',
+    name: `Youth Football Tournament Formats in ${cityName}`,
+    description: `Multiple football tournament formats available in ${cityName} including 3v3, 5v5, 7v7, 9v9, and 11v11 competitions`,
+    sport: 'Football',
+    location: {
+      '@type': 'Place',
+      name: cityName,
+      addressRegion: 'United Kingdom',
+      addressCountry: 'GB'
+    },
+    offers: [
+      { '@type': 'Offer', name: '3v3 Football Tournaments', description: 'Small-sided games perfect for young players' },
+      { '@type': 'Offer', name: '5v5 Football Tournaments', description: 'Popular format for youth development' },
+      { '@type': 'Offer', name: '7v7 Football Tournaments', description: 'Standard format for junior leagues' },
+      { '@type': 'Offer', name: '9v9 Football Tournaments', description: 'Semi-professional youth format' },
+      { '@type': 'Offer', name: '11v11 Football Tournaments', description: 'Full-size pitch professional format' }
+    ]
+  } : null;
+
+  // Generate age groups schema for city pages
+  const ageGroupsSchema = isCityPage && cityName ? {
+    '@type': 'Event',
+    '@context': 'https://schema.org',
+    name: `Youth Football Age Groups in ${cityName}`,
+    description: `Comprehensive youth football development programs in ${cityName} for all age groups from U6 to U21`,
+    sport: 'Football',
+    location: {
+      '@type': 'Place',
+      name: cityName,
+      addressRegion: 'United Kingdom',
+      addressCountry: 'GB'
+    },
+    audience: [
+      { '@type': 'Audience', name: 'U6 Football', description: 'Under 6 years old football development' },
+      { '@type': 'Audience', name: 'U7 Football', description: 'Under 7 years old youth football' },
+      { '@type': 'Audience', name: 'U8 Football', description: 'Under 8 years old junior tournaments' },
+      { '@type': 'Audience', name: 'U9 Football', description: 'Under 9 years old competitive football' },
+      { '@type': 'Audience', name: 'U10 Football', description: 'Under 10 years old youth development' },
+      { '@type': 'Audience', name: 'U11 Football', description: 'Under 11 years old junior competitions' },
+      { '@type': 'Audience', name: 'U12 Football', description: 'Under 12 years old youth tournaments' },
+      { '@type': 'Audience', name: 'U13 Football', description: 'Under 13 years old teenage football' },
+      { '@type': 'Audience', name: 'U14 Football', description: 'Under 14 years old junior leagues' },
+      { '@type': 'Audience', name: 'U15 Football', description: 'Under 15 years old youth competitions' },
+      { '@type': 'Audience', name: 'U16 Football', description: 'Under 16 years old teenage tournaments' },
+      { '@type': 'Audience', name: 'U18 Football', description: 'Under 18 years old youth football' },
+      { '@type': 'Audience', name: 'U21 Football', description: 'Under 21 years old development leagues' }
+    ]
+  } : null;
+
   const schemas = [
     ...tournamentSchemas,
     organizationSchema,
-    breadcrumbSchema
+    breadcrumbSchema,
+    tournamentFormatsSchema,
+    ageGroupsSchema
   ].filter(Boolean);
 
   // Generate dynamic OG image URL for tournaments

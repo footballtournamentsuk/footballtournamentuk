@@ -275,6 +275,7 @@ const CityTournaments = () => {
           canonicalUrl={`/city/${city.slug}`}
           tournaments={upcomingTournaments.slice(0, 5)}
           cityName={city.displayName}
+          isCityPage={true}
         />
         
         <EnhancedSEO 
