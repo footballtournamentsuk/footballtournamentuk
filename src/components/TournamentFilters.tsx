@@ -80,7 +80,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
       location: {
         postcode: location.postcode,
         coordinates: location.coordinates,
-        radius: filters.location?.radius || 10
+        radius: filters.location?.radius || 25 // Default to 25 miles
       }
     });
   };

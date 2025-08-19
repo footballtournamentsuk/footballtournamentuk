@@ -87,12 +87,12 @@ const Tournaments = () => {
     }
 
     // Apply location and radius filter
-    if (filters.location?.postcode && filters.location?.coordinates && filters.location?.radius) {
+    if (filters.location?.postcode && filters.location?.coordinates) {
       const userCoords = filters.location.coordinates;
-      const maxDistance = filters.location.radius;
+      const maxDistance = filters.location.radius || 25; // Default 25 miles radius
       
       filtered = filtered.filter(tournament => {
-        if (!tournament.location.coordinates) return true;
+        if (!tournament.location.coordinates) return false; // Exclude tournaments without coordinates
         
         const distance = calculateDistance(
           userCoords[1], // lat
@@ -124,9 +124,13 @@ const Tournaments = () => {
 
     // Apply format filter
     if (filters.format && filters.format.length > 0) {
-      filtered = filtered.filter(tournament => 
-        filters.format!.includes(tournament.format)
-      );
+      filtered = filtered.filter(tournament => {
+        // Handle both single format and comma-separated formats
+        const tournamentFormats = tournament.format.split(',').map(f => f.trim());
+        return filters.format!.some(selectedFormat => 
+          tournamentFormats.includes(selectedFormat)
+        );
+      });
     }
 
     // Apply age groups filter

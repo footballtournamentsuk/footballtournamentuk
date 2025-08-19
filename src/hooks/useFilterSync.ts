@@ -19,10 +19,14 @@ export const useFilterSync = () => {
     // Parse location
     const postcode = searchParams.get('location');
     const radius = searchParams.get('radius');
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
     if (postcode) {
       urlFilters.location = {
         postcode,
-        radius: radius ? parseInt(radius) : 10
+        radius: radius ? parseInt(radius) : 25,
+        // Include coordinates if available in URL
+        coordinates: (lat && lng) ? [parseFloat(lng), parseFloat(lat)] : undefined
       };
     }
     
@@ -96,6 +100,11 @@ export const useFilterSync = () => {
       params.set('location', newFilters.location.postcode);
       if (newFilters.location.radius) {
         params.set('radius', newFilters.location.radius.toString());
+      }
+      // Store coordinates if available for proper filtering
+      if (newFilters.location.coordinates) {
+        params.set('lat', newFilters.location.coordinates[1].toString());
+        params.set('lng', newFilters.location.coordinates[0].toString());
       }
     }
     
