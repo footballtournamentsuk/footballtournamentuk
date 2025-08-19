@@ -455,6 +455,26 @@ export type Database = {
           tournaments_with_review_emails: number
         }[]
       }
+      get_funnel_metrics: {
+        Args: { end_date?: string; start_date?: string }
+        Returns: {
+          detail_views: number
+          drop_off_rate: number
+          list_views: number
+          registration_completions: number
+          registration_starts: number
+        }[]
+      }
+      get_performance_metrics: {
+        Args: { end_date?: string; start_date?: string }
+        Returns: {
+          avg_api_latency: number
+          avg_cls: number
+          avg_fid: number
+          avg_lcp: number
+          error_rate: number
+        }[]
+      }
       get_pwa_metrics: {
         Args: { end_date?: string; start_date?: string }
         Returns: {

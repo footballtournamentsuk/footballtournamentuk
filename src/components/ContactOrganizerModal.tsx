@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { trackRegistrationStart, trackRegistrationComplete } from '@/hooks/useAnalyticsEvents';
 import {
   Select,
   SelectContent,
@@ -65,6 +66,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       document.body.style.paddingRight = 'var(--scrollbar-width, 0px)';
+      
+      // Track registration start when modal opens
+      trackRegistrationStart(tournament.id, 'contact_organizer');
     } else {
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
@@ -74,7 +78,7 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
     };
-  }, [isOpen]);
+  }, [isOpen, tournament.id]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -120,6 +124,9 @@ export const ContactOrganizerModal: React.FC<ContactOrganizerModalProps> = ({
         title: "Message Sent",
         description: `Your message has been sent to the tournament organizer. They will contact you directly at ${data.email}.`,
       });
+
+      // Track successful registration completion
+      trackRegistrationComplete(tournament.id, 'contact_sent');
 
       form.reset();
       setIsOpen(false);

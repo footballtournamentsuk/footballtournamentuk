@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
+import { trackTournamentDetailView, trackRegistrationStart } from '@/hooks/useAnalyticsEvents';
 import { SEO } from '@/components/SEO';
 import { HelmetProvider } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,6 +64,9 @@ const TournamentDetails = () => {
   React.useEffect(() => {
     if (tournament) {
       trackMeaningfulAction('tournament-details-viewed');
+      
+      // Track tournament detail view for analytics
+      trackTournamentDetailView(tournament.id, tournament.name);
     }
   }, [tournament, trackMeaningfulAction]);
 

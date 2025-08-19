@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useFilterSync } from '@/hooks/useFilterSync';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
+import { trackTournamentListView } from '@/hooks/useAnalyticsEvents';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,6 @@ const Tournaments = () => {
     loading,
     error
   } = useTournaments();
-
-  // Scroll to top when component mounts
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   // Filter and separate tournaments
   const {
@@ -216,6 +212,19 @@ const Tournaments = () => {
       allFilteredTournaments: filtered
     };
   }, [tournaments, filters]);
+
+  // Track tournament list view when data is available
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Only track if we have tournaments data
+    if (tournaments.length > 0) {
+      trackTournamentListView({
+        ...filters,
+        results_count: allFilteredTournaments.length,
+      });
+    }
+  }, [allFilteredTournaments.length, tournaments.length]);
 
   const handleTournamentSelect = (tournament: Tournament) => {
     setSelectedTournament(tournament);

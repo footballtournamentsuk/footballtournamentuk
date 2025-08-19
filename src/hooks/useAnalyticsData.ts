@@ -132,11 +132,15 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
         userData,
         geographyData,
         pwaData,
+        funnelData,
+        performanceData,
       ] = await Promise.all([
         fetchTournamentKPIs(),
         fetchUserAnalytics(),
         fetchGeographyData(),
         fetchPWAMetrics(),
+        fetchFunnelMetrics(),
+        fetchPerformanceMetrics(),
       ]);
 
       setData(prev => ({
@@ -145,24 +149,8 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
         users: userData,
         geography: geographyData,
         pwa: pwaData,
-        funnel: {
-          // Mock data for now - would be tracked via analytics events
-          listViews: 1250,
-          detailViews: 380,
-          registrationStarts: 85,
-          registrationCompletions: 67,
-          dropOffRate: 21.2,
-        },
-        performance: {
-          // Mock data for now - would be from monitoring service
-          avgApiLatency: 245,
-          errorRate: 0.8,
-          coreWebVitals: {
-            lcp: 2200,
-            fid: 85,
-            cls: 0.08,
-          },
-        },
+        funnel: funnelData,
+        performance: performanceData,
         loading: false,
       }));
     } catch (error) {
@@ -393,6 +381,84 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
         installs_completed: 67,
         conversion_rate: 27.3,
         retention_7d: 89.0
+      };
+    }
+  };
+
+  const fetchFunnelMetrics = async (): Promise<FunnelMetrics> => {
+    try {
+      const { data, error } = await supabase.rpc('get_funnel_metrics', {
+        start_date: dateRange.start.toISOString(),
+        end_date: dateRange.end.toISOString()
+      });
+
+      if (error) throw error;
+
+      const result = data?.[0] || {
+        list_views: 0,
+        detail_views: 0,
+        registration_starts: 0,
+        registration_completions: 0,
+        drop_off_rate: 0
+      };
+
+      return {
+        listViews: result.list_views || 0,
+        detailViews: result.detail_views || 0,
+        registrationStarts: result.registration_starts || 0,
+        registrationCompletions: result.registration_completions || 0,
+        dropOffRate: Number(result.drop_off_rate) || 0,
+      };
+    } catch (error) {
+      console.error('Error fetching funnel metrics:', error);
+      // Fallback to mock data if real data fails
+      return {
+        listViews: 1250,
+        detailViews: 380,
+        registrationStarts: 85,
+        registrationCompletions: 67,
+        dropOffRate: 21.2,
+      };
+    }
+  };
+
+  const fetchPerformanceMetrics = async (): Promise<PerformanceMetrics> => {
+    try {
+      const { data, error } = await supabase.rpc('get_performance_metrics', {
+        start_date: dateRange.start.toISOString(),
+        end_date: dateRange.end.toISOString()
+      });
+
+      if (error) throw error;
+
+      const result = data?.[0] || {
+        avg_api_latency: 0,
+        error_rate: 0,
+        avg_lcp: 0,
+        avg_fid: 0,
+        avg_cls: 0
+      };
+
+      return {
+        avgApiLatency: Number(result.avg_api_latency) || 0,
+        errorRate: Number(result.error_rate) || 0,
+        coreWebVitals: {
+          lcp: Number(result.avg_lcp) || 0,
+          fid: Number(result.avg_fid) || 0,
+          cls: Number(result.avg_cls) || 0,
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching performance metrics:', error);
+      // Fallback to mock data if real data fails
+      return {
+        avgApiLatency: 245,
+        errorRate: 0.8,
+        coreWebVitals: {
+          lcp: 2200,
+          fid: 85,
+          cls: 0.08,
+        },
       };
     }
   };

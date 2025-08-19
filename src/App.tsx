@@ -12,7 +12,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
-import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
+import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -46,6 +46,9 @@ const Navigation = () => {
   const { toast } = useToast();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
   const { canInstall, triggerInstall } = usePWAInstall();
+  
+  // Track Core Web Vitals for performance analytics
+  useCoreWebVitals();
 
   const getInitials = (name: string | undefined, email: string | undefined) => {
     if (name && name.trim()) {

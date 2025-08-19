@@ -81,9 +81,8 @@ export const loadThirdPartyScripts = () => {
 
 const loadAnalytics = () => {
   // Defer Google Analytics or other tracking scripts
-  if (typeof gtag === 'undefined') {
-    deferScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID');
-  }
+  // Note: gtag would be loaded by external script
+  deferScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID');
 };
 
 // Font loading optimization

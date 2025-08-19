@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
-import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
 
@@ -522,8 +521,6 @@ export const Admin = () => {
           </CardContent>
         </Card>
       </div>
-      {/* Performance monitoring - admin only */}
-      <WebVitalsDebugger />
     </div>
   );
 };
