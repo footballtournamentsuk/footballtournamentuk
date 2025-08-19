@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { useToast } from "@/hooks/use-toast";
 import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
 import { SupportModal } from "@/components/SupportModal";
 import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
@@ -42,6 +43,7 @@ const queryClient = new QueryClient();
 const Navigation = () => {
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
+  const { toast } = useToast();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
   const { canInstall, triggerInstall } = usePWAInstall();
 
@@ -149,7 +151,31 @@ const Navigation = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => signOut()}
+                  onClick={async () => {
+                    try {
+                      const { error } = await signOut();
+                      if (error) {
+                        toast({
+                          title: "Sign out failed",
+                          description: error.message || "Unable to sign out. Please try again.",
+                          variant: "destructive",
+                        });
+                      } else {
+                        toast({
+                          title: "Signed out successfully",
+                          description: "You have been signed out of your account.",
+                        });
+                        // Force redirect to auth page
+                        window.location.href = '/auth';
+                      }
+                    } catch (error: any) {
+                      toast({
+                        title: "Sign out error",
+                        description: error.message || "An unexpected error occurred.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
                   className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="h-4 w-4" />

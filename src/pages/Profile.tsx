@@ -729,7 +729,34 @@ const ProfilePage = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-foreground">Profile Management</h1>
-          <Button variant="outline" onClick={signOut}>
+          <Button 
+            variant="outline" 
+            onClick={async () => {
+              try {
+                const { error } = await signOut();
+                if (error) {
+                  toast({
+                    title: "Sign out failed",
+                    description: error.message || "Unable to sign out. Please try again.",
+                    variant: "destructive",
+                  });
+                } else {
+                  toast({
+                    title: "Signed out successfully",
+                    description: "You have been signed out of your account.",
+                  });
+                  // Force redirect to auth page
+                  window.location.href = '/auth';
+                }
+              } catch (error: any) {
+                toast({
+                  title: "Sign out error",
+                  description: error.message || "An unexpected error occurred.",
+                  variant: "destructive",
+                });
+              }
+            }}
+          >
             Sign Out
           </Button>
         </div>
