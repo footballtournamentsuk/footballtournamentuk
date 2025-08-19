@@ -112,14 +112,25 @@ export const useAuth = () => {
       setUser(null);
       setSession(null);
       
-      // Clear any stored session data
+      // Clear ALL auth-related localStorage data including Supabase keys
       localStorage.removeItem('session-settings');
       
-      // Try to sign out from Supabase - handle missing session gracefully
+      // Clear Supabase auth storage keys that persist sessions
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('sb-') || key.includes('supabase') || key.includes('auth')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Force clear the Supabase session from storage
+      await supabase.auth.signOut({ scope: 'local' });
+      
+      // Try to sign out from Supabase server - handle missing session gracefully
       const { error } = await supabase.auth.signOut();
       
       // If the error is about missing session, consider it a success since user is already signed out
-      if (error && error.message?.includes('missing') || error?.message?.includes('not found')) {
+      if (error && (error.message?.includes('missing') || error?.message?.includes('not found'))) {
         return { error: null };
       }
       
