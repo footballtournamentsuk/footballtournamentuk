@@ -8,9 +8,10 @@ const API_CACHE = 'api-v2';
 // Assets to cache immediately
 const PRECACHE_ASSETS = [
   '/',
-  '/src/main.tsx',
-  '/src/index.css',
-  // Add critical CSS and JS files
+  '/manifest.json',
+  '/favicon.png',
+  '/app-icon-192.png',
+  '/app-icon-512.png'
 ];
 
 // Cache strategies
@@ -28,7 +29,10 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        return cache.addAll(PRECACHE_ASSETS);
+        return cache.addAll(PRECACHE_ASSETS).catch(error => {
+          console.warn('Some assets failed to cache during install:', error);
+          // Don't fail installation if some assets can't be cached
+        });
       })
   );
   self.skipWaiting();
@@ -184,8 +188,8 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     const options = {
       body: event.data.text(),
-      icon: '/favicon-192x192.png',
-      badge: '/favicon-192x192.png'
+      icon: '/app-icon-192.png',
+      badge: '/app-icon-192.png'
     };
 
     event.waitUntil(
