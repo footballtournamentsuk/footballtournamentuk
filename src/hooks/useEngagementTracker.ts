@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import { trackUserActivity } from '@/hooks/useAnalyticsEvents';
 
 interface EngagementData {
   pageViews: number;
@@ -82,6 +83,10 @@ export const useEngagementTracker = () => {
         lastActionTime: Date.now(),
       };
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      
+      // Track user activity for PWA retention calculation
+      trackUserActivity();
+      
       return updated;
     });
   }, [location.pathname]);

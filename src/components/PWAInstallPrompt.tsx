@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { X, Download, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
+import { trackPWAPromptShown, trackPWAInstalled, trackPWAPromptDismissed } from '@/hooks/useAnalyticsEvents';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -98,6 +99,7 @@ export const PWAInstallPrompt: React.FC = () => {
         setShowInstallPrompt(true);
         sessionStorage.setItem('pwa-prompt-shown', 'true');
         trackMeaningfulAction('pwa-prompt-shown');
+        trackPWAPromptShown('automatic');
       }, 2000);
 
       return () => clearTimeout(timer);
@@ -117,6 +119,7 @@ export const PWAInstallPrompt: React.FC = () => {
         setShowInstallPrompt(true);
         sessionStorage.setItem('pwa-prompt-shown', 'true');
         trackMeaningfulAction('pwa-prompt-shown');
+        trackPWAPromptShown('automatic');
       }, 2000);
 
       return () => clearTimeout(timer);
@@ -133,9 +136,11 @@ export const PWAInstallPrompt: React.FC = () => {
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the install prompt');
         trackMeaningfulAction('pwa-install-accepted');
+        trackPWAInstalled();
       } else {
         console.log('User dismissed the install prompt');
         trackMeaningfulAction('pwa-install-declined');
+        trackPWAPromptDismissed('user_dismissed');
       }
     } catch (error) {
       console.error('Error showing PWA install prompt:', error);
@@ -149,6 +154,7 @@ export const PWAInstallPrompt: React.FC = () => {
     setShowInstallPrompt(false);
     sessionStorage.setItem('pwa-prompt-dismissed', 'true');
     trackMeaningfulAction('pwa-prompt-dismissed');
+    trackPWAPromptDismissed('user_dismissed');
   };
 
   // Manual install trigger for external use

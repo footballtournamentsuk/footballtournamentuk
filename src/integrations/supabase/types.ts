@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          properties: Json
+          session_id: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          properties: Json
+          session_id: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          properties?: Json
+          session_id?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           consent_date: string | null
@@ -423,6 +453,15 @@ export type Database = {
           pending_review_emails: number
           total_tournaments: number
           tournaments_with_review_emails: number
+        }[]
+      }
+      get_pwa_metrics: {
+        Args: { end_date?: string; start_date?: string }
+        Returns: {
+          conversion_rate: number
+          installs_completed: number
+          prompts_shown: number
+          retention_7d: number
         }[]
       }
       is_admin: {

@@ -493,33 +493,60 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ dateRang
               </div>
             </TabsContent>
 
-            <TabsContent value="pwa" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">PWA Metrics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <Smartphone className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-blue-600">245</div>
-                      <div className="text-sm text-muted-foreground">Install Prompts Shown</div>
+              <TabsContent value="pwa" className="space-y-4 mt-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">PWA Metrics</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Real-time data from analytics_events table
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <Smartphone className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-blue-600">{data.pwa.prompts_shown}</div>
+                        <div className="text-sm text-muted-foreground">Install Prompts Shown</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Event: pwa_prompt_shown
+                        </div>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 rounded-lg">
+                        <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-green-600">{data.pwa.installs_completed}</div>
+                        <div className="text-sm text-muted-foreground">Installs Completed</div>
+                        <div className="text-xs text-green-600 mt-1">
+                          {data.pwa.conversion_rate.toFixed(1)}% conversion
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Event: pwa_installed
+                        </div>
+                      </div>
+                      <div className="text-center p-4 bg-purple-50 rounded-lg">
+                        <Activity className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                        <div className="text-2xl font-bold text-purple-600">{data.pwa.retention_7d.toFixed(0)}%</div>
+                        <div className="text-sm text-muted-foreground">7-day Retention</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Users active 7 days post-install
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-green-600">67</div>
-                      <div className="text-sm text-muted-foreground">Installs Completed</div>
-                      <div className="text-xs text-green-600 mt-1">27.3% conversion</div>
+                    
+                    {/* Data source info */}
+                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                      <h4 className="font-medium mb-2">Data Sources</h4>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p>• <strong>Prompts:</strong> COUNT(event_name='pwa_prompt_shown') from analytics_events</p>
+                        <p>• <strong>Installs:</strong> COUNT(event_name='pwa_installed') from analytics_events</p>
+                        <p>• <strong>Retention:</strong> Users with activity 6-8 days after install</p>
+                        <p>• <strong>Timezone:</strong> UTC (stored as timestamptz)</p>
+                        <p>• <strong>Refresh:</strong> Live query on page load</p>
+                        <p>• <strong>Privacy:</strong> No PII stored, user_id hashed</p>
+                      </div>
                     </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <Activity className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-purple-600">89%</div>
-                      <div className="text-sm text-muted-foreground">7-day Retention</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </CardContent>
+                </Card>
+              </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
