@@ -62,18 +62,32 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip service worker for auth requests - they must go through directly
+  // Skip service worker for auth requests, POST requests, and Mapbox requests
   if (url.hostname.includes('supabase') && (
     url.pathname.includes('/auth/') || 
     request.method === 'POST' ||
     url.pathname.includes('/signup') ||
-    url.pathname.includes('/signin')
+    url.pathname.includes('/signin') ||
+    url.pathname.includes('/functions/')
   )) {
-    // Let auth requests pass through without interference
+    // Let these requests pass through without interference
+    event.respondWith(fetch(request));
     return;
   }
 
-  // Handle different types of requests
+  // Skip caching for non-GET requests
+  if (request.method !== 'GET') {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // Skip Mapbox API requests to prevent interference
+  if (url.hostname.includes('mapbox') || url.hostname.includes('api.mapbox')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // Handle different types of GET requests
   if (request.destination === 'image') {
     event.respondWith(handleImageRequest(request));
   } else if (url.pathname.startsWith('/api')) {
