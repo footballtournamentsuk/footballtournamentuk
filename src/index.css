@@ -79,6 +79,13 @@
 
     --radius: 0.5rem;
 
+    /* Glassmorphism Design System */
+    --glass-bg: rgba(255, 255, 255, 0.10);
+    --glass-border: rgba(255, 255, 255, 0.20);
+    --glass-bg-dark: rgba(0, 0, 0, 0.10);
+    --glass-border-dark: rgba(255, 255, 255, 0.10);
+    --glass-blur: blur(8px);
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -170,6 +177,33 @@
   
   .touch-pan-xy {
     touch-action: pan-x pan-y;
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+  }
+
+  .glass-dark {
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border-dark);
+    border-radius: 16px;
+  }
+
+  /* Fallbacks for browsers without backdrop-filter support */
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass { 
+      background: rgba(255, 255, 255, 0.92); 
+    }
+    .glass-dark { 
+      background: rgba(0, 0, 0, 0.80); 
+    }
   }
 
   @keyframes hero-pulse {

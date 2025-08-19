@@ -182,20 +182,20 @@ export const PWAInstallPrompt: React.FC = () => {
     <>
       {/* Android/Chrome Install Modal */}
       <Dialog open={showInstallPrompt && !!deferredPrompt} onOpenChange={(open) => !open && handleDismiss()}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md glass border-0 text-white shadow-xl shadow-black/10">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <Smartphone className="h-5 w-5 text-primary" />
-              <DialogTitle>Add to Home Screen</DialogTitle>
+              <Smartphone className="h-5 w-5 text-emerald-400" />
+              <DialogTitle className="text-white">Add to Home Screen</DialogTitle>
             </div>
-            <DialogDescription>
+            <DialogDescription className="text-white/80">
               Get quick access to football tournaments with our app. Install it for a faster, more convenient experience.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-4">
             <Button
               onClick={handleInstallClick}
-              className="w-full"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white"
             >
               <Download className="h-4 w-4 mr-2" />
               Download App
@@ -203,7 +203,7 @@ export const PWAInstallPrompt: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleDismiss}
-              className="w-full"
+              className="w-full border-white/20 text-white hover:bg-white/10"
             >
               Maybe Later
             </Button>
@@ -213,19 +213,19 @@ export const PWAInstallPrompt: React.FC = () => {
 
       {/* iOS Safari Instructions Modal */}
       <Dialog open={isIOS && showInstallPrompt && !deferredPrompt} onOpenChange={(open) => !open && handleDismiss()}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md glass border-0 text-white shadow-xl shadow-black/10">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <Smartphone className="h-5 w-5 text-primary" />
-              <DialogTitle>Add to Home Screen</DialogTitle>
+              <Smartphone className="h-5 w-5 text-emerald-400" />
+              <DialogTitle className="text-white">Add to Home Screen</DialogTitle>
             </div>
-            <DialogDescription>
+            <DialogDescription className="text-white/80">
               Install this app on your iOS device for the best experience.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 space-y-4">
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p className="font-medium">To install this app:</p>
+            <div className="space-y-2 text-sm text-white/70">
+              <p className="font-medium text-white">To install this app:</p>
               <div className="space-y-1 pl-4">
                 <p>1. Tap the Share button (square with arrow up) in Safari</p>
                 <p>2. Scroll down and tap "Add to Home Screen"</p>
@@ -235,7 +235,7 @@ export const PWAInstallPrompt: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleDismiss}
-              className="w-full"
+              className="w-full border-white/20 text-white hover:bg-white/10"
             >
               Got It
             </Button>

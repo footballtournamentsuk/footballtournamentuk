@@ -44,12 +44,12 @@ export const CookieConsent = () => {
       aria-labelledby="cookie-consent-title"
       aria-describedby="cookie-consent-description"
     >
-      <Card className="max-w-md w-full bg-background border shadow-lg">
+      <Card className="max-w-md w-full glass shadow-xl shadow-black/10">
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
             <h2 
               id="cookie-consent-title" 
-              className="text-lg font-semibold text-foreground"
+              className="text-lg font-semibold text-white"
             >
               Cookie Consent
             </h2>
@@ -57,7 +57,7 @@ export const CookieConsent = () => {
               variant="ghost"
               size="sm"
               onClick={handleClose}
-              className="h-6 w-6 p-0"
+              className="h-6 w-6 p-0 hover:bg-white/20 text-white"
               aria-label="Close cookie consent dialog"
             >
               <X className="h-4 w-4" />
@@ -66,12 +66,12 @@ export const CookieConsent = () => {
           
           <p 
             id="cookie-consent-description" 
-            className="text-sm text-muted-foreground mb-6 leading-relaxed"
+            className="text-sm text-white/80 mb-6 leading-relaxed"
           >
             We use cookies to improve your browsing experience, provide personalized services, and analyze site performance. For more details, see our{" "}
             <Link 
               to="/cookie-policy" 
-              className="text-primary hover:underline font-medium"
+              className="text-white underline hover:text-white/80 font-medium"
               onClick={() => setShowConsent(false)}
             >
               Cookie Policy
@@ -82,7 +82,7 @@ export const CookieConsent = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <Button 
               onClick={handleAccept}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white"
               aria-label="Accept all cookies"
             >
               Accept
@@ -90,7 +90,7 @@ export const CookieConsent = () => {
             <Button 
               onClick={handleDecline}
               variant="outline"
-              className="flex-1"
+              className="flex-1 border-white/20 text-white hover:bg-white/10"
               aria-label="Decline non-essential cookies"
             >
               Decline
@@ -98,7 +98,7 @@ export const CookieConsent = () => {
             <Button 
               asChild
               variant="ghost"
-              className="flex-1 text-primary hover:text-primary/80"
+              className="flex-1 text-white hover:text-white/80 hover:bg-white/10"
               onClick={() => setShowConsent(false)}
             >
               <Link to="/cookie-policy">Learn More</Link>

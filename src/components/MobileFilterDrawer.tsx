@@ -159,14 +159,14 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         </Button>
       </SheetTrigger>
       
-      <SheetContent side="bottom" className="h-[85vh] flex flex-col">
+      <SheetContent side="bottom" className="h-[85vh] flex flex-col glass border-0 text-white">
         <SheetHeader className="pb-4">
-          <SheetTitle className="flex items-center justify-between">
+          <SheetTitle className="flex items-center justify-between text-white">
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5" />
               Filter Tournaments
             </div>
-            {activeCount > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-destructive">
+            {activeCount > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-red-300 hover:bg-white/10">
                 Clear All
               </Button>}
           </SheetTitle>
@@ -175,12 +175,12 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         <div className="flex-1 overflow-y-auto space-y-4 pb-20">
           {/* Search Section */}
           <Collapsible open={expandedSections.search} onOpenChange={() => toggleSection('search')}>
-            <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
               <div className="flex items-center gap-3">
-                <Search className="w-5 h-5 text-primary" />
-                <span className="font-medium">Search</span>
+                <Search className="w-5 h-5 text-emerald-300" />
+                <span className="font-medium text-white">Search</span>
               </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.search ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-white transition-transform ${expandedSections.search ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
               <SearchBar value={filters.search || ''} onChange={handleSearchChange} suggestions={searchSuggestions} placeholder="Search tournaments, locations..." />
@@ -382,12 +382,12 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         </div>
 
         {/* Sticky Bottom Buttons */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm border-t border-white/20">
           <div className="flex gap-3">
-            <Button variant="outline" onClick={clearAllFilters} className="flex-1">
+            <Button variant="outline" onClick={clearAllFilters} className="flex-1 border-white/20 text-white hover:bg-white/10">
               Clear All
             </Button>
-            <Button onClick={applyFilters} className="flex-1 bg-football-primary hover:bg-football-primary/90 text-gray-950 bg-emerald-500 hover:bg-emerald-400">
+            <Button onClick={applyFilters} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white">
               Apply Filters
             </Button>
           </div>

@@ -249,7 +249,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 flex flex-col">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       
@@ -279,20 +279,20 @@ const AuthPage = () => {
             </Alert>
           )}
 
-          <Card className="border-border/20 bg-card/95 backdrop-blur-sm">
+            <Card className="glass shadow-xl shadow-black/20 border-0 max-w-md mx-auto">
             <CardHeader className="text-center space-y-4 pb-6">
               <div className="mx-auto">
                 <img 
                   src={logo} 
                   alt="Football Tournaments UK" 
-                  className="w-28 h-28 sm:w-32 sm:h-32 mx-auto" 
+                  className="w-12 h-12 mx-auto" 
                 />
               </div>
               <div className="space-y-2">
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-2xl font-bold text-white">
                   Welcome to Football Tournaments UK
                 </CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-white/80">
                   Sign in to your account or create a new one to get started
                 </CardDescription>
               </div>
@@ -326,11 +326,11 @@ const AuthPage = () => {
                   <TabsContent value="signin" className="space-y-4">
                     <form onSubmit={handleSignIn} className="space-y-4" noValidate>
                       <div className="space-y-2">
-                        <Label htmlFor="signin-email" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signin-email" className="sr-only sm:not-sr-only text-white">
                           Email Address
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signin-email"
                             name="email"
@@ -338,7 +338,7 @@ const AuthPage = () => {
                             placeholder="Enter your email address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-10 h-12 touch-manipulation"
+                            className="pl-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="email"
                             autoCapitalize="none"
@@ -356,11 +356,11 @@ const AuthPage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="signin-password" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signin-password" className="sr-only sm:not-sr-only text-white">
                           Password
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signin-password"
                             name="password"
@@ -368,7 +368,7 @@ const AuthPage = () => {
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 pr-10 h-12 touch-manipulation"
+                            className="pl-10 pr-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="current-password"
                             required
@@ -377,7 +377,7 @@ const AuthPage = () => {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent touch-manipulation"
+                            className="absolute right-0 top-0 h-12 px-3 hover:bg-white/10 text-white/70 hover:text-white touch-manipulation"
                             onClick={() => setShowPassword(!showPassword)}
                             disabled={isLocked}
                             aria-label={showPassword ? "Hide password" : "Show password"}
@@ -402,7 +402,7 @@ const AuthPage = () => {
                           />
                           <Label 
                             htmlFor="remember-signin" 
-                            className="text-sm font-normal cursor-pointer"
+                            className="text-sm font-normal cursor-pointer text-white"
                           >
                             Remember me
                           </Label>
@@ -411,7 +411,7 @@ const AuthPage = () => {
                         <Button
                           type="button"
                           variant="link"
-                          className="px-0 font-normal text-sm h-auto touch-manipulation"
+                          className="px-0 font-normal text-sm h-auto touch-manipulation text-white hover:text-white/80 underline"
                           onClick={() => setShowForgotPassword(true)}
                           disabled={isLocked}
                         >
@@ -421,7 +421,7 @@ const AuthPage = () => {
 
                       <Button
                         type="submit"
-                        className="w-full h-12 touch-manipulation"
+                        className="w-full h-12 touch-manipulation bg-emerald-600 hover:bg-emerald-500 text-white"
                         disabled={isLocked || isLoading || !emailValid}
                         aria-describedby={isLocked ? "security-warning" : undefined}
                       >
@@ -444,11 +444,11 @@ const AuthPage = () => {
                   <TabsContent value="signup" className="space-y-4">
                     <form onSubmit={handleSignUp} className="space-y-4" noValidate>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-name" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signup-name" className="sr-only sm:not-sr-only text-white">
                           Full Name
                         </Label>
                         <div className="relative">
-                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signup-name"
                             name="name"
@@ -456,7 +456,7 @@ const AuthPage = () => {
                             placeholder="Enter your full name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="pl-10 h-12 touch-manipulation"
+                            className="pl-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="name"
                             required
@@ -465,11 +465,11 @@ const AuthPage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signup-email" className="sr-only sm:not-sr-only text-white">
                           Email Address
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signup-email"
                             name="email"
@@ -477,7 +477,7 @@ const AuthPage = () => {
                             placeholder="Enter your email address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-10 h-12 touch-manipulation"
+                            className="pl-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="email"
                             autoCapitalize="none"
@@ -495,11 +495,11 @@ const AuthPage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signup-password" className="sr-only sm:not-sr-only text-white">
                           Password
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signup-password"
                             name="password"
@@ -507,7 +507,7 @@ const AuthPage = () => {
                             placeholder="Create a password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 pr-10 h-12 touch-manipulation"
+                            className="pl-10 pr-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="new-password"
                             aria-describedby="signup-password-strength"
@@ -517,7 +517,7 @@ const AuthPage = () => {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent touch-manipulation"
+                            className="absolute right-0 top-0 h-12 px-3 hover:bg-white/10 text-white/70 hover:text-white touch-manipulation"
                             onClick={() => setShowPassword(!showPassword)}
                             disabled={isLocked}
                             aria-label={showPassword ? "Hide password" : "Show password"}
@@ -536,11 +536,11 @@ const AuthPage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="signup-confirm-password" className="sr-only sm:not-sr-only">
+                        <Label htmlFor="signup-confirm-password" className="sr-only sm:not-sr-only text-white">
                           Confirm Password
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
                           <Input
                             id="signup-confirm-password"
                             name="confirmPassword"
@@ -548,7 +548,7 @@ const AuthPage = () => {
                             placeholder="Confirm your password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="pl-10 pr-10 h-12 touch-manipulation"
+                            className="pl-10 pr-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
                             disabled={isLocked || isLoading}
                             autoComplete="new-password"
                             aria-describedby="signup-confirm-password-validation"
@@ -558,7 +558,7 @@ const AuthPage = () => {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent touch-manipulation"
+                            className="absolute right-0 top-0 h-12 px-3 hover:bg-white/10 text-white/70 hover:text-white touch-manipulation"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             disabled={isLocked}
                             aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
@@ -589,7 +589,7 @@ const AuthPage = () => {
                         />
                         <Label 
                           htmlFor="remember-signup" 
-                          className="text-sm font-normal cursor-pointer"
+                          className="text-sm font-normal cursor-pointer text-white"
                         >
                           Keep me signed in
                         </Label>
@@ -597,7 +597,7 @@ const AuthPage = () => {
 
                       <Button
                         type="submit"
-                        className="w-full h-12 touch-manipulation"
+                        className="w-full h-12 touch-manipulation bg-emerald-600 hover:bg-emerald-500 text-white"
                         disabled={
                           isLocked || 
                           isLoading || 
@@ -626,8 +626,8 @@ const AuthPage = () => {
                 // Forgot Password Form
                 <div className="space-y-6">
                   <div className="text-center space-y-2">
-                    <h3 className="text-lg font-semibold">Reset Your Password</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="text-lg font-semibold text-white">Reset Your Password</h3>
+                    <p className="text-sm text-white/70">
                       Enter your email address and we'll send you a link to reset your password.
                     </p>
                   </div>
@@ -638,8 +638,8 @@ const AuthPage = () => {
                         <Mail className="w-6 h-6 text-success" />
                       </div>
                       <div>
-                        <p className="font-medium">Check your email</p>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="font-medium text-white">Check your email</p>
+                        <p className="text-sm text-white/70 mt-1">
                           We've sent password reset instructions to {forgotPasswordEmail}
                         </p>
                       </div>
@@ -657,28 +657,28 @@ const AuthPage = () => {
                     </div>
                   ) : (
                     <form onSubmit={handleForgotPassword} className="space-y-4" noValidate>
-                      <div className="space-y-2">
-                        <Label htmlFor="forgot-email" className="sr-only sm:not-sr-only">
-                          Email Address
-                        </Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                          <Input
-                            id="forgot-email"
-                            name="email"
-                            type="email"
-                            placeholder="Enter your email address"
-                            value={forgotPasswordEmail}
-                            onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                            className="pl-10 h-12 touch-manipulation"
-                            disabled={isLocked || isLoading}
-                            autoComplete="email"
-                            autoCapitalize="none"
-                            spellCheck={false}
-                            required
-                          />
+                        <div className="space-y-2">
+                          <Label htmlFor="forgot-email" className="sr-only sm:not-sr-only text-white">
+                            Email Address
+                          </Label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
+                            <Input
+                              id="forgot-email"
+                              name="email"
+                              type="email"
+                              placeholder="Enter your email address"
+                              value={forgotPasswordEmail}
+                              onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                              className="pl-10 h-12 touch-manipulation bg-white/10 text-white placeholder-white/70 border-white/20 rounded-lg focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/40"
+                              disabled={isLocked || isLoading}
+                              autoComplete="email"
+                              autoCapitalize="none"
+                              spellCheck={false}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
 
                       <div className="flex gap-3">
                         <Button
@@ -692,7 +692,7 @@ const AuthPage = () => {
                         </Button>
                         <Button
                           type="submit"
-                          className="flex-1 h-12 touch-manipulation"
+                          className="flex-1 h-12 touch-manipulation bg-emerald-600 hover:bg-emerald-500 text-white"
                           disabled={isLocked || isLoading || !forgotPasswordEmail}
                         >
                           {isLoading ? (
@@ -715,20 +715,20 @@ const AuthPage = () => {
 
               {/* Footer */}
               <div className="pt-6 text-center space-y-4">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white/70">
                   By signing up, you agree to our{' '}
-                  <a href="/policies" className="text-primary hover:underline focus:underline">
+                  <a href="/policies" className="text-white underline hover:text-white/80 focus:text-white/80">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="/policies" className="text-primary hover:underline focus:underline">
+                  <a href="/policies" className="text-white underline hover:text-white/80 focus:text-white/80">
                     Privacy Policy
                   </a>
                 </p>
                 
                 <Button
                   variant="link"
-                  className="text-sm h-auto p-0 touch-manipulation"
+                  className="text-sm h-auto p-0 touch-manipulation text-white hover:text-white/80"
                   onClick={() => window.history.back()}
                 >
                   ← Back to Home
