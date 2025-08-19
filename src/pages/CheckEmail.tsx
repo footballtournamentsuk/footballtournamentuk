@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, ArrowLeft, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import logo from '/bimi-logo.svg';
 
 const CheckEmail = () => {
   const { resendVerificationEmail } = useAuth();
@@ -91,8 +92,12 @@ const CheckEmail = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Mail className="w-6 h-6 text-primary" />
+          <div className="mx-auto">
+            <img 
+              src={logo} 
+              alt="Football Tournaments UK" 
+              className="w-14 h-14 sm:w-16 sm:h-16 mx-auto" 
+            />
           </div>
           <CardTitle className="text-2xl">Check Your Email</CardTitle>
           <CardDescription>

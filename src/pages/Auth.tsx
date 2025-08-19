@@ -253,21 +253,6 @@ const AuthPage = () => {
       {/* Background pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       
-      {/* Header */}
-      <header className="relative z-10 p-4 sm:p-6">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center gap-3">
-            <img 
-              src={logo} 
-              alt="Football Tournaments UK logo" 
-              className="w-8 h-8 sm:w-10 sm:h-10" 
-            />
-            <h1 className="text-lg sm:text-xl font-bold text-foreground">
-              Football Tournaments UK
-            </h1>
-          </div>
-        </div>
-      </header>
 
       {/* Main content */}
       <main className="flex-1 flex items-center justify-center p-4 relative z-10">
@@ -296,8 +281,12 @@ const AuthPage = () => {
 
           <Card className="border-border/20 bg-card/95 backdrop-blur-sm">
             <CardHeader className="text-center space-y-4 pb-6">
-              <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <Shield className="w-6 h-6 text-primary" />
+              <div className="mx-auto">
+                <img 
+                  src={logo} 
+                  alt="Football Tournaments UK" 
+                  className="w-14 h-14 sm:w-16 sm:h-16 mx-auto" 
+                />
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-bold">
