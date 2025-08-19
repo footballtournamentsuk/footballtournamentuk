@@ -54,8 +54,9 @@ Deno.serve(async (req) => {
     let html: string
     let subject: string
 
-    // Build the confirmation/reset URL
-    const confirmationUrl = `${site_url}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
+    // Build the confirmation/reset URL - point to our app's verify route
+    const appUrl = redirect_to || 'https://footballtournamentsuk.co.uk'
+    const confirmationUrl = `${appUrl}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
 
     if (email_action_type === 'signup' || email_action_type === 'email_change') {
       // Email verification

@@ -27,6 +27,7 @@ import TournamentRouter from "./components/TournamentRouter";
 import Policies from "./pages/Policies";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
+import Verify from "./pages/Verify";
 import { Admin } from "./pages/Admin";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
@@ -184,9 +185,10 @@ const App = () => (
         {/* Add top padding to prevent header overlap and bottom padding for mobile nav */}
         <div className="pt-16 pb-20 md:pb-0">
           <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/profile" element={<Profile />} />
+           <Route path="/" element={<Index />} />
+           <Route path="/auth" element={<Auth />} />
+           <Route path="/verify" element={<Verify />} />
+           <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<About />} />
           <Route path="/support" element={<Support />} />
           <Route path="/partners" element={<Partners />} />
