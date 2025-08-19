@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff } from "lucide-react";
+import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { WebVitalsDebugger } from "@/hooks/useCoreWebVitals";
+import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
+import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
 
 interface Testimonial {
   id: string;
@@ -50,6 +52,14 @@ export const Admin = () => {
   });
   const [loading, setLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [analyticsDateRange, setAnalyticsDateRange] = useState({
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    end: new Date()
+  });
+  const [analyticsFilters, setAnalyticsFilters] = useState({
+    city: null as string | null,
+    type: null as string | null
+  });
   const { user, session, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
@@ -331,14 +341,18 @@ export const Admin = () => {
           </Card>
         </div>
 
-        {/* Management Tabs */}
+        {/* Analytics & Management Tabs */}
         <Card>
           <CardHeader>
-            <CardTitle>Platform Management</CardTitle>
+            <CardTitle>Admin Dashboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="reviews" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+            <Tabs defaultValue="analytics" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="analytics">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Analytics
+                </TabsTrigger>
                 <TabsTrigger value="reviews">
                   Reviews ({testimonials.length})
                 </TabsTrigger>
@@ -346,6 +360,17 @@ export const Admin = () => {
                   Users ({users.length})
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="analytics" className="space-y-4">
+                <AnalyticsFilters
+                  onDateRangeChange={setAnalyticsDateRange}
+                  onCityFilter={(city) => setAnalyticsFilters(prev => ({ ...prev, city }))}
+                  onTypeFilter={(type) => setAnalyticsFilters(prev => ({ ...prev, type }))}
+                  onRefresh={() => window.location.reload()}
+                  loading={loading}
+                />
+                <AnalyticsDashboard dateRange={analyticsDateRange} />
+              </TabsContent>
 
               <TabsContent value="reviews" className="space-y-4">
                 <Tabs defaultValue="pending" className="w-full">
