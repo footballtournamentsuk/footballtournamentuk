@@ -117,17 +117,19 @@ async function handleAPIRequest(request) {
   
   try {
     const response = await fetch(request);
-    if (response.ok) {
-      // Cache successful API responses for 5 minutes
+    if (response.ok && request.method === 'GET') {
+      // Only cache GET requests to avoid cache errors
       const responseClone = response.clone();
       setTimeout(() => cache.put(request, responseClone), 0);
     }
     return response;
   } catch (error) {
-    // Return cached version if network fails
-    const cachedResponse = await cache.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
+    // Return cached version if network fails (only for GET requests)
+    if (request.method === 'GET') {
+      const cachedResponse = await cache.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
     }
     throw error;
   }
