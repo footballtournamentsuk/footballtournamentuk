@@ -37,20 +37,32 @@ const Map: React.FC<MapProps> = ({
         console.log('🔑 Fetching Mapbox token...');
         console.log('🌍 Current environment check...');
         
-        const { data, error } = await supabase.functions.invoke('mapbox-token');
+        // Try direct fetch to Supabase edge function
+        const functionUrl = 'https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token';
+        const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlrbm1jZGRyZmtnZ3Bocmt0aXZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNjgzMTUsImV4cCI6MjA3MDc0NDMxNX0.y87-teQtXq7-LJiwFUvpEspiYVgDi30jSl0WVRfzXSU';
+        
+        const response = await fetch(functionUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${anonKey}`,
+            'apikey': anonKey,
+            'Content-Type': 'application/json',
+          },
+        });
 
-        console.log('📡 Response received:', { data, error });
+        console.log('📡 Response status:', response.status, response.statusText);
 
-        if (error) {
-          console.error('❌ Supabase function error:', error);
-          throw new Error(`Token fetch failed: ${error.message || 'Unknown error'}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const data = await response.json();
+        console.log('📡 Response data:', data);
 
         if (data?.token) {
           console.log('✅ Token fetched successfully, length:', data.token.length);
           setMapboxToken(data.token);
           mapboxgl.accessToken = data.token;
-          setIsLoading(true); // Keep loading until map initializes
         } else {
           console.error('❌ No token in response:', data);
           throw new Error('No token received from server');
