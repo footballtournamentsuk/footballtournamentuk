@@ -1,9 +1,9 @@
 // Service Worker for caching and performance optimization
 
-const CACHE_NAME = 'footballtournaments-v1';
-const STATIC_CACHE = 'static-v1';
-const IMAGE_CACHE = 'images-v1';
-const API_CACHE = 'api-v1';
+const CACHE_NAME = 'footballtournaments-v2';
+const STATIC_CACHE = 'static-v2';
+const IMAGE_CACHE = 'images-v2';
+const API_CACHE = 'api-v2';
 
 // Assets to cache immediately
 const PRECACHE_ASSETS = [
@@ -58,10 +58,21 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip service worker for auth requests - they must go through directly
+  if (url.hostname.includes('supabase') && (
+    url.pathname.includes('/auth/') || 
+    request.method === 'POST' ||
+    url.pathname.includes('/signup') ||
+    url.pathname.includes('/signin')
+  )) {
+    // Let auth requests pass through without interference
+    return;
+  }
+
   // Handle different types of requests
   if (request.destination === 'image') {
     event.respondWith(handleImageRequest(request));
-  } else if (url.pathname.startsWith('/api') || url.hostname.includes('supabase')) {
+  } else if (url.pathname.startsWith('/api')) {
     event.respondWith(handleAPIRequest(request));
   } else if (request.destination === 'document') {
     event.respondWith(handlePageRequest(request));

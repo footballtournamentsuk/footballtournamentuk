@@ -40,23 +40,31 @@ export const useAuth = () => {
   };
 
   const signUp = async (email: string, password: string, name?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use production domain for redirect
+    const redirectUrl = 'https://footballtournamentsuk.co.uk/';
     
     console.log('Attempting signup with:', { email, redirectUrl });
     
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: name
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: name
+          }
         }
-      }
-    });
-    
-    console.log('Signup result:', { error });
-    return { error };
+      });
+      
+      console.log('Signup result:', { data, error });
+      console.log('Full response data:', data);
+      
+      return { error };
+    } catch (catchError) {
+      console.error('Signup catch error:', catchError);
+      return { error: catchError };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
