@@ -4,14 +4,14 @@ import { UK_CITIES } from './cities';
 // Demo tournament types array that we'll rotate through
 const DEMO_TYPES = ['tournament', 'league', 'cup', 'festival', 'showcase', 'friendly', 'camp'] as const;
 
-// Demo banner images for each city/type combination - using ES6 imports
-import tournamentBanner from '@/assets/tournaments/tournament-type.webp';
-import leagueBanner from '@/assets/tournaments/league-type.webp';
-import cupBanner from '@/assets/tournaments/cup-type.webp';
-import festivalBanner from '@/assets/tournaments/festival-type.webp';
-import showcaseBanner from '@/assets/tournaments/showcase-type.webp';
-import friendlyBanner from '@/assets/tournaments/friendly-type.webp';
-import campBanner from '@/assets/tournaments/camp-type.webp';
+// Clean demo banner images without embedded text - using ES6 imports
+import tournamentBanner from '@/assets/tournaments/clean-tournament-banner.webp';
+import leagueBanner from '@/assets/tournaments/clean-league-banner.webp';
+import cupBanner from '@/assets/tournaments/clean-cup-banner.webp';
+import festivalBanner from '@/assets/tournaments/clean-festival-banner.webp';
+import showcaseBanner from '@/assets/tournaments/clean-showcase-banner.webp';
+import friendlyBanner from '@/assets/tournaments/clean-friendly-banner.webp';
+import campBanner from '@/assets/tournaments/clean-camp-banner.webp';
 
 export const DEMO_BANNER_URLS = {
   'london': tournamentBanner,
