@@ -35,32 +35,36 @@ const Map: React.FC<MapProps> = ({
     const fetchToken = async () => {
       try {
         console.log('🔑 Fetching Mapbox token...');
+        console.log('🌍 Current environment check...');
         
-        const { data, error } = await supabase.functions.invoke('mapbox-token', {
-          method: 'GET',
-        });
+        const { data, error } = await supabase.functions.invoke('mapbox-token');
+
+        console.log('📡 Response received:', { data, error });
 
         if (error) {
           console.error('❌ Supabase function error:', error);
-          throw new Error(`Token fetch failed: ${error.message}`);
+          throw new Error(`Token fetch failed: ${error.message || 'Unknown error'}`);
         }
 
         if (data?.token) {
-          console.log('✅ Token fetched successfully');
+          console.log('✅ Token fetched successfully, length:', data.token.length);
           setMapboxToken(data.token);
           mapboxgl.accessToken = data.token;
+          setIsLoading(true); // Keep loading until map initializes
         } else {
           console.error('❌ No token in response:', data);
-          throw new Error('No token in response');
+          throw new Error('No token received from server');
         }
       } catch (err) {
         console.error('❌ Token fetch error:', err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.error('🚨 Setting error state:', errorMessage);
         setError(`Unable to load map: ${errorMessage}`);
         setIsLoading(false);
       }
     };
 
+    console.log('🚀 Starting token fetch...');
     fetchToken();
   }, []);
 
