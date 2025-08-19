@@ -41,7 +41,9 @@ interface AnalyticsDashboardProps {
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ dateRange }) => {
   const { data, refetch } = useAnalyticsData(dateRange);
-  const webVitals = useCoreWebVitals();
+  
+  // Initialize Core Web Vitals tracking
+  useCoreWebVitals();
 
   if (data.loading) {
     return (
