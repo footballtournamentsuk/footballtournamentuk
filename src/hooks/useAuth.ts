@@ -60,6 +60,11 @@ export const useAuth = () => {
       console.log('Signup result:', { data, error });
       console.log('Full response data:', data);
       
+      // Redirect to check-email page on successful signup
+      if (!error) {
+        window.location.href = '/check-email';
+      }
+      
       return { error };
     } catch (catchError) {
       console.error('Signup catch error:', catchError);
