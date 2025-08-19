@@ -107,8 +107,30 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    try {
+      // Clear local state first
+      setUser(null);
+      setSession(null);
+      
+      // Clear any stored session data
+      localStorage.removeItem('session-settings');
+      
+      // Try to sign out from Supabase - handle missing session gracefully
+      const { error } = await supabase.auth.signOut();
+      
+      // If the error is about missing session, consider it a success since user is already signed out
+      if (error && error.message?.includes('missing') || error?.message?.includes('not found')) {
+        return { error: null };
+      }
+      
+      return { error };
+    } catch (catchError: any) {
+      // Handle any network or other errors gracefully
+      if (catchError.message?.includes('missing') || catchError.message?.includes('not found')) {
+        return { error: null };
+      }
+      return { error: catchError };
+    }
   };
 
   const resetPassword = async (email: string) => {
