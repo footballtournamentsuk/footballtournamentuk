@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tournament } from '@/types/tournament';
+import { isDemoTournament } from '@/utils/demoUtils';
 
 interface SEOProps {
   title: string;
@@ -184,6 +185,9 @@ export const SEO: React.FC<SEOProps> = ({
 
   const ogImageUrl = getOgImageUrl();
 
+  // Check if this is a demo tournament page
+  const isDemoPage = tournaments.length === 1 && isDemoTournament(tournaments[0]);
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -210,7 +214,7 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:image" content={ogImageUrl} />
       
       {/* Additional SEO tags */}
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={isDemoPage ? "noindex, nofollow" : "index, follow"} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="language" content="English" />

@@ -26,6 +26,7 @@ import { AddToCalendar } from './AddToCalendar';
 import { ContactOrganizerModal } from './ContactOrganizerModal';
 import { getTournamentThumbnail, shouldPrioritizeTournament } from '@/utils/tournamentThumbnails';
 import { TournamentImage } from '@/components/ui/tournament-image';
+import { isDemoTournament } from '@/utils/demoUtils';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -96,6 +97,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
     : null;
 
   const thumbnail = getTournamentThumbnail(tournament);
+  const isDemo = isDemoTournament(tournament);
 
   return (
     <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden">
@@ -113,6 +115,14 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+        {/* Demo Badge */}
+        {isDemo && (
+          <div className="absolute top-3 right-3">
+            <Badge className="bg-orange-500 text-white font-bold animate-pulse">
+              DEMO
+            </Badge>
+          </div>
+        )}
       </div>
 
       <CardHeader className="pb-3">
@@ -347,16 +357,27 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
                 </Link>
               </Button>
 
-              {/* Secondary Action - Contact Organizer */}
-              <ContactOrganizerModal tournament={tournament}>
+              {/* Secondary Action - Contact Organizer - Disabled for demos */}
+              {!isDemo ? (
+                <ContactOrganizerModal tournament={tournament}>
+                  <Button 
+                    className="w-full bg-green-500/80 backdrop-blur-sm hover:bg-green-600/90 hover:shadow-lg hover:shadow-green-500/30 text-white border border-green-400/30 rounded-xl transition-all duration-300 font-medium" 
+                    size="sm"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Contact Organizer
+                  </Button>
+                </ContactOrganizerModal>
+              ) : (
                 <Button 
-                  className="w-full bg-green-500/80 backdrop-blur-sm hover:bg-green-600/90 hover:shadow-lg hover:shadow-green-500/30 text-white border border-green-400/30 rounded-xl transition-all duration-300 font-medium" 
+                  disabled
+                  className="w-full bg-gray-300 text-gray-500 cursor-not-allowed rounded-xl" 
                   size="sm"
                 >
                   <Mail className="w-4 h-4 mr-2" />
-                  Contact Organizer
+                  Demo Event - No Registration
                 </Button>
-              </ContactOrganizerModal>
+              )}
 
               {/* Tertiary Actions */}
               <DropdownMenu>

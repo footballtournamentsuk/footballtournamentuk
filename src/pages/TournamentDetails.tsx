@@ -46,6 +46,7 @@ import { useAttachments } from '@/hooks/useAttachments';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
 import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
+import { isDemoTournament } from '@/utils/demoUtils';
 
 const TournamentDetails = () => {
   const { param } = useParams<{ param: string }>();
@@ -56,6 +57,7 @@ const TournamentDetails = () => {
   // Find tournament by slug first (preferred), then by ID for backward compatibility
   const tournament = tournaments.find(t => t.slug === param) || tournaments.find(t => t.id === param);
   const { attachments } = useAttachments(tournament?.id || '');
+  const isDemo = tournament ? isDemoTournament(tournament) : false;
 
   // Track meaningful action when tournament details are viewed
   React.useEffect(() => {
@@ -252,9 +254,21 @@ const TournamentDetails = () => {
             <Badge className={getTypeColor(tournament.type)} variant="secondary">
               {tournament.type}
             </Badge>
+            {isDemo && (
+              <Badge className="bg-orange-500 text-white font-bold animate-pulse">
+                DEMO
+              </Badge>
+            )}
           </div>
           
-          <h1 className="text-4xl font-bold mb-6">{tournament.name}</h1>
+          <h1 className="text-4xl font-bold mb-6">
+            {tournament.name}
+            {isDemo && (
+              <div className="text-sm text-orange-600 font-normal mt-2">
+                This is a demo listing for illustration purposes
+              </div>
+            )}
+          </h1>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-center gap-3">
@@ -698,14 +712,21 @@ const TournamentDetails = () => {
                   <div className="text-sm text-muted-foreground">Tournament Organizer</div>
                 </div>
                 
-                <ContactOrganizerModal tournament={tournament}>
-                  <Button className="w-full" size="sm">
+                {!isDemo ? (
+                  <ContactOrganizerModal tournament={tournament}>
+                    <Button className="w-full" size="sm">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Contact Organizer
+                    </Button>
+                  </ContactOrganizerModal>
+                ) : (
+                  <Button disabled className="w-full bg-gray-300 text-gray-500 cursor-not-allowed" size="sm">
                     <Mail className="w-4 h-4 mr-2" />
-                    Contact Organizer
+                    Demo Event - No Registration
                   </Button>
-                </ContactOrganizerModal>
+                )}
                 
-                {tournament.website && (
+                {tournament.website && !isDemo && (
                   <div className="flex items-center gap-2">
                     <ExternalLink className="w-4 h-4 text-muted-foreground" />
                     <a 
