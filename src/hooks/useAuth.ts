@@ -42,6 +42,8 @@ export const useAuth = () => {
   const signUp = async (email: string, password: string, name?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
+    console.log('Attempting signup with:', { email, redirectUrl });
+    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -52,6 +54,8 @@ export const useAuth = () => {
         }
       }
     });
+    
+    console.log('Signup result:', { error });
     return { error };
   };
 
