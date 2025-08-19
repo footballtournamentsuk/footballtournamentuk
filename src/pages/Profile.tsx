@@ -14,8 +14,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useSessionManager } from '@/hooks/useSessionManager';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText, ChevronDown, Shield, LogOut } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
@@ -100,6 +101,7 @@ const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const { isOnboardingOpen, closeOnboarding } = useOnboarding();
+  const { sessionSettings, signOutAllDevices } = useSessionManager();
   const [searchParams] = useSearchParams();
   const [saving, setSaving] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
