@@ -54,9 +54,10 @@ Deno.serve(async (req) => {
     let html: string
     let subject: string
 
-    // Build the confirmation/reset URL - point to our app's verify route
-    const appUrl = redirect_to || 'https://footballtournamentsuk.co.uk'
-    const confirmationUrl = `${appUrl}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
+    // Build the confirmation/reset URL - always use production domain
+    const appUrl = 'https://footballtournamentsuk.co.uk'
+    const finalRedirectTo = redirect_to && !redirect_to.includes('localhost') ? redirect_to : appUrl
+    const confirmationUrl = `${appUrl}/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${finalRedirectTo}`
 
     if (email_action_type === 'signup' || email_action_type === 'email_change') {
       // Email verification
