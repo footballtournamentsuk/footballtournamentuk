@@ -1,9 +1,9 @@
 // Service Worker for caching and performance optimization
 
-const CACHE_NAME = 'footballtournaments-v2';
-const STATIC_CACHE = 'static-v2';
-const IMAGE_CACHE = 'images-v2';
-const API_CACHE = 'api-v2';
+const CACHE_NAME = 'footballtournaments-v3';
+const STATIC_CACHE = 'static-v3';
+const IMAGE_CACHE = 'images-v3';
+const API_CACHE = 'api-v3';
 
 // Assets to cache immediately
 const PRECACHE_ASSETS = [
@@ -62,15 +62,10 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip service worker for auth requests, POST requests, and Mapbox requests
-  if (url.hostname.includes('supabase') && (
-    url.pathname.includes('/auth/') || 
-    request.method === 'POST' ||
-    url.pathname.includes('/signup') ||
-    url.pathname.includes('/signin') ||
-    url.pathname.includes('/functions/')
-  )) {
-    // Let these requests pass through without interference
+  // Skip service worker for Supabase requests to ensure real-time updates work
+  if (url.hostname.includes('supabase')) {
+    // Let all Supabase requests pass through without caching
+    // This ensures real-time subscriptions work properly in production
     event.respondWith(fetch(request));
     return;
   }
