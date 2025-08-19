@@ -1,8 +1,5 @@
 project_id = "yknmcddrfkggphrktivd"
 
-[functions.auth-emails]
-verify_jwt = false
-
 [functions.contact-organizer]
 verify_jwt = false
 
