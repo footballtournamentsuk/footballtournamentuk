@@ -8,9 +8,10 @@ interface SessionSettings {
   warningTime: number; // when to show warning before timeout
 }
 
-const DEFAULT_SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
-const REMEMBER_ME_TIMEOUT = 30 * 24 * 60 * 60 * 1000; // 30 days
+const DEFAULT_SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour of inactivity
+const REMEMBER_ME_TIMEOUT = 7 * 24 * 60 * 60 * 1000; // 7 days for remember me
 const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+const ACTIVITY_CHECK_INTERVAL = 30 * 1000; // Check activity every 30 seconds
 
 export const useSessionManager = () => {
   const { toast } = useToast();
@@ -21,6 +22,7 @@ export const useSessionManager = () => {
   });
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const [timeoutCountdown, setTimeoutCountdown] = useState(0);
+  const [lastActivity, setLastActivity] = useState(Date.now());
 
   // Load session settings from localStorage
   useEffect(() => {
@@ -51,81 +53,108 @@ export const useSessionManager = () => {
     });
   }, [saveSettings]);
 
-  // Session timeout logic
+  // Track user activity
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    const activities = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    const updateActivity = () => {
+      setLastActivity(Date.now());
+    };
+
+    activities.forEach(activity => {
+      document.addEventListener(activity, updateActivity, true);
+    });
+
+    return () => {
+      activities.forEach(activity => {
+        document.removeEventListener(activity, updateActivity, true);
+      });
+    };
+  }, []);
+
+  // Session monitoring logic - check periodically instead of aggressive timers
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
     let warningId: NodeJS.Timeout;
     let countdownId: NodeJS.Timeout;
 
-    const resetTimers = () => {
-      clearTimeout(timeoutId);
-      clearTimeout(warningId);
-      clearTimeout(countdownId);
-      setShowTimeoutWarning(false);
-      setTimeoutCountdown(0);
-
-      // Set warning timer
-      warningId = setTimeout(() => {
-        setShowTimeoutWarning(true);
-        setTimeoutCountdown(sessionSettings.warningTime);
+    const checkSession = async () => {
+      try {
+        // Check Supabase session first
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        // Start countdown
-        countdownId = setInterval(() => {
-          setTimeoutCountdown(prev => {
-            if (prev <= 1000) {
-              handleSessionTimeout();
-              return 0;
-            }
-            return prev - 1000;
-          });
-        }, 1000);
+        if (error || !session) {
+          // Session is invalid in Supabase, don't show timeout warning
+          return;
+        }
 
-        toast({
-          title: "Session Expiring Soon",
-          description: `Your session will expire in ${Math.ceil(sessionSettings.warningTime / (60 * 1000))} minutes. Activity detected to extend session.`
-        });
-      }, sessionSettings.sessionTimeout - sessionSettings.warningTime);
+        const now = Date.now();
+        const timeSinceActivity = now - lastActivity;
+        const timeUntilTimeout = sessionSettings.sessionTimeout - timeSinceActivity;
+        
+        // Only proceed with timeout logic if we have a valid session
+        if (timeUntilTimeout <= sessionSettings.warningTime && timeUntilTimeout > 0) {
+          if (!showTimeoutWarning) {
+            setShowTimeoutWarning(true);
+            setTimeoutCountdown(timeUntilTimeout);
+            
+            // Start countdown
+            countdownId = setInterval(() => {
+              setTimeoutCountdown(prev => {
+                const newCountdown = prev - 1000;
+                if (newCountdown <= 0) {
+                  handleSessionTimeout();
+                  return 0;
+                }
+                return newCountdown;
+              });
+            }, 1000);
 
-      // Set timeout timer
-      timeoutId = setTimeout(handleSessionTimeout, sessionSettings.sessionTimeout);
+            toast({
+              title: "Session Expiring Soon",
+              description: `Your session will expire due to inactivity in ${Math.ceil(timeUntilTimeout / (60 * 1000))} minutes.`,
+              variant: "destructive"
+            });
+          }
+        } else if (timeUntilTimeout <= 0) {
+          handleSessionTimeout();
+        } else if (showTimeoutWarning && timeUntilTimeout > sessionSettings.warningTime) {
+          // User became active again, cancel warning
+          setShowTimeoutWarning(false);
+          setTimeoutCountdown(0);
+          clearInterval(countdownId);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      }
     };
 
     const handleSessionTimeout = async () => {
+      clearInterval(countdownId);
       setShowTimeoutWarning(false);
+      setTimeoutCountdown(0);
+      
       toast({
         title: "Session Expired",
-        description: "Your session has expired. Please sign in again.",
+        description: "Your session has expired due to inactivity. Please sign in again.",
         variant: "destructive",
       });
       
       await supabase.auth.signOut();
     };
 
-    // Track user activity to reset timers
-    const activities = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    // Check session periodically
+    intervalId = setInterval(checkSession, ACTIVITY_CHECK_INTERVAL);
     
-    const resetOnActivity = () => {
-      if (!showTimeoutWarning) {
-        resetTimers();
-      }
-    };
-
-    activities.forEach(activity => {
-      document.addEventListener(activity, resetOnActivity, true);
-    });
-
-    // Initial timer setup
-    resetTimers();
+    // Initial check
+    checkSession();
 
     return () => {
-      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+      clearInterval(countdownId);
       clearTimeout(warningId);
-      clearTimeout(countdownId);
-      activities.forEach(activity => {
-        document.removeEventListener(activity, resetOnActivity, true);
-      });
     };
-  }, [sessionSettings.sessionTimeout, sessionSettings.warningTime, showTimeoutWarning, toast]);
+  }, [lastActivity, sessionSettings.sessionTimeout, sessionSettings.warningTime, showTimeoutWarning, toast]);
 
   const extendSession = useCallback(async () => {
     try {
