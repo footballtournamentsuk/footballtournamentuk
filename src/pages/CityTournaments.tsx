@@ -13,6 +13,8 @@ import { EnhancedSEO } from '@/components/EnhancedSEO';
 import { InternalLinking } from '@/components/InternalLinking';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreloadHeroImages } from '@/hooks/usePreloadCriticalResources';
+import { useTournamentTypes } from '@/hooks/useTournamentTypes';
 import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { getCityBySlug, UK_CITIES } from '@/data/cities';
 import { Button } from '@/components/ui/button';
@@ -42,6 +44,10 @@ const CityTournaments = () => {
   const [showFilters, setShowFilters] = useState(false);
   const { tournaments, loading, error } = useTournaments();
   const { user } = useAuth();
+  const { tournamentTypes } = useTournamentTypes();
+  
+  // Preload critical resources for performance
+  usePreloadHeroImages(`/city/${slugToUse}`);
 
   // Filter tournaments by city/region
   const { cityTournaments, upcomingTournaments, pastTournaments } = useMemo(() => {
@@ -348,11 +354,41 @@ const CityTournaments = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Tournament Map - {city.displayName}
+                Interactive Tournament Map - {city.displayName}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore tournaments across {city.displayName} and {city.region}. Click on any marker to view tournament details.
+                Explore tournaments across {city.displayName} and {city.region}. Click on any marker to view tournament details. Map markers are color-coded by event type for easy identification.
               </p>
+              
+              {/* Tournament Type Legend */}
+              {tournamentTypes.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 mt-6">
+                  {tournamentTypes.filter(type => 
+                    upcomingTournaments.some(t => t.type === type)
+                  ).map(type => {
+                    const getTypeColor = (eventType: string) => {
+                      const colors: Record<string, string> = {
+                        'league': 'bg-blue-500',
+                        'tournament': 'bg-primary',
+                        'camp': 'bg-green-500',
+                        'cup': 'bg-yellow-500',
+                        'festival': 'bg-purple-500',
+                        'showcase': 'bg-orange-500',
+                        'friendly': 'bg-emerald-500',
+                        'holiday': 'bg-pink-500',
+                      };
+                      return colors[eventType] || 'bg-muted';
+                    };
+                    
+                    return (
+                      <div key={type} className="flex items-center gap-1 text-sm">
+                        <div className={`w-3 h-3 rounded-full ${getTypeColor(type)}`} />
+                        <span className="capitalize text-muted-foreground">{type}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
             
             <Map 

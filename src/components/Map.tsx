@@ -181,25 +181,44 @@ const Map: React.FC<MapProps> = ({
       const [lng, lat] = tournament.location.coordinates;
       console.log('📍 Creating marker for:', tournament.name, 'at', lng, lat);
       
-      // Create marker element
+      // Create marker element with color based on tournament type
+      const getMarkerColor = (type: string) => {
+        const typeColors: Record<string, string> = {
+          'league': '#3b82f6', // blue
+          'tournament': 'hsl(var(--primary))', // default primary
+          'camp': '#10b981', // green
+          'cup': '#f59e0b', // yellow/amber
+          'festival': '#8b5cf6', // purple
+          'showcase': '#f97316', // orange
+          'friendly': '#059669', // emerald
+          'holiday': '#ec4899', // pink
+        };
+        return typeColors[type.toLowerCase()] || 'hsl(var(--primary))';
+      };
+
       const markerEl = document.createElement('div');
       markerEl.className = 'tournament-marker';
       markerEl.innerHTML = `
         <div style="
-          width: 24px;
-          height: 24px;
-          background: hsl(var(--primary));
+          width: 28px;
+          height: 28px;
+          background: ${getMarkerColor(tournament.type)};
           border: 2px solid white;
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          box-shadow: 0 3px 6px rgba(0,0,0,0.4);
           display: flex;
           align-items: center;
           justify-content: center;
-        ">
+          transition: all 0.2s ease;
+        " 
+        onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.5)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 3px 6px rgba(0,0,0,0.4)'"
+        title="${tournament.name} - ${tournament.type}"
+        >
           <div style="
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background: white;
             border-radius: 50%;
           "></div>

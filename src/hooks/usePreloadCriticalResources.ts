@@ -65,6 +65,21 @@ export const usePreloadHeroImages = (currentRoute?: string) => {
       });
     }
 
+    // Preload tournament type images for better performance
+    const tournamentTypeImages = [
+      '/src/assets/tournaments/tournament-type.webp',
+      '/src/assets/tournaments/league-type.webp',
+      '/src/assets/tournaments/camp-type.webp',
+      '/src/assets/tournaments/cup-type.webp',
+      '/src/assets/tournaments/festival-type.webp',
+      '/src/assets/tournaments/showcase-type.webp',
+      '/src/assets/tournaments/holiday-type.webp',
+    ];
+
+    tournamentTypeImages.forEach(imagePath => {
+      baseImages.push({ href: imagePath, as: 'image' });
+    });
+
     return baseImages;
   };
 

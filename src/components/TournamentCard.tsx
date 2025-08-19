@@ -71,13 +71,21 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
   const getTypeColor = (type: Tournament['type']) => {
     switch (type) {
       case 'league':
-        return 'bg-primary text-primary-foreground';
+        return 'bg-blue-500 text-white';
       case 'tournament':
-        return 'bg-secondary text-secondary-foreground';
+        return 'bg-primary text-primary-foreground';
       case 'camp':
-        return 'bg-accent text-accent-foreground';
+        return 'bg-green-500 text-white';
+      case 'cup':
+        return 'bg-yellow-500 text-black';
+      case 'festival':
+        return 'bg-purple-500 text-white';
+      case 'showcase':
+        return 'bg-orange-500 text-white';
+      case 'friendly':
+        return 'bg-emerald-500 text-white';
       case 'holiday':
-        return 'bg-football-green text-white';
+        return 'bg-pink-500 text-white';
       default:
         return 'bg-muted text-muted-foreground';
     }

@@ -95,6 +95,10 @@ const getImageByType = (type: string): { src: string; description: string } | nu
       src: showcaseTypeImage,
       description: 'football talent showcase with scouting setup'
     },
+    friendly: {
+      src: tournamentTypeImage,
+      description: 'friendly match competition with football atmosphere'
+    },
   };
 
   return typeMap[type.toLowerCase()] || null;
