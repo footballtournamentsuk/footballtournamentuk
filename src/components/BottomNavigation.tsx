@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
-import { Home, Search, HelpCircle, Mail, User, Plus } from 'lucide-react';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { useToast } from '@/hooks/use-toast';
+import { Home, Search, HelpCircle, Mail, User, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BottomNavigation = () => {
@@ -12,9 +14,44 @@ const BottomNavigation = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { trackMeaningfulAction } = useEngagementTracker();
+  const { manualRefresh } = usePullToRefresh();
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Only show on mobile devices
   if (!isMobile) return null;
+
+  // Detect if running as installed PWA
+  const isPWA = useCallback(() => {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           (window.navigator as any).standalone === true ||
+           document.referrer.includes('android-app://');
+  }, []);
+
+  const handleRefresh = useCallback(async () => {
+    if (isRefreshing) return;
+    
+    setIsRefreshing(true);
+    
+    // Track analytics
+    trackMeaningfulAction('manual_refresh');
+
+    try {
+      await manualRefresh();
+      toast({
+        title: "Updated",
+        variant: "default"
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh failed. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      // Keep button disabled for 3 seconds to prevent spam
+      setTimeout(() => setIsRefreshing(false), 3000);
+    }
+  }, [isRefreshing, manualRefresh, trackMeaningfulAction, location.pathname, toast]);
 
   const handleAddEvent = () => {
     if (user) {
@@ -56,6 +93,13 @@ const BottomNavigation = () => {
       action: handleSearchClick,
       isActive: location.pathname === '/tournaments'
     },
+    ...(isPWA() ? [{
+      icon: RefreshCw,
+      label: 'Refresh',
+      action: handleRefresh,
+      isActive: false,
+      isRefreshing
+    }] : []),
     {
       icon: HelpCircle,
       label: 'FAQ',
@@ -89,6 +133,13 @@ const BottomNavigation = () => {
       action: handleAddEvent,
       isActive: false
     },
+    ...(isPWA() ? [{
+      icon: RefreshCw,
+      label: 'Refresh',
+      action: handleRefresh,
+      isActive: false,
+      isRefreshing
+    }] : []),
     {
       icon: Search,
       label: 'Search',
@@ -100,24 +151,30 @@ const BottomNavigation = () => {
   const tabs = user ? registeredTabs : nonRegisteredTabs;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border pb-safe">
       <div className="flex items-center justify-around px-2 py-2">
         {tabs.map((tab, index) => {
           const Icon = tab.icon;
+          const isRefreshButton = tab.label === 'Refresh';
+          const isRefreshDisabled = isRefreshButton && (tab as any).isRefreshing;
+          
           return (
             <Button
               key={index}
               variant="ghost"
               size="sm"
               onClick={tab.action}
+              disabled={isRefreshDisabled}
               aria-label={tab.label === 'Search' ? 'Search tournaments' : tab.label}
               className={`flex flex-col items-center gap-1 h-auto py-2 px-3 ${
                 tab.isActive 
                   ? 'text-primary bg-primary/10' 
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+              } ${isRefreshDisabled ? 'opacity-50' : ''}`}
             >
-              <Icon className="h-5 w-5" />
+              <Icon 
+                className={`h-5 w-5 ${isRefreshDisabled ? 'animate-spin' : ''}`} 
+              />
               <span className="text-xs font-medium">{tab.label}</span>
             </Button>
           );
