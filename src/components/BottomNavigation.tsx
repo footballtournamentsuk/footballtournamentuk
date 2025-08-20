@@ -25,9 +25,6 @@ const BottomNavigation = () => {
            document.referrer.includes('android-app://');
   }, []);
 
-  // Only show on mobile devices
-  if (!isMobile) return null;
-
   // Check if PWA once to avoid multiple calls
   const isInPWA = isPWA();
 
@@ -152,6 +149,9 @@ const BottomNavigation = () => {
   ];
 
   const tabs = user ? registeredTabs : nonRegisteredTabs;
+
+  // Only show on mobile devices - check this after all hooks are called
+  if (!isMobile) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border pb-safe">
