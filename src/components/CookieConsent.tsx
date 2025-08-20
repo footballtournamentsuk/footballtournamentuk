@@ -82,7 +82,7 @@ export const CookieConsent = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <Button 
               onClick={handleAccept}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white"
+              className="flex-1 bg-primary hover:bg-primary-hover text-primary-foreground font-medium shadow-sm"
               aria-label="Accept all cookies"
             >
               Accept
@@ -90,7 +90,7 @@ export const CookieConsent = () => {
             <Button 
               onClick={handleDecline}
               variant="outline"
-              className="flex-1 border-white/20 text-white hover:bg-white/10"
+              className="flex-1 bg-background/95 border-2 border-primary/20 text-foreground hover:bg-background hover:border-primary/30 font-medium shadow-sm"
               aria-label="Decline non-essential cookies"
             >
               Decline
@@ -98,7 +98,7 @@ export const CookieConsent = () => {
             <Button 
               asChild
               variant="ghost"
-              className="flex-1 text-white hover:text-white/80 hover:bg-white/10"
+              className="flex-1 text-white/90 hover:text-white hover:bg-white/10 underline underline-offset-2 font-medium"
               onClick={() => setShowConsent(false)}
             >
               <Link to="/cookie-policy">Learn More</Link>
