@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import TournamentCard from '@/components/TournamentCard';
+import { PullToRefreshIndicator } from '@/components/PullToRefreshIndicator';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import TournamentFilters from '@/components/TournamentFilters';
 import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
 import Map from '@/components/Map';
@@ -49,6 +51,14 @@ const Index = () => {
     user
   } = useAuth();
   const { isOnboardingOpen, closeOnboarding } = useOnboarding();
+
+  // Pull to refresh functionality
+  const pullToRefresh = usePullToRefresh({
+    onRefresh: async () => {
+      // Refresh page data - in a real app, you'd call refetch functions
+      window.location.reload();
+    }
+  });
 
   // Filter and separate tournaments
   const {
@@ -214,8 +224,18 @@ const Index = () => {
   const hasActiveFilters = getActiveFiltersCount() > 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <SEO 
+    <div 
+      className="min-h-screen bg-background" 
+      ref={pullToRefresh.bindToContainer}
+      data-ptr="true"
+    >
+      <PullToRefreshIndicator
+        isPulling={pullToRefresh.isPulling}
+        pullDistance={pullToRefresh.pullDistance}
+        isRefreshing={pullToRefresh.isRefreshing}
+        canRefresh={pullToRefresh.canRefresh}
+      />
+      <SEO
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
         description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."
         canonicalUrl="/"

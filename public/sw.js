@@ -208,3 +208,24 @@ self.addEventListener('push', (event) => {
     );
   }
 });
+
+// Handle messages from main thread
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'CHECK_FOR_UPDATE') {
+    // Check for updates by comparing cache versions or triggering update
+    self.registration.update().then((registration) => {
+      if (registration.waiting) {
+        // New service worker is waiting, notify main thread
+        event.ports[0]?.postMessage({
+          type: 'UPDATE_AVAILABLE'
+        });
+      }
+    }).catch((error) => {
+      console.warn('Update check failed:', error);
+    });
+  }
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

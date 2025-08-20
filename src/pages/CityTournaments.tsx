@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { PullToRefreshIndicator } from '@/components/PullToRefreshIndicator';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useFilterSync } from '@/hooks/useFilterSync';
 import { HelmetProvider } from 'react-helmet-async';
 import CityHero from '@/components/CityHero';
@@ -48,6 +50,14 @@ const CityTournaments = () => {
   
   // Preload critical resources for performance
   usePreloadHeroImages(`/city/${slugToUse}`);
+
+  // Pull to refresh functionality
+  const pullToRefresh = usePullToRefresh({
+    onRefresh: async () => {
+      // Refresh page data - in a real app, you'd call refetch functions
+      window.location.reload();
+    }
+  });
 
   // Filter tournaments by city/region
   const { cityTournaments, upcomingTournaments, pastTournaments } = useMemo(() => {
@@ -268,8 +278,18 @@ const CityTournaments = () => {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen bg-background">
-        <SEO 
+      <div 
+        className="min-h-screen bg-background" 
+        ref={pullToRefresh.bindToContainer}
+        data-ptr="true"
+      >
+        <PullToRefreshIndicator
+          isPulling={pullToRefresh.isPulling}
+          pullDistance={pullToRefresh.pullDistance}
+          isRefreshing={pullToRefresh.isRefreshing}
+          canRefresh={pullToRefresh.canRefresh}
+        />
+        <SEO
           title={pageTitle}
           description={pageDescription}
           canonicalUrl={`/city/${city.slug}`}

@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import TournamentCard from '@/components/TournamentCard';
+import { PullToRefreshIndicator } from '@/components/PullToRefreshIndicator';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import TournamentFilters from '@/components/TournamentFilters';
 import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
 import Map from '@/components/Map';
@@ -40,6 +42,14 @@ const Tournaments = () => {
     loading,
     error
   } = useTournaments();
+
+  // Pull to refresh functionality
+  const pullToRefresh = usePullToRefresh({
+    onRefresh: async () => {
+      // Refresh page data - in a real app, you'd call refetch functions
+      window.location.reload();
+    }
+  });
 
   // Filter and separate tournaments
   const {
@@ -248,7 +258,18 @@ const Tournaments = () => {
 
   return (
     <>
-      <SEO 
+      <div 
+        className="min-h-screen" 
+        ref={pullToRefresh.bindToContainer}
+        data-ptr="true"
+      >
+        <PullToRefreshIndicator
+          isPulling={pullToRefresh.isPulling}
+          pullDistance={pullToRefresh.pullDistance}
+          isRefreshing={pullToRefresh.isRefreshing}
+          canRefresh={pullToRefresh.canRefresh}
+        />
+        <SEO
         title="Football Tournaments | Search & Find Local Events"
         description="Find and join football tournaments across the UK. Search by location, age group, format (5v5, 7v7, 11v11) and more. All ages and skill levels welcome."
       />
@@ -464,6 +485,7 @@ const Tournaments = () => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </>
