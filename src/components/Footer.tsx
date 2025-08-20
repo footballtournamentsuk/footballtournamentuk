@@ -5,7 +5,7 @@ import PartnersCarousel from '@/components/PartnersCarousel';
 
 export const Footer = () => {
   return (
-    <footer className="py-12 border-t text-white/90" style={{ backgroundColor: '#08261E', borderTopColor: 'rgba(255, 255, 255, 0.06)' }}>
+    <footer className="py-12 border-t text-white/90 pb-[env(safe-area-inset-bottom)]" style={{ backgroundColor: '#08261E', borderTopColor: 'rgba(255, 255, 255, 0.1)' }}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">

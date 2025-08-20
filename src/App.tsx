@@ -211,7 +211,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0E3B2E] to-[#0C3328]">
           <ScrollToTop />
           <Navigation />
           <main className="flex-1 pt-16 pb-[env(safe-area-inset-bottom)]">
