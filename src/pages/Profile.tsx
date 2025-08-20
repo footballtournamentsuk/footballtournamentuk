@@ -715,10 +715,14 @@ const ProfilePage = () => {
     }
   };
 
-  const canSave = editingTournament.name && editingTournament.location_name && 
-                  editingTournament.postcode && editingTournament.start_date && 
-                  editingTournament.end_date && editingTournament.age_groups.length > 0 && 
-                  editingTournament.team_types.length > 0 && tournamentConsent;
+  const canSave = editingTournament.name?.trim() && 
+                  editingTournament.location_name?.trim() && 
+                  editingTournament.postcode?.trim() && 
+                  editingTournament.start_date && 
+                  editingTournament.end_date && 
+                  editingTournament.age_groups.length > 0 && 
+                  editingTournament.team_types.length > 0 && 
+                  tournamentConsent;
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
