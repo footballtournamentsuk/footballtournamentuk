@@ -143,33 +143,33 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     return count;
   };
   const hasActiveFilters = getActiveFiltersCount() > 0;
-  return <Card className="w-full bg-gradient-to-br from-background to-surface/50 border-2 border-border/50 shadow-lg">
+  return <Card className="w-full bg-card border border-border shadow-lg">
       <CardContent className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Filter className="w-5 h-5 text-primary" />
+            <div className="p-2 bg-football-green/10 rounded-lg">
+              <Filter className="w-5 h-5 text-football-green" />
             </div>
             <div>
-              <h3 className="font-bold text-lg">Filters</h3>
+              <h3 className="font-bold text-lg text-foreground">Filters</h3>
               <p className="text-xs text-muted-foreground">Refine your search</p>
             </div>
-            {hasActiveFilters && <Badge variant="default" className="ml-2 bg-football-primary hover:bg-football-primary/90">
+            {hasActiveFilters && <Badge variant="default" className="ml-2 bg-football-green text-white">
                 {getActiveFiltersCount()} active
               </Badge>}
           </div>
-          {hasActiveFilters && <Button variant="ghost" size="sm" onClick={onClearFilters} className="text-sm hover:bg-destructive/10 hover:text-destructive transition-all duration-200">
+          {hasActiveFilters && <Button variant="outline" size="sm" onClick={onClearFilters} className="text-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors">
               <X className="w-4 h-4 mr-1" />
               Clear All
             </Button>}
         </div>
 
         {/* Search Bar */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-primary/10 rounded-md">
-              <Search className="w-4 h-4 text-primary" />
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="p-1.5 bg-football-green/10 rounded-md">
+              <Search className="w-4 h-4 text-football-green" />
             </div>
             <div>
               <label className="text-sm font-semibold text-foreground">Search</label>
@@ -184,7 +184,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           />
         </div>
 
-        <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
+        <Separator className="my-6" />
 
         {/* Location & Date Filters */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -199,10 +199,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           />
 
           {/* Date Range Filter */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-accent/10 rounded-md">
-                <CalendarDays className="w-4 h-4 text-accent-foreground" />
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-secondary/10 rounded-md">
+                <CalendarDays className="w-4 h-4 text-secondary" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-foreground">Date Range</label>
@@ -223,9 +223,9 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
 
         {/* Price Range Filter */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-green-500/10 rounded-md">
-              <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs border-green-500/20 text-green-600">
+          <div className="flex items-center gap-3">
+            <div className="p-1.5 bg-accent/10 rounded-md">
+              <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs border-accent/50 text-accent-foreground bg-accent/5">
                 £
               </Badge>
             </div>
@@ -238,7 +238,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           <div className="space-y-4">
             {/* Price Range Slider */}
             <div className="space-y-3">
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm font-medium text-foreground">
                 <span>£{filters.priceRange?.min || 0}</span>
                 <span>£{filters.priceRange?.max || 500}{filters.priceRange?.max === 500 || !filters.priceRange?.max ? '+' : ''}</span>
               </div>
@@ -277,12 +277,12 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                   variant={
                     filters.priceRange?.min === range.min && 
                     filters.priceRange?.max === range.max
-                      ? "glass-selected" 
-                      : "glass"
+                      ? "default" 
+                      : "outline"
                   }
                   size="sm"
                   onClick={() => handlePriceRangeChange([range.min, range.max])}
-                  className="text-xs"
+                  className="text-xs font-medium"
                 >
                   {range.label}
                 </Button>
@@ -293,66 +293,64 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
 
         {/* Active Filters */}
         {hasActiveFilters && <>
-            <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
-            <div>
+            <Separator className="my-6" />
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-foreground">Active Filters</h4>
               <div className="flex flex-wrap gap-2">
-                {filters.search && <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer">
+                {filters.search && <Badge variant="secondary" className="cursor-pointer">
                     <Search className="w-3 h-3 mr-1" />
                     Search: {filters.search}
-                    <button onClick={() => handleSearchChange('')} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => handleSearchChange('')} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>}
-                {filters.location?.postcode && <Badge className="bg-primary/20 text-primary border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer">
+                {filters.location?.postcode && <Badge variant="secondary" className="cursor-pointer">
                     <MapPin className="w-3 h-3 mr-1" />
                     {filters.location.postcode} ({filters.location.radius || 10} miles)
-                    <button onClick={handleLocationClear} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={handleLocationClear} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>}
-                {(filters.dateRange?.start || filters.dateRange?.end) && <Badge className="bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all duration-200 cursor-pointer">
+                {(filters.dateRange?.start || filters.dateRange?.end) && <Badge variant="secondary" className="cursor-pointer">
                     <CalendarDays className="w-3 h-3 mr-1" />
                     Date Filter
-                    <button onClick={() => handleDateRangeChange(undefined)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => handleDateRangeChange(undefined)} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                      <X className="w-3 h-3" />
                    </button>
                  </Badge>}
-                {(filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined) && <Badge className="bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500 hover:text-white transition-all duration-200 cursor-pointer">
-                     <Badge variant="outline" className="h-3 w-3 rounded-full p-0 flex items-center justify-center text-xs mr-1 border-green-500/20">
-                       £
-                     </Badge>
-                     Price: {filters.priceRange?.min && filters.priceRange?.max ? `£${filters.priceRange.min}-${filters.priceRange.max}` : 
+                {(filters.priceRange?.min !== undefined || filters.priceRange?.max !== undefined) && <Badge variant="secondary" className="cursor-pointer">
+                     £ Price: {filters.priceRange?.min && filters.priceRange?.max ? `£${filters.priceRange.min}-${filters.priceRange.max}` : 
                        filters.priceRange?.min ? `£${filters.priceRange.min}+` : 
                        filters.priceRange?.max ? `Up to £${filters.priceRange.max}` : 'Custom'}
-                     <button onClick={() => removeFilter('priceRange')} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                     <button onClick={() => removeFilter('priceRange')} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                        <X className="w-3 h-3" />
                      </button>
                    </Badge>}
-                {filters.format?.map(format => <Badge key={format} className="bg-football-primary/20 text-football-primary border-football-primary/30 hover:bg-football-primary hover:text-white transition-all duration-200 cursor-pointer group">
+                {filters.format?.map(format => <Badge key={format} variant="secondary" className="cursor-pointer">
                     <Target className="w-3 h-3 mr-1" />
                     {format}
-                    <button onClick={() => removeFilter('format', format)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => removeFilter('format', format)} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>)}
-                {filters.ageGroups?.map(age => <Badge key={age} className="bg-accent/20 text-accent-foreground border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all duration-200 cursor-pointer">
+                {filters.ageGroups?.map(age => <Badge key={age} variant="secondary" className="cursor-pointer">
                     <Calendar className="w-3 h-3 mr-1" />
                     {age}
-                    <button onClick={() => removeFilter('ageGroups', age)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => removeFilter('ageGroups', age)} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>)}
-                {filters.teamTypes?.map(type => <Badge key={type} className="bg-secondary/20 text-secondary-foreground border-secondary/30 hover:bg-secondary hover:text-secondary-foreground transition-all duration-200 cursor-pointer">
+                {filters.teamTypes?.map(type => <Badge key={type} variant="secondary" className="cursor-pointer">
                     <Users className="w-3 h-3 mr-1" />
                     {type}
-                    <button onClick={() => removeFilter('teamTypes', type)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => removeFilter('teamTypes', type)} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>)}
-                {filters.type?.map(type => <Badge key={type} className="bg-primary/20 text-primary border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200 cursor-pointer">
+                {filters.type?.map(type => <Badge key={type} variant="secondary" className="cursor-pointer">
                     <Trophy className="w-3 h-3 mr-1" />
                     {type}
-                    <button onClick={() => removeFilter('type', type)} className="ml-2 hover:bg-white/30 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => removeFilter('type', type)} className="ml-2 hover:bg-muted rounded-full p-0.5 transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </Badge>)}
@@ -360,14 +358,14 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
             </div>
           </>}
 
-        <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
+        <Separator className="my-6" />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Match Format */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1.5 bg-football-primary/10 rounded-md">
-                <Target className="w-4 h-4 text-football-primary" />
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-football-green/10 rounded-md">
+                <Target className="w-4 h-4 text-football-green" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-foreground">Match Format</label>
@@ -378,7 +376,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               {matchFormats.map(format => (
                 <Button 
                   key={format} 
-                  variant={filters.format?.includes(format) ? "glass-selected" : "glass"} 
+                  variant={filters.format?.includes(format) ? "default" : "outline"} 
                   size="sm" 
                   onClick={() => handleArrayFilterChange('format', format)} 
                   className="text-xs font-medium"
@@ -390,10 +388,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           </div>
 
           {/* Age Groups */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1.5 bg-accent/10 rounded-md">
-                <Calendar className="w-4 h-4 text-accent-foreground" />
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-secondary/10 rounded-md">
+                <Calendar className="w-4 h-4 text-secondary" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-foreground">Age Groups</label>
@@ -401,10 +399,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               </div>
             </div>
             <Select onValueChange={value => handleArrayFilterChange('ageGroups', value)}>
-              <SelectTrigger className="bg-background/50 hover:bg-accent/5 transition-colors border-accent/20 hover:border-accent/40">
+              <SelectTrigger className="bg-background hover:bg-accent/5 transition-colors border-border hover:border-accent/40">
                 <SelectValue placeholder="Choose age groups" />
               </SelectTrigger>
-              <SelectContent className="bg-background border-accent/20">
+              <SelectContent className="bg-background border-border">
                 {ageGroups.map(age => <SelectItem key={age} value={age} className="hover:bg-accent/10 focus:bg-accent/10">
                     {age}
                   </SelectItem>)}
@@ -418,10 +416,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           </div>
 
           {/* Team Types */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1.5 rounded-md bg-indigo-500">
-                <Users className="w-4 h-4 text-secondary-foreground bg-indigo-500" />
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-accent/10 rounded-md">
+                <Users className="w-4 h-4 text-accent-foreground" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-foreground">Team Type</label>
@@ -432,7 +430,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               {teamTypes.map(type => (
                 <Button 
                   key={type} 
-                  variant={filters.teamTypes?.includes(type) ? "glass-selected" : "glass"} 
+                  variant={filters.teamTypes?.includes(type) ? "default" : "outline"} 
                   size="sm" 
                   onClick={() => handleArrayFilterChange('teamTypes', type)} 
                   className="text-xs font-medium capitalize"
@@ -444,10 +442,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           </div>
 
           {/* Tournament Type */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1.5 bg-primary/10 rounded-md">
-                <Trophy className="w-4 h-4 text-primary" />
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-football-green/10 rounded-md">
+                <Trophy className="w-4 h-4 text-football-green" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-foreground">Tournament Type</label>
@@ -461,7 +459,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 tournamentTypes.map(type => (
                   <Button
                     key={type}
-                    variant={filters.type?.includes(type) ? "glass-selected" : "glass"}
+                    variant={filters.type?.includes(type) ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleArrayFilterChange('type', type)}
                     className="text-xs font-medium capitalize"

@@ -44,10 +44,10 @@ export function LocationFilter({
   return (
     <div className="space-y-4">
       {/* Location Input */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-primary/10 rounded-md">
-            <MapPin className="w-4 h-4 text-primary" />
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-football-green/10 rounded-md">
+            <MapPin className="w-4 h-4 text-football-green" />
           </div>
           <div>
             <label className="text-sm font-semibold text-foreground">Location</label>
@@ -61,17 +61,16 @@ export function LocationFilter({
           onAddressSelect={handleAddressSelect}
           placeholder="Enter postcode (e.g., SW1A 1AA)"
           className="w-full"
-          variant="glass"
         />
       </div>
 
       {/* Radius Selector */}
       {postcode && (
-        <div className="space-y-3 pt-2 border-t border-border/50">
+        <div className="space-y-3 pt-2 border-t border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Navigation className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Search Radius</span>
+              <span className="text-sm font-medium text-foreground">Search Radius</span>
             </div>
             <Badge variant="outline" className="text-xs">
               {radius} miles
@@ -83,10 +82,10 @@ export function LocationFilter({
             {radiusOptions.map(option => (
               <Button
                 key={option.value}
-                variant={radius === option.value ? "glass-selected" : "glass"}
+                variant={radius === option.value ? "default" : "outline"}
                 size="sm"
                 onClick={() => onRadiusChange(option.value)}
-                className="text-xs"
+                className="text-xs font-medium"
               >
                 {option.label}
               </Button>
