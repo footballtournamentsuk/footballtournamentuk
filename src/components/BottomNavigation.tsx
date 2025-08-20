@@ -18,15 +18,18 @@ const BottomNavigation = () => {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Only show on mobile devices
-  if (!isMobile) return null;
-
   // Detect if running as installed PWA
   const isPWA = useCallback(() => {
     return window.matchMedia('(display-mode: standalone)').matches ||
            (window.navigator as any).standalone === true ||
            document.referrer.includes('android-app://');
   }, []);
+
+  // Only show on mobile devices
+  if (!isMobile) return null;
+
+  // Check if PWA once to avoid multiple calls
+  const isInPWA = isPWA();
 
   const handleRefresh = useCallback(async () => {
     if (isRefreshing) return;
@@ -93,7 +96,7 @@ const BottomNavigation = () => {
       action: handleSearchClick,
       isActive: location.pathname === '/tournaments'
     },
-    ...(isPWA() ? [{
+    ...(isInPWA ? [{
       icon: RefreshCw,
       label: 'Refresh',
       action: handleRefresh,
@@ -133,7 +136,7 @@ const BottomNavigation = () => {
       action: handleAddEvent,
       isActive: false
     },
-    ...(isPWA() ? [{
+    ...(isInPWA ? [{
       icon: RefreshCw,
       label: 'Refresh',
       action: handleRefresh,
