@@ -61,6 +61,7 @@ export function LocationFilter({
           onAddressSelect={handleAddressSelect}
           placeholder="Enter postcode (e.g., SW1A 1AA)"
           className="w-full"
+          variant="glass"
         />
       </div>
 
@@ -82,7 +83,7 @@ export function LocationFilter({
             {radiusOptions.map(option => (
               <Button
                 key={option.value}
-                variant={radius === option.value ? "default" : "outline"}
+                variant={radius === option.value ? "glass-selected" : "glass"}
                 size="sm"
                 onClick={() => onRadiusChange(option.value)}
                 className="text-xs"

@@ -166,7 +166,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
               <Filter className="w-5 h-5" />
               Filter Tournaments
             </div>
-            {activeCount > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-red-300 hover:bg-white/10">
+            {activeCount > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-rose-400 hover:text-rose-300 active:text-rose-200 font-medium hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
                 Clear All
               </Button>}
           </SheetTitle>

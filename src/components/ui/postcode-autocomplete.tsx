@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import { Input, GlassInput } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { MapPin, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -23,6 +23,7 @@ interface PostcodeAutocompleteProps {
   placeholder?: string;
   className?: string;
   id?: string;
+  variant?: 'default' | 'glass';
 }
 
 export function PostcodeAutocomplete({ 
@@ -31,7 +32,8 @@ export function PostcodeAutocomplete({
   onAddressSelect, 
   placeholder, 
   className,
-  id 
+  id,
+  variant = 'default'
 }: PostcodeAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -170,22 +172,44 @@ export function PostcodeAutocomplete({
   return (
     <div className="relative">
       <div className="relative">
-        <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          ref={inputRef}
-          id={id}
-          value={value}
-          onChange={handleInputChange}
-          placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
-          className={cn("pl-10 pr-10", className)}
-          onFocus={() => {
-            if (suggestions.length > 0) {
-              setShowSuggestions(true);
-            }
-          }}
-        />
+        <MapPin className={cn(
+          "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2",
+          variant === 'glass' ? "text-slate-600 dark:text-slate-400" : "text-muted-foreground"
+        )} />
+        {variant === 'glass' ? (
+          <GlassInput
+            ref={inputRef}
+            id={id}
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
+            className={cn("pl-10 pr-10", className)}
+            onFocus={() => {
+              if (suggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+          />
+        ) : (
+          <Input
+            ref={inputRef}
+            id={id}
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
+            className={cn("pl-10 pr-10", className)}
+            onFocus={() => {
+              if (suggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+          />
+        )}
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Loader2 className={cn(
+            "absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin",
+            variant === 'glass' ? "text-slate-600 dark:text-slate-400" : "text-muted-foreground"
+          )} />
         )}
       </div>
       
