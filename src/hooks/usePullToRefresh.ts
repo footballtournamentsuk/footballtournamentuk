@@ -66,8 +66,12 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
   }, [location.pathname]);
 
   const isAtTop = useCallback(() => {
-    if (!containerRef.current) return false;
-    return containerRef.current.scrollTop === 0;
+    // For PWAs, check both the container and document scroll position
+    const containerScrollTop = containerRef.current?.scrollTop || 0;
+    const documentScrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+    
+    // Consider "at top" if within 5px to handle fractional scrolling in PWAs
+    return containerScrollTop <= 5 && documentScrollTop <= 5;
   }, []);
 
   const shouldDisable = useCallback(() => {
@@ -224,6 +228,13 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
     }
   }, [shouldDisable, state.canRefresh, state.isPulling, performRefresh]);
 
+  // Detect if running as installed PWA
+  const isPWA = useCallback(() => {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           (window.navigator as any).standalone === true ||
+           document.referrer.includes('android-app://');
+  }, []);
+
   // Set up container ref and event listeners
   const bindToContainer = useCallback((element: HTMLElement | null) => {
     if (containerRef.current) {
@@ -238,12 +249,29 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
       // Apply touch-action for better mobile handling
       element.style.touchAction = 'pan-y';
       (element.style as any).webkitOverflowScrolling = 'touch';
+      
+      // For PWAs, also ensure body/html have proper touch handling
+      if (isPWA()) {
+        document.body.style.touchAction = 'pan-y';
+        document.documentElement.style.touchAction = 'pan-y';
+        
+        // Prevent native pull-to-refresh in PWAs
+        document.body.style.overscrollBehaviorY = 'contain';
+        document.documentElement.style.overscrollBehaviorY = 'contain';
+      }
 
       element.addEventListener('touchstart', handleTouchStart, { passive: false });
       element.addEventListener('touchmove', handleTouchMove, { passive: false });
       element.addEventListener('touchend', handleTouchEnd, { passive: true });
+      
+      // Also bind to document for PWA compatibility
+      if (isPWA()) {
+        document.addEventListener('touchstart', handleTouchStart, { passive: false });
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        document.addEventListener('touchend', handleTouchEnd, { passive: true });
+      }
     }
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd, isPWA]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -253,8 +281,21 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
         containerRef.current.removeEventListener('touchmove', handleTouchMove);
         containerRef.current.removeEventListener('touchend', handleTouchEnd);
       }
+      
+      // Cleanup document listeners for PWAs
+      if (isPWA()) {
+        document.removeEventListener('touchstart', handleTouchStart);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+        
+        // Reset body styles
+        document.body.style.touchAction = '';
+        document.documentElement.style.touchAction = '';
+        document.body.style.overscrollBehaviorY = '';
+        document.documentElement.style.overscrollBehaviorY = '';
+      }
     };
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd, isPWA]);
 
   return {
     ...state,
