@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Policies() {
   return <HelmetProvider>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-background">
         <Helmet>
           <title>Policies - Football Tournaments UK</title>
           <meta name="description" content="Privacy Policy and Terms & Conditions for Football Tournaments UK - your free online board for football tournament listings." />

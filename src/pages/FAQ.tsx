@@ -59,7 +59,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <SEO 
         title="FAQ - Frequently Asked Questions | UK Youth Football"
         description="Get answers to common questions about our free youth football tournament bulletin board. Learn about our platform, how to list tournaments, participation requirements, and more."

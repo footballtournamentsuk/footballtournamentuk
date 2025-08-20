@@ -214,7 +214,7 @@ const Index = () => {
   const hasActiveFilters = getActiveFiltersCount() > 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <SEO 
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
         description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."

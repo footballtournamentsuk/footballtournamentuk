@@ -249,7 +249,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#0E3B2E] to-[#0C3328] flex flex-col">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none" />
       

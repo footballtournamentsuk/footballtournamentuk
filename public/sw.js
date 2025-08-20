@@ -1,9 +1,9 @@
 // Service Worker for caching and performance optimization
 
-const CACHE_NAME = 'footballtournaments-v7';
-const STATIC_CACHE = 'static-v7';
-const IMAGE_CACHE = 'images-v7';
-const API_CACHE = 'api-v7';
+const CACHE_NAME = 'footballtournaments-v8';
+const STATIC_CACHE = 'static-v8';
+const IMAGE_CACHE = 'images-v8';
+const API_CACHE = 'api-v8';
 
 // Assets to cache immediately
 const PRECACHE_ASSETS = [
