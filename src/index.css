@@ -86,6 +86,17 @@
     --glass-border-dark: rgba(255, 255, 255, 0.10);
     --glass-blur: blur(8px);
 
+    /* Glass Chip/Button Tokens */
+    --chip-bg: rgba(255, 255, 255, 0.15);
+    --chip-text: hsl(0 0% 100%);
+    --chip-border: rgba(255, 255, 255, 0.30);
+    --chip-bg-hover: rgba(255, 255, 255, 0.25);
+    --chip-bg-selected: rgba(22, 163, 74, 0.90);
+    --chip-text-selected: hsl(0 0% 100%);
+    --chip-focus: rgba(255, 255, 255, 0.60);
+    --chip-disabled: rgba(255, 255, 255, 0.10);
+    --chip-text-disabled: rgba(255, 255, 255, 0.50);
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -196,6 +207,42 @@
     border-radius: 16px;
   }
 
+  /* Glass chip utilities */
+  .chip-glass {
+    background: var(--chip-bg);
+    color: var(--chip-text);
+    border: 1px solid var(--chip-border);
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .chip-glass:hover {
+    background: var(--chip-bg-hover);
+    transform: translateY(-1px);
+  }
+
+  .chip-glass[data-selected="true"] {
+    background: var(--chip-bg-selected);
+    color: var(--chip-text-selected);
+    border-color: transparent;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.3);
+  }
+
+  .chip-glass:focus-visible {
+    outline: none;
+    ring: 2px solid var(--chip-focus);
+    ring-offset: 2px;
+    ring-offset-color: transparent;
+  }
+
+  .chip-glass:disabled {
+    background: var(--chip-disabled);
+    color: var(--chip-text-disabled);
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+  }
+
   /* Fallbacks for browsers without backdrop-filter support */
   @supports not (backdrop-filter: blur(1px)) {
     .glass { 
@@ -203,6 +250,17 @@
     }
     .glass-dark { 
       background: rgba(0, 0, 0, 0.80); 
+    }
+    .chip-glass {
+      background: hsl(122 39% 20%);
+      color: hsl(0 0% 100%);
+      border-color: hsl(122 39% 35%);
+    }
+    .chip-glass:hover {
+      background: hsl(122 39% 25%);
+    }
+    .chip-glass[data-selected="true"] {
+      background: hsl(122 39% 49%);
     }
   }
 

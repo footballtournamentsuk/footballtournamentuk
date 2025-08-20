@@ -267,7 +267,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 label: '£200+',
                 min: 200,
                 max: 500
-              }].map(range => <Button key={range.label} type="button" variant={filters.priceRange?.min === range.min && filters.priceRange?.max === range.max ? "default" : "outline"} size="sm" onClick={() => handlePriceRangeChange([range.min, range.max])} className="text-xs">
+              }].map(range => <Button key={range.label} type="button" variant={filters.priceRange?.min === range.min && filters.priceRange?.max === range.max ? "glass-selected" : "glass"} size="sm" onClick={() => handlePriceRangeChange([range.min, range.max])} className="text-xs">
                     {range.label}
                   </Button>)}
               </div>
@@ -288,7 +288,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
               <div className="flex flex-wrap gap-2">
-                {matchFormats.map(format => <Button key={format} variant={filters.format?.includes(format) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('format', format)} className="text-xs">
+                {matchFormats.map(format => <Button key={format} variant={filters.format?.includes(format) ? "glass-selected" : "glass"} size="sm" onClick={() => handleArrayFilterChange('format', format)} className="text-xs">
                     {format}
                   </Button>)}
               </div>
@@ -340,7 +340,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
               <div className="flex flex-wrap gap-2">
-                {teamTypes.map(type => <Button key={type} variant={filters.teamTypes?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('teamTypes', type)} className="text-xs capitalize">
+                {teamTypes.map(type => <Button key={type} variant={filters.teamTypes?.includes(type) ? "glass-selected" : "glass"} size="sm" onClick={() => handleArrayFilterChange('teamTypes', type)} className="text-xs capitalize">
                     {type}
                   </Button>)}
               </div>
@@ -367,7 +367,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                   tournamentTypes.map(type => (
                     <Button
                       key={type}
-                      variant={filters.type?.includes(type) ? "default" : "outline"}
+                      variant={filters.type?.includes(type) ? "glass-selected" : "glass"}
                       size="sm"
                       onClick={() => handleArrayFilterChange('type', type)}
                       className="text-xs capitalize"

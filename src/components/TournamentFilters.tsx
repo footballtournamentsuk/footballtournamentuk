@@ -277,8 +277,8 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                   variant={
                     filters.priceRange?.min === range.min && 
                     filters.priceRange?.max === range.max
-                      ? "default" 
-                      : "outline"
+                      ? "glass-selected" 
+                      : "glass"
                   }
                   size="sm"
                   onClick={() => handlePriceRangeChange([range.min, range.max])}
@@ -375,9 +375,17 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {matchFormats.map(format => <Button key={format} variant={filters.format?.includes(format) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('format', format)} className={`text-xs font-medium transition-all duration-200 hover-scale ${filters.format?.includes(format) ? "bg-football-primary hover:bg-football-primary/90 text-white shadow-lg scale-105" : "hover:bg-football-primary/10 hover:text-football-primary hover:border-football-primary/50"}`}>
+              {matchFormats.map(format => (
+                <Button 
+                  key={format} 
+                  variant={filters.format?.includes(format) ? "glass-selected" : "glass"} 
+                  size="sm" 
+                  onClick={() => handleArrayFilterChange('format', format)} 
+                  className="text-xs font-medium"
+                >
                   {format}
-                </Button>)}
+                </Button>
+              ))}
             </div>
           </div>
 
@@ -421,9 +429,17 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {teamTypes.map(type => <Button key={type} variant={filters.teamTypes?.includes(type) ? "default" : "outline"} size="sm" onClick={() => handleArrayFilterChange('teamTypes', type)} className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${filters.teamTypes?.includes(type) ? "bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-lg scale-105" : "hover:bg-secondary/10 hover:text-secondary-foreground hover:border-secondary/50"}`}>
+              {teamTypes.map(type => (
+                <Button 
+                  key={type} 
+                  variant={filters.teamTypes?.includes(type) ? "glass-selected" : "glass"} 
+                  size="sm" 
+                  onClick={() => handleArrayFilterChange('teamTypes', type)} 
+                  className="text-xs font-medium capitalize"
+                >
                   {type}
-                </Button>)}
+                </Button>
+              ))}
             </div>
           </div>
 
@@ -445,14 +461,10 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
                 tournamentTypes.map(type => (
                   <Button
                     key={type}
-                    variant={filters.type?.includes(type) ? "default" : "outline"}
+                    variant={filters.type?.includes(type) ? "glass-selected" : "glass"}
                     size="sm"
                     onClick={() => handleArrayFilterChange('type', type)}
-                    className={`text-xs font-medium capitalize transition-all duration-200 hover-scale ${
-                      filters.type?.includes(type)
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105"
-                        : "hover:bg-primary/10 hover:text-primary hover:border-primary/50"
-                    }`}
+                    className="text-xs font-medium capitalize"
                   >
                     {type}
                   </Button>
