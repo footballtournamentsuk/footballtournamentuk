@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import { Input, GlassInput } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,7 @@ interface SearchBarProps {
   placeholder?: string;
   className?: string;
   suggestions?: SearchSuggestion[];
+  variant?: 'default' | 'glass';
 }
 
 export function SearchBar({ 
@@ -24,7 +25,8 @@ export function SearchBar({
   onChange, 
   placeholder = "Search tournaments, locations, leagues...",
   className,
-  suggestions = []
+  suggestions = [],
+  variant = 'default'
 }: SearchBarProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState<SearchSuggestion[]>([]);
@@ -100,24 +102,47 @@ export function SearchBar({
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          ref={inputRef}
-          value={value}
-          onChange={handleInputChange}
-          placeholder={placeholder}
-          className={cn("pl-10 pr-10", className)}
-          onFocus={() => {
-            if (filteredSuggestions.length > 0) {
-              setShowSuggestions(true);
-            }
-          }}
-        />
+        <Search className={cn(
+          "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2",
+          variant === 'glass' ? "text-slate-600 dark:text-slate-400" : "text-muted-foreground"
+        )} />
+        {variant === 'glass' ? (
+          <GlassInput
+            ref={inputRef}
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            className={cn("pl-10 pr-10", className)}
+            onFocus={() => {
+              if (filteredSuggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+          />
+        ) : (
+          <Input
+            ref={inputRef}
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            className={cn("pl-10 pr-10", className)}
+            onFocus={() => {
+              if (filteredSuggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+          />
+        )}
         {value && (
           <Button
             variant="ghost"
             size="sm"
-            className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0 hover:bg-muted"
+            className={cn(
+              "absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0",
+              variant === 'glass' 
+                ? "hover:bg-white/20 text-slate-600 dark:text-slate-400" 
+                : "hover:bg-muted"
+            )}
             onClick={handleClear}
           >
             <X className="h-3 w-3" />
@@ -128,7 +153,7 @@ export function SearchBar({
       {showSuggestions && filteredSuggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-md"
+          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-1 shadow-md"
         >
           {filteredSuggestions.map((suggestion) => (
             <Button

@@ -10,7 +10,7 @@ import { SearchBar } from './SearchBar';
 import { LocationFilter } from './LocationFilter';
 import { DateRangePicker } from './DateRangePicker';
 import { DateRange } from 'react-day-picker';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, GlassSelectTrigger, GlassSelectContent } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { useTournamentTypes } from '@/hooks/useTournamentTypes';
 interface MobileFilterDrawerProps {
@@ -183,7 +183,13 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
               <ChevronDown className={`w-4 h-4 text-white transition-transform ${expandedSections.search ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
-              <SearchBar value={filters.search || ''} onChange={handleSearchChange} suggestions={searchSuggestions} placeholder="Search tournaments, locations..." />
+              <SearchBar 
+                value={filters.search || ''} 
+                onChange={handleSearchChange} 
+                suggestions={searchSuggestions} 
+                placeholder="Search tournaments, locations..." 
+                variant="glass" 
+              />
             </CollapsibleContent>
           </Collapsible>
 
@@ -309,14 +315,14 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3 space-y-3">
               <Select onValueChange={value => handleArrayFilterChange('ageGroups', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose age groups" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ageGroups.map(age => <SelectItem key={age} value={age}>
+                <GlassSelectTrigger>
+                  <SelectValue placeholder="Select age groups" />
+                </GlassSelectTrigger>
+                <GlassSelectContent>
+                  {ageGroups.map(age => <SelectItem key={age} value={age} className="hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800">
                       {age}
                     </SelectItem>)}
-                </SelectContent>
+                </GlassSelectContent>
               </Select>
               {filters.ageGroups && filters.ageGroups.length > 0 && <div className="flex flex-wrap gap-1">
                   {filters.ageGroups.map(age => <Badge key={age} variant="secondary" className="text-xs">
@@ -384,7 +390,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         {/* Sticky Bottom Buttons */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-sm border-t border-white/20">
           <div className="flex gap-3">
-            <Button variant="outline" onClick={clearAllFilters} className="flex-1 border-white/20 text-white hover:bg-white/10">
+            <Button variant="outline" onClick={clearAllFilters} className="flex-1 border-white/20 text-rose-400 hover:text-rose-300 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
               Clear All
             </Button>
             <Button onClick={applyFilters} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white">
