@@ -108,7 +108,7 @@ const OnboardingModal = ({ isOpen, onClose }: OnboardingModalProps) => {
                   )}
                   <Button
                     onClick={nextSlide}
-                    className="px-6 bg-gradient-to-r from-primary to-football-primary hover:from-primary/90 hover:to-football-primary/90"
+                    className="px-6 bg-primary hover:bg-primary-hover text-primary-foreground font-medium shadow-lg"
                   >
                     {slides[currentSlide].buttonText}
                     {currentSlide < slides.length - 1 && (
@@ -133,7 +133,7 @@ const OnboardingModal = ({ isOpen, onClose }: OnboardingModalProps) => {
                         // Navigate to tournaments tab
                         window.location.href = '/profile?tab=tournaments';
                       }}
-                      className="text-primary border-primary hover:bg-primary hover:text-white"
+                      className="text-primary border-primary hover:bg-primary hover:text-primary-foreground font-medium"
                     >
                       <Trophy className="w-4 h-4 mr-2" />
                       Create Your First Tournament

@@ -90,35 +90,26 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
   }, [disabled]);
 
   const checkForServiceWorkerUpdate = useCallback(async () => {
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    if ('serviceWorker' in navigator) {
       try {
-        // Post message to service worker to check for updates
-        navigator.serviceWorker.controller.postMessage({
-          type: 'CHECK_FOR_UPDATE'
-        });
-
-        // Listen for update available message
-        const messageHandler = (event: MessageEvent) => {
-          if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-            // Trigger update
-            if (navigator.serviceWorker.controller) {
-              navigator.serviceWorker.controller.postMessage({
-                type: 'SKIP_WAITING'
-              });
-            }
-            // Reload page after update
-            setTimeout(() => {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+          // Check for updates by calling update on registration
+          await registration.update();
+          
+          // Check if there's a waiting service worker after update
+          if (registration.waiting) {
+            // New service worker is waiting, trigger skip waiting
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            
+            // Listen for the new service worker to take control
+            const handleControllerChange = () => {
               window.location.reload();
-            }, 1000);
+            };
+            
+            navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange, { once: true });
           }
-        };
-
-        navigator.serviceWorker.addEventListener('message', messageHandler);
-        
-        // Clean up listener after 5 seconds
-        setTimeout(() => {
-          navigator.serviceWorker.removeEventListener('message', messageHandler);
-        }, 5000);
+        }
       } catch (error) {
         console.warn('Service Worker update check failed:', error);
       }

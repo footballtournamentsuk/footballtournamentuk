@@ -195,7 +195,7 @@ export const PWAInstallPrompt: React.FC = () => {
           <div className="flex flex-col gap-3 mt-4">
             <Button
               onClick={handleInstallClick}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white"
+              className="w-full bg-primary hover:bg-primary-hover text-primary-foreground font-medium shadow-lg"
             >
               <Download className="h-4 w-4 mr-2" />
               Download App
@@ -203,7 +203,7 @@ export const PWAInstallPrompt: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleDismiss}
-              className="w-full border-white/20 text-white hover:bg-white/10"
+              className="w-full border-border bg-background/95 text-foreground hover:bg-muted font-medium"
             >
               Maybe Later
             </Button>
@@ -235,7 +235,7 @@ export const PWAInstallPrompt: React.FC = () => {
             <Button
               variant="outline"
               onClick={handleDismiss}
-              className="w-full border-white/20 text-white hover:bg-white/10"
+              className="w-full border-border bg-background/95 text-foreground hover:bg-muted font-medium"
             >
               Got It
             </Button>
