@@ -7,10 +7,10 @@
 @layer base {
   :root {
     /* Background & Surface Colors */
-    --background: 0 0% 100%;
-    --foreground: 216 12% 8%;
-    --surface: 210 20% 98%;
-    --surface-elevated: 0 0% 100%;
+    --background: 14 59% 46%; /* Dark green base */
+    --foreground: 0 0% 100%; /* White text */
+    --surface: 14 59% 46%; /* Match background */
+    --surface-elevated: 14 59% 50%; /* Slightly lighter */
 
     /* Football Brand Colors */
     --football-green: 122 39% 49%;
@@ -79,19 +79,19 @@
 
     --radius: 0.5rem;
 
-    /* Glassmorphism Design System */
-    --glass-bg: rgba(255, 255, 255, 0.10);
-    --glass-border: rgba(255, 255, 255, 0.20);
-    --glass-bg-dark: rgba(0, 0, 0, 0.10);
-    --glass-border-dark: rgba(255, 255, 255, 0.10);
-    --glass-blur: blur(8px);
+    /* Glassmorphism Design System - Enhanced for dark background */
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --glass-bg-dark: rgba(255, 255, 255, 0.20);
+    --glass-border-dark: rgba(255, 255, 255, 0.30);
+    --glass-blur: blur(10px);
 
-    /* Glass Chip/Button Tokens */
-    --chip-bg: rgba(255, 255, 255, 0.15);
+    /* Glass Chip/Button Tokens - Optimized for dark glass surfaces */
+    --chip-bg: rgba(255, 255, 255, 0.16);
     --chip-text: hsl(0 0% 100%);
-    --chip-border: rgba(255, 255, 255, 0.30);
-    --chip-bg-hover: rgba(255, 255, 255, 0.25);
-    --chip-bg-selected: rgba(22, 163, 74, 0.90);
+    --chip-border: rgba(255, 255, 255, 0.28);
+    --chip-bg-hover: rgba(255, 255, 255, 0.24);
+    --chip-bg-selected: rgba(16, 185, 129, 0.95); /* Emerald green */
     --chip-text-selected: hsl(0 0% 100%);
     --chip-focus: rgba(255, 255, 255, 0.60);
     --chip-disabled: rgba(255, 255, 255, 0.10);
@@ -154,12 +154,29 @@
 }
 
 @layer base {
+  html, body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #0E3B2E, #0C3328);
+    background-attachment: fixed;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color-scheme: dark;
+    color: rgba(255, 255, 255, 0.9);
   }
 }
 
@@ -190,34 +207,42 @@
     touch-action: pan-x pan-y;
   }
 
-  /* Glassmorphism utilities */
+  /* Glassmorphism utilities - Enhanced for dark background */
   .glass {
     background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur) brightness(0.9);
+    -webkit-backdrop-filter: var(--glass-blur) brightness(0.9);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .glass-dark {
     background: var(--glass-bg-dark);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur) brightness(0.85);
+    -webkit-backdrop-filter: var(--glass-blur) brightness(0.85);
     border: 1px solid var(--glass-border-dark);
     border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 
-  /* Glass chip utilities */
+  /* Glass chip utilities - Enhanced for readability on dark surfaces */
   .chip-glass {
     background: var(--chip-bg);
     color: var(--chip-text);
     border: 1px solid var(--chip-border);
     border-radius: 8px;
+    backdrop-filter: blur(4px);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 44px; /* WCAG touch target */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .chip-glass:hover {
     background: var(--chip-bg-hover);
+    border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-1px);
   }
 
@@ -225,12 +250,12 @@
     background: var(--chip-bg-selected);
     color: var(--chip-text-selected);
     border-color: transparent;
-    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.3);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
   }
 
   .chip-glass:focus-visible {
     outline: none;
-    ring: 2px solid var(--chip-focus);
+    box-shadow: 0 0 0 2px var(--chip-focus);
     ring-offset: 2px;
     ring-offset-color: transparent;
   }
@@ -239,28 +264,31 @@
     background: var(--chip-disabled);
     color: var(--chip-text-disabled);
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.55;
     transform: none;
   }
 
   /* Fallbacks for browsers without backdrop-filter support */
   @supports not (backdrop-filter: blur(1px)) {
     .glass { 
-      background: rgba(255, 255, 255, 0.92); 
+      background: rgba(14, 59, 46, 0.85); /* Dark green fallback */
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .glass-dark { 
-      background: rgba(0, 0, 0, 0.80); 
+      background: rgba(14, 59, 46, 0.90); /* Darker fallback for better contrast */
+      border-color: rgba(255, 255, 255, 0.25);
     }
     .chip-glass {
-      background: hsl(122 39% 20%);
+      background: rgba(14, 59, 46, 0.80);
       color: hsl(0 0% 100%);
-      border-color: hsl(122 39% 35%);
+      border-color: rgba(255, 255, 255, 0.3);
     }
     .chip-glass:hover {
-      background: hsl(122 39% 25%);
+      background: rgba(14, 59, 46, 0.90);
+      border-color: rgba(255, 255, 255, 0.4);
     }
     .chip-glass[data-selected="true"] {
-      background: hsl(122 39% 49%);
+      background: hsl(160 84% 39%); /* Emerald-600 */
     }
   }
 

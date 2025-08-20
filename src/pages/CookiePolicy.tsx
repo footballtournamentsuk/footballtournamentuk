@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function CookiePolicy() {
   return (
     <HelmetProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Helmet>
           <title>Cookie Policy - Football Tournaments UK</title>
           <meta 

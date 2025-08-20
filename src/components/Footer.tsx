@@ -5,34 +5,34 @@ import PartnersCarousel from '@/components/PartnersCarousel';
 
 export const Footer = () => {
   return (
-    <footer className="bg-football-green-dark text-primary-foreground py-12" style={{ backgroundColor: 'hsl(122, 39%, 32%)' }}>
+    <footer className="py-12 border-t text-white/90" style={{ backgroundColor: '#08261E', borderTopColor: 'rgba(255, 255, 255, 0.06)' }}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <h3 className="text-2xl font-bold mb-4">Football Tournaments UK</h3>
-            <p className="text-primary-foreground/80 mb-4">
+            <p className="text-white/80 mb-4">
               Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.
               From grassroots to elite level competitions.
             </p>
             
             {/* Contact Info for Trust & SEO */}
             <div className="mb-4">
-              <p className="text-primary-foreground/90 font-medium">
+              <p className="text-white/90 font-medium">
                 📧 info@footballtournamentsuk.co.uk
               </p>
             </div>
 
             {/* Quick Links - Conversion Priority */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-primary-foreground">Quick Links</h4>
+              <h4 className="font-semibold mb-3 text-white">Quick Links</h4>
               <div className="flex flex-wrap gap-4">
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/">🏠 Home</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground bg-primary-foreground/10" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 bg-white/10 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/auth">⚽ List Your Tournament</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground border border-primary-foreground/30 hover:border-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50" asChild>
                   <a href="mailto:info@footballtournamentsuk.co.uk">📧 Contact</a>
                 </Button>
               </div>
@@ -40,21 +40,21 @@ export const Footer = () => {
 
             {/* Other Links */}
             <div>
-              <h4 className="font-semibold mb-3 text-primary-foreground">More Info</h4>
+              <h4 className="font-semibold mb-3 text-white">More Info</h4>
               <div className="flex flex-wrap gap-4">
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/about">About Us</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/support">Support Us</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/faq">FAQ</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/policies">Policies</Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:text-primary-foreground" asChild>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/cookie-policy">Cookie Policy</Link>
                 </Button>
               </div>
@@ -62,36 +62,36 @@ export const Footer = () => {
           </div>
           
           <div>
-            <h4 className="font-semibold mb-3">Major Cities</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/tournaments/london" className="hover:text-primary-foreground">London Tournaments</Link></li>
-              <li><Link to="/tournaments/manchester" className="hover:text-primary-foreground">Manchester Tournaments</Link></li>
-              <li><Link to="/tournaments/birmingham" className="hover:text-primary-foreground">Birmingham Tournaments</Link></li>
-              <li><Link to="/tournaments/liverpool" className="hover:text-primary-foreground">Liverpool Tournaments</Link></li>
-              <li><Link to="/tournaments/leeds" className="hover:text-primary-foreground">Leeds Tournaments</Link></li>
-              <li><Link to="/tournaments/glasgow" className="hover:text-primary-foreground">Glasgow Tournaments</Link></li>
+            <h4 className="font-semibold mb-3 text-white">Major Cities</h4>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li><Link to="/tournaments/london" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">London Tournaments</Link></li>
+              <li><Link to="/tournaments/manchester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Manchester Tournaments</Link></li>
+              <li><Link to="/tournaments/birmingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Birmingham Tournaments</Link></li>
+              <li><Link to="/tournaments/liverpool" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Liverpool Tournaments</Link></li>
+              <li><Link to="/tournaments/leeds" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leeds Tournaments</Link></li>
+              <li><Link to="/tournaments/glasgow" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Glasgow Tournaments</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-3">More Cities</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/tournaments/newcastle-upon-tyne" className="hover:text-primary-foreground">Newcastle Tournaments</Link></li>
-              <li><Link to="/tournaments/sheffield" className="hover:text-primary-foreground">Sheffield Tournaments</Link></li>
-              <li><Link to="/tournaments/bristol" className="hover:text-primary-foreground">Bristol Tournaments</Link></li>
-              <li><Link to="/tournaments/nottingham" className="hover:text-primary-foreground">Nottingham Tournaments</Link></li>
-              <li><Link to="/tournaments/leicester" className="hover:text-primary-foreground">Leicester Tournaments</Link></li>
-              <li><Link to="/tournaments/brighton" className="hover:text-primary-foreground">Brighton Tournaments</Link></li>
+            <h4 className="font-semibold mb-3 text-white">More Cities</h4>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li><Link to="/tournaments/newcastle-upon-tyne" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Newcastle Tournaments</Link></li>
+              <li><Link to="/tournaments/sheffield" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Sheffield Tournaments</Link></li>
+              <li><Link to="/tournaments/bristol" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Bristol Tournaments</Link></li>
+              <li><Link to="/tournaments/nottingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Nottingham Tournaments</Link></li>
+              <li><Link to="/tournaments/leicester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leicester Tournaments</Link></li>
+              <li><Link to="/tournaments/brighton" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Brighton Tournaments</Link></li>
             </ul>
           </div>
         </div>
         
         {/* Partners Section */}
-        <div className="border-t border-primary-foreground/20 mt-8 pt-8">
+        <div className="border-t border-white/20 mt-8 pt-8">
           <PartnersCarousel showTitle={true} showButton={false} compact={true} />
         </div>
         
-        <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-sm text-primary-foreground/60">
+        <div className="border-t border-white/20 mt-8 pt-8 text-center text-sm text-white/60">
           <p>© 2025 Football Tournaments UK. All rights reserved.</p>
         </div>
       </div>

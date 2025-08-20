@@ -211,35 +211,36 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ScrollToTop />
-        <Navigation />
-        {/* Add top padding to prevent header overlap and bottom padding for mobile nav */}
-        <div className="pt-16 pb-20 md:pb-0">
-          <Routes>
-           <Route path="/" element={<Index />} />
-           <Route path="/tournaments" element={<Tournaments />} />
-           <Route path="/auth" element={<Auth />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/check-email" element={<CheckEmail />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/teams/:id" element={<TeamView />} />
-          <Route path="/city/:citySlug" element={<CityTournaments />} />
-          <Route path="/tournaments/:param" element={<TournamentRouter />} />
-          <Route path="/policies" element={<Policies />} />
-          <Route path="/cookie-policy" element={<CookiePolicy />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-          </Routes>
+        <div className="min-h-screen flex flex-col">
+          <ScrollToTop />
+          <Navigation />
+          <main className="flex-1 pt-16 pb-[env(safe-area-inset-bottom)]">
+            <Routes>
+             <Route path="/" element={<Index />} />
+             <Route path="/tournaments" element={<Tournaments />} />
+             <Route path="/auth" element={<Auth />} />
+            <Route path="/verify" element={<Verify />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/partners" element={<Partners />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/teams/:id" element={<TeamView />} />
+            <Route path="/city/:citySlug" element={<CityTournaments />} />
+            <Route path="/tournaments/:param" element={<TournamentRouter />} />
+            <Route path="/policies" element={<Policies />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
           <Footer />
           <CookieConsent />
           <PWAInstallPrompt />
+          <BottomNavigation />
         </div>
-        <BottomNavigation />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

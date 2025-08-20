@@ -5,7 +5,7 @@ import { Megaphone, Handshake, Users, Heart, Mail } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import heroBackground from '@/assets/hero-football.jpg';
 const Support = () => {
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen">
       <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="/support" />
       
       {/* Hero Section */}

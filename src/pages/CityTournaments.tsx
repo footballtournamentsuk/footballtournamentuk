@@ -249,10 +249,10 @@ const CityTournaments = () => {
   // If city not found, show 404
   if (!city) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">City Not Found</h1>
-          <p className="text-muted-foreground mb-6">
+          <h1 className="text-4xl font-bold mb-4 text-white">City Not Found</h1>
+          <p className="text-white/70 mb-6">
             The city "{slugToUse}" is not in our database.
           </p>
           <Link to="/">
@@ -268,7 +268,7 @@ const CityTournaments = () => {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <SEO 
           title={pageTitle}
           description={pageDescription}
