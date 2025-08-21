@@ -72,7 +72,11 @@ const YouthTournaments = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>{group.age}</span>
-                    <Badge variant="secondary">{group.format}</Badge>
+                    <Link to={`/tournaments?formats=${group.format.toLowerCase()}`}>
+                      <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
+                        {group.format}
+                      </Badge>
+                    </Link>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
