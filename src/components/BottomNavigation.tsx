@@ -5,7 +5,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useToast } from '@/hooks/use-toast';
-import { Home, Search, HelpCircle, Mail, User, Plus, RefreshCw } from 'lucide-react';
+import { Home, Search, HelpCircle, Mail, User, Plus, RefreshCw, Instagram, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BottomNavigation = () => {
@@ -110,6 +110,12 @@ const BottomNavigation = () => {
       icon: Mail,
       label: 'Contact',
       action: handleContact,
+      isActive: false
+    },
+    {
+      icon: Instagram,
+      label: 'Instagram',
+      action: () => window.open('https://www.instagram.com/footballtournamentuk/', '_blank'),
       isActive: false
     }
   ];

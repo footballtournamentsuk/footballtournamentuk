@@ -76,9 +76,8 @@ export const SEO: React.FC<SEOProps> = ({
     url: siteUrl,
     logo: `${siteUrl}/bimi-logo.svg`,
     sameAs: [
-      'https://facebook.com/footballtournamentsuk',
-      'https://twitter.com/footballtournamentsuk',
-      'https://instagram.com/footballtournamentsuk'
+      'https://www.instagram.com/footballtournamentuk/',
+      'https://www.facebook.com/profile.php?id=61579443724038'
     ],
     contactPoint: {
       '@type': 'ContactPoint',

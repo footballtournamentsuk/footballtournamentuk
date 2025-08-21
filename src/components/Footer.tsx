@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Instagram, Facebook } from 'lucide-react';
 import PartnersCarousel from '@/components/PartnersCarousel';
 export const Footer = () => {
   return <footer className="py-12 border-t text-white/90 pb-[env(safe-area-inset-bottom)]" style={{
@@ -21,6 +22,43 @@ export const Footer = () => {
               <p className="text-white/90 font-medium">
                 📧 info@footballtournamentsuk.co.uk
               </p>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-white">Follow Us</h4>
+              <div className="flex gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50 p-2" 
+                  asChild
+                >
+                  <a 
+                    href="https://www.instagram.com/footballtournamentuk/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Follow us on Instagram"
+                  >
+                    <Instagram className="h-5 w-5" />
+                  </a>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50 p-2" 
+                  asChild
+                >
+                  <a 
+                    href="https://www.facebook.com/profile.php?id=61579443724038" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Follow us on Facebook"
+                  >
+                    <Facebook className="h-5 w-5" />
+                  </a>
+                </Button>
+              </div>
             </div>
 
             {/* Quick Links - Conversion Priority */}
