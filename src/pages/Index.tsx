@@ -25,6 +25,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronDown, Filter, Users, Target, MapPin } from 'lucide-react';
+import { AlertSubscriptionBanner } from '@/components/alerts/AlertSubscriptionBanner';
 
 // Haversine formula to calculate distance between two coordinates in miles
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -441,6 +442,29 @@ const Index = () => {
 
                 {!loading && !error && (
                   <>
+                    {/* Alert Subscription Banner above results */}
+                    {upcomingTournaments.length > 0 && (
+                      <div className="mb-8">
+                        <AlertSubscriptionBanner
+                          filters={{
+                            search: filters.search,
+                            location: filters.location?.postcode,
+                            radius: filters.location?.radius,
+                            format: filters.format,
+                            ageGroups: filters.ageGroups,
+                            teamTypes: filters.teamTypes,
+                            type: filters.type,
+                            regions: filters.regions,
+                            priceRange: filters.priceRange ? [filters.priceRange.min || 0, filters.priceRange.max || 500] : undefined,
+                            dateRange: filters.dateRange ? { from: filters.dateRange.start, to: filters.dateRange.end } : undefined
+                          }}
+                          source="list"
+                          message="Get alerts for tournaments like these"
+                          resultCount={upcomingTournaments.length}
+                        />
+                      </div>
+                    )}
+
                     {/* Upcoming Tournaments */}
                     {upcomingTournaments.length > 0 && (
                       <div className="mb-12">
@@ -487,6 +511,24 @@ const Index = () => {
 
                     {upcomingTournaments.length === 0 && pastTournaments.length === 0 && (
                       <div className="text-center py-12">
+                        <div className="mb-6">
+                          <AlertSubscriptionBanner
+                            filters={{
+                              search: filters.search,
+                              location: filters.location?.postcode,
+                              radius: filters.location?.radius,
+                              format: filters.format,
+                              ageGroups: filters.ageGroups,
+                              teamTypes: filters.teamTypes,
+                              type: filters.type,
+                              regions: filters.regions,
+                              priceRange: filters.priceRange ? [filters.priceRange.min || 0, filters.priceRange.max || 500] : undefined,
+                              dateRange: filters.dateRange ? { from: filters.dateRange.start, to: filters.dateRange.end } : undefined
+                            }}
+                            source="empty"
+                            message="Get notified when new tournaments match your filters"
+                          />
+                        </div>
                         <p className="text-muted-foreground mb-4">
                           No tournaments found matching your criteria.
                         </p>

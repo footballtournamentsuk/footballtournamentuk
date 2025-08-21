@@ -13,6 +13,7 @@ import { DateRangePicker } from '@/components/DateRangePicker';
 import { DateRange } from 'react-day-picker';
 import { Slider } from '@/components/ui/slider';
 import { useTournamentTypes } from '@/hooks/useTournamentTypes';
+import { AlertSubscriptionBanner } from '@/components/alerts/AlertSubscriptionBanner';
 interface TournamentFiltersProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
@@ -143,6 +144,9 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
     return count;
   };
   const hasActiveFilters = getActiveFiltersCount() > 0;
+
+  // Show alert banner when filters are applied
+  const showAlertBanner = hasActiveFilters;
   return <Card className="w-full bg-card border border-border shadow-lg">
       <CardContent className="p-6 space-y-6">
         {/* Header */}
@@ -471,6 +475,29 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Alert Subscription Banner for Applied Filters */}
+        {showAlertBanner && (
+          <>
+            <Separator className="my-6" />
+            <AlertSubscriptionBanner
+              filters={{
+                search: filters.search,
+                location: filters.location?.postcode,
+                radius: filters.location?.radius,
+                format: filters.format,
+                ageGroups: filters.ageGroups,
+                teamTypes: filters.teamTypes,
+                type: filters.type,
+                regions: filters.regions,
+                priceRange: filters.priceRange ? [filters.priceRange.min || 0, filters.priceRange.max || 500] : undefined,
+                dateRange: filters.dateRange ? { from: filters.dateRange.start, to: filters.dateRange.end } : undefined
+              }}
+              source="filters"
+              message="Save this search as an alert to get notified of new matching tournaments"
+            />
+          </>
+        )}
       </CardContent>
     </Card>;
 };

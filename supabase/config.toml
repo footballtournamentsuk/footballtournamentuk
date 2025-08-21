@@ -20,3 +20,18 @@ verify_jwt = false
 
 [functions.generate-og-image]
 verify_jwt = false
+
+[functions.alerts]
+verify_jwt = false
+
+[functions.alerts-verify]
+verify_jwt = false
+
+[functions.alerts-manage]
+verify_jwt = false
+
+[functions.alerts-digest]
+verify_jwt = false
+
+[functions.alerts-unsubscribe]
+verify_jwt = false

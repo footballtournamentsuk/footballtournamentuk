@@ -24,6 +24,7 @@ import portsmouthHero from '@/assets/cities/portsmouth-hero.webp';
 import brightonHero from '@/assets/cities/brighton-hero.webp';
 import cambridgeHero from '@/assets/cities/cambridge-hero.webp';
 import { CityConfig } from '@/data/cities';
+import { AlertSubscriptionBanner } from '@/components/alerts/AlertSubscriptionBanner';
 
 interface CityHeroProps {
   city: CityConfig;
@@ -139,6 +140,16 @@ const CityHero: React.FC<CityHeroProps> = ({
             </div>
             <span className="text-sm font-medium">Real-time</span>
           </div>
+        </div>
+
+        {/* Alert Subscription Banner */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <AlertSubscriptionBanner
+            filters={{ location: city.displayName, regions: [city.region] }}
+            source="city"
+            message={`Get notified about new tournaments in ${city.displayName}`}
+            cityName={city.displayName}
+          />
         </div>
 
         {/* Call to Action */}
