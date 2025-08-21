@@ -32,6 +32,7 @@ import Verify from "./pages/Verify";
 import CheckEmail from "./pages/CheckEmail";
 import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
+import HowItWorks from "./pages/HowItWorks";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -225,9 +226,10 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/support" element={<Support />} />
             <Route path="/partners" element={<Partners />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/teams/:id" element={<TeamView />} />
+             <Route path="/faq" element={<FAQ />} />
+             <Route path="/how-it-works" element={<HowItWorks />} />
+             <Route path="/admin" element={<Admin />} />
+             <Route path="/teams/:id" element={<TeamView />} />
             <Route path="/city/:citySlug" element={<CityTournaments />} />
             <Route path="/tournaments/:param" element={<TournamentRouter />} />
             <Route path="/policies" element={<Policies />} />

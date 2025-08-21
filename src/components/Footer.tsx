@@ -88,6 +88,9 @@ export const Footer = () => {
                   <Link to="/support">Support Us</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/how-it-works">How It Works</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/faq">FAQ</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
