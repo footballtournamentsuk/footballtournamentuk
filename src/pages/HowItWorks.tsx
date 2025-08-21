@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SEO } from '@/components/SEO';
 import { 
   UserPlus, 
@@ -12,7 +12,9 @@ import {
   Calendar, 
   Mail,
   HelpCircle,
-  MessageCircle
+  MessageCircle,
+  Users,
+  Grid
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -420,7 +422,69 @@ const HowItWorks = () => {
           <section className="py-12 md:py-16 bg-muted/30">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 md:mb-12">Popular Tournament Locations</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 md:mb-12">Explore Tournament Options</h3>
+              
+              {/* Hub Pages Links */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Users className="w-5 h-5" />
+                      Youth Tournaments
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      Age-appropriate tournaments from U6 to U21 with proper development focus.
+                    </p>
+                    <Button className="w-full" size="sm" asChild>
+                      <Link to="/youth-tournaments">
+                        Browse Youth Tournaments
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Grid className="w-5 h-5" />
+                      Tournament Formats
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      Compare 3v3, 5v5, 7v7, 9v9, and 11v11 formats for all age groups.
+                    </p>
+                    <Button className="w-full" size="sm" asChild>
+                      <Link to="/tournament-formats">
+                        View Format Guide
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <MapPin className="w-5 h-5" />
+                      Tournament Regions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      Explore tournaments across England, Scotland, Wales, and Northern Ireland.
+                    </p>
+                    <Button className="w-full" size="sm" asChild>
+                      <Link to="/regions">
+                        Browse by Region
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <h4 className="text-lg font-semibold text-center mb-6">Popular Tournament Cities</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {[
                   { name: 'London', slug: 'london' },

@@ -176,6 +176,78 @@ const FAQ = () => {
           </div>
         </div>
       </section>
+
+      {/* FAQPage Schema for SEO */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqData.map((faq, index) => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.answer
+            }
+          }))
+        })
+      }} />
+
+      {/* Internal Links to Hub Pages */}
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <h2 className="text-2xl font-bold text-center mb-8">Explore More</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Youth Tournaments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4 text-sm">
+                  Browse age-specific tournaments from U6 to U21 across the UK.
+                </p>
+                <Button className="w-full" size="sm" asChild>
+                  <Link to="/youth-tournaments">
+                    View Youth Tournaments
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Tournament Formats</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4 text-sm">
+                  Learn about 3v3, 5v5, 7v7, 9v9, and 11v11 tournament formats.
+                </p>
+                <Button className="w-full" size="sm" asChild>
+                  <Link to="/tournament-formats">
+                    View Format Guide
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Tournament Regions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4 text-sm">
+                  Explore tournaments by region across England, Scotland, Wales, and Northern Ireland.
+                </p>
+                <Button className="w-full" size="sm" asChild>
+                  <Link to="/regions">
+                    Browse by Region
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
