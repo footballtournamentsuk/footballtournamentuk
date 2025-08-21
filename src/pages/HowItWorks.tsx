@@ -17,7 +17,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { trackEvent } from '@/hooks/useAnalyticsEvents';
-import heroImage from '@/assets/hero-football.jpg';
+import heroImage from '@/assets/how-it-works-hero.webp';
+import ogImage from '@/assets/how-it-works-og.jpg';
 
 const HowItWorks = () => {
   const { user } = useAuth();
@@ -176,53 +177,83 @@ const HowItWorks = () => {
         isHomePage={false}
       />
       
+      {/* Custom meta tags for social sharing */}
+      <meta property="og:image" content={`https://footballtournamentsuk.co.uk${ogImage}`} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:type" content="image/jpeg" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={`https://footballtournamentsuk.co.uk${ogImage}`} />
+      
       <script type="application/ld+json">
         {JSON.stringify(structuredData)}
       </script>
 
+      {/* Skip to content link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md focus:outline-none focus:ring-2 focus:ring-primary-foreground"
+      >
+        Skip to content
+      </a>
+
       <div className="min-h-screen">
         {/* Hero Section */}
         <section 
-          className="relative min-h-[60vh] flex items-center justify-center bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage})` }}
+          className="relative min-h-[60vh] flex items-center justify-center overflow-hidden"
+          role="banner"
         >
+          {/* Optimized hero image with proper loading attributes */}
+          <img 
+            src={heroImage}
+            alt="Young football players in action on grass field representing UK youth football tournaments"
+            className="absolute inset-0 w-full h-full object-cover"
+            width="1920"
+            height="1080"
+            loading="eager"
+            fetchPriority="high"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/60" />
-          <div className="relative z-10 container mx-auto px-4 text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 md:mb-6 leading-tight">
               How Football Tournaments UK Works
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
               Find youth football near you — or list your tournament for free.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6 md:mb-8 z-20 relative">
               <Button 
                 size="lg" 
                 variant="secondary"
                 onClick={() => handleCTAClick('organisers_list', user ? '/profile?tab=tournaments' : '/auth')}
+                aria-label="List your football tournament for free"
               >
                 List Free Tournament
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="bg-white/10 border-white text-white hover:bg-white hover:text-primary"
+                className="bg-white/10 border-white text-white hover:bg-white hover:text-primary transition-all duration-200"
                 onClick={() => handleCTAClick('find_tournaments', '/tournaments')}
+                aria-label="Find football tournaments near you"
               >
                 Find Tournaments
               </Button>
             </div>
             
             {/* Quick navigation to sections */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center text-sm z-20 relative">
               <button 
                 onClick={() => handleAnchorClick('organisers')}
-                className="text-white/90 hover:text-white underline decoration-dotted"
+                className="text-white/90 hover:text-white underline decoration-dotted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:rounded px-2 py-1"
+                aria-label="Jump to organiser information section"
               >
                 For Organisers →
               </button>
               <button 
                 onClick={() => handleAnchorClick('parents-teams')}
-                className="text-white/90 hover:text-white underline decoration-dotted"
+                className="text-white/90 hover:text-white underline decoration-dotted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:rounded px-2 py-1"
+                aria-label="Jump to parents and teams information section"
               >
                 For Parents & Teams →
               </button>
@@ -230,14 +261,16 @@ const HowItWorks = () => {
           </div>
         </section>
 
-        {/* For Organisers Section */}
-        <section id="organisers" className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
+        {/* Main Content */}
+        <main id="main-content">
+          {/* For Organisers Section */}
+          <section id="organisers" className="py-16 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">For Tournament Organisers</h2>
-                <p className="text-xl text-muted-foreground">
-                  List your youth football tournament and reach thousands of teams across the UK — completely free.
+              <div className="text-center mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">For Tournament Organisers</h2>
+                <p className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto">
+                  List your youth football tournament and reach thousands of teams across the UK — completely free. Whether you're running <Link to="/tournaments?format=3v3" className="text-primary hover:underline">3v3 tournaments</Link>, <Link to="/tournaments?format=5v5" className="text-primary hover:underline">5v5 leagues</Link>, <Link to="/tournaments?format=7v7" className="text-primary hover:underline">7v7 competitions</Link>, or <Link to="/tournaments?format=11v11" className="text-primary hover:underline">11v11 matches</Link> across cities like <Link to="/tournaments/london" className="text-primary hover:underline">London</Link>, <Link to="/tournaments/manchester" className="text-primary hover:underline">Manchester</Link>, and <Link to="/tournaments/birmingham" className="text-primary hover:underline">Birmingham</Link>, we'll help you connect with teams nationwide.
                 </p>
               </div>
               
@@ -268,14 +301,14 @@ const HowItWorks = () => {
           </div>
         </section>
 
-        {/* For Parents & Teams Section */}
-        <section id="parents-teams" className="py-20">
-          <div className="container mx-auto px-4">
+          {/* For Parents & Teams Section */}
+          <section id="parents-teams" className="py-16 md:py-20">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">For Parents & Teams</h2>
-                <p className="text-xl text-muted-foreground">
-                  Discover the perfect football tournaments for your young players across the UK.
+              <div className="text-center mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">For Parents & Teams</h2>
+                <p className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto">
+                  Discover the perfect football tournaments for your young players across the UK. From <Link to="/tournaments?format=3v3" className="text-primary hover:underline">small-sided 3v3 games</Link> perfect for younger players, to competitive <Link to="/tournaments?format=9v9" className="text-primary hover:underline">9v9</Link> and <Link to="/tournaments?format=11v11" className="text-primary hover:underline">full 11v11 tournaments</Link>. Find opportunities in major cities like <Link to="/tournaments/liverpool" className="text-primary hover:underline">Liverpool</Link>, <Link to="/tournaments/leeds" className="text-primary hover:underline">Leeds</Link>, <Link to="/tournaments/glasgow" className="text-primary hover:underline">Glasgow</Link>, and <Link to="/tournaments/bristol" className="text-primary hover:underline">Bristol</Link>.
                 </p>
               </div>
               
@@ -307,11 +340,11 @@ const HowItWorks = () => {
           </div>
         </section>
 
-        {/* Mini FAQ Section */}
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
+          {/* Mini FAQ Section */}
+          <section className="py-16 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Frequently Asked Questions</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12 md:mb-16">Frequently Asked Questions</h2>
               
               <div className="space-y-6">
                 {faqs.map((faq, index) => (
@@ -342,12 +375,12 @@ const HowItWorks = () => {
           </div>
         </section>
 
-        {/* Support Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
+          {/* Support Section */}
+          <section className="py-16 md:py-20">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Need Help?</h2>
-              <p className="text-xl text-muted-foreground mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Need Help?</h2>
+              <p className="text-lg sm:text-xl text-muted-foreground mb-6 md:mb-8">
                 Our team is here to support you every step of the way.
               </p>
               
@@ -383,12 +416,12 @@ const HowItWorks = () => {
           </div>
         </section>
 
-        {/* Internal Linking Section */}
-        <section className="py-16 bg-muted/30">
-          <div className="container mx-auto px-4">
+          {/* Internal Linking Section */}
+          <section className="py-12 md:py-16 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <h3 className="text-2xl font-bold text-center mb-12">Popular Tournament Locations</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 md:mb-12">Popular Tournament Locations</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {[
                   { name: 'London', slug: 'london' },
                   { name: 'Manchester', slug: 'manchester' },
@@ -402,15 +435,17 @@ const HowItWorks = () => {
                   <Link 
                     key={city.slug}
                     to={`/tournaments/${city.slug}`}
-                    className="block p-4 bg-card hover:bg-accent rounded-lg text-center transition-colors"
+                    className="block p-3 md:p-4 bg-card hover:bg-accent rounded-lg text-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    aria-label={`View football tournaments in ${city.name}`}
                   >
-                    <span className="font-medium">{city.name} Tournaments</span>
+                    <span className="font-medium text-sm sm:text-base">{city.name} Tournaments</span>
                   </Link>
                 ))}
               </div>
             </div>
           </div>
         </section>
+        </main>
       </div>
     </>
   );
