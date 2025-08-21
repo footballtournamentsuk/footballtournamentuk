@@ -19,7 +19,27 @@ import {
 
 const Partners = () => {
   const handleBecomePartner = () => {
-    window.location.href = 'mailto:info@footballtournamentsuk.co.uk?subject=Partnership Inquiry';
+    const email = 'info@footballtournamentsuk.co.uk';
+    const subject = 'Partnership Inquiry - Football Tournaments UK';
+    const body = 'Hello,\n\nI am interested in discussing partnership opportunities with Football Tournaments UK.\n\nPlease contact me to arrange a discussion.\n\nBest regards,';
+    
+    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try to open email client
+    try {
+      window.open(mailtoUrl, '_self');
+    } catch (error) {
+      // Fallback: copy email to clipboard and show alert
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(email).then(() => {
+          alert(`Email client not available. Email address copied to clipboard: ${email}`);
+        }).catch(() => {
+          alert(`Please contact us at: ${email}`);
+        });
+      } else {
+        alert(`Please contact us at: ${email}`);
+      }
+    }
   };
 
   const benefits = [
