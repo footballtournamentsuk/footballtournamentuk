@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PartnersCarousel from '@/components/PartnersCarousel';
 import { SEO } from '@/components/SEO';
+import { SupportModal } from '@/components/SupportModal';
+import { trackEvent } from '@/hooks/useAnalyticsEvents';
 import { 
   Trophy, 
   Users, 
@@ -18,28 +20,21 @@ import {
 } from 'lucide-react';
 
 const Partners = () => {
+  const [isPartnershipModalOpen, setIsPartnershipModalOpen] = useState(false);
+
   const handleBecomePartner = () => {
-    const email = 'info@footballtournamentsuk.co.uk';
-    const subject = 'Partnership Inquiry - Football Tournaments UK';
-    const body = 'Hello,\n\nI am interested in discussing partnership opportunities with Football Tournaments UK.\n\nPlease contact me to arrange a discussion.\n\nBest regards,';
-    
-    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Try to open email client
-    try {
-      window.open(mailtoUrl, '_self');
-    } catch (error) {
-      // Fallback: copy email to clipboard and show alert
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(email).then(() => {
-          alert(`Email client not available. Email address copied to clipboard: ${email}`);
-        }).catch(() => {
-          alert(`Please contact us at: ${email}`);
-        });
-      } else {
-        alert(`Please contact us at: ${email}`);
-      }
-    }
+    trackEvent('partners_cta_click', { cta: 'become_partner' });
+    setIsPartnershipModalOpen(true);
+  };
+
+  const handleStartDiscussion = () => {
+    trackEvent('partners_cta_click', { cta: 'start_discussion' });
+    setIsPartnershipModalOpen(true);
+  };
+
+  const handleRequestInfo = () => {
+    trackEvent('partners_cta_click', { cta: 'request_info' });
+    setIsPartnershipModalOpen(true);
   };
 
   const benefits = [
@@ -265,7 +260,7 @@ const Partners = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
-                  onClick={handleBecomePartner}
+                  onClick={handleStartDiscussion}
                   size="lg"
                   className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold px-8 py-4 text-lg gap-2 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
                 >
@@ -275,18 +270,24 @@ const Partners = () => {
                 <Button 
                   variant="outline" 
                   size="lg"
-                  asChild
+                  onClick={handleRequestInfo}
                   className="px-8 py-4 text-lg"
                 >
-                  <a href="mailto:info@footballtournamentsuk.co.uk?subject=Partnership Information Request">
-                    Request More Information
-                  </a>
+                  Request More Information
                 </Button>
               </div>
             </div>
           </div>
         </section>
       </div>
+
+      {/* Partnership Modal */}
+      <SupportModal
+        isOpen={isPartnershipModalOpen}
+        onClose={() => setIsPartnershipModalOpen(false)}
+        defaultSubject="Partnership Inquiry"
+        defaultCategory="Other"
+      />
     </>
   );
 };

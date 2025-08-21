@@ -13,9 +13,11 @@ import { supabase } from "@/integrations/supabase/client";
 interface SupportModalProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultSubject?: string;
+  defaultCategory?: string;
 }
 
-export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
+export const SupportModal = ({ isOpen, onClose, defaultSubject = "", defaultCategory = "" }: SupportModalProps) => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { toast } = useToast();
@@ -36,13 +38,13 @@ export const SupportModal = ({ isOpen, onClose }: SupportModalProps) => {
       setFormData({
         name: profile?.full_name || "",
         email: user?.email || "",
-        subject: "",
-        category: "",
+        subject: defaultSubject,
+        category: defaultCategory,
         message: "",
         honeypot: "",
       });
     }
-  }, [isOpen, profile?.full_name, user?.email]);
+  }, [isOpen, profile?.full_name, user?.email, defaultSubject, defaultCategory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
