@@ -9,57 +9,48 @@ import { SEO } from '@/components/SEO';
 const TournamentFormats = () => {
   const formats = [
     {
-      format: '3v3',
-      players: '3 vs 3',
-      ageGroups: 'U6-U8',
-      duration: '10-15 min matches',
-      description: 'Perfect introduction to competitive football for the youngest players',
-      benefits: ['More touches per player', 'Builds confidence', 'Fun-focused environment'],
-      searchUrl: '/tournaments?formats=3v3'
-    },
-    {
       format: '5v5',
       players: '5 vs 5',
-      ageGroups: 'U9-U10',
+      ageGroups: 'U6-U8',
       duration: '15-20 min matches',
-      description: 'Ideal format for developing technical skills and game understanding',
-      benefits: ['Enhanced ball control', 'Quick decision making', 'Team coordination'],
-      searchUrl: '/tournaments?formats=5v5'
+      description: 'Perfect introduction to competitive football for the youngest players',
+      benefits: ['More touches per player', 'Builds confidence', 'Fun-focused environment'],
+      searchUrl: '/tournaments?format=5v5'
     },
     {
       format: '7v7',
       players: '7 vs 7',
-      ageGroups: 'U11-U12',
+      ageGroups: 'U9-U10',
       duration: '20-25 min halves',
-      description: 'Bridge between small-sided and full football with tactical development',
-      benefits: ['Positional awareness', 'Tactical understanding', 'Role specialization'],
-      searchUrl: '/tournaments?formats=7v7'
+      description: 'Ideal format for developing technical skills and game understanding',
+      benefits: ['Enhanced ball control', 'Quick decision making', 'Team coordination'],
+      searchUrl: '/tournaments?format=7v7'
     },
     {
       format: '9v9',
       players: '9 vs 9',
-      ageGroups: 'U13-U14',
+      ageGroups: 'U11-U12',
       duration: '25-30 min halves',
-      description: 'Advanced tactical play with increased field coverage and strategy',
-      benefits: ['Complex tactics', 'Stamina building', 'Advanced positioning'],
-      searchUrl: '/tournaments?formats=9v9'
+      description: 'Bridge between small-sided and full football with tactical development',
+      benefits: ['Positional awareness', 'Tactical understanding', 'Role specialization'],
+      searchUrl: '/tournaments?format=9v9'
     },
     {
       format: '11v11',
       players: '11 vs 11',
-      ageGroups: 'U15+',
+      ageGroups: 'U13+',
       duration: '35-45 min halves',
       description: 'Full-scale football matching professional game conditions',
       benefits: ['Complete game experience', 'Physical development', 'Adult preparation'],
-      searchUrl: '/tournaments?formats=11v11'
+      searchUrl: '/tournaments?format=11v11'
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="Football Tournament Formats | 3v3, 5v5, 7v7, 9v9, 11v11"
-        description="Complete guide to youth football tournament formats from 3v3 to 11v11. Learn about age groups, match durations, and benefits of each format for player development."
+        title="Football Tournament Formats | 5v5, 7v7, 9v9, 11v11"
+        description="Complete guide to youth football tournament formats from 5v5 to 11v11. Learn about age groups, match durations, and benefits of each format for player development."
         canonicalUrl="https://footballtournamentsuk.co.uk/tournament-formats"
       />
 
@@ -88,7 +79,7 @@ const TournamentFormats = () => {
           </h1>
           <p className="text-xl text-primary-foreground/80 max-w-3xl">
             Discover the different tournament formats available for youth football teams. 
-            From 3v3 festivals to full 11v11 competitions, find the perfect format for your players' development.
+            From 5v5 festivals to full 11v11 competitions, find the perfect format for your players' development.
           </p>
         </div>
       </header>
@@ -155,11 +146,11 @@ const TournamentFormats = () => {
             <div className="prose prose-lg max-w-none">
               <p className="text-lg leading-relaxed mb-6">
                 The tournament format significantly impacts player development and enjoyment. Smaller formats like 
-                <Link to="/tournaments?formats=3v3" className="text-primary hover:underline mx-1">3v3</Link> and 
-                <Link to="/tournaments?formats=5v5" className="text-primary hover:underline mx-1">5v5</Link> 
-                provide more ball touches and encourage creativity, while larger formats like 
-                <Link to="/tournaments?formats=9v9" className="text-primary hover:underline mx-1">9v9</Link> and 
-                <Link to="/tournaments?formats=11v11" className="text-primary hover:underline mx-1">11v11</Link> 
+                <Link to="/tournaments?format=5v5" className="text-primary hover:underline mx-1">5v5</Link> and 
+                <Link to="/tournaments?format=7v7" className="text-primary hover:underline mx-1">7v7</Link> 
+                provide more ball touches and encourage creativity, while larger formats like
+                <Link to="/tournaments?format=9v9" className="text-primary hover:underline mx-1">9v9</Link> and 
+                <Link to="/tournaments?format=11v11" className="text-primary hover:underline mx-1">11v11</Link>
                 focus on tactical awareness and positional play.
               </p>
               

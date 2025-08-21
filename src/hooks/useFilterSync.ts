@@ -53,7 +53,7 @@ export const useFilterSync = () => {
     }
     
     // Parse array filters
-    const format = searchParams.get('format');
+    const format = searchParams.get('format') || searchParams.get('formats'); // Support both for compatibility
     if (format) {
       urlFilters.format = format.split(',');
     }

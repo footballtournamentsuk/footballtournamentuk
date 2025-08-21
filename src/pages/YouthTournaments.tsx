@@ -8,11 +8,36 @@ import { SEO } from '@/components/SEO';
 
 const YouthTournaments = () => {
   const ageGroups = [
-    { age: 'U6-U8', description: 'Fun festivals and small-sided games', format: '3v3' },
-    { age: 'U9-U10', description: '5v5 tournaments with shorter matches', format: '5v5' },
-    { age: 'U11-U12', description: '7v7 competitive tournaments', format: '7v7' },
-    { age: 'U13-U14', description: '9v9 development focused', format: '9v9' },
-    { age: 'U15-U21', description: 'Full 11v11 competitive matches', format: '11v11' },
+    { 
+      age: 'U6-U8', 
+      description: 'Small-sided games with focus on fun and skill development', 
+      format: '5v5',
+      ages: 'U6,U7,U8'
+    },
+    { 
+      age: 'U9-U10', 
+      description: '7v7 tournaments with tactical development', 
+      format: '7v7',
+      ages: 'U9,U10'
+    },
+    { 
+      age: 'U11-U12', 
+      description: '9v9 competitive tournaments with advanced tactics', 
+      format: '9v9',
+      ages: 'U11,U12'
+    },
+    { 
+      age: 'U13-U14', 
+      description: 'Full 11v11 competitive matches', 
+      format: '11v11',
+      ages: 'U13,U14'
+    },
+    { 
+      age: 'U15-U21', 
+      description: 'Elite level 11v11 competitive tournaments', 
+      format: '11v11',
+      ages: 'U15,U16,U17,U18,U19,U20,U21'
+    },
   ];
 
   const topCities = [
@@ -72,7 +97,7 @@ const YouthTournaments = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>{group.age}</span>
-                    <Link to={`/tournaments?formats=${group.format.toLowerCase()}`}>
+                    <Link to={`/tournaments?format=${group.format.toLowerCase()}`}>
                       <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
                         {group.format}
                       </Badge>
@@ -82,7 +107,7 @@ const YouthTournaments = () => {
                 <CardContent>
                   <p className="text-muted-foreground mb-4">{group.description}</p>
                   <Button variant="outline" size="sm" asChild>
-                    <Link to={`/tournaments?formats=${group.format.toLowerCase()}`}>
+                    <Link to={`/tournaments?format=${group.format.toLowerCase()}&ageGroups=${group.ages}`}>
                       Find {group.format} Tournaments
                     </Link>
                   </Button>
