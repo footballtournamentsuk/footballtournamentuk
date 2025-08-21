@@ -192,7 +192,7 @@ const Regions = () => {
                 Each region offers unique opportunities for player development, from the competitive metropolitan 
                 leagues in <Link to="/city/london" className="text-primary hover:underline">London</Link> and{' '}
                 <Link to="/city/manchester" className="text-primary hover:underline">Manchester</Link> to the
-                community-focused festivals in smaller cities across <Link to="/city/glasgow" className="text-primary hover:underline">Scotland</Link> 
+                community-focused festivals in smaller cities across <Link to="/city/glasgow" className="text-primary hover:underline">Scotland</Link>{' '}
                 and <Link to="/city/cardiff" className="text-primary hover:underline">Wales</Link>.
               </p>
               
