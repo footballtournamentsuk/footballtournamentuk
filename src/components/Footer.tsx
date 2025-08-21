@@ -77,18 +77,34 @@ export const Footer = () => {
               </div>
             </div>
 
-            {/* Other Links */}
-            <div>
-              <h4 className="font-semibold mb-3 text-white">More Info</h4>
+            {/* Explore Links */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-white">Explore</h4>
               <div className="flex flex-wrap gap-4">
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/regions">Regions</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/youth-tournaments">Youth Tournaments</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/tournament-formats">Tournament Formats</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Help & Info Links */}
+            <div>
+              <h4 className="font-semibold mb-3 text-white">Help & Info</h4>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/how-it-works">How It Works</Link>
+                </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/about">About Us</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/support">Support Us</Link>
-                </Button>
-                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
-                  <Link to="/how-it-works">How It Works</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/faq">FAQ</Link>

@@ -1,12 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ArrowLeft, Mail, Phone } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SEO } from '@/components/SEO';
+import { trackEvent } from '@/hooks/useAnalyticsEvents';
 
 const FAQ = () => {
+  const navigate = useNavigate();
+
+  const handleContactSupport = () => {
+    trackEvent('faq_contact_support_click', {
+      source: 'faq_page',
+      timestamp: Date.now()
+    });
+    navigate('/support');
+  };
+
   const faqData = [
     {
       question: "What is UK Youth Football?",
@@ -147,11 +158,15 @@ const FAQ = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="default" size="lg" className="flex items-center gap-2" asChild>
-              <a href="mailto:info@footballtournamentsuk.co.uk">
-                <Mail className="w-5 h-5" />
-                Contact Support
-              </a>
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="flex items-center gap-2"
+              onClick={handleContactSupport}
+              aria-label="Contact our support team"
+            >
+              <Mail className="w-5 h-5" />
+              Contact Support
             </Button>
             <Button variant="outline" size="lg" asChild>
               <Link to="/">

@@ -58,7 +58,7 @@ export const useFilterSync = () => {
       urlFilters.format = format.split(',');
     }
     
-    const ageGroups = searchParams.get('ageGroups');
+    const ageGroups = searchParams.get('ageGroups') || searchParams.get('ages'); // Support both for compatibility
     if (ageGroups) {
       urlFilters.ageGroups = ageGroups.split(',') as any;
     }
@@ -76,6 +76,12 @@ export const useFilterSync = () => {
     const regions = searchParams.get('regions');
     if (regions) {
       urlFilters.regions = regions.split(',');
+    }
+    
+    // Also support singular 'region' parameter for region pages
+    const region = searchParams.get('region');
+    if (region && !urlFilters.regions) {
+      urlFilters.regions = [region];
     }
     
     const status = searchParams.get('status');
@@ -139,6 +145,8 @@ export const useFilterSync = () => {
     }
     if (newFilters.ageGroups?.length) {
       params.set('ageGroups', newFilters.ageGroups.join(','));
+      // Also set 'ages' for compatibility with hub page deep links
+      params.set('ages', newFilters.ageGroups.join(','));
     }
     if (newFilters.teamTypes?.length) {
       params.set('teamTypes', newFilters.teamTypes.join(','));
@@ -148,6 +156,10 @@ export const useFilterSync = () => {
     }
     if (newFilters.regions?.length) {
       params.set('regions', newFilters.regions.join(','));
+      // Also set 'region' for single region compatibility
+      if (newFilters.regions.length === 1) {
+        params.set('region', newFilters.regions[0]);
+      }
     }
     if (newFilters.status?.length) {
       params.set('status', newFilters.status.join(','));
