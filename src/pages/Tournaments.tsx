@@ -17,6 +17,7 @@ import { Tournament, TournamentFilters as Filters } from '@/types/tournament';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
+import { AlertSubscriptionBanner } from '@/components/alerts/AlertSubscriptionBanner';
 
 // Haversine formula to calculate distance between two coordinates in miles
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {

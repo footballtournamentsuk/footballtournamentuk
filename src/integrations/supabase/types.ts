@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_deliveries: {
+        Row: {
+          alert_id: string | null
+          error: string | null
+          id: string
+          item_count: number
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          alert_id?: string | null
+          error?: string | null
+          id?: string
+          item_count: number
+          sent_at?: string | null
+          status: string
+        }
+        Update: {
+          alert_id?: string | null
+          error?: string | null
+          id?: string
+          item_count?: number
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_deliveries_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "tournament_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -230,6 +265,54 @@ export type Database = {
           source?: string
           text?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      tournament_alerts: {
+        Row: {
+          consent_source: string
+          consent_timestamp: string
+          created_at: string | null
+          email: string
+          filters: Json
+          frequency: string
+          id: string
+          is_active: boolean | null
+          last_sent_at: string | null
+          management_token: string
+          updated_at: string | null
+          verification_token: string
+          verified_at: string | null
+        }
+        Insert: {
+          consent_source: string
+          consent_timestamp?: string
+          created_at?: string | null
+          email: string
+          filters: Json
+          frequency: string
+          id?: string
+          is_active?: boolean | null
+          last_sent_at?: string | null
+          management_token: string
+          updated_at?: string | null
+          verification_token: string
+          verified_at?: string | null
+        }
+        Update: {
+          consent_source?: string
+          consent_timestamp?: string
+          created_at?: string | null
+          email?: string
+          filters?: Json
+          frequency?: string
+          id?: string
+          is_active?: boolean | null
+          last_sent_at?: string | null
+          management_token?: string
+          updated_at?: string | null
+          verification_token?: string
+          verified_at?: string | null
         }
         Relationships: []
       }

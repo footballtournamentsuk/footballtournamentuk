@@ -33,6 +33,7 @@ import Verify from "./pages/Verify";
 import CheckEmail from "./pages/CheckEmail";
 import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
+import AlertManagement from "./pages/AlertManagement";
 import HowItWorks from "./pages/HowItWorks";
 import YouthTournaments from "./pages/YouthTournaments";
 import TournamentFormats from "./pages/TournamentFormats";
@@ -242,6 +243,7 @@ const App = () => (
              <Route path="/tournaments/:city" element={<TournamentCityRedirect />} />
              <Route path="/policies" element={<Policies />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="/alerts/manage/:managementToken" element={<AlertManagement />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
             </Routes>
