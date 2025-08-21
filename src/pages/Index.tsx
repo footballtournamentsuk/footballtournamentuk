@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import TournamentCard from '@/components/TournamentCard';
 import { PullToRefreshIndicator } from '@/components/PullToRefreshIndicator';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
@@ -300,6 +301,66 @@ const Index = () => {
 
       {/* Organizer CTA Section */}
       <OrganizerCTA />
+
+      {/* Popular Sections */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Popular Sections</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="text-primary mb-4">
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Youth Tournaments</h3>
+              <p className="text-muted-foreground mb-4">
+                Find age-appropriate tournaments from U6 to U21 with proper supervision and development focus.
+              </p>
+              <Button className="w-full" asChild>
+                <Link to="/youth-tournaments">
+                  Browse Youth Tournaments
+                </Link>
+              </Button>
+            </div>
+
+            <div className="bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="text-primary mb-4">
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Tournament Formats</h3>
+              <p className="text-muted-foreground mb-4">
+                Compare 3v3, 5v5, 7v7, 9v9, and 11v11 formats to find the best fit for your team's development.
+              </p>
+              <Button className="w-full" asChild>
+                <Link to="/tournament-formats">
+                  View Formats Guide
+                </Link>
+              </Button>
+            </div>
+
+            <div className="bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="text-primary mb-4">
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Tournament Regions</h3>
+              <p className="text-muted-foreground mb-4">
+                Explore tournaments across England, Scotland, Wales, and Northern Ireland by region and city.
+              </p>
+              <Button className="w-full" asChild>
+                <Link to="/regions">
+                  Browse by Region
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Map Section */}
       <section id="tournament-map" className="py-16 bg-surface">

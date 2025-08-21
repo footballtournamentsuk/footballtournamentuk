@@ -34,6 +34,9 @@ import CheckEmail from "./pages/CheckEmail";
 import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
 import HowItWorks from "./pages/HowItWorks";
+import YouthTournaments from "./pages/YouthTournaments";
+import TournamentFormats from "./pages/TournamentFormats";
+import Regions from "./pages/Regions";
 import { Footer } from "./components/Footer";
 import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -229,6 +232,9 @@ const App = () => (
             <Route path="/partners" element={<Partners />} />
              <Route path="/faq" element={<FAQ />} />
              <Route path="/how-it-works" element={<HowItWorks />} />
+             <Route path="/youth-tournaments" element={<YouthTournaments />} />
+             <Route path="/tournament-formats" element={<TournamentFormats />} />
+             <Route path="/regions" element={<Regions />} />
              <Route path="/admin" element={<Admin />} />
              <Route path="/teams/:id" element={<TeamView />} />
              <Route path="/city/:citySlug" element={<CityTournaments />} />

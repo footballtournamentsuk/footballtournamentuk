@@ -1,0 +1,264 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, MapPin, Users, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SEO } from '@/components/SEO';
+
+const Regions = () => {
+  const regions = [
+    {
+      name: 'England',
+      description: 'The heartland of football with the highest concentration of youth tournaments',
+      cities: [
+        { name: 'London', slug: 'london', tournaments: '50+' },
+        { name: 'Manchester', slug: 'manchester', tournaments: '35+' },
+        { name: 'Birmingham', slug: 'birmingham', tournaments: '30+' },
+        { name: 'Liverpool', slug: 'liverpool', tournaments: '25+' },
+        { name: 'Leeds', slug: 'leeds', tournaments: '20+' },
+        { name: 'Newcastle', slug: 'newcastle-upon-tyne', tournaments: '18+' },
+        { name: 'Sheffield', slug: 'sheffield', tournaments: '15+' },
+        { name: 'Bristol', slug: 'bristol', tournaments: '12+' },
+        { name: 'Nottingham', slug: 'nottingham', tournaments: '10+' },
+        { name: 'Leicester', slug: 'leicester', tournaments: '10+' },
+        { name: 'Brighton', slug: 'brighton', tournaments: '8+' },
+        { name: 'Portsmouth', slug: 'portsmouth', tournaments: '8+' },
+        { name: 'Southampton', slug: 'southampton', tournaments: '7+' },
+        { name: 'Oxford', slug: 'oxford', tournaments: '6+' },
+        { name: 'Cambridge', slug: 'cambridge', tournaments: '5+' },
+      ]
+    },
+    {
+      name: 'Scotland',
+      description: 'Rich football heritage with passionate grassroots tournaments across the country',
+      cities: [
+        { name: 'Glasgow', slug: 'glasgow', tournaments: '20+' },
+        { name: 'Edinburgh', slug: 'edinburgh', tournaments: '15+' },
+      ]
+    },
+    {
+      name: 'Wales',
+      description: 'Growing youth football scene with excellent community-focused tournaments',
+      cities: [
+        { name: 'Cardiff', slug: 'cardiff', tournaments: '12+' },
+        { name: 'Swansea', slug: 'swansea', tournaments: '8+' },
+      ]
+    },
+    {
+      name: 'Northern Ireland',
+      description: 'Dedicated grassroots development with quality youth tournaments',
+      cities: [
+        { name: 'Belfast', slug: 'belfast', tournaments: '10+' },
+      ]
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SEO 
+        title="Football Tournaments by Region | England, Scotland, Wales"
+        description="Find youth football tournaments across all UK regions. Browse tournaments in England, Scotland, Wales, and Northern Ireland with comprehensive city-by-city listings."
+        canonicalUrl="https://footballtournamentsuk.co.uk/regions"
+      />
+
+      {/* Breadcrumbs */}
+      <nav className="container mx-auto px-4 py-4">
+        <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <li><Link to="/" className="hover:text-foreground">Home</Link></li>
+          <li>/</li>
+          <li className="text-foreground">Regions</li>
+        </ol>
+      </nav>
+
+      {/* Header */}
+      <header className="bg-primary text-primary-foreground py-12">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="ghost" size="sm" asChild className="text-primary-foreground hover:bg-primary-foreground/10">
+              <Link to="/">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Tournament Regions Directory
+          </h1>
+          <p className="text-xl text-primary-foreground/80 max-w-3xl">
+            Explore youth football tournaments across the United Kingdom. From bustling English cities 
+            to Scottish highlands, Welsh valleys, and Northern Ireland's passionate communities.
+          </p>
+        </div>
+      </header>
+
+      {/* Overview Stats */}
+      <section className="py-12 bg-surface">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">4</div>
+              <div className="text-sm text-muted-foreground">Countries Covered</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">20+</div>
+              <div className="text-sm text-muted-foreground">Major Cities</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">300+</div>
+              <div className="text-sm text-muted-foreground">Active Tournaments</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">All</div>
+              <div className="text-sm text-muted-foreground">Age Groups</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Regions */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="space-y-12">
+            {regions.map((region) => (
+              <div key={region.name}>
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold mb-4">{region.name}</h2>
+                  <p className="text-lg text-muted-foreground max-w-3xl">{region.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {region.cities.map((city) => (
+                    <Card key={city.slug} className="hover:shadow-md transition-shadow">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          <span>{city.name}</span>
+                          <span className="text-sm text-muted-foreground font-normal">
+                            {city.tournaments}
+                          </span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                            <Calendar className="w-4 h-4" />
+                            <span>Active tournaments</span>
+                          </div>
+                          <Button size="sm" variant="outline" asChild>
+                            <Link to={`/city/${city.slug}`}>
+                              View
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Regional Information */}
+      <section className="py-16 bg-surface">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <h2 className="text-3xl font-bold text-center mb-12">UK Football Tournament Landscape</h2>
+          <div className="prose prose-lg max-w-none">
+            <p className="text-lg leading-relaxed mb-6">
+              The United Kingdom boasts one of the world's most comprehensive youth football tournament networks. 
+              Each region offers unique opportunities for player development, from the competitive metropolitan 
+              leagues in <Link to="/city/london" className="text-primary hover:underline">London</Link> and 
+              <Link to="/city/manchester" className="text-primary hover:underline">Manchester</Link> to the 
+              community-focused festivals in smaller cities across <Link to="/city/glasgow" className="text-primary hover:underline">Scotland</Link> 
+              and <Link to="/city/cardiff" className="text-primary hover:underline">Wales</Link>.
+            </p>
+            
+            <h3 className="text-2xl font-bold mb-4">Regional Characteristics</h3>
+            <p className="leading-relaxed mb-6">
+              <strong>England</strong> leads in tournament quantity and variety, with major cities hosting both 
+              grassroots festivals and elite competitions. <strong>Scotland</strong> emphasizes technical 
+              development and community engagement, while <strong>Wales</strong> focuses on inclusive participation 
+              and player welfare. <strong>Northern Ireland</strong> combines passionate local support with 
+              high-quality coaching and facilities.
+            </p>
+            
+            <h3 className="text-2xl font-bold mb-4">Finding Local Opportunities</h3>
+            <p className="leading-relaxed mb-6">
+              Each region maintains its own tournament calendar aligned with local school holidays and weather 
+              patterns. Browse city-specific pages to discover tournaments that match your team's travel 
+              capabilities and competitive aspirations. Many tournaments offer accommodation recommendations 
+              and travel packages for visiting teams.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Access */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Quick Access</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Youth Tournaments
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Age-specific tournaments designed for player development and enjoyment.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/youth-tournaments">
+                    Browse Youth Tournaments
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Tournament Formats
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Compare different formats from 3v3 to 11v11 for all age groups.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/tournament-formats">
+                    View Formats Guide
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  All Tournaments
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Search all available tournaments with advanced filtering options.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/tournaments">
+                    Search Tournaments
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Regions;
