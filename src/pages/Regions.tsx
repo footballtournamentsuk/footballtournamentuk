@@ -55,7 +55,7 @@ const Regions = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="Football Tournaments by Region | England, Scotland, Wales"
+        title="Football Tournaments by Region | England, Scotland, Wales, Northern Ireland"
         description="Find youth football tournaments across all UK regions. Browse tournaments in England, Scotland, Wales, and Northern Ireland with comprehensive city-by-city listings."
         canonicalUrl="https://footballtournamentsuk.co.uk/regions"
       />

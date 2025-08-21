@@ -173,7 +173,7 @@ const HowItWorks = () => {
       <SEO
         title="How Football Tournaments UK Works | Youth Football Across the UK"
         description="Learn how to find youth football tournaments or list your event free. Simple steps for organisers, parents & teams across the UK."
-        canonicalUrl="/how-it-works"
+        canonicalUrl="https://footballtournamentsuk.co.uk/how-it-works"
         isHomePage={false}
       />
       

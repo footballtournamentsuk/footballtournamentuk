@@ -48,9 +48,9 @@ const TournamentFormats = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Football Tournament Formats | 5v5, 7v7, 9v9, 11v11"
-        description="Complete guide to youth football tournament formats from 5v5 to 11v11. Learn about age groups, match durations, and benefits of each format for player development."
+      <SEO
+        title="Football Tournament Formats | 3v3, 5v5, 7v7, 9v9, 11v11"
+        description="Complete guide to youth football tournament formats from 3v3 to 11v11. Learn about age groups, match durations, and benefits of each format for player development."
         canonicalUrl="https://footballtournamentsuk.co.uk/tournament-formats"
       />
 

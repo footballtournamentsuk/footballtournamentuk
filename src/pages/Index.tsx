@@ -239,7 +239,7 @@ const Index = () => {
       <SEO
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
         description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."
-        canonicalUrl="/"
+        canonicalUrl="https://footballtournamentsuk.co.uk/"
         tournaments={upcomingTournaments.slice(0, 5)}
         isHomePage={true}
       />
