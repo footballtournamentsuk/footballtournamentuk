@@ -25,6 +25,7 @@ import TournamentDetails from "./pages/TournamentDetails";
 import CityTournaments from "./pages/CityTournaments";
 import FAQ from "./pages/FAQ";
 import TournamentRouter from "./components/TournamentRouter";
+import { TournamentCityRedirect } from "./components/RedirectRoutes";
 import Policies from "./pages/Policies";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
@@ -230,9 +231,10 @@ const App = () => (
              <Route path="/how-it-works" element={<HowItWorks />} />
              <Route path="/admin" element={<Admin />} />
              <Route path="/teams/:id" element={<TeamView />} />
-            <Route path="/city/:citySlug" element={<CityTournaments />} />
-            <Route path="/tournaments/:param" element={<TournamentRouter />} />
-            <Route path="/policies" element={<Policies />} />
+             <Route path="/city/:citySlug" element={<CityTournaments />} />
+             {/* 301 redirects from old /tournaments/{city} URLs to new /city/{slug} format */}
+             <Route path="/tournaments/:city" element={<TournamentCityRedirect />} />
+             <Route path="/policies" element={<Policies />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

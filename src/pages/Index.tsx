@@ -243,6 +243,29 @@ const Index = () => {
         isHomePage={true}
       />
       
+      {/* WebSite Schema with SitelinksSearchAction for Google sitelinks */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Football Tournaments UK",
+            "alternateName": "FTUK",
+            "url": "https://footballtournamentsuk.co.uk",
+            "description": "Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://footballtournamentsuk.co.uk/tournaments?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
+      
       {/* Hero Section */}
       <Hero onHeroSearch={(searchTerm, postcode, coordinates) => {
         const newFilters: Filters = { ...filters };

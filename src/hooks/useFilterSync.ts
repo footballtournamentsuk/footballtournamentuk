@@ -10,8 +10,8 @@ export const useFilterSync = () => {
   const parseFiltersFromUrl = useCallback((): TournamentFilters => {
     const urlFilters: TournamentFilters = {};
     
-    // Parse search
-    const search = searchParams.get('search');
+    // Parse search - support both 'search' and 'q' parameters (Google sitelinks compatibility)
+    const search = searchParams.get('search') || searchParams.get('q');
     if (search) {
       urlFilters.search = search;
     }
@@ -90,9 +90,13 @@ export const useFilterSync = () => {
   const updateUrlFromFilters = useCallback((newFilters: TournamentFilters) => {
     const params = new URLSearchParams();
     
-    // Add search
+    // Add search - use 'search' as primary, but also support 'q' for compatibility
     if (newFilters.search) {
       params.set('search', newFilters.search);
+      // Also set 'q' parameter for Google sitelinks compatibility if it was in the original URL
+      if (searchParams.get('q')) {
+        params.set('q', newFilters.search);
+      }
     }
     
     // Add location

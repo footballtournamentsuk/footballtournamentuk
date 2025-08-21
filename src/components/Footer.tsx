@@ -106,24 +106,24 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold mb-3 text-white">Major Cities</h4>
             <ul className="space-y-2 text-sm text-white/80">
-              <li><Link to="/tournaments/london" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">London Tournaments</Link></li>
-              <li><Link to="/tournaments/manchester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Manchester Tournaments</Link></li>
-              <li><Link to="/tournaments/birmingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Birmingham Tournaments</Link></li>
-              <li><Link to="/tournaments/liverpool" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Liverpool Tournaments</Link></li>
-              <li><Link to="/tournaments/leeds" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leeds Tournaments</Link></li>
-              <li><Link to="/tournaments/glasgow" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Glasgow Tournaments</Link></li>
+              <li><Link to="/city/london" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">London Tournaments</Link></li>
+              <li><Link to="/city/manchester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Manchester Tournaments</Link></li>
+              <li><Link to="/city/birmingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Birmingham Tournaments</Link></li>
+              <li><Link to="/city/liverpool" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Liverpool Tournaments</Link></li>
+              <li><Link to="/city/leeds" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leeds Tournaments</Link></li>
+              <li><Link to="/city/glasgow" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Glasgow Tournaments</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold mb-3 text-white">More Cities</h4>
             <ul className="space-y-2 text-sm text-white/80">
-              <li><Link to="/tournaments/newcastle-upon-tyne" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Newcastle Tournaments</Link></li>
-              <li><Link to="/tournaments/sheffield" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Sheffield Tournaments</Link></li>
-              <li><Link to="/tournaments/bristol" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Bristol Tournaments</Link></li>
-              <li><Link to="/tournaments/nottingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Nottingham Tournaments</Link></li>
-              <li><Link to="/tournaments/leicester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leicester Tournaments</Link></li>
-              <li><Link to="/tournaments/brighton" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Brighton Tournaments</Link></li>
+              <li><Link to="/city/newcastle" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Newcastle Tournaments</Link></li>
+              <li><Link to="/city/sheffield" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Sheffield Tournaments</Link></li>
+              <li><Link to="/city/bristol" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Bristol Tournaments</Link></li>
+              <li><Link to="/city/nottingham" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Nottingham Tournaments</Link></li>
+              <li><Link to="/city/leicester" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Leicester Tournaments</Link></li>
+              <li><Link to="/city/brighton" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-1 focus-visible:ring-emerald-400/50">Brighton Tournaments</Link></li>
             </ul>
           </div>
         </div>
