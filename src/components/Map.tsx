@@ -202,14 +202,14 @@ const Map: React.FC<MapProps> = ({
       // Create marker element with color based on tournament type
       const getMarkerColor = (type: string) => {
         const typeColors: Record<string, string> = {
-          'league': '#3b82f6', // blue
+          'league': '#2563eb', // blue-600
           'tournament': 'hsl(var(--primary))', // default primary
-          'camp': '#10b981', // green
-          'cup': '#f59e0b', // yellow/amber
-          'festival': '#8b5cf6', // purple
-          'showcase': '#f97316', // orange
-          'friendly': '#059669', // emerald
-          'holiday': '#ec4899', // pink
+          'camp': '#16a34a', // green-600
+          'cup': '#d97706', // amber-600
+          'festival': '#9333ea', // purple-600
+          'showcase': '#ea580c', // orange-600
+          'friendly': '#059669', // emerald-600
+          'holiday': '#dc2626', // red-600
         };
         return typeColors[type.toLowerCase()] || 'hsl(var(--primary))';
       };

@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Megaphone, Handshake, Users, Heart, Mail } from 'lucide-react';
 import { SEO } from '@/components/SEO';
+import { SupportModal } from '@/components/SupportModal';
+import { trackEvent } from '@/hooks/useAnalyticsEvents';
 import heroBackground from '@/assets/hero-football.jpg';
 const Support = () => {
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+
+  const handleContactSupport = () => {
+    trackEvent('support_contact_click', { source: 'support_page' });
+    setIsSupportModalOpen(true);
+  };
+
   return <div className="min-h-screen bg-background">
       <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="/support" />
       
@@ -96,10 +105,13 @@ const Support = () => {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               Whether you want to sponsor events, volunteer your time, or simply spread the word about our platform, we'd love to hear from you.
             </p>
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3" asChild>
-              <a href="mailto:info@footballtournamentsuk.co.uk">
-                Contact Us to Support
-              </a>
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+              onClick={handleContactSupport}
+              aria-label="Open contact support form"
+            >
+              Contact Us to Support
             </Button>
           </div>
 
@@ -116,6 +128,12 @@ const Support = () => {
           </div>
         </div>
       </section>
+
+      {/* Support Modal */}
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+      />
     </div>;
 };
 export default Support;

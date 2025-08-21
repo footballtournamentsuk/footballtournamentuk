@@ -53,16 +53,16 @@ const CityMapContainer: React.FC<CityMapContainerProps> = ({
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      'league': 'bg-blue-500 text-white',
-      'tournament': 'bg-primary text-primary-foreground',
-      'camp': 'bg-green-500 text-white',
-      'cup': 'bg-yellow-500 text-black',
-      'festival': 'bg-purple-500 text-white',
-      'showcase': 'bg-orange-500 text-white',
-      'friendly': 'bg-emerald-500 text-white',
-      'holiday': 'bg-pink-500 text-white',
+      'league': 'bg-blue-600 hover:bg-blue-700 text-white',
+      'tournament': 'bg-primary hover:bg-primary/90 text-primary-foreground',
+      'camp': 'bg-green-600 hover:bg-green-700 text-white',
+      'cup': 'bg-amber-500 hover:bg-amber-600 text-white',
+      'festival': 'bg-purple-600 hover:bg-purple-700 text-white',
+      'showcase': 'bg-orange-600 hover:bg-orange-700 text-white',
+      'friendly': 'bg-emerald-600 hover:bg-emerald-700 text-white',
+      'holiday': 'bg-pink-600 hover:bg-pink-700 text-white',
     };
-    return colors[type] || 'bg-muted text-muted-foreground';
+    return colors[type] || 'bg-muted hover:bg-muted/80 text-muted-foreground';
   };
 
   return (
