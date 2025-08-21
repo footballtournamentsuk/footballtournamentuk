@@ -166,7 +166,7 @@ const TournamentFormats = () => {
               <p className="leading-relaxed mb-6">
                 When choosing tournaments for your team, consider your players' experience level, development goals, 
                 and physical readiness. <Link to="/youth-tournaments" className="text-primary hover:underline">Youth tournaments</Link> 
-                often feature multiple formats in one event, allowing players to experience different styles of play 
+                {' '}often feature multiple formats in one event, allowing players to experience different styles of play
                 and find their preferred competitive environment.
               </p>
             </div>
