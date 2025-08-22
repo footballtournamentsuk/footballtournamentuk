@@ -165,8 +165,31 @@ const Tournaments = () => {
 
     // Apply regions filter
     if (filters.regions && filters.regions.length > 0) {
+      // Create a mapping from region slugs to actual region names
+      const regionSlugToName: Record<string, string[]> = {
+        'england': ['England', 'West Midlands', 'South West England', 'North West England', 'Yorkshire', 'East England', 'South England', 'North East England', 'East Midlands', 'London', 'South East England'],
+        'scotland': ['Scotland'],
+        'wales': ['Wales'],
+        'northern-ireland': ['Northern Ireland']
+      };
+      
+      // Get all possible region names for the selected region slugs
+      const targetRegions = filters.regions!.flatMap(regionSlug => {
+        // First try exact match (case-insensitive)
+        const exactMatch = Object.keys(regionSlugToName).find(key => 
+          key.toLowerCase() === regionSlug.toLowerCase()
+        );
+        if (exactMatch) {
+          return regionSlugToName[exactMatch];
+        }
+        // Fallback to treating it as a region name directly
+        return [regionSlug];
+      });
+      
       filtered = filtered.filter(tournament => 
-        filters.regions!.includes(tournament.location.region)
+        targetRegions.some(targetRegion => 
+          tournament.location.region.toLowerCase() === targetRegion.toLowerCase()
+        )
       );
     }
 
