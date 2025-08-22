@@ -155,27 +155,39 @@ export default function AlertManagement() {
       summary.push(`🔍 "${filters.search}"`);
     }
     
-    // Location with radius
+    // Location handling - improved to match modal format
     if (filters.location) {
       let locationText = '';
+      
       if (typeof filters.location === 'string') {
-        // Handle string location (legacy format)
+        // Handle legacy string format
         locationText = filters.location;
       } else if (filters.location.postcode) {
-        locationText = filters.location.postcode;
+        // Postcode with radius format: "M1 1WR (50 miles)"
+        const radius = filters.location.radius;
+        locationText = `${filters.location.postcode}${radius ? ` (${radius} miles)` : ''}`;
+      } else if (filters.location.city) {
+        // City with optional region: "Manchester" or "Manchester • Greater Manchester"  
+        locationText = filters.location.region && filters.location.region !== filters.location.city 
+          ? `${filters.location.city} • ${filters.location.region}`
+          : filters.location.city;
       } else if (filters.location.coordinates) {
+        // Fallback for coordinates
         locationText = `${filters.location.coordinates[1]?.toFixed(4)}, ${filters.location.coordinates[0]?.toFixed(4)}`;
       }
       
       if (locationText) {
-        const radius = typeof filters.location === 'object' ? filters.location.radius : null;
-        summary.push(`📍 ${locationText}${radius ? ` · within ${radius} miles` : ''}`);
+        summary.push(`📍 ${locationText}`);
       }
     }
     
-    // Handle city-based alerts (from Hero/city pages)
+    // Handle city-based alerts (from Hero/city pages) - improved format
     if (filters.city && !filters.location) {
-      summary.push(`📍 ${filters.city}`);
+      let cityText = filters.city;
+      if (filters.region && filters.region !== filters.city) {
+        cityText = `${filters.city} • ${filters.region}`;
+      }
+      summary.push(`📍 ${cityText}`);
     }
     
     // Date range
@@ -200,19 +212,27 @@ export default function AlertManagement() {
       }
     }
     
-    // Price range
-    if (filters.priceRange) {
-      const { min, max, includeFree } = filters.priceRange;
+    // Price range - improved to match modal format
+    if (filters.priceRange || (filters.minPrice !== undefined || filters.maxPrice !== undefined)) {
       let priceText = '💰 ';
       
-      // Check if min/max are valid numbers (not null, undefined, or NaN)
-      const validMin = typeof min === 'number' && !isNaN(min);
-      const validMax = typeof max === 'number' && !isNaN(max);
+      // Check both priceRange object and direct min/maxPrice fields
+      const min = filters.priceRange?.min ?? filters.minPrice;
+      const max = filters.priceRange?.max ?? filters.maxPrice;
+      const includeFree = filters.priceRange?.includeFree;
       
-      if (includeFree && !validMin && !validMax) {
-        priceText += 'Free only';
+      // Check if min/max are valid numbers (not null, undefined, or NaN)
+      const validMin = typeof min === 'number' && !isNaN(min) && min >= 0;
+      const validMax = typeof max === 'number' && !isNaN(max) && max >= 0;
+      
+      if (min === 0 && max === 0) {
+        priceText += 'Free';
+      } else if (includeFree && !validMin && !validMax) {
+        priceText += 'Free';
+      } else if (validMin && validMax && min === max) {
+        priceText += `£${min}`;
       } else if (validMin && validMax) {
-        priceText += `£${min}–£${max}`;
+        priceText += `£${min} - £${max}`;
         if (includeFree) priceText += ' (inc. free)';
       } else if (validMin) {
         priceText += `From £${min}`;
@@ -221,7 +241,7 @@ export default function AlertManagement() {
         priceText += `Up to £${max}`;
         if (includeFree) priceText += ' (inc. free)';
       } else if (includeFree) {
-        priceText += 'Free only';
+        priceText += 'Free';
       }
       
       if (priceText !== '💰 ') {
