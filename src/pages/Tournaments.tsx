@@ -60,6 +60,13 @@ const Tournaments = () => {
   } = useMemo(() => {
     let filtered = tournaments;
 
+    // When filtering by region, exclude demo tournaments to show only real data
+    if (filters.regions && filters.regions.length > 0) {
+      filtered = filtered.filter(tournament => 
+        tournament.organizerId !== 'demo' && !tournament.id.startsWith('demo-')
+      );
+    }
+
     // Apply search query from filters
     if (filters.search?.trim()) {
       const query = filters.search.toLowerCase();
