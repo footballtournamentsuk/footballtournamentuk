@@ -198,12 +198,12 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-primary" />
-                <span className="font-medium">Location</span>
+                <span className="font-medium text-white">Location</span>
                 {filters.location?.postcode && <Badge variant="secondary" className="ml-2 text-xs">
                     {filters.location.postcode}
                   </Badge>}
               </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections.location ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-white transition-transform ${expandedSections.location ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
               <LocationFilter postcode={filters.location?.postcode || ''} radius={filters.location?.radius || 10} onPostcodeChange={handleLocationChange} onRadiusChange={handleRadiusChange} onLocationSelect={handleLocationSelect} onClear={handleLocationClear} />
