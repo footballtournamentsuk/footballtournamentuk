@@ -87,10 +87,10 @@
     --glass-blur: blur(6px);
 
     /* Glass Chip/Button Tokens - Optimized for dark glass surfaces */
-    --chip-bg: rgba(255, 255, 255, 0.16);
+    --chip-bg: rgba(255, 255, 255, 0.20);
     --chip-text: hsl(0 0% 100%);
-    --chip-border: rgba(255, 255, 255, 0.28);
-    --chip-bg-hover: rgba(255, 255, 255, 0.24);
+    --chip-border: rgba(255, 255, 255, 0.40);
+    --chip-bg-hover: rgba(255, 255, 255, 0.28);
     --chip-bg-selected: rgba(16, 185, 129, 0.95); /* Emerald green */
     --chip-text-selected: hsl(0 0% 100%);
     --chip-focus: rgba(255, 255, 255, 0.60);
