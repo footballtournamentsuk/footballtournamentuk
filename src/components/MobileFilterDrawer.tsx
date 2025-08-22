@@ -206,7 +206,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
               <ChevronDown className={`w-4 h-4 text-white transition-transform ${expandedSections.location ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-3">
-              <LocationFilter postcode={filters.location?.postcode || ''} radius={filters.location?.radius || 10} onPostcodeChange={handleLocationChange} onRadiusChange={handleRadiusChange} onLocationSelect={handleLocationSelect} onClear={handleLocationClear} />
+              <LocationFilter postcode={filters.location?.postcode || ''} radius={filters.location?.radius || 10} onPostcodeChange={handleLocationChange} onRadiusChange={handleRadiusChange} onLocationSelect={handleLocationSelect} onClear={handleLocationClear} variant="glass" />
             </CollapsibleContent>
           </Collapsible>
 

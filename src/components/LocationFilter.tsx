@@ -12,6 +12,7 @@ interface LocationFilterProps {
   onRadiusChange: (radius: number) => void;
   onLocationSelect?: (location: { postcode: string; coordinates: [number, number] }) => void;
   onClear: () => void;
+  variant?: 'default' | 'glass';
 }
 
 export function LocationFilter({
@@ -20,7 +21,8 @@ export function LocationFilter({
   onPostcodeChange,
   onRadiusChange,
   onLocationSelect,
-  onClear
+  onClear,
+  variant = 'default'
 }: LocationFilterProps) {
   const handleAddressSelect = (suggestion: any) => {
     onLocationSelect?.({
@@ -61,6 +63,7 @@ export function LocationFilter({
           onAddressSelect={handleAddressSelect}
           placeholder="Enter postcode (e.g., SW1A 1AA)"
           className="w-full"
+          variant={variant}
         />
       </div>
 
