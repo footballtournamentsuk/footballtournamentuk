@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Loader2, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SEO } from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 
 const AlertVerify = () => {
   const [searchParams] = useSearchParams();
@@ -27,11 +27,7 @@ const AlertVerify = () => {
       try {
         // Call the alerts-verify edge function
         const { data, error } = await supabase.functions.invoke('alerts-verify', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
+          body: { token },
         });
 
         if (error) {
@@ -110,10 +106,15 @@ const AlertVerify = () => {
 
   return (
     <>
-      <SEO
-        title="Alert Verification | Football Tournaments UK"
-        description="Verify your tournament alert subscription"
-      />
+      <Helmet>
+        <title>Alert Verification | Football Tournaments UK</title>
+        <meta name="description" content="Verify your tournament alert subscription" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="cache-control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate" />
+        <meta http-equiv="pragma" content="no-cache" />
+        <meta http-equiv="expires" content="0" />
+      </Helmet>
       
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-md w-full mx-auto p-8">

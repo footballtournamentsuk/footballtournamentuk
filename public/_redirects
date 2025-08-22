@@ -1,0 +1,9 @@
+# Netlify redirects file for SPA routing
+# This ensures all routes are handled by React Router
+
+# Redirect specific paths to the React app
+/alerts/verify/* /index.html 200
+/alerts/manage/* /index.html 200
+
+# Catch-all rule for SPA - must be last
+/*    /index.html   200

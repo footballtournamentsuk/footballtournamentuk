@@ -1,0 +1,31 @@
+{
+  "rewrites": [
+    {
+      "source": "/alerts/verify",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/alerts/manage/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|.*\\.).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/alerts/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
