@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -44,6 +44,13 @@ import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
 import BottomNavigation from "./components/BottomNavigation";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+
+// Extend Window interface for GTM dataLayer
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
 
 const queryClient = new QueryClient();
 
@@ -212,6 +219,23 @@ const Navigation = () => {
   );
 };
 
+// Component to track route changes for GTM
+const RouteTracker = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    // Push pageview to dataLayer for GTM on route change
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'pageview',
+      page_path: location.pathname + location.search,
+      page_title: document.title
+    });
+  }, [location]);
+
+  return null;
+};
+
 const App = () => {
   // Handle SPA routing redirects stored in sessionStorage
   React.useEffect(() => {
@@ -229,6 +253,7 @@ const App = () => {
       <Sonner />
       <BrowserRouter>
         <div className="min-h-screen flex flex-col">
+          <RouteTracker />
           <ScrollToTop />
           <Navigation />
           <main className="flex-1 pt-16 pb-[env(safe-area-inset-bottom)]">
