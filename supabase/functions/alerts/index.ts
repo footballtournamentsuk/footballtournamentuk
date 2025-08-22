@@ -36,7 +36,7 @@ const checkRateLimit = async (email: string): Promise<boolean> => {
 };
 
 const sendVerificationEmail = async (email: string, verificationToken: string) => {
-  const verificationUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/alerts-verify?token=${verificationToken}`;
+  const verificationUrl = `https://footballtournamentsuk.co.uk/alerts/verify?token=${verificationToken}`;
   
   try {
     const { error } = await resend.emails.send({
