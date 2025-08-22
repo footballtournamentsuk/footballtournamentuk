@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,20 @@ interface TournamentCardProps {
 
 const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    if (
+      e.target instanceof HTMLElement &&
+      (e.target.closest('button') || 
+       e.target.closest('a') || 
+       e.target.closest('[role="button"]'))
+    ) {
+      return;
+    }
+    navigate(`/tournaments/${tournament.slug || tournament.id}`);
+  };
   
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -100,7 +114,10 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
   const isDemo = isDemoTournament(tournament);
 
   return (
-    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden">
+    <Card 
+      className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden"
+      onClick={handleCardClick}
+    >
       {/* Tournament Thumbnail */}
       <div className="relative w-full h-48">
         <TournamentImage
