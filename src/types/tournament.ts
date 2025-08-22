@@ -14,7 +14,7 @@ export interface Tournament {
     end: Date;
     registrationDeadline?: Date;
   };
-  format: '3v3' | '5v5' | '7v7' | '9v9' | '11v11';
+  format: string; // Can be single format or comma-separated formats like "3v3,5v5,7v7"
   ageGroups: AgeGroup[];
   teamTypes: TeamType[];
   league?: League;

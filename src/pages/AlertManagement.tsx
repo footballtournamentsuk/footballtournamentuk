@@ -173,6 +173,11 @@ export default function AlertManagement() {
       }
     }
     
+    // Handle city-based alerts (from Hero/city pages)
+    if (filters.city && !filters.location) {
+      summary.push(`📍 ${filters.city}`);
+    }
+    
     // Date range
     if (filters.dateRange?.start || filters.dateRange?.end) {
       const start = filters.dateRange.start ? new Date(filters.dateRange.start).toLocaleDateString('en-GB', { 
@@ -200,15 +205,19 @@ export default function AlertManagement() {
       const { min, max, includeFree } = filters.priceRange;
       let priceText = '💰 ';
       
-      if (includeFree && (min === undefined || min === null) && (max === undefined || max === null)) {
+      // Check if min/max are valid numbers (not null, undefined, or NaN)
+      const validMin = typeof min === 'number' && !isNaN(min);
+      const validMax = typeof max === 'number' && !isNaN(max);
+      
+      if (includeFree && !validMin && !validMax) {
         priceText += 'Free only';
-      } else if ((min !== undefined && min !== null) && (max !== undefined && max !== null)) {
+      } else if (validMin && validMax) {
         priceText += `£${min}–£${max}`;
         if (includeFree) priceText += ' (inc. free)';
-      } else if (min !== undefined && min !== null) {
+      } else if (validMin) {
         priceText += `From £${min}`;
         if (includeFree) priceText += ' (inc. free)';
-      } else if (max !== undefined && max !== null) {
+      } else if (validMax) {
         priceText += `Up to £${max}`;
         if (includeFree) priceText += ' (inc. free)';
       } else if (includeFree) {

@@ -41,7 +41,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
         ? new Date(dbTournament.registration_deadline) 
         : undefined,
     },
-    format: dbTournament.format as '3v3' | '5v5' | '7v7' | '9v9' | '11v11',
+    format: dbTournament.format,
     ageGroups: dbTournament.age_groups as AgeGroup[],
     teamTypes: dbTournament.team_types as TeamType[],
     type: dbTournament.type,
