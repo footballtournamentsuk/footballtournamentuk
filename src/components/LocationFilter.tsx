@@ -85,7 +85,11 @@ export function LocationFilter({
             {radiusOptions.map(option => (
               <Button
                 key={option.value}
-                variant={radius === option.value ? "default" : "outline"}
+                variant={
+                  variant === 'glass' 
+                    ? (radius === option.value ? "glass-selected" : "glass")
+                    : (radius === option.value ? "default" : "outline")
+                }
                 size="sm"
                 onClick={() => onRadiusChange(option.value)}
                 className="text-xs font-medium"
