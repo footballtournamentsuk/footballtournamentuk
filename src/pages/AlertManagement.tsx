@@ -150,11 +150,121 @@ export default function AlertManagement() {
   const getFilterSummary = (filters: any) => {
     const summary = [];
     
-    if (filters.location) summary.push(`📍 ${filters.location}`);
-    if (filters.format?.length) summary.push(`⚽ ${filters.format.join(', ')}`);
-    if (filters.ageGroups?.length) summary.push(`👥 ${filters.ageGroups.join(', ')}`);
-    if (filters.type?.length) summary.push(`🏆 ${filters.type.join(', ')}`);
-    if (filters.priceRange) summary.push(`💰 £${filters.priceRange[0]} - £${filters.priceRange[1]}`);
+    // Search query
+    if (filters.search) {
+      summary.push(`🔍 "${filters.search}"`);
+    }
+    
+    // Location with radius
+    if (filters.location) {
+      let locationText = '';
+      if (filters.location.postcode) {
+        locationText = filters.location.postcode;
+      } else if (filters.location.coordinates) {
+        locationText = `${filters.location.coordinates[1]?.toFixed(4)}, ${filters.location.coordinates[0]?.toFixed(4)}`;
+      }
+      
+      if (locationText) {
+        const radius = filters.location.radius;
+        summary.push(`📍 ${locationText}${radius ? ` · within ${radius} miles` : ''}`);
+      }
+    }
+    
+    // Date range
+    if (filters.dateRange?.start || filters.dateRange?.end) {
+      const start = filters.dateRange.start ? new Date(filters.dateRange.start).toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      }) : null;
+      const end = filters.dateRange.end ? new Date(filters.dateRange.end).toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      }) : null;
+      
+      if (start && end && start !== end) {
+        summary.push(`📅 ${start} - ${end}`);
+      } else if (start) {
+        summary.push(`📅 From ${start}`);
+      } else if (end) {
+        summary.push(`📅 Until ${end}`);
+      }
+    }
+    
+    // Price range
+    if (filters.priceRange) {
+      const { min, max, includeFree } = filters.priceRange;
+      let priceText = '💰 ';
+      
+      if (includeFree && min === undefined && max === undefined) {
+        priceText += 'Free only';
+      } else if (min !== undefined && max !== undefined) {
+        priceText += `£${min}–£${max}`;
+        if (includeFree) priceText += ' (inc. free)';
+      } else if (min !== undefined) {
+        priceText += `From £${min}`;
+        if (includeFree) priceText += ' (inc. free)';
+      } else if (max !== undefined) {
+        priceText += `Up to £${max}`;
+        if (includeFree) priceText += ' (inc. free)';
+      } else if (includeFree) {
+        priceText += 'Free only';
+      }
+      
+      summary.push(priceText);
+    }
+    
+    // Format
+    if (filters.format?.length) {
+      summary.push(`⚽ ${filters.format.join(', ')}`);
+    }
+    
+    // Age groups
+    if (filters.ageGroups?.length) {
+      summary.push(`👥 ${filters.ageGroups.join(', ')}`);
+    }
+    
+    // Team types
+    if (filters.teamTypes?.length) {
+      const teamTypeLabels = filters.teamTypes.map((type: string) => {
+        switch (type) {
+          case 'boys': return 'Boys';
+          case 'girls': return 'Girls';
+          case 'mixed': return 'Mixed';
+          default: return type;
+        }
+      });
+      summary.push(`👨‍👩‍👧‍👦 ${teamTypeLabels.join(', ')}`);
+    }
+    
+    // Tournament type
+    if (filters.type?.length) {
+      summary.push(`🏆 ${filters.type.join(', ')}`);
+    }
+    
+    // Regions
+    if (filters.regions?.length) {
+      summary.push(`🗺️ ${filters.regions.join(', ')}`);
+    }
+    
+    // Status
+    if (filters.status?.length) {
+      const statusLabels = filters.status.map((status: string) => {
+        switch (status) {
+          case 'registration_open': return 'Registration Open';
+          case 'registration_closes_soon': return 'Registration Closing Soon';
+          case 'registration_closed': return 'Registration Closed';
+          case 'upcoming': return 'Upcoming';
+          case 'ongoing': return 'Ongoing';
+          case 'today': return 'Today';
+          case 'tomorrow': return 'Tomorrow';
+          case 'completed': return 'Completed';
+          default: return status;
+        }
+      });
+      summary.push(`🎯 ${statusLabels.join(', ')}`);
+    }
     
     return summary.length > 0 ? summary : ['🔍 All tournaments'];
   };
