@@ -48,6 +48,30 @@
     <meta name="twitter:title" content="Football Tournaments UK – Youth, Adult & Grassroots Competitions" />
     <meta name="twitter:description" content="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts." />
     <meta name="twitter:image" content="https://footballtournamentsuk.co.uk/og-image.jpg" />
+    
+    <!-- SPA Routing Support Script -->
+    <script>
+      // Handle direct URL access for SPA routes
+      (function() {
+        var path = window.location.pathname;
+        var search = window.location.search;
+        
+        // If this is a potential SPA route (not a file or API endpoint)
+        if (path !== '/' && 
+            !path.includes('.') && 
+            !path.includes('api') && 
+            !path.includes('_next') &&
+            !path.includes('static')) {
+          
+          console.log('SPA route detected, ensuring proper handling:', path + search);
+          
+          // Store the original URL for React Router to handle
+          if (path.startsWith('/alerts/')) {
+            sessionStorage.setItem('spa_redirect', path + search);
+          }
+        }
+      })();
+    </script>
   </head>
 
   <body>

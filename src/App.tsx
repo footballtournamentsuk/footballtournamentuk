@@ -212,7 +212,17 @@ const Navigation = () => {
   );
 };
 
-const App = () => (
+const App = () => {
+  // Handle SPA routing redirects stored in sessionStorage
+  React.useEffect(() => {
+    const storedRedirect = sessionStorage.getItem('spa_redirect');
+    if (storedRedirect) {
+      sessionStorage.removeItem('spa_redirect');
+      window.history.replaceState(null, '', storedRedirect);
+    }
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -258,6 +268,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
