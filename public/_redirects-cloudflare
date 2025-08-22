@@ -1,0 +1,11 @@
+# Cloudflare Pages _redirects
+/alerts/verify* /index.html 200
+/alerts/manage/* /index.html 200
+/auth* /index.html 200
+/profile* /index.html 200
+/tournaments* /index.html 200
+/city/* /index.html 200
+/admin* /index.html 200
+
+# Catch-all for SPA
+/* /index.html 200

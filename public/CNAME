@@ -1,0 +1,22 @@
+# Surge.sh configuration for SPA routing
+200 /index.html /alerts/verify*
+200 /index.html /alerts/manage*
+200 /index.html /auth*
+200 /index.html /profile*
+200 /index.html /tournaments*
+200 /index.html /city*
+200 /index.html /admin*
+
+# Cache static assets
+cache /assets 1y
+cache /images 1y  
+cache /*.css 1y
+cache /*.js 1y
+cache /*.png 1y
+cache /*.jpg 1y
+cache /*.webp 1y
+cache /*.svg 1y
+
+# Security headers for alert routes
+/alerts/* X-Robots-Tag: noindex, nofollow
+/alerts/* Cache-Control: no-store, no-cache, must-revalidate
