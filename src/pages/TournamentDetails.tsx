@@ -50,13 +50,13 @@ import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
 import { isDemoTournament } from '@/utils/demoUtils';
 
 const TournamentDetails = () => {
-  const { param } = useParams<{ param: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { tournaments, loading, error } = useTournaments();
   const { trackMeaningfulAction } = useEngagementTracker();
   
   // Find tournament by slug first (preferred), then by ID for backward compatibility
-  const tournament = tournaments.find(t => t.slug === param) || tournaments.find(t => t.id === param);
+  const tournament = tournaments.find(t => t.slug === slug) || tournaments.find(t => t.id === slug);
   const { attachments } = useAttachments(tournament?.id || '');
   const isDemo = tournament ? isDemoTournament(tournament) : false;
 
