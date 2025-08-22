@@ -150,30 +150,42 @@ export default function AlertManagement() {
   const getFilterSummary = (filters: any) => {
     const summary = [];
     
+    // Parse filters if they're stored as strings (common when saved to DB)
+    let parsedFilters = filters;
+    if (typeof filters === 'string') {
+      try {
+        parsedFilters = JSON.parse(filters);
+      } catch (e) {
+        console.warn('Failed to parse filters:', e);
+        parsedFilters = {};
+      }
+    }
+    
     // Search query
-    if (filters.search) {
-      summary.push(`🔍 "${filters.search}"`);
+    if (parsedFilters.search) {
+      summary.push(`🔍 "${parsedFilters.search}"`);
     }
     
     // Location handling - improved to match modal format
-    if (filters.location) {
+    if (parsedFilters.location) {
       let locationText = '';
+      const location = parsedFilters.location;
       
-      if (typeof filters.location === 'string') {
+      if (typeof location === 'string') {
         // Handle legacy string format
-        locationText = filters.location;
-      } else if (filters.location.postcode) {
+        locationText = location;
+      } else if (location.postcode) {
         // Postcode with radius format: "M1 1WR (50 miles)"
-        const radius = filters.location.radius;
-        locationText = `${filters.location.postcode}${radius ? ` (${radius} miles)` : ''}`;
-      } else if (filters.location.city) {
+        const radius = location.radius;
+        locationText = `${location.postcode}${radius ? ` (${radius} miles)` : ''}`;
+      } else if (location.city) {
         // City with optional region: "Manchester" or "Manchester • Greater Manchester"  
-        locationText = filters.location.region && filters.location.region !== filters.location.city 
-          ? `${filters.location.city} • ${filters.location.region}`
-          : filters.location.city;
-      } else if (filters.location.coordinates) {
+        locationText = location.region && location.region !== location.city 
+          ? `${location.city} • ${location.region}`
+          : location.city;
+      } else if (location.coordinates && Array.isArray(location.coordinates) && location.coordinates.length >= 2) {
         // Fallback for coordinates
-        locationText = `${filters.location.coordinates[1]?.toFixed(4)}, ${filters.location.coordinates[0]?.toFixed(4)}`;
+        locationText = `${location.coordinates[1]?.toFixed(4)}, ${location.coordinates[0]?.toFixed(4)}`;
       }
       
       if (locationText) {
@@ -182,22 +194,22 @@ export default function AlertManagement() {
     }
     
     // Handle city-based alerts (from Hero/city pages) - improved format
-    if (filters.city && !filters.location) {
-      let cityText = filters.city;
-      if (filters.region && filters.region !== filters.city) {
-        cityText = `${filters.city} • ${filters.region}`;
+    if (parsedFilters.city && !parsedFilters.location) {
+      let cityText = parsedFilters.city;
+      if (parsedFilters.region && parsedFilters.region !== parsedFilters.city) {
+        cityText = `${parsedFilters.city} • ${parsedFilters.region}`;
       }
       summary.push(`📍 ${cityText}`);
     }
     
     // Date range
-    if (filters.dateRange?.start || filters.dateRange?.end) {
-      const start = filters.dateRange.start ? new Date(filters.dateRange.start).toLocaleDateString('en-GB', { 
+    if (parsedFilters.dateRange?.start || parsedFilters.dateRange?.end) {
+      const start = parsedFilters.dateRange.start ? new Date(parsedFilters.dateRange.start).toLocaleDateString('en-GB', { 
         day: 'numeric', 
         month: 'short', 
         year: 'numeric' 
       }) : null;
-      const end = filters.dateRange.end ? new Date(filters.dateRange.end).toLocaleDateString('en-GB', { 
+      const end = parsedFilters.dateRange.end ? new Date(parsedFilters.dateRange.end).toLocaleDateString('en-GB', { 
         day: 'numeric', 
         month: 'short', 
         year: 'numeric' 
@@ -213,13 +225,14 @@ export default function AlertManagement() {
     }
     
     // Price range - improved to match modal format
-    if (filters.priceRange || (filters.minPrice !== undefined || filters.maxPrice !== undefined)) {
+    if (parsedFilters.priceRange || (parsedFilters.minPrice !== undefined || parsedFilters.maxPrice !== undefined)) {
       let priceText = '💰 ';
       
       // Check both priceRange object and direct min/maxPrice fields
-      const min = filters.priceRange?.min ?? filters.minPrice;
-      const max = filters.priceRange?.max ?? filters.maxPrice;
-      const includeFree = filters.priceRange?.includeFree;
+      const priceRange = parsedFilters.priceRange || {};
+      const min = priceRange.min ?? parsedFilters.minPrice;
+      const max = priceRange.max ?? parsedFilters.maxPrice;
+      const includeFree = priceRange.includeFree;
       
       // Check if min/max are valid numbers (not null, undefined, or NaN)
       const validMin = typeof min === 'number' && !isNaN(min) && min >= 0;
@@ -228,7 +241,7 @@ export default function AlertManagement() {
       if (min === 0 && max === 0) {
         priceText += 'Free';
       } else if (includeFree && !validMin && !validMax) {
-        priceText += 'Free';
+        priceText += 'Free tournaments';
       } else if (validMin && validMax && min === max) {
         priceText += `£${min}`;
       } else if (validMin && validMax) {
@@ -241,7 +254,7 @@ export default function AlertManagement() {
         priceText += `Up to £${max}`;
         if (includeFree) priceText += ' (inc. free)';
       } else if (includeFree) {
-        priceText += 'Free';
+        priceText += 'Free tournaments';
       }
       
       if (priceText !== '💰 ') {
@@ -250,18 +263,18 @@ export default function AlertManagement() {
     }
     
     // Format
-    if (filters.format?.length) {
-      summary.push(`⚽ ${filters.format.join(', ')}`);
+    if (parsedFilters.format?.length) {
+      summary.push(`⚽ ${parsedFilters.format.join(', ')}`);
     }
     
     // Age groups
-    if (filters.ageGroups?.length) {
-      summary.push(`👥 ${filters.ageGroups.join(', ')}`);
+    if (parsedFilters.ageGroups?.length) {
+      summary.push(`👥 ${parsedFilters.ageGroups.join(', ')}`);
     }
     
     // Team types
-    if (filters.teamTypes?.length) {
-      const teamTypeLabels = filters.teamTypes.map((type: string) => {
+    if (parsedFilters.teamTypes?.length) {
+      const teamTypeLabels = parsedFilters.teamTypes.map((type: string) => {
         switch (type) {
           case 'boys': return 'Boys';
           case 'girls': return 'Girls';
@@ -273,18 +286,18 @@ export default function AlertManagement() {
     }
     
     // Tournament type
-    if (filters.type?.length) {
-      summary.push(`🏆 ${filters.type.join(', ')}`);
+    if (parsedFilters.type?.length) {
+      summary.push(`🏆 ${parsedFilters.type.join(', ')}`);
     }
     
     // Regions
-    if (filters.regions?.length) {
-      summary.push(`🗺️ ${filters.regions.join(', ')}`);
+    if (parsedFilters.regions?.length) {
+      summary.push(`🗺️ ${parsedFilters.regions.join(', ')}`);
     }
     
     // Status
-    if (filters.status?.length) {
-      const statusLabels = filters.status.map((status: string) => {
+    if (parsedFilters.status?.length) {
+      const statusLabels = parsedFilters.status.map((status: string) => {
         switch (status) {
           case 'registration_open': return 'Registration Open';
           case 'registration_closes_soon': return 'Registration Closing Soon';
