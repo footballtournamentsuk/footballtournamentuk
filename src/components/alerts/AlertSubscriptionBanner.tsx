@@ -29,39 +29,40 @@ export function AlertSubscriptionBanner({
   return (
     <>
       <div className="flex justify-center mb-6">
-        <Card className="p-6 w-full max-w-2xl bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Bell className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Stay Updated</h3>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsDismissed(true)}
-                className="h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            
+        <div className="w-full max-w-2xl mx-auto">
+          {/* Alert Banner Header */}
+          <div className="text-center mb-4">
+            <h3 className="text-lg font-semibold text-white mb-1 flex items-center justify-center gap-2">
+              <Bell className="h-5 w-5 text-white" />
+              Stay Updated
+            </h3>
+            <p className="text-white/80 text-sm">
+              {message}
+            </p>
+          </div>
+
+          {/* Alert Banner Form */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 relative">
             <Button
-              onClick={() => setIsModalOpen(true)}
-              size="default"
-              className="w-full"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDismissed(true)}
+              className="absolute top-2 right-2 h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/20"
             >
-              <Bell className="h-4 w-4 mr-2" />
-              Create Alert
+              <X className="h-4 w-4" />
             </Button>
             
-            <p className="text-sm text-muted-foreground text-center">{message}</p>
+            <div className="space-y-3">
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base"
+              >
+                <Bell className="h-4 w-4 mr-2" />
+                Create Alert
+              </Button>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
 
       <AlertSubscriptionModal
