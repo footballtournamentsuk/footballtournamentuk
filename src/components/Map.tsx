@@ -186,10 +186,38 @@ const Map: React.FC<MapProps> = ({
 
     // Remove existing radius circle if it exists
     if (mapInstance.current.getSource('radius-circle')) {
-      mapInstance.current.removeLayer('radius-circle-fill');
-      mapInstance.current.removeLayer('radius-circle-stroke');
-      mapInstance.current.removeSource('radius-circle');
+      try {
+        mapInstance.current.removeLayer('radius-circle-fill');
+        mapInstance.current.removeLayer('radius-circle-stroke');
+        mapInstance.current.removeSource('radius-circle');
+      } catch (e) {
+        console.log('Circle layers already removed or don\'t exist');
+      }
     }
+
+    // Get actual CSS custom property values
+    const getComputedCSSProperty = (property: string): string => {
+      const root = document.documentElement;
+      const computedStyle = getComputedStyle(root);
+      const value = computedStyle.getPropertyValue(property).trim();
+      
+      // If it's an HSL value, convert it to a proper color
+      if (value) {
+        // Handle HSL values like "210 40% 98%"
+        const hslMatch = value.match(/^(\d+)\s+(\d+)%\s+(\d+)%$/);
+        if (hslMatch) {
+          const [, h, s, l] = hslMatch;
+          return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+        return value;
+      }
+      
+      // Fallback to a default blue color
+      return '#3b82f6';
+    };
+
+    const primaryColor = getComputedCSSProperty('--primary');
+    console.log('🎨 Resolved primary color:', primaryColor);
 
     // Convert miles to meters for the circle
     const radiusInMeters = searchRadius * 1609.34;
@@ -213,43 +241,47 @@ const Map: React.FC<MapProps> = ({
     }
     coordinates.push(coordinates[0]); // Close the polygon
 
-    // Add circle source
-    mapInstance.current.addSource('radius-circle', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [coordinates]
-        },
-        properties: {}
-      }
-    });
+    try {
+      // Add circle source
+      mapInstance.current.addSource('radius-circle', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [coordinates]
+          },
+          properties: {}
+        }
+      });
 
-    // Add circle fill layer
-    mapInstance.current.addLayer({
-      id: 'radius-circle-fill',
-      type: 'fill',
-      source: 'radius-circle',
-      paint: {
-        'fill-color': 'hsl(var(--primary))',
-        'fill-opacity': 0.1
-      }
-    });
+      // Add circle fill layer
+      mapInstance.current.addLayer({
+        id: 'radius-circle-fill',
+        type: 'fill',
+        source: 'radius-circle',
+        paint: {
+          'fill-color': primaryColor,
+          'fill-opacity': 0.1
+        }
+      });
 
-    // Add circle stroke layer
-    mapInstance.current.addLayer({
-      id: 'radius-circle-stroke',
-      type: 'line',
-      source: 'radius-circle',
-      paint: {
-        'line-color': 'hsl(var(--primary))',
-        'line-width': 2,
-        'line-opacity': 0.6
-      }
-    });
+      // Add circle stroke layer
+      mapInstance.current.addLayer({
+        id: 'radius-circle-stroke',
+        type: 'line',
+        source: 'radius-circle',
+        paint: {
+          'line-color': primaryColor,
+          'line-width': 2,
+          'line-opacity': 0.6
+        }
+      });
 
-    console.log('✅ Radius circle added successfully');
+      console.log('✅ Radius circle added successfully');
+    } catch (error) {
+      console.error('❌ Error adding radius circle:', error);
+    }
   };
 
   // Update radius circle when parameters change
@@ -291,9 +323,30 @@ const Map: React.FC<MapProps> = ({
       
       // Create marker element with color based on tournament type
       const getMarkerColor = (type: string) => {
+        // Get computed CSS property for primary color
+        const getComputedPrimary = () => {
+          const root = document.documentElement;
+          const computedStyle = getComputedStyle(root);
+          const value = computedStyle.getPropertyValue('--primary').trim();
+          
+          if (value) {
+            // Handle HSL values like "210 40% 98%"
+            const hslMatch = value.match(/^(\d+)\s+(\d+)%\s+(\d+)%$/);
+            if (hslMatch) {
+              const [, h, s, l] = hslMatch;
+              return `hsl(${h}, ${s}%, ${l}%)`;
+            }
+            return value;
+          }
+          
+          return '#3b82f6'; // Fallback blue
+        };
+
+        const primaryColor = getComputedPrimary();
+        
         const typeColors: Record<string, string> = {
           'league': '#2563eb', // blue-600
-          'tournament': 'hsl(var(--primary))', // default primary
+          'tournament': primaryColor, // resolved primary
           'camp': '#16a34a', // green-600
           'cup': '#d97706', // amber-600
           'festival': '#9333ea', // purple-600
@@ -301,7 +354,7 @@ const Map: React.FC<MapProps> = ({
           'friendly': '#059669', // emerald-600
           'holiday': '#dc2626', // red-600
         };
-        return typeColors[type.toLowerCase()] || 'hsl(var(--primary))';
+        return typeColors[type.toLowerCase()] || primaryColor;
       };
 
       const markerEl = document.createElement('div');
