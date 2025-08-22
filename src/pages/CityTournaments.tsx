@@ -65,22 +65,20 @@ const CityTournaments = () => {
 
     // Filter tournaments for this city/region
     let filtered = tournaments.filter(tournament => {
-      // Match by region or city name in location
+      // For city pages, be more inclusive - allow tournaments from the same country
+      // or nearby regions to show up, then rely on distance filter to narrow down
       const isMatch = tournament.location.region === city.region ||
              tournament.location.name.toLowerCase().includes(city.displayName.toLowerCase()) ||
-             tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase());
-      
-      // Debug log for UK 3v3s tournament in base filter
-      if (tournament.name.includes('UK 3v3s') || tournament.location.name.includes('Ormskirk')) {
-        console.log('🎯 UK 3v3s Base Filter Check:', {
-          tournamentName: tournament.name,
-          tournamentRegion: tournament.location.region,
-          cityRegion: city.region,
-          tournamentLocationName: tournament.location.name,
-          cityDisplayName: city.displayName,
-          isMatch: isMatch
-        });
-      }
+             tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase()) ||
+             // Allow tournaments from same country (England, Scotland, Wales, Northern Ireland)
+             (city.region.includes('England') && tournament.location.region === 'England') ||
+             (city.region.includes('Scotland') && tournament.location.region === 'Scotland') ||
+             (city.region.includes('Wales') && tournament.location.region === 'Wales') ||
+             (city.region.includes('Northern Ireland') && tournament.location.region === 'Northern Ireland') ||
+             // For broad regions like England, be more inclusive to nearby counties
+             (tournament.location.region === 'England' && ['England', 'Greater Manchester', 'Merseyside', 'West Midlands', 'Yorkshire', 'Lancashire'].some(region => 
+               city.region.includes(region) || region.includes(city.region.split(' ')[0])
+             ));
       
       return isMatch;
     }).map(tournament => {
