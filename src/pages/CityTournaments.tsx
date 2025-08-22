@@ -66,9 +66,23 @@ const CityTournaments = () => {
     // Filter tournaments for this city/region
     let filtered = tournaments.filter(tournament => {
       // Match by region or city name in location
-      return tournament.location.region === city.region ||
+      const isMatch = tournament.location.region === city.region ||
              tournament.location.name.toLowerCase().includes(city.displayName.toLowerCase()) ||
              tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase());
+      
+      // Debug log for UK 3v3s tournament in base filter
+      if (tournament.name.includes('UK 3v3s') || tournament.location.name.includes('Ormskirk')) {
+        console.log('🎯 UK 3v3s Base Filter Check:', {
+          tournamentName: tournament.name,
+          tournamentRegion: tournament.location.region,
+          cityRegion: city.region,
+          tournamentLocationName: tournament.location.name,
+          cityDisplayName: city.displayName,
+          isMatch: isMatch
+        });
+      }
+      
+      return isMatch;
     }).map(tournament => {
       // Fix coordinates for tournaments that have incorrect coordinates
       // If tournament location name or region matches this city but coordinates are far away,
@@ -154,6 +168,18 @@ const CityTournaments = () => {
           searchCoords[1], searchCoords[0], // lat, lng for search center
           tournamentCoords[1], tournamentCoords[0] // lat, lng for tournament
         );
+        
+        // Debug log for UK 3v3s tournament
+        if (tournament.name.includes('UK 3v3s') || tournament.location.name.includes('Ormskirk')) {
+          console.log('🔍 UK 3v3s Distance Check:', {
+            tournamentName: tournament.name,
+            searchCenter: { lat: searchCoords[1], lng: searchCoords[0] },
+            tournamentLocation: { lat: tournamentCoords[1], lng: tournamentCoords[0] },
+            calculatedDistance: distance,
+            maxDistance: maxDistance,
+            withinRadius: distance <= maxDistance
+          });
+        }
         
         return distance <= maxDistance;
       });
