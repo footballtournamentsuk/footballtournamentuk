@@ -250,9 +250,9 @@ const App = () => {
              <Route path="/regions" element={<Regions />} />
              <Route path="/admin" element={<Admin />} />
              <Route path="/teams/:id" element={<TeamView />} />
+             <Route path="/tournaments/:slug" element={<TournamentDetails />} />
              <Route path="/city/:citySlug" element={<CityTournaments />} />
              {/* 301 redirects from old /tournaments/{city} URLs to new /city/{slug} format */}
-             <Route path="/tournaments/:city" element={<TournamentCityRedirect />} />
              <Route path="/policies" element={<Policies />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="/alerts/manage/:managementToken" element={<AlertManagement />} />
