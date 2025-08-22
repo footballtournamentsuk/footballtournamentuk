@@ -77,22 +77,11 @@ const CityTournaments = () => {
       searchCoords = filters.location.coordinates;
     }
 
-    // Start with basic country/region matching (minimal base filter)
+    // Apply minimal filtering - only exclude tournaments that are clearly in different countries
     let filtered = tournaments.filter(tournament => {
-      // Only do basic country matching to avoid cross-country issues
-      const cityCountry = city.region.includes('England') ? 'England' :
-                         city.region.includes('Scotland') ? 'Scotland' :
-                         city.region.includes('Wales') ? 'Wales' :
-                         city.region.includes('Northern Ireland') ? 'Northern Ireland' :
-                         city.region;
-      
-      const tournamentCountry = tournament.location.region.includes('England') ? 'England' :
-                               tournament.location.region.includes('Scotland') ? 'Scotland' :
-                               tournament.location.region.includes('Wales') ? 'Wales' :
-                               tournament.location.region.includes('Northern Ireland') ? 'Northern Ireland' :
-                               tournament.location.region;
-      
-      return cityCountry === tournamentCountry;
+      // Don't filter by region - let the radius filter handle proximity
+      // Only exclude if coordinates are missing (required for distance calculation)
+      return tournament.location.coordinates && tournament.location.coordinates.length === 2;
     });
 
     // Apply strict radius filtering to all tournaments

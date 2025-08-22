@@ -167,6 +167,36 @@ export const mockTournaments: Tournament[] = [
   },
   {
     id: '6',
+    name: 'UK 3v3s',
+    description: 'Fast-paced 3v3 tournament for young players in Ormskirk',
+    location: {
+      name: 'Ormskirk FC Ground',
+      coordinates: [-2.8834, 53.5692], // Ormskirk coordinates
+      postcode: 'L39 2AT',
+      region: 'Lancashire'
+    },
+    dates: {
+      start: new Date('2024-06-08'),
+      end: new Date('2024-06-09'),
+      registrationDeadline: new Date('2024-05-20')
+    },
+    format: '3v3',
+    ageGroups: ['U8', 'U10', 'U12'],
+    teamTypes: ['boys', 'girls', 'mixed'],
+    type: 'tournament',
+    status: 'upcoming',
+    maxTeams: 32,
+    registeredTeams: 19,
+    cost: { amount: 35, currency: 'GBP' },
+    contact: {
+      name: 'Mark Wilson',
+      email: 'mark@uk3v3s.co.uk',
+      phone: '01695 123456'
+    },
+    features: ['Fast matches', 'Medals for all', 'Refreshments available']
+  },
+  {
+    id: '7',
     name: 'Yorkshire Dales Holiday Camp',
     description: 'Residential football camp in the beautiful Yorkshire Dales',
     location: {
