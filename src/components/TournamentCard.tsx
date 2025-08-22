@@ -422,7 +422,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(tournament.location.coordinates[1] + ',' + tournament.location.coordinates[0])}`}
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tournament.location.name + ', ' + tournament.location.postcode)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 cursor-pointer w-full"
