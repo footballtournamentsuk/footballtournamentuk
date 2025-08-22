@@ -130,8 +130,18 @@ const CityTournaments = () => {
     }
 
     // Apply location and radius filter
-    if (filters.location?.postcode && filters.location?.coordinates && filters.location?.radius) {
-      const userCoords = filters.location.coordinates;
+    // For city pages, use city coordinates if no specific postcode is set but radius is provided
+    if (filters.location?.radius) {
+      let searchCoords: [number, number];
+      
+      // If specific postcode coordinates are provided, use those
+      if (filters.location.coordinates && filters.location.postcode) {
+        searchCoords = filters.location.coordinates;
+      } else {
+        // Otherwise, use the city center for radius-based filtering
+        searchCoords = city.coordinates as [number, number];
+      }
+      
       const maxDistance = filters.location.radius;
       
       filtered = filtered.filter(tournament => {
@@ -141,7 +151,7 @@ const CityTournaments = () => {
         
         const tournamentCoords = tournament.location.coordinates;
         const distance = calculateDistance(
-          userCoords[1], userCoords[0], // lat, lng for user
+          searchCoords[1], searchCoords[0], // lat, lng for search center
           tournamentCoords[1], tournamentCoords[0] // lat, lng for tournament
         );
         
