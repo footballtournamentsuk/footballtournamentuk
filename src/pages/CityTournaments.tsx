@@ -59,52 +59,56 @@ const CityTournaments = () => {
     }
   });
 
-  // Filter tournaments by city/region
+  // Filter tournaments by city/region with strict radius-based filtering
   const { cityTournaments, upcomingTournaments, pastTournaments } = useMemo(() => {
     if (!city) return { cityTournaments: [], upcomingTournaments: [], pastTournaments: [] };
 
-    // Filter tournaments for this city/region
+    // Default radius for city pages (in miles)
+    const DEFAULT_CITY_RADIUS = 25;
+    
+    // Use radius from filters or default city radius
+    const searchRadius = filters.location?.radius || DEFAULT_CITY_RADIUS;
+    
+    // Use city coordinates as default search center
+    let searchCoords: [number, number] = city.coordinates as [number, number];
+    
+    // Override with specific postcode coordinates if provided
+    if (filters.location?.coordinates && filters.location.postcode) {
+      searchCoords = filters.location.coordinates;
+    }
+
+    // Start with basic country/region matching (minimal base filter)
     let filtered = tournaments.filter(tournament => {
-      // For city pages, be more inclusive - allow tournaments from the same country
-      // or nearby regions to show up, then rely on distance filter to narrow down
-      const isMatch = tournament.location.region === city.region ||
-             tournament.location.name.toLowerCase().includes(city.displayName.toLowerCase()) ||
-             tournament.location.region.toLowerCase().includes(city.displayName.toLowerCase()) ||
-             // Allow tournaments from same country (England, Scotland, Wales, Northern Ireland)
-             (city.region.includes('England') && tournament.location.region === 'England') ||
-             (city.region.includes('Scotland') && tournament.location.region === 'Scotland') ||
-             (city.region.includes('Wales') && tournament.location.region === 'Wales') ||
-             (city.region.includes('Northern Ireland') && tournament.location.region === 'Northern Ireland') ||
-             // For broad regions like England, be more inclusive to nearby counties
-             (tournament.location.region === 'England' && ['England', 'Greater Manchester', 'Merseyside', 'West Midlands', 'Yorkshire', 'Lancashire'].some(region => 
-               city.region.includes(region) || region.includes(city.region.split(' ')[0])
-             ));
+      // Only do basic country matching to avoid cross-country issues
+      const cityCountry = city.region.includes('England') ? 'England' :
+                         city.region.includes('Scotland') ? 'Scotland' :
+                         city.region.includes('Wales') ? 'Wales' :
+                         city.region.includes('Northern Ireland') ? 'Northern Ireland' :
+                         city.region;
       
-      return isMatch;
-    }).map(tournament => {
-      // Fix coordinates for tournaments that have incorrect coordinates
-      // If tournament location name or region matches this city but coordinates are far away,
-      // use the city's coordinates instead
-      const [tournamentLng, tournamentLat] = tournament.location.coordinates;
-      const [cityLng, cityLat] = city.coordinates;
+      const tournamentCountry = tournament.location.region.includes('England') ? 'England' :
+                               tournament.location.region.includes('Scotland') ? 'Scotland' :
+                               tournament.location.region.includes('Wales') ? 'Wales' :
+                               tournament.location.region.includes('Northern Ireland') ? 'Northern Ireland' :
+                               tournament.location.region;
       
-      // Calculate rough distance (simplified)
-      const lngDiff = Math.abs(tournamentLng - cityLng);
-      const latDiff = Math.abs(tournamentLat - cityLat);
-      
-      // If coordinates are more than ~1 degree away (roughly 100km), they're likely wrong
-      if (lngDiff > 1 || latDiff > 1) {
-        return {
-          ...tournament,
-          location: {
-            ...tournament.location,
-            coordinates: city.coordinates as [number, number]
-          }
-        };
+      return cityCountry === tournamentCountry;
+    });
+
+    // Apply strict radius filtering to all tournaments
+    filtered = filtered.filter(tournament => {
+      if (!tournament.location.coordinates || tournament.location.coordinates.length !== 2) {
+        return false;
       }
       
-      return tournament;
-    });
+      const tournamentCoords = tournament.location.coordinates;
+      const distance = calculateDistance(
+        searchCoords[1], searchCoords[0], // lat, lng for search center
+        tournamentCoords[1], tournamentCoords[0] // lat, lng for tournament
+      );
+      
+      return distance <= searchRadius;
+    }).map(tournament => tournament); // Keep tournaments as-is after radius filtering
 
     // Apply search query from filters
     if (filters.search?.trim()) {
@@ -141,47 +145,7 @@ const CityTournaments = () => {
       });
     }
 
-    // Apply location and radius filter
-    // For city pages, use city coordinates if no specific postcode is set but radius is provided
-    if (filters.location?.radius) {
-      let searchCoords: [number, number];
-      
-      // If specific postcode coordinates are provided, use those
-      if (filters.location.coordinates && filters.location.postcode) {
-        searchCoords = filters.location.coordinates;
-      } else {
-        // Otherwise, use the city center for radius-based filtering
-        searchCoords = city.coordinates as [number, number];
-      }
-      
-      const maxDistance = filters.location.radius;
-      
-      filtered = filtered.filter(tournament => {
-        if (!tournament.location.coordinates || tournament.location.coordinates.length !== 2) {
-          return false;
-        }
-        
-        const tournamentCoords = tournament.location.coordinates;
-        const distance = calculateDistance(
-          searchCoords[1], searchCoords[0], // lat, lng for search center
-          tournamentCoords[1], tournamentCoords[0] // lat, lng for tournament
-        );
-        
-        // Debug log for UK 3v3s tournament
-        if (tournament.name.includes('UK 3v3s') || tournament.location.name.includes('Ormskirk')) {
-          console.log('🔍 UK 3v3s Distance Check:', {
-            tournamentName: tournament.name,
-            searchCenter: { lat: searchCoords[1], lng: searchCoords[0] },
-            tournamentLocation: { lat: tournamentCoords[1], lng: tournamentCoords[0] },
-            calculatedDistance: distance,
-            maxDistance: maxDistance,
-            withinRadius: distance <= maxDistance
-          });
-        }
-        
-        return distance <= maxDistance;
-      });
-    }
+    // Note: Radius filtering already applied above - no additional location filtering needed here
 
     // Apply price range filter
     if (filters.priceRange) {
@@ -446,13 +410,21 @@ const CityTournaments = () => {
               )}
             </div>
             
-            <Map 
-              tournaments={upcomingTournaments}
-              selectedTournament={selectedTournament}
-              onTournamentSelect={handleTournamentSelect}
-              centerCoordinates={city.coordinates}
-              defaultZoom={11}
-            />
+        <div className="relative">
+          <Map 
+            tournaments={upcomingTournaments}
+            selectedTournament={selectedTournament}
+            onTournamentSelect={handleTournamentSelect}
+            centerCoordinates={city.coordinates}
+            defaultZoom={11}
+            showRadiusCircle={true}
+            searchCenter={filters.location?.coordinates && filters.location.postcode 
+              ? filters.location.coordinates 
+              : city.coordinates as [number, number]
+            }
+            searchRadius={filters.location?.radius || 25}
+          />
+        </div>
           </div>
         </section>
 

@@ -13,6 +13,9 @@ interface MapProps {
   onTournamentSelect: (tournament: Tournament | null) => void;
   centerCoordinates?: [number, number];
   defaultZoom?: number;
+  showRadiusCircle?: boolean;
+  searchCenter?: [number, number];
+  searchRadius?: number;
 }
 
 const Map: React.FC<MapProps> = ({ 
@@ -20,7 +23,10 @@ const Map: React.FC<MapProps> = ({
   selectedTournament, 
   onTournamentSelect,
   centerCoordinates,
-  defaultZoom = 6
+  defaultZoom = 6,
+  showRadiusCircle = false,
+  searchCenter,
+  searchRadius
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
@@ -151,6 +157,7 @@ const Map: React.FC<MapProps> = ({
           console.log('🎉 Map loaded! Hiding spinner and adding markers...');
           setIsLoading(false);
           setError(null);
+          addRadiusCircle(); // Add radius circle first
           addTournamentMarkers();
         });
 
@@ -168,6 +175,89 @@ const Map: React.FC<MapProps> = ({
       }
     }
   }, [mapboxToken]);
+
+  // Add radius circle to map
+  const addRadiusCircle = () => {
+    if (!mapInstance.current || !showRadiusCircle || !searchCenter || !searchRadius) {
+      return;
+    }
+
+    console.log('⭕ Adding radius circle:', searchRadius, 'miles at', searchCenter);
+
+    // Remove existing radius circle if it exists
+    if (mapInstance.current.getSource('radius-circle')) {
+      mapInstance.current.removeLayer('radius-circle-fill');
+      mapInstance.current.removeLayer('radius-circle-stroke');
+      mapInstance.current.removeSource('radius-circle');
+    }
+
+    // Convert miles to meters for the circle
+    const radiusInMeters = searchRadius * 1609.34;
+    
+    // Create circle coordinates (approximate circle using polygon)
+    const coordinates = [];
+    const numPoints = 64;
+    const centerLat = searchCenter[1];
+    const centerLng = searchCenter[0];
+    
+    for (let i = 0; i < numPoints; i++) {
+      const angle = (i / numPoints) * 2 * Math.PI;
+      const dx = radiusInMeters * Math.cos(angle);
+      const dy = radiusInMeters * Math.sin(angle);
+      
+      // Convert meters to degrees (rough approximation)
+      const deltaLat = dy / 111320; // meters per degree latitude
+      const deltaLng = dx / (111320 * Math.cos(centerLat * Math.PI / 180)); // adjust for latitude
+      
+      coordinates.push([centerLng + deltaLng, centerLat + deltaLat]);
+    }
+    coordinates.push(coordinates[0]); // Close the polygon
+
+    // Add circle source
+    mapInstance.current.addSource('radius-circle', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [coordinates]
+        },
+        properties: {}
+      }
+    });
+
+    // Add circle fill layer
+    mapInstance.current.addLayer({
+      id: 'radius-circle-fill',
+      type: 'fill',
+      source: 'radius-circle',
+      paint: {
+        'fill-color': 'hsl(var(--primary))',
+        'fill-opacity': 0.1
+      }
+    });
+
+    // Add circle stroke layer
+    mapInstance.current.addLayer({
+      id: 'radius-circle-stroke',
+      type: 'line',
+      source: 'radius-circle',
+      paint: {
+        'line-color': 'hsl(var(--primary))',
+        'line-width': 2,
+        'line-opacity': 0.6
+      }
+    });
+
+    console.log('✅ Radius circle added successfully');
+  };
+
+  // Update radius circle when parameters change
+  useEffect(() => {
+    if (mapInstance.current && !isLoading) {
+      addRadiusCircle();
+    }
+  }, [showRadiusCircle, searchCenter, searchRadius, isLoading]);
 
   // Add tournament markers
   const addTournamentMarkers = () => {

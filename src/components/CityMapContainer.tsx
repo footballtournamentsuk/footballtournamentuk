@@ -142,15 +142,21 @@ const CityMapContainer: React.FC<CityMapContainerProps> = ({
       </div>
 
       {/* Map Component */}
-      <div className={isFullscreen ? 'h-[calc(100vh-140px)]' : 'h-[520px]'}>
-        <Map 
-          tournaments={filteredTournaments}
-          selectedTournament={selectedTournament}
-          onTournamentSelect={onTournamentSelect}
-          centerCoordinates={city.coordinates}
-          defaultZoom={isFullscreen ? 12 : 11}
-        />
-      </div>
+        <div className={isFullscreen ? 'h-[calc(100vh-140px)]' : 'h-[520px]'}>
+          <Map 
+            tournaments={filteredTournaments}
+            selectedTournament={selectedTournament}
+            onTournamentSelect={onTournamentSelect}
+            centerCoordinates={city.coordinates}
+            defaultZoom={isFullscreen ? 12 : 11}
+            showRadiusCircle={!!filters?.location?.radius}
+            searchCenter={filters?.location?.coordinates && filters?.location?.postcode 
+              ? filters.location.coordinates 
+              : city.coordinates as [number, number]
+            }
+            searchRadius={filters?.location?.radius || 25}
+          />
+        </div>
 
       {/* Enhanced Tournament Info Panel */}
       {selectedTournament && (
