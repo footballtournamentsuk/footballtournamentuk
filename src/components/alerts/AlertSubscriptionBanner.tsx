@@ -4,18 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Bell, X } from 'lucide-react';
 import { AlertSubscriptionModal } from './AlertSubscriptionModal';
 
-interface TournamentFilters {
-  search?: string;
-  location?: string;
-  radius?: number;
-  format?: string[];
-  ageGroups?: string[];
-  teamTypes?: string[];
-  type?: string[];
-  regions?: string[];
-  priceRange?: [number, number];
-  dateRange?: { from?: Date; to?: Date };
-}
+import { TournamentFilters } from '@/types/tournament';
 
 interface AlertSubscriptionBannerProps {
   filters: TournamentFilters;

@@ -481,18 +481,7 @@ const TournamentFilters: React.FC<TournamentFiltersProps> = ({
           <>
             <Separator className="my-6" />
             <AlertSubscriptionBanner
-              filters={{
-                search: filters.search,
-                location: filters.location?.postcode,
-                radius: filters.location?.radius,
-                format: filters.format,
-                ageGroups: filters.ageGroups,
-                teamTypes: filters.teamTypes,
-                type: filters.type,
-                regions: filters.regions,
-                priceRange: filters.priceRange ? [filters.priceRange.min || 0, filters.priceRange.max || 500] : undefined,
-                dateRange: filters.dateRange ? { from: filters.dateRange.start, to: filters.dateRange.end } : undefined
-              }}
+              filters={filters}
               source="filters"
               message="Save this search as an alert to get notified of new matching tournaments"
             />

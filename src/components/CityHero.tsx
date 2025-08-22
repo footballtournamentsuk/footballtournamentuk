@@ -145,7 +145,10 @@ const CityHero: React.FC<CityHeroProps> = ({
         {/* Alert Subscription Banner */}
         <div className="max-w-2xl mx-auto mb-8">
           <AlertSubscriptionBanner
-            filters={{ location: city.displayName, regions: [city.region] }}
+            filters={{ 
+              location: { postcode: city.displayName }, 
+              regions: [city.region] 
+            }}
             source="city"
             message={`Get notified about new tournaments in ${city.displayName}`}
             cityName={city.displayName}
