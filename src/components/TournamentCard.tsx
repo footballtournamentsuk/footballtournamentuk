@@ -37,18 +37,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking on interactive elements
-    if (
-      e.target instanceof HTMLElement &&
-      (e.target.closest('button') || 
-       e.target.closest('a') || 
-       e.target.closest('[role="button"]'))
-    ) {
-      return;
-    }
-    navigate(`/tournaments/${tournament.slug || tournament.id}`);
-  };
   
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-GB', {
@@ -115,8 +103,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
 
   return (
     <Card 
-      className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group overflow-hidden"
-      onClick={handleCardClick}
+      className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group overflow-hidden"
     >
       {/* Tournament Thumbnail */}
       <div className="relative w-full h-48">
@@ -168,7 +155,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
         
         {/* Tournament Title - Most prominent */}
         <div className="mb-4">
-          <h3 className="font-semibold text-xl leading-tight group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-xl leading-tight">
             {tournament.name}
           </h3>
         </div>
