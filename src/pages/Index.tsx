@@ -169,7 +169,13 @@ const Index = () => {
 
     // Apply other filters
     if (filters.format?.length) {
-      filtered = filtered.filter(t => filters.format!.includes(t.format));
+      filtered = filtered.filter(tournament => {
+        // Handle comma-separated formats in the database
+        const tournamentFormats = tournament.format.split(',').map(f => f.trim());
+        return filters.format!.some(selectedFormat => 
+          tournamentFormats.includes(selectedFormat)
+        );
+      });
     }
     if (filters.ageGroups?.length) {
       filtered = filtered.filter(t => t.ageGroups.some(age => filters.ageGroups!.includes(age)));
