@@ -158,14 +158,17 @@ export default function AlertManagement() {
     // Location with radius
     if (filters.location) {
       let locationText = '';
-      if (filters.location.postcode) {
+      if (typeof filters.location === 'string') {
+        // Handle string location (legacy format)
+        locationText = filters.location;
+      } else if (filters.location.postcode) {
         locationText = filters.location.postcode;
       } else if (filters.location.coordinates) {
         locationText = `${filters.location.coordinates[1]?.toFixed(4)}, ${filters.location.coordinates[0]?.toFixed(4)}`;
       }
       
       if (locationText) {
-        const radius = filters.location.radius;
+        const radius = typeof filters.location === 'object' ? filters.location.radius : null;
         summary.push(`📍 ${locationText}${radius ? ` · within ${radius} miles` : ''}`);
       }
     }
@@ -197,22 +200,24 @@ export default function AlertManagement() {
       const { min, max, includeFree } = filters.priceRange;
       let priceText = '💰 ';
       
-      if (includeFree && min === undefined && max === undefined) {
+      if (includeFree && (min === undefined || min === null) && (max === undefined || max === null)) {
         priceText += 'Free only';
-      } else if (min !== undefined && max !== undefined) {
+      } else if ((min !== undefined && min !== null) && (max !== undefined && max !== null)) {
         priceText += `£${min}–£${max}`;
         if (includeFree) priceText += ' (inc. free)';
-      } else if (min !== undefined) {
+      } else if (min !== undefined && min !== null) {
         priceText += `From £${min}`;
         if (includeFree) priceText += ' (inc. free)';
-      } else if (max !== undefined) {
+      } else if (max !== undefined && max !== null) {
         priceText += `Up to £${max}`;
         if (includeFree) priceText += ' (inc. free)';
       } else if (includeFree) {
         priceText += 'Free only';
       }
       
-      summary.push(priceText);
+      if (priceText !== '💰 ') {
+        summary.push(priceText);
+      }
     }
     
     // Format

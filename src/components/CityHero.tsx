@@ -31,13 +31,15 @@ interface CityHeroProps {
   tournamentCount: number;
   onScrollToMap: () => void;
   onScrollToTournaments: () => void;
+  filters?: any; // Current filters from URL
 }
 
 const CityHero: React.FC<CityHeroProps> = ({ 
   city, 
   tournamentCount, 
   onScrollToMap, 
-  onScrollToTournaments 
+  onScrollToTournaments,
+  filters 
 }) => {
   // Map city-specific hero images
   const cityHeroImages: Record<string, string> = {
@@ -145,9 +147,11 @@ const CityHero: React.FC<CityHeroProps> = ({
         {/* Alert Subscription Banner */}
         <div className="max-w-2xl mx-auto mb-8">
           <AlertSubscriptionBanner
-            filters={{ 
-              location: { postcode: city.displayName }, 
-              regions: [city.region] 
+            filters={{
+              // Use current filters if available, otherwise default to city location
+              ...filters,
+              location: filters?.location || { postcode: city.displayName },
+              regions: filters?.regions || [city.region]
             }}
             source="city"
             message={`Get notified about new tournaments in ${city.displayName}`}

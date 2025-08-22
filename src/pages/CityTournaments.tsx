@@ -303,6 +303,7 @@ const CityTournaments = () => {
           tournamentCount={upcomingTournaments.length}
           onScrollToMap={scrollToMap}
           onScrollToTournaments={scrollToTournaments}
+          filters={filters}
         />
 
         {/* Breadcrumb Navigation */}

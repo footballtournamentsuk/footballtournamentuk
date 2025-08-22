@@ -34,9 +34,30 @@ interface Alert {
 }
 
 const matchesTournamentFilters = (tournament: Tournament, filters: any): boolean => {
-  // Location matching
-  if (filters.location && !tournament.location_name.toLowerCase().includes(filters.location.toLowerCase())) {
-    return false;
+  // Location matching - handle both string and object formats
+  if (filters.location) {
+    if (typeof filters.location === 'string') {
+      // Legacy string format
+      if (!tournament.location_name.toLowerCase().includes(filters.location.toLowerCase())) {
+        return false;
+      }
+    } else if (filters.location.postcode) {
+      // Object format with postcode - for now, do a simple name match
+      // TODO: Add proper geographic distance matching
+      if (!tournament.location_name.toLowerCase().includes(filters.location.postcode.toLowerCase())) {
+        return false;
+      }
+    }
+  }
+
+  // Search query matching
+  if (filters.search) {
+    const searchLower = filters.search.toLowerCase();
+    const searchMatch = tournament.name.toLowerCase().includes(searchLower) ||
+                       tournament.location_name.toLowerCase().includes(searchLower);
+    if (!searchMatch) {
+      return false;
+    }
   }
 
   // Format matching
@@ -56,6 +77,16 @@ const matchesTournamentFilters = (tournament: Tournament, filters: any): boolean
     }
   }
 
+  // Team types matching
+  if (filters.teamTypes && filters.teamTypes.length > 0) {
+    const hasMatchingTeamType = filters.teamTypes.some((teamType: string) =>
+      tournament.team_types?.includes(teamType)
+    );
+    if (!hasMatchingTeamType) {
+      return false;
+    }
+  }
+
   // Type matching
   if (filters.type && filters.type.length > 0) {
     if (!filters.type.includes(tournament.type)) {
@@ -63,31 +94,61 @@ const matchesTournamentFilters = (tournament: Tournament, filters: any): boolean
     }
   }
 
-  // Price range matching
-  if (filters.priceRange && tournament.cost_amount !== null) {
-    const [min, max] = filters.priceRange;
-    if (tournament.cost_amount < min || tournament.cost_amount > max) {
+  // Price range matching - handle object format {min, max, includeFree}
+  if (filters.priceRange) {
+    const { min, max, includeFree } = filters.priceRange;
+    const tournamentCost = tournament.cost_amount;
+    const isFree = !tournamentCost || tournamentCost === 0;
+
+    // If tournament is free and we want to include free, include it
+    if (isFree && includeFree) {
+      return true;
+    }
+
+    // If tournament is free but we don't want free, exclude it
+    if (isFree && !includeFree) {
       return false;
+    }
+
+    // For paid tournaments, check min/max
+    if (!isFree && tournamentCost !== null) {
+      if (min !== undefined && min !== null && tournamentCost < min) {
+        return false;
+      }
+      if (max !== undefined && max !== null && tournamentCost > max) {
+        return false;
+      }
     }
   }
 
-  // Date range matching
+  // Date range matching - handle {start, end} format
   if (filters.dateRange) {
     const tournamentStart = new Date(tournament.start_date);
     
-    if (filters.dateRange.from) {
-      const filterFrom = new Date(filters.dateRange.from);
-      if (tournamentStart < filterFrom) {
+    if (filters.dateRange.start) {
+      const filterStart = new Date(filters.dateRange.start);
+      if (tournamentStart < filterStart) {
         return false;
       }
     }
     
-    if (filters.dateRange.to) {
-      const filterTo = new Date(filters.dateRange.to);
-      if (tournamentStart > filterTo) {
+    if (filters.dateRange.end) {
+      const filterEnd = new Date(filters.dateRange.end);
+      if (tournamentStart > filterEnd) {
         return false;
       }
     }
+  }
+
+  // Status matching
+  if (filters.status && filters.status.length > 0) {
+    // For now, we'll skip status matching since it's complex and computed
+    // TODO: Add proper status matching based on computed_status
+  }
+
+  // Regions matching
+  if (filters.regions && filters.regions.length > 0) {
+    // TODO: Add proper region matching
   }
 
   return true;
