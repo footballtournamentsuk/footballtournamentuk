@@ -206,12 +206,12 @@ const TournamentDetails = () => {
       />
       <div className="min-h-screen bg-background">
       {/* Hero Section with Banner */}
-      <div className="relative h-64 bg-gradient-to-r from-primary to-primary-glow overflow-hidden">
+      <div className="relative w-full aspect-video bg-gradient-to-r from-primary to-primary-glow overflow-hidden">
         {tournament.banner_url && (
           <img 
             src={tournament.banner_url} 
             alt={tournament.name}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
         )}
         <div className="absolute inset-0 bg-black/40" />
