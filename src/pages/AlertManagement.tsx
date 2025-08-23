@@ -16,7 +16,7 @@ interface TournamentAlert {
   id: string;
   email: string;
   filters: any;
-  frequency: 'daily' | 'weekly';
+  frequency: 'daily' | 'weekly' | 'instant';
   is_active: boolean;
   verified_at: string | null;
   created_at: string;
@@ -438,7 +438,7 @@ export default function AlertManagement() {
                       
                       <Select
                         value={alert.frequency}
-                        onValueChange={(value: 'daily' | 'weekly') => 
+                        onValueChange={(value: 'daily' | 'weekly' | 'instant') => 
                           updateAlert(alert.id, { frequency: value })
                         }
                         disabled={!alert.verified_at}
@@ -447,6 +447,7 @@ export default function AlertManagement() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="instant">Instant</SelectItem>
                           <SelectItem value="daily">Daily</SelectItem>
                           <SelectItem value="weekly">Weekly</SelectItem>
                         </SelectContent>

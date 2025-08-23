@@ -28,7 +28,7 @@ export function AlertSubscriptionModal({
   cityName 
 }: AlertSubscriptionModalProps) {
   const [email, setEmail] = useState('');
-  const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
+  const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'instant'>('daily');
   const [hasConsented, setHasConsented] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -265,7 +265,13 @@ export function AlertSubscriptionModal({
           {/* Frequency Selection */}
           <div className="space-y-3">
             <Label>How often would you like to receive alerts?</Label>
-            <RadioGroup value={frequency} onValueChange={(value: 'daily' | 'weekly') => setFrequency(value)}>
+            <RadioGroup value={frequency} onValueChange={(value: 'daily' | 'weekly' | 'instant') => setFrequency(value)}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="instant" id="instant" />
+                <Label htmlFor="instant" className="font-normal">
+                  Instant (within minutes of new tournaments)
+                </Label>
+              </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="daily" id="daily" />
                 <Label htmlFor="daily" className="font-normal">

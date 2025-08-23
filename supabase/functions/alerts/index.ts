@@ -13,7 +13,7 @@ const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 interface CreateAlertRequest {
   email: string;
   filters: Record<string, any>;
-  frequency: 'daily' | 'weekly';
+  frequency: 'daily' | 'weekly' | 'instant';
   source: 'list' | 'city' | 'filters' | 'empty';
 }
 
@@ -122,7 +122,7 @@ serve(async (req) => {
       );
     }
 
-    if (!frequency || !['daily', 'weekly'].includes(frequency)) {
+    if (!frequency || !['daily', 'weekly', 'instant'].includes(frequency)) {
       return new Response(
         JSON.stringify({ error: 'Valid frequency is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
