@@ -112,7 +112,9 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Received request body:', await req.clone().text());
     const { email, filters, frequency, source }: CreateAlertRequest = await req.json();
+    console.log('Parsed values:', { email, filters, frequency, source });
 
     // Validation
     if (!email || !validateEmail(email)) {
@@ -146,10 +148,13 @@ serve(async (req) => {
     }
 
     // Generate tokens
+    console.log('Generating tokens...');
     const verificationToken = generateSecureToken();
     const managementToken = generateSecureToken();
+    console.log('Tokens generated successfully');
 
     // Create alert in database
+    console.log('Inserting alert into database...');
     const { data: alert, error: dbError } = await supabase
       .from('tournament_alerts')
       .insert({
@@ -164,6 +169,8 @@ serve(async (req) => {
       .select()
       .single();
 
+    console.log('Database operation result:', { alert, dbError });
+
     if (dbError) {
       console.error('Database error:', dbError);
       return new Response(
@@ -173,7 +180,9 @@ serve(async (req) => {
     }
 
     // Send verification email
+    console.log('Sending verification email...');
     await sendVerificationEmail(email, verificationToken);
+    console.log('Verification email sent successfully');
 
     console.log('Alert created successfully:', alert.id);
 
@@ -191,8 +200,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in alerts function:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
