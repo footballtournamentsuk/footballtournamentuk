@@ -40,7 +40,7 @@ const sendVerificationEmail = async (email: string, verificationToken: string) =
   
   try {
     const { error } = await resend.emails.send({
-      from: 'Football Tournaments UK <noreply@footballtournamentsuk.co.uk>',
+      from: 'Football Tournaments UK <onboarding@resend.dev>',
       to: [email],
       subject: 'Verify your tournament alerts subscription',
       html: `

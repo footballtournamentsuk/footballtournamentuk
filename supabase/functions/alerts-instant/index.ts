@@ -425,7 +425,7 @@ serve(async (req) => {
         const emailHtml = generateInstantEmail(tournament, alert);
         
         const { error: emailError } = await resend.emails.send({
-          from: 'Football Tournaments UK <alerts@footballtournamentsuk.co.uk>',
+          from: 'Football Tournaments UK <onboarding@resend.dev>',
           to: [alert.email],
           subject: `🏆 New Tournament Alert: ${tournament.name}`,
           html: emailHtml,
