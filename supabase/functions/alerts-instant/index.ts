@@ -122,7 +122,9 @@ const matchesTournamentFilters = (tournament: Tournament, filters: any): boolean
 
   // Format filter
   if (parsedFilters.format && parsedFilters.format.length > 0) {
-    if (!parsedFilters.format.includes(tournament.format)) {
+    // Tournament format can be comma-separated (e.g., "11v11,9v9,7v7")
+    const tournamentFormats = tournament.format.split(',').map(f => f.trim());
+    if (!parsedFilters.format.some((alertFormat: string) => tournamentFormats.includes(alertFormat))) {
       return false;
     }
   }

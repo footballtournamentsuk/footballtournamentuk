@@ -43,28 +43,7 @@ export const useTournamentAlerts = () => {
               console.log('Instant alerts function called successfully:', data);
             }
 
-            // Send confirmation email to tournament creator
-            const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
-              body: {
-                type: 'tournament_created',
-                to: payload.new.contact_email,
-                data: {
-                  userName: payload.new.contact_name,
-                  tournamentName: payload.new.name,
-                  tournamentUrl: `https://footballtournamentsuk.co.uk/tournaments/${payload.new.slug || payload.new.id}`,
-                  dateRange: new Date(payload.new.start_date).toLocaleDateString() + 
-                           (payload.new.end_date !== payload.new.start_date ? 
-                            ' - ' + new Date(payload.new.end_date).toLocaleDateString() : ''),
-                  location: payload.new.location_name
-                }
-              }
-            });
-
-            if (emailError) {
-              console.error('Error sending creator confirmation email:', emailError);
-            } else {
-              console.log('Creator confirmation email sent successfully:', emailData);
-            }
+            // Note: Creator confirmation email is sent by database trigger, not here
           } catch (error) {
             console.error('Failed to process tournament creation:', error);
           }
