@@ -15,6 +15,7 @@ interface EmailRequest {
     dateRange?: string;
     location?: string;
   };
+  sender_type?: 'creator_confirmation' | 'user_action';
 }
 
 // Simple rate limiting map (in production, use Redis or similar)
@@ -231,21 +232,25 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Rate limiting
-    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-    if (!checkRateLimit(clientIP)) {
-      console.log(`Rate limit exceeded for IP: ${clientIP}`);
-      return new Response(JSON.stringify({ 
-        ok: false, 
-        error: "Rate limit exceeded. Please try again later." 
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const requestData: EmailRequest = await req.json();
     
+    // Rate limiting - exempt creator confirmation emails from rate limiting
+    if (requestData.sender_type !== 'creator_confirmation') {
+      const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      if (!checkRateLimit(clientIP)) {
+        console.log(`Rate limit exceeded for IP: ${clientIP}`);
+        return new Response(JSON.stringify({ 
+          ok: false, 
+          error: "Rate limit exceeded. Please try again later." 
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } else {
+      console.log(`Bypassing rate limit for creator confirmation email to: ${requestData.to}`);
+    }
+
     // Validate request
     const validationError = validateEmailRequest(requestData);
     if (validationError) {
