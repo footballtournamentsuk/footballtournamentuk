@@ -5,7 +5,8 @@ export const useTournamentAlerts = () => {
   const processedTournaments = useRef(new Set<string>());
 
   useEffect(() => {
-    // Listen for tournament creation events
+    // Listen for tournament creation events for UI updates only
+    // Instant alerts are triggered by database triggers, not client-side
     const channel = supabase
       .channel('tournament-alerts-monitor')
       .on(
@@ -16,37 +17,8 @@ export const useTournamentAlerts = () => {
           table: 'tournaments'
         },
         async (payload) => {
-          const tournamentId = payload.new.id;
-          
-          // Prevent duplicate processing of the same tournament
-          if (processedTournaments.current.has(tournamentId)) {
-            console.log('Tournament already processed, skipping:', tournamentId);
-            return;
-          }
-          
-          processedTournaments.current.add(tournamentId);
-          
-          console.log('New tournament created, triggering instant alerts:', payload.new);
-          
-          try {
-            // Call the instant alerts function
-            const { data, error } = await supabase.functions.invoke('alerts-instant', {
-              body: {
-                tournamentId: tournamentId,
-                action: 'created'
-              }
-            });
-
-            if (error) {
-              console.error('Error calling instant alerts function:', error);
-            } else {
-              console.log('Instant alerts function called successfully:', data);
-            }
-
-            // Note: Creator confirmation email is sent by database trigger, not here
-          } catch (error) {
-            console.error('Failed to process tournament creation:', error);
-          }
+          console.log('New tournament created (UI update only):', payload.new);
+          // No instant alerts processing here - handled by database trigger
         }
       )
       .on(
