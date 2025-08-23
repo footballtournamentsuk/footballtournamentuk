@@ -181,8 +181,13 @@ serve(async (req) => {
 
     // Send verification email
     console.log('Sending verification email...');
-    await sendVerificationEmail(email, verificationToken);
-    console.log('Verification email sent successfully');
+    try {
+      await sendVerificationEmail(email, verificationToken);
+      console.log('Verification email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send verification email, but alert was created:', emailError);
+      // Continue - alert is created even if email fails (for testing with Resend limits)
+    }
 
     console.log('Alert created successfully:', alert.id);
 
