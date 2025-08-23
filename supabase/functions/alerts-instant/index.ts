@@ -336,9 +336,14 @@ serve(async (req) => {
   }
 
   try {
-    const { tournamentId, action = 'created' } = await req.json();
+    console.log('Instant alerts function triggered');
+    const body = await req.text();
+    console.log('Request body:', body);
+    
+    const { tournamentId, action = 'created' } = JSON.parse(body);
 
     if (!tournamentId) {
+      console.error('No tournamentId provided');
       return new Response(
         JSON.stringify({ error: 'Tournament ID is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -499,8 +504,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in alerts-instant function:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
