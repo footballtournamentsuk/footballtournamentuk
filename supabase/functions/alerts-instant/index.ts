@@ -354,6 +354,41 @@ serve(async (req) => {
 
     console.log('Processing instant alerts for tournament:', tournamentId, 'action:', action);
 
+    // Check for duplicate processing within the last 2 minutes to prevent double notifications
+    const { data: recentProcessing } = await supabase
+      .from('analytics_events')
+      .select('id')
+      .eq('event_name', 'instant_alerts_processed')
+      .eq('properties->tournamentId', tournamentId)
+      .eq('properties->action', action)
+      .gte('timestamp', new Date(Date.now() - 2 * 60 * 1000).toISOString())
+      .limit(1);
+
+    if (recentProcessing && recentProcessing.length > 0) {
+      console.log('Duplicate processing detected, skipping:', tournamentId);
+      return new Response(
+        JSON.stringify({ 
+          message: 'Duplicate processing detected, skipped to prevent double notifications',
+          tournamentId,
+          sent: 0,
+          total: 0
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Mark as processing to prevent duplicates
+    await supabase
+      .from('analytics_events')
+      .insert({
+        event_name: 'instant_alerts_processed',
+        properties: { tournamentId, action },
+        timestamp: new Date().toISOString()
+      });
+
     // Get the tournament details
     const { data: tournament, error: tournamentError } = await supabase
       .from('tournaments')
