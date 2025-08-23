@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useTournamentAlerts = () => {
+  const processedTournaments = useRef(new Set<string>());
+
   useEffect(() => {
     // Listen for tournament creation events
     const channel = supabase
@@ -14,13 +16,23 @@ export const useTournamentAlerts = () => {
           table: 'tournaments'
         },
         async (payload) => {
+          const tournamentId = payload.new.id;
+          
+          // Prevent duplicate processing of the same tournament
+          if (processedTournaments.current.has(tournamentId)) {
+            console.log('Tournament already processed, skipping:', tournamentId);
+            return;
+          }
+          
+          processedTournaments.current.add(tournamentId);
+          
           console.log('New tournament created, triggering instant alerts:', payload.new);
           
           try {
             // Call the instant alerts function
             const { data, error } = await supabase.functions.invoke('alerts-instant', {
               body: {
-                tournamentId: payload.new.id,
+                tournamentId: tournamentId,
                 action: 'created'
               }
             });
@@ -30,8 +42,31 @@ export const useTournamentAlerts = () => {
             } else {
               console.log('Instant alerts function called successfully:', data);
             }
+
+            // Send confirmation email to tournament creator
+            const { data: emailData, error: emailError } = await supabase.functions.invoke('send-email', {
+              body: {
+                type: 'tournament_created',
+                to: payload.new.contact_email,
+                data: {
+                  userName: payload.new.contact_name,
+                  tournamentName: payload.new.name,
+                  tournamentUrl: `https://footballtournamentsuk.co.uk/tournaments/${payload.new.slug || payload.new.id}`,
+                  dateRange: new Date(payload.new.start_date).toLocaleDateString() + 
+                           (payload.new.end_date !== payload.new.start_date ? 
+                            ' - ' + new Date(payload.new.end_date).toLocaleDateString() : ''),
+                  location: payload.new.location_name
+                }
+              }
+            });
+
+            if (emailError) {
+              console.error('Error sending creator confirmation email:', emailError);
+            } else {
+              console.log('Creator confirmation email sent successfully:', emailData);
+            }
           } catch (error) {
-            console.error('Failed to trigger instant alerts:', error);
+            console.error('Failed to process tournament creation:', error);
           }
         }
       )
