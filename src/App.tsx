@@ -44,6 +44,7 @@ import { CookieConsent } from "./components/CookieConsent";
 import { ScrollToTop } from "./components/ScrollToTop";
 import BottomNavigation from "./components/BottomNavigation";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import { useTournamentAlerts } from "./hooks/useTournamentAlerts";
 
 // Extend Window interface for GTM dataLayer
 declare global {
@@ -237,6 +238,9 @@ const RouteTracker = () => {
 };
 
 const App = () => {
+  // Initialize tournament alerts monitoring
+  useTournamentAlerts();
+
   // Handle SPA routing redirects stored in sessionStorage
   React.useEffect(() => {
     const storedRedirect = sessionStorage.getItem('spa_redirect');
