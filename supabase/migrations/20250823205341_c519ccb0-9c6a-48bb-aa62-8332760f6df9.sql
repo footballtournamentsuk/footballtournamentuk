@@ -1,0 +1,2 @@
+-- Set the service role key for the trigger function to use
+ALTER DATABASE postgres SET app.settings.service_role_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlrbm1jZGRyZmtnZ3Bocmt0aXZkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE2ODMxNSwiZXhwIjoyMDcwNzQ0MzE1fQ.ELLaJpQOdQ1_8aagR-qLCtgPJSDnF6_LbMrW2rGFO_w';
