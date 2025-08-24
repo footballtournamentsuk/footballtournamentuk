@@ -45,10 +45,9 @@ Deno.serve(async (req) => {
     // Generate XML sitemap with proper formatting
     const baseUrl = 'https://footballtournamentsuk.co.uk'
     
-    const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    const xmlFooter = '</urlset>'
-    
-    let xmlUrls = ''
+    let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+`
 
     // Add each tournament to sitemap
     if (tournaments && tournaments.length > 0) {
@@ -78,7 +77,7 @@ Deno.serve(async (req) => {
           priority = '0.8'
         }
 
-        xmlUrls += `  <url>
+        xmlContent += `  <url>
     <loc>${tournamentUrl}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
@@ -88,7 +87,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const xmlContent = xmlHeader + xmlUrls + xmlFooter
+    xmlContent += `</urlset>`
 
     console.log('Successfully generated tournaments sitemap')
 
