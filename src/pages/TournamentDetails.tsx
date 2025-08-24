@@ -46,6 +46,7 @@ import { AttachmentViewer } from '@/components/AttachmentViewer';
 import { useAttachments } from '@/hooks/useAttachments';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
+import { ShareHero } from '@/components/ShareHero';
 import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
 import { isDemoTournament } from '@/utils/demoUtils';
 
@@ -205,17 +206,16 @@ const TournamentDetails = () => {
         tournaments={[tournament]}
       />
       <div className="min-h-screen bg-background">
-      {/* Hero Section with Banner */}
-      <div className="relative h-64 bg-gradient-to-r from-primary to-primary-glow overflow-hidden">
-        {tournament.banner_url && (
-          <img 
-            src={tournament.banner_url} 
-            alt={tournament.name}
-            className="absolute inset-0 w-full h-full object-contain object-center"
-          />
-        )}
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
+      {/* Share Hero Section */}
+      <ShareHero 
+        tournament={tournament} 
+        onScrollToDetails={() => {
+          const detailsElement = document.getElementById('tournament-details');
+          if (detailsElement) {
+            detailsElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      />
 
       {/* Action Buttons */}
       <div className="border-b bg-background">
@@ -331,7 +331,7 @@ const TournamentDetails = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div id="tournament-details" className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">

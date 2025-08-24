@@ -175,8 +175,13 @@ export const SEO: React.FC<SEOProps> = ({
   // Generate dynamic OG image URL for tournaments
   const getOgImageUrl = () => {
     if (tournaments.length === 1) {
-      // Single tournament page - use dynamic OG image
-      return `${siteUrl}/functions/v1/generate-og-image?tournamentId=${tournaments[0].id}`;
+      const tournament = tournaments[0];
+      // Prefer share cover, fallback to dynamic generation, then default
+      if (tournament.share_cover_url) {
+        return tournament.share_cover_url;
+      }
+      // Dynamic OG image generation as fallback
+      return `${siteUrl}/functions/v1/generate-og-image?tournamentId=${tournament.id}`;
     }
     // Default OG image for other pages
     return `${siteUrl}/og-image.jpg`;

@@ -35,6 +35,9 @@ export interface Tournament {
   features?: string[];
   organizerId?: string;
   banner_url?: string;
+  share_cover_url?: string;
+  share_cover_alt?: string;
+  share_cover_variant?: 'FB_1200x630' | 'IG_1080x1350' | 'IG_1080x1080';
   extended_description?: string;
   venue_details?: string;
   rules_and_regulations?: string;
@@ -78,6 +81,9 @@ export interface DatabaseTournament {
   organizer_id: string | null;
   computed_status: string | null;
   banner_url: string | null;
+  share_cover_url: string | null;
+  share_cover_alt: string | null;
+  share_cover_variant: string | null;
   extended_description: string | null;
   venue_details: string | null;
   rules_and_regulations: string | null;

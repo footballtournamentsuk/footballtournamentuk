@@ -411,6 +411,9 @@ export type Database = {
           registration_deadline: string | null
           rules_and_regulations: string | null
           schedule_details: string | null
+          share_cover_alt: string | null
+          share_cover_url: string | null
+          share_cover_variant: string | null
           slug: string | null
           social_media_links: Json | null
           sponsor_info: string | null
@@ -455,6 +458,9 @@ export type Database = {
           registration_deadline?: string | null
           rules_and_regulations?: string | null
           schedule_details?: string | null
+          share_cover_alt?: string | null
+          share_cover_url?: string | null
+          share_cover_variant?: string | null
           slug?: string | null
           social_media_links?: Json | null
           sponsor_info?: string | null
@@ -499,6 +505,9 @@ export type Database = {
           registration_deadline?: string | null
           rules_and_regulations?: string | null
           schedule_details?: string | null
+          share_cover_alt?: string | null
+          share_cover_url?: string | null
+          share_cover_variant?: string | null
           slug?: string | null
           social_media_links?: Json | null
           sponsor_info?: string | null

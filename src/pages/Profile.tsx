@@ -21,6 +21,7 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
 import { AttachmentUploader } from '@/components/AttachmentUploader';
+import { ShareCoverUpload } from '@/components/ShareCoverUpload';
 import { Progress } from '@/components/ui/progress';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
@@ -95,6 +96,9 @@ interface Tournament {
   prize_information?: string;
   additional_notes?: string;
   banner_url?: string;
+  share_cover_url?: string;
+  share_cover_alt?: string;
+  share_cover_variant?: string;
 }
 
 const ProfilePage = () => {
@@ -604,7 +608,10 @@ const ProfilePage = () => {
         schedule_details: selectedTournamentForDetails.schedule_details || '',
         prize_information: selectedTournamentForDetails.prize_information || '',
         additional_notes: selectedTournamentForDetails.additional_notes || '',
-        banner_url: selectedTournamentForDetails.banner_url || null
+        banner_url: selectedTournamentForDetails.banner_url || null,
+        share_cover_url: selectedTournamentForDetails.share_cover_url || null,
+        share_cover_alt: selectedTournamentForDetails.share_cover_alt || null,
+        share_cover_variant: selectedTournamentForDetails.share_cover_variant || null
       };
 
       const { error } = await supabase
@@ -1654,6 +1661,38 @@ const ProfilePage = () => {
                         </div>
                       </CardContent>
                     </Card>
+
+                    {/* Share Cover Upload Section */}
+                    <ShareCoverUpload
+                      tournamentId={selectedTournamentForDetails.id}
+                      currentShareCoverUrl={selectedTournamentForDetails.share_cover_url}
+                      currentAltText={selectedTournamentForDetails.share_cover_alt}
+                      currentVariant={selectedTournamentForDetails.share_cover_variant}
+                      onUploadComplete={(url, altText, variant) => {
+                        setSelectedTournamentForDetails(prev => prev ? {
+                          ...prev,
+                          share_cover_url: url,
+                          share_cover_alt: altText,
+                          share_cover_variant: variant
+                        } : null);
+                        
+                        // Update in database
+                        supabase
+                          .from('tournaments')
+                          .update({
+                            share_cover_url: url || null,
+                            share_cover_alt: altText || null,
+                            share_cover_variant: variant
+                          })
+                          .eq('id', selectedTournamentForDetails.id)
+                          .then(({ error }) => {
+                            if (error) {
+                              console.error('Error updating share cover:', error);
+                            }
+                          });
+                      }}
+                    />
+
                     <Card>
                       <CardHeader>
                         <CardTitle>Extended Description</CardTitle>
