@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-const emailFrom = Deno.env.get("EMAIL_FROM") || "Football Tournaments UK <alerts@footballtournamentsuk.co.uk>";
+const emailFrom = `${Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK"} <${Deno.env.get("EMAIL_FROM") || "alerts@footballtournamentsuk.co.uk"}>`;
 const emailFromName = Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK";
 const emailReplyTo = Deno.env.get("EMAIL_REPLY_TO") || "support@footballtournamentsuk.co.uk";
 
