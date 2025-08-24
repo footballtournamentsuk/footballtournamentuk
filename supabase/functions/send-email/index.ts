@@ -2,7 +2,14 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// Check if RESEND_API_KEY is available
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
+if (!resendApiKey) {
+  console.error("RESEND_API_KEY environment variable is not set");
+  throw new Error("RESEND_API_KEY environment variable is required");
+}
+
+const resend = new Resend(resendApiKey);
 const emailFrom = `${Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK"} <${Deno.env.get("EMAIL_FROM") || "alerts@footballtournamentsuk.co.uk"}>`;
 const emailFromName = Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK";
 const emailReplyTo = Deno.env.get("EMAIL_REPLY_TO") || "support@footballtournamentsuk.co.uk";
