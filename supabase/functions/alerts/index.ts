@@ -112,9 +112,31 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Received request body:', await req.clone().text());
-    const { email, filters, frequency, source }: CreateAlertRequest = await req.json();
+    console.log('=== ALERTS FUNCTION START ===');
+    console.log('Request method:', req.method);
+    console.log('Request headers:', Object.fromEntries(req.headers.entries()));
+    
+    const bodyText = await req.text();
+    console.log('Raw request body:', bodyText);
+    
+    let requestData;
+    try {
+      requestData = JSON.parse(bodyText);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const { email, filters, frequency, source } = requestData;
     console.log('Parsed values:', { email, filters, frequency, source });
+
+    // Check environment variables
+    console.log('Environment check:');
+    console.log('- SUPABASE_URL:', Deno.env.get('SUPABASE_URL') ? 'SET' : 'MISSING');
+    console.log('- SUPABASE_SERVICE_ROLE_KEY:', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ? 'SET' : 'MISSING');
 
     // Validation
     if (!email || !validateEmail(email)) {
