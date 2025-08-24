@@ -46,7 +46,7 @@ import { AttachmentViewer } from '@/components/AttachmentViewer';
 import { useAttachments } from '@/hooks/useAttachments';
 import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
-import { ShareHero } from '@/components/ShareHero';
+import { SimpleShareCard } from '@/components/SimpleShareCard';
 import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
 import { isDemoTournament } from '@/utils/demoUtils';
 
@@ -206,16 +206,8 @@ const TournamentDetails = () => {
         tournaments={[tournament]}
       />
       <div className="min-h-screen bg-background">
-      {/* Share Hero Section */}
-      <ShareHero 
-        tournament={tournament} 
-        onScrollToDetails={() => {
-          const detailsElement = document.getElementById('tournament-details');
-          if (detailsElement) {
-            detailsElement.scrollIntoView({ behavior: 'smooth' });
-          }
-        }}
-      />
+      {/* Simple Share Card Section */}
+      <SimpleShareCard tournament={tournament} />
 
       {/* Action Buttons */}
       <div className="border-b bg-background">
