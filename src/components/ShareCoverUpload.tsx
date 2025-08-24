@@ -231,7 +231,7 @@ export const ShareCoverUpload: React.FC<ShareCoverUploadProps> = ({
           <Label htmlFor="alt-text">Alt Text</Label>
           <Input
             id="alt-text"
-            value={altText}
+            value={altText || ''}
             onChange={(e) => setAltText(e.target.value)}
             placeholder="Describe the image for accessibility"
             disabled={isUploading}
