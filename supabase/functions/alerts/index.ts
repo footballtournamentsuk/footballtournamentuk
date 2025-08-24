@@ -35,66 +35,68 @@ const checkRateLimit = async (email: string): Promise<boolean> => {
   return (count || 0) < 5;
 };
 
-const sendVerificationEmail = async (email: string, verificationToken: string) => {
-  const verificationUrl = `https://footballtournamentsuk.co.uk/alerts/verify?token=${verificationToken}`;
+const sendVerificationEmail = async (email: string, verificationToken: string, alertId: string, retryCount = 0): Promise<void> => {
+  const maxRetries = 3;
+  const backoffMs = Math.pow(2, retryCount) * 1000; // Exponential backoff: 1s, 2s, 4s
   
   try {
-    const { error } = await resend.emails.send({
-      from: 'Football Tournaments UK <onboarding@resend.dev>',
-      to: [email],
-      subject: 'Verify your tournament alerts subscription',
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Verify Your Tournament Alerts</title>
-          </head>
-          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #059669; margin-bottom: 10px;">🏆 Football Tournaments UK</h1>
-              <h2 style="color: #374151; font-weight: 600;">Verify Your Tournament Alerts</h2>
-            </div>
-            
-            <div style="background: #f9fafb; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
-              <p style="margin: 0 0 16px 0; font-size: 16px;">Hi there!</p>
-              <p style="margin: 0 0 16px 0;">You've requested to receive tournament alerts. To activate your subscription, please click the button below:</p>
-              
-              <div style="text-align: center; margin: 24px 0;">
-                <a href="${verificationUrl}" 
-                   style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
-                  ✅ Activate My Alerts
-                </a>
-              </div>
-              
-              <p style="margin: 16px 0 0 0; font-size: 14px; color: #6b7280;">
-                If the button doesn't work, copy and paste this link into your browser:<br>
-                <a href="${verificationUrl}" style="color: #059669; word-break: break-all;">${verificationUrl}</a>
-              </p>
-            </div>
-            
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 14px; color: #6b7280;">
-              <p>If you didn't request this, you can safely ignore this email.</p>
-              <p style="margin-top: 16px;">
-                Best regards,<br>
-                The Football Tournaments UK Team
-              </p>
-            </div>
-          </body>
-        </html>
-      `,
+    console.log(`Sending verification email to ${email}, attempt ${retryCount + 1}/${maxRetries + 1}`);
+    
+    // Use the existing send-email function with proper error handling
+    const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+      },
+      body: JSON.stringify({
+        type: 'alert_verify',
+        to: email,
+        data: {
+          verificationToken,
+          verificationUrl: `https://footballtournamentsuk.co.uk/alerts/verify?token=${verificationToken}`
+        }
+      })
     });
 
-    if (error) {
-      console.error('Error sending verification email:', error);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Send-email returned ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('Verification email sent successfully via send-email function:', result);
+    
+    // Log successful delivery
+    await supabase
+      .from('alert_deliveries')
+      .insert({
+        alert_id: alertId,
+        status: 'sent',
+        item_count: 1
+      });
+    
+  } catch (error) {
+    console.error(`Failed to send verification email (attempt ${retryCount + 1}):`, error);
+    
+    // Log failed delivery attempt
+    await supabase
+      .from('alert_deliveries')
+      .insert({
+        alert_id: alertId,
+        status: 'failed',
+        item_count: 0,
+        error: error.message
+      });
+
+    if (retryCount < maxRetries) {
+      console.log(`Retrying in ${backoffMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, backoffMs));
+      return sendVerificationEmail(email, verificationToken, alertId, retryCount + 1);
+    } else {
+      console.error('Max retries reached, giving up on verification email');
       throw error;
     }
-    
-    console.log('Verification email sent successfully to:', email);
-  } catch (error) {
-    console.error('Failed to send verification email:', error);
-    throw error;
   }
 };
 
@@ -179,14 +181,21 @@ serve(async (req) => {
       );
     }
 
-    // Send verification email
+    // Send verification email with retries
     console.log('Sending verification email...');
     try {
-      await sendVerificationEmail(email, verificationToken);
+      await sendVerificationEmail(email, verificationToken, alert.id);
       console.log('Verification email sent successfully');
     } catch (emailError) {
-      console.error('Failed to send verification email, but alert was created:', emailError);
-      // Continue - alert is created even if email fails (for testing with Resend limits)
+      console.error('Failed to send verification email after all retries:', emailError);
+      // Return error to user if email fails completely
+      return new Response(
+        JSON.stringify({ 
+          error: 'Alert created but verification email failed. Please try again later.',
+          alertId: alert.id
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Alert created successfully:', alert.id);

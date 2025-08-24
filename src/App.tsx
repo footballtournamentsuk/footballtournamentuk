@@ -31,6 +31,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 import Verify from "./pages/Verify";
 import AlertVerify from "./pages/AlertVerify";
+import AlertManage from "./pages/AlertManage";
 import CheckEmail from "./pages/CheckEmail";
 import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
@@ -266,8 +267,9 @@ const App = () => {
              <Route path="/tournaments" element={<Tournaments />} />
              <Route path="/auth" element={<Auth />} />
              <Route path="/verify" element={<Verify />} />
-             <Route path="/alerts/verify" element={<AlertVerify />} />
-             <Route path="/check-email" element={<CheckEmail />} />
+              <Route path="/alerts/verify" element={<AlertVerify />} />
+              <Route path="/alerts/manage" element={<AlertManage />} />
+              <Route path="/check-email" element={<CheckEmail />} />
              <Route path="/profile" element={<Profile />} />
             <Route path="/about" element={<About />} />
             <Route path="/support" element={<Support />} />

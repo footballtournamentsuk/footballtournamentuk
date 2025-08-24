@@ -6,7 +6,7 @@ const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const emailFrom = Deno.env.get("EMAIL_FROM") || "Football Tournaments UK <info@footballtournamentsuk.co.uk>";
 
 interface EmailRequest {
-  type: 'welcome' | 'tournament_created' | 'review_request';
+  type: 'welcome' | 'tournament_created' | 'review_request' | 'alert_verify';
   to: string;
   data: {
     userName?: string;
@@ -14,6 +14,8 @@ interface EmailRequest {
     tournamentUrl?: string;
     dateRange?: string;
     location?: string;
+    verificationToken?: string;
+    verificationUrl?: string;
   };
   sender_type?: 'creator_confirmation' | 'user_action';
 }
@@ -43,8 +45,8 @@ function validateEmailRequest(request: EmailRequest): string | null {
     return "Missing required fields: type, to, data";
   }
 
-  if (!['welcome', 'tournament_created', 'review_request'].includes(request.type)) {
-    return "Invalid email type. Must be: welcome, tournament_created, or review_request";
+  if (!['welcome', 'tournament_created', 'review_request', 'alert_verify'].includes(request.type)) {
+    return "Invalid email type. Must be: welcome, tournament_created, review_request, or alert_verify";
   }
 
   // Validate email format
@@ -207,6 +209,52 @@ function generateEmailContent(request: EmailRequest): { subject: string; html: s
               You received this email because you participated in a tournament through Football Tournaments UK.
             </p>
           </div>
+        `
+      };
+
+    case 'alert_verify':
+      return {
+        subject: 'Verify your tournament alerts subscription',
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Verify Your Tournament Alerts</title>
+            </head>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #059669; margin-bottom: 10px;">🏆 Football Tournaments UK</h1>
+                <h2 style="color: #374151; font-weight: 600;">Verify Your Tournament Alerts</h2>
+              </div>
+              
+              <div style="background: #f9fafb; padding: 24px; border-radius: 8px; margin-bottom: 24px;">
+                <p style="margin: 0 0 16px 0; font-size: 16px;">Hi there!</p>
+                <p style="margin: 0 0 16px 0;">You've requested to receive tournament alerts. To activate your subscription, please click the button below:</p>
+                
+                <div style="text-align: center; margin: 24px 0;">
+                  <a href="${data.verificationUrl}" 
+                     style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
+                    ✅ Activate My Alerts
+                  </a>
+                </div>
+                
+                <p style="margin: 16px 0 0 0; font-size: 14px; color: #6b7280;">
+                  If the button doesn't work, copy and paste this link into your browser:<br>
+                  <a href="${data.verificationUrl}" style="color: #059669; word-break: break-all;">${data.verificationUrl}</a>
+                </p>
+              </div>
+              
+              <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 14px; color: #6b7280;">
+                <p>If you didn't request this, you can safely ignore this email.</p>
+                <p style="margin-top: 16px;">
+                  Best regards,<br>
+                  The Football Tournaments UK Team
+                </p>
+              </div>
+            </body>
+          </html>
         `
       };
 
