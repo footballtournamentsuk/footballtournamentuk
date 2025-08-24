@@ -6,7 +6,7 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useCounterAnimation } from '@/hooks/useCounterAnimation';
 import { usePreloadHeroImages } from '@/hooks/usePreloadCriticalResources';
 import { HeroSearch } from '@/components/HeroSearch';
-import heroImage from '@/assets/hero-football.jpg';
+import heroImage from '@/assets/hero-football.webp';
 
 interface HeroProps {
   onHeroSearch?: (searchTerm: string, postcode?: string, coordinates?: [number, number]) => void;

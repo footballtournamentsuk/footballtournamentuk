@@ -19,8 +19,8 @@ export const getTournamentThumbnail = (tournament: Tournament): TournamentThumbn
     };
   }
 
-  // Use default football image from public folder
-  const defaultImage = '/hero-football.jpg';
+  // Use optimized WebP image from assets
+  const defaultImage = '/src/assets/hero-football.webp';
   
   return {
     src: defaultImage,
@@ -34,8 +34,8 @@ export const getTournamentThumbnail = (tournament: Tournament): TournamentThumbn
  */
 export const generatePlaceholderThumbnail = (tournament: Tournament): string => {
   // This could be enhanced to generate dynamic thumbnails
-  // For now, return a consistent placeholder
-  return '/hero-football.jpg';
+  // For now, return a consistent optimized placeholder
+  return '/src/assets/hero-football.webp';
 };
 
 /**

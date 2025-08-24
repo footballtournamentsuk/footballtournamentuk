@@ -1,9 +1,27 @@
-# Netlify redirects file for SPA routing
-# This ensures all routes are handled by React Router
+# Dynamic sitemap redirects to Supabase Edge Functions
+/sitemap_tournaments.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments 200
+/sitemap_index.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-index 200
 
-# Redirect specific paths to the React app
-/alerts/verify/* /index.html 200
-/alerts/manage/* /index.html 200
+# SPA routing support
+/city/* /index.html 200
+/tournaments/* /index.html 200
+/auth /index.html 200
+/profile /index.html 200
+/how-it-works /index.html 200
+/youth-tournaments /index.html 200
+/tournament-formats /index.html 200
+/regions /index.html 200
+/about /index.html 200
+/faq /index.html 200
+/support /index.html 200
+/policies /index.html 200
+/partners /index.html 200
+/alerts/* /index.html 200
+/admin /index.html 200
+
+# Alert management routes with no-index headers
+/alerts/verify/* /index.html 200!
+/alerts/manage/* /index.html 200!
 
 # Catch-all rule for SPA - must be last
-/*    /index.html   200
+/* /index.html 200

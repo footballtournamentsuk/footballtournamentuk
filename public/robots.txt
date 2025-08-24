@@ -13,4 +13,6 @@ Allow: /
 User-agent: *
 Allow: /
 
+Sitemap: https://footballtournamentsuk.co.uk/sitemap_index.xml
 Sitemap: https://footballtournamentsuk.co.uk/sitemap.xml
+Sitemap: https://footballtournamentsuk.co.uk/sitemap_tournaments.xml

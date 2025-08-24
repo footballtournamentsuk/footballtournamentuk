@@ -4,10 +4,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker, addResourceHints, optimizeFonts } from '@/utils/performance';
+import { injectCriticalCSS, optimizeFontLoading } from '@/utils/criticalCss';
 
 // Initialize performance optimizations
 addResourceHints();
 optimizeFonts();
+injectCriticalCSS();
+optimizeFontLoading();
 
 // Register service worker for caching
 if ('serviceWorker' in navigator) {

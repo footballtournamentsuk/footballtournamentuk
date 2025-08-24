@@ -24,6 +24,23 @@
     <meta name="geo.placename" content="United Kingdom" />
     <meta name="theme-color" content="#16a34a" />
     
+    <!-- Critical Resource Preloads -->
+    <link rel="preload" href="/src/assets/hero-football.webp" as="image" fetchpriority="high">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Critical CSS Inline -->
+    <style>
+      /* Critical above-the-fold styles */
+      body { font-family: Inter, system-ui, sans-serif; margin: 0; }
+      .hero-section { min-height: 80vh; position: relative; overflow: hidden; }
+      .hero-bg { position: absolute; inset: 0; z-index: 0; }
+      .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+      .hero-content { position: relative; z-index: 10; text-align: center; color: white; }
+      .hero-gradient { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.7) 100%); }
+    </style>
+
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -40,6 +57,10 @@
     
     <link rel="manifest" href="/manifest.json" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    
+    <!-- Optimized Font Loading -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
     
     <title>Football Tournaments UK – Youth, Adult & Grassroots Competitions</title>
     <meta name="description" content="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts." />
