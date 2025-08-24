@@ -64,121 +64,182 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
     }
   };
 
-  // Determine the share cover image and aspect ratio
+  // Determine the share cover image and variant
   const shareCoverUrl = tournament.share_cover_url || tournament.banner_url;
   const shareVariant = tournament.share_cover_variant || 'FB_1200x630';
   
-  // Get aspect ratio class based on variant
-  const getAspectRatioClass = () => {
+  // Get container dimensions based on variant
+  const getContainerStyle = () => {
+    let ratio: number;
+    let maxWidth: number;
+    
     switch (shareVariant) {
       case 'IG_1080x1350':
-        return 'aspect-[4/5]'; // Instagram Portrait
+        ratio = 1080 / 1350;
+        maxWidth = 1080;
+        break;
       case 'IG_1080x1080':
-        return 'aspect-square'; // Instagram Square  
+        ratio = 1;
+        maxWidth = 1080;
+        break;
       case 'FB_1200x630':
       default:
-        return 'aspect-[1200/630]'; // Facebook/Twitter
+        ratio = 1200 / 630;
+        maxWidth = 1200;
+        break;
     }
+
+    return {
+      '--ratio': ratio.toString(),
+      width: `min(100%, ${maxWidth}px, calc(80svh * ${ratio}))`,
+      aspectRatio: ratio.toString(),
+    } as React.CSSProperties;
   };
 
   const altText = tournament.share_cover_alt || 
     `${tournament.name} - ${tournament.format} ${tournament.type} tournament in ${tournament.location.name}`;
 
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-br from-primary/90 to-primary-glow/90">
-      {/* Background Image Container */}
-      <div className={`relative w-full ${getAspectRatioClass()}`}>
-        {shareCoverUrl ? (
-          <img
-            src={shareCoverUrl}
-            alt={altText}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="eager"
-            decoding="async"
-            sizes="100vw"
-          />
-        ) : (
-          // Fallback gradient background
-          <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow" />
-        )}
-        
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/50" />
-        
-        {/* Content Overlay */}
-        <div className="absolute inset-0 flex flex-col justify-center">
-          <div className="container mx-auto px-4 text-center text-white">
-            {/* Status and Type Badges */}
-            <div className="flex flex-wrap justify-center gap-2 mb-4">
-              <Badge className={`${getStatusColor(tournament.status)} border-white/20`}>
-                {tournament.status.replace(/_/g, ' ')}
-              </Badge>
-              <Badge className={`${getTypeColor(tournament.type)} border-white/20`}>
-                {tournament.type}
-              </Badge>
-              {isDemo && (
-                <Badge className="bg-orange-500 text-white font-bold animate-pulse border-orange-400">
-                  DEMO
-                </Badge>
-              )}
-            </div>
-
-            {/* Tournament Name */}
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 text-shadow-lg">
-              {tournament.name}
-            </h1>
-            
+    <div className="w-full py-8 bg-gradient-to-br from-muted/30 to-background">
+      <div className="container mx-auto px-4">
+        {/* Centered Share Card */}
+        <div className="flex flex-col items-center space-y-6">
+          
+          {/* Status and Type Badges */}
+          <div className="flex flex-wrap justify-center gap-2">
+            <Badge className={getStatusColor(tournament.status)}>
+              {tournament.status.replace(/_/g, ' ')}
+            </Badge>
+            <Badge className={getTypeColor(tournament.type)}>
+              {tournament.type}
+            </Badge>
             {isDemo && (
-              <div className="text-lg text-orange-200 font-medium mb-4">
-                This is a demo listing for illustration purposes
-              </div>
-            )}
-
-            {/* Key Information */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
-              <div className="flex items-center justify-center gap-2 text-white/90">
-                <MapPin className="w-5 h-5" />
-                <span className="font-medium">{tournament.location.name}</span>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 text-white/90">
-                <Calendar className="w-5 h-5" />
-                <span className="font-medium">
-                  {formatDate(tournament.dates.start)} - {formatDate(tournament.dates.end)}
-                </span>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 text-white/90">
-                <Users className="w-5 h-5" />
-                <span className="font-medium">{tournament.format}</span>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 text-white/90">
-                <Trophy className="w-5 h-5" />
-                <span className="font-medium">{tournament.ageGroups.join(', ')}</span>
-              </div>
-            </div>
-
-            {/* Cost Information */}
-            {tournament.cost && (
-              <div className="text-2xl md:text-3xl font-bold mb-6 text-white">
-                £{tournament.cost.amount} per team
-              </div>
-            )}
-
-            {/* View Details Button */}
-            {onScrollToDetails && (
-              <Button 
-                onClick={onScrollToDetails}
-                variant="secondary"
-                size="lg"
-                className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 transition-all duration-300"
-              >
-                View Details
-                <ArrowDown className="w-4 h-4 ml-2" />
-              </Button>
+              <Badge className="bg-orange-500 text-white font-bold animate-pulse">
+                DEMO
+              </Badge>
             )}
           </div>
+
+          {/* Centered Image Container */}
+          <div 
+            className="relative mx-auto rounded-lg overflow-hidden shadow-xl bg-muted"
+            style={getContainerStyle()}
+          >
+            {shareCoverUrl ? (
+              <img
+                src={shareCoverUrl}
+                alt={altText}
+                className="absolute inset-0 w-full h-full object-contain"
+                loading="eager"
+                decoding="async"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            ) : (
+              // Fallback with tournament info overlay
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow flex flex-col justify-center items-center p-6 text-white text-center">
+                <h2 className="text-2xl md:text-4xl font-bold mb-4">
+                  {tournament.name}
+                </h2>
+                
+                {isDemo && (
+                  <div className="text-lg text-orange-200 font-medium mb-4">
+                    This is a demo listing for illustration purposes
+                  </div>
+                )}
+
+                {/* Key Information */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm md:text-base">
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>{tournament.location.name}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      {formatDate(tournament.dates.start)} - {formatDate(tournament.dates.end)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-2">
+                    <Users className="w-4 h-4" />
+                    <span>{tournament.format}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-2">
+                    <Trophy className="w-4 h-4" />
+                    <span>{tournament.ageGroups.join(', ')}</span>
+                  </div>
+                </div>
+
+                {/* Cost Information */}
+                {tournament.cost && (
+                  <div className="text-xl md:text-2xl font-bold mt-4">
+                    £{tournament.cost.amount} per team
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Tournament Title (shown below card when image exists) */}
+          {shareCoverUrl && (
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                {tournament.name}
+              </h1>
+              
+              {isDemo && (
+                <div className="text-lg text-orange-600 font-medium mb-4">
+                  This is a demo listing for illustration purposes
+                </div>
+              )}
+
+              {/* Key Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 text-muted-foreground">
+                <div className="flex items-center justify-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>{tournament.location.name}</span>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    {formatDate(tournament.dates.start)} - {formatDate(tournament.dates.end)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2">
+                  <Users className="w-4 h-4" />
+                  <span>{tournament.format}</span>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2">
+                  <Trophy className="w-4 h-4" />
+                  <span>{tournament.ageGroups.join(', ')}</span>
+                </div>
+              </div>
+
+              {/* Cost Information */}
+              {tournament.cost && (
+                <div className="text-2xl font-bold text-primary mb-4">
+                  £{tournament.cost.amount} per team
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* View Details Button */}
+          {onScrollToDetails && (
+            <Button 
+              onClick={onScrollToDetails}
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              View Details
+              <ArrowDown className="w-4 h-4 ml-2" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
