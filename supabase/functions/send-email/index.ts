@@ -2,19 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
 
-// Check if RESEND_API_KEY is available and log for debugging
-const resendApiKey = Deno.env.get("RESEND_API_KEY");
-console.log("Checking RESEND_API_KEY availability:", resendApiKey ? "AVAILABLE" : "MISSING");
-
-if (!resendApiKey) {
-  console.error("RESEND_API_KEY environment variable is not set");
-  throw new Error("RESEND_API_KEY environment variable is required");
-}
-
-console.log("Initializing Resend client...");
-const resend = new Resend(resendApiKey);
-console.log("Resend client initialized successfully");
-
+// Email configuration - will be set at runtime
 const emailFrom = `${Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK"} <${Deno.env.get("EMAIL_FROM") || "alerts@footballtournamentsuk.co.uk"}>`;
 const emailFromName = Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK";
 const emailReplyTo = Deno.env.get("EMAIL_REPLY_TO") || "support@footballtournamentsuk.co.uk";
@@ -294,6 +282,29 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("=== SEND-EMAIL FUNCTION START ===");
+    console.log("Environment variables check:");
+    console.log("- RESEND_API_KEY:", Deno.env.get("RESEND_API_KEY") ? "AVAILABLE" : "MISSING");
+    console.log("- EMAIL_FROM:", Deno.env.get("EMAIL_FROM"));
+    console.log("- EMAIL_FROM_NAME:", Deno.env.get("EMAIL_FROM_NAME"));
+    
+    // Initialize Resend client at request time
+    const runtimeApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!runtimeApiKey) {
+      console.error("CRITICAL: RESEND_API_KEY not available at runtime");
+      return new Response(JSON.stringify({ 
+        ok: false, 
+        error: "Email service not configured properly" 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
+    console.log("Initializing Resend client at runtime...");
+    const resend = new Resend(runtimeApiKey);
+    console.log("Resend client initialized successfully");
+    
     const requestData: EmailRequest = await req.json();
     
     // Rate limiting - exempt creator confirmation emails from rate limiting
