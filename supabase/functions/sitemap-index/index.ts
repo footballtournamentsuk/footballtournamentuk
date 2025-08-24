@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
     const baseUrl = 'https://footballtournamentsuk.co.uk'
     const currentDate = new Date().toISOString().split('T')[0]
 
-    // Generate sitemap index XML
+    // Generate sitemap index XML with proper formatting
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
