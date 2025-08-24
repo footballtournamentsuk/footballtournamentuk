@@ -420,12 +420,18 @@ serve(async (req) => {
           ? `New tournament: ${matchingTournaments[0].name}`
           : `${matchingTournaments.length} new tournaments matching your interests`;
 
+        // Create idempotency key to prevent duplicates
+        const idempotencyKey = `digest-${frequency}-${alert.id}-${now.toISOString().split('T')[0]}`;
+        
         const { error: emailError } = await resend.emails.send({
           from: emailFrom,
           to: [alert.email],
           subject,
           html: emailHtml,
           replyTo: emailReplyTo,
+          headers: {
+            'X-Entity-Ref-ID': idempotencyKey,
+          },
         });
 
         if (emailError) {
@@ -436,7 +442,8 @@ serve(async (req) => {
             alert_id: alert.id,
             item_count: matchingTournaments.length,
             status: 'failed',
-            error: emailError.message
+            error: `Digest: ${frequency}, Error: ${emailError.message}`,
+            sent_at: new Date().toISOString()
           });
           
           totalFailed++;
@@ -453,7 +460,8 @@ serve(async (req) => {
         await supabase.from('alert_deliveries').insert({
           alert_id: alert.id,
           item_count: matchingTournaments.length,
-          status: 'sent'
+          status: 'delivered',
+          sent_at: new Date().toISOString()
         });
 
         totalSent++;
@@ -468,7 +476,8 @@ serve(async (req) => {
           alert_id: alert.id,
           item_count: 0,
           status: 'failed',
-          error: error.message
+          error: `Digest: ${frequency}, Error: ${error.message}`,
+          sent_at: new Date().toISOString()
         });
       }
     }

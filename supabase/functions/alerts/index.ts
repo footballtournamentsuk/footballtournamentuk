@@ -86,7 +86,8 @@ const sendVerificationEmail = async (email: string, verificationToken: string, a
         alert_id: alertId,
         status: 'failed',
         item_count: 0,
-        error: error.message
+        error: `Verification email failed: ${error.message}`,
+        sent_at: new Date().toISOString()
       });
 
     if (retryCount < maxRetries) {

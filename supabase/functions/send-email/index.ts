@@ -317,6 +317,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Generate email content
     const { subject, html, replyTo } = generateEmailContent(requestData);
 
+    // Create idempotency key to prevent duplicates
+    const idempotencyKey = `${requestData.type}-${requestData.to}-${Date.now()}`;
+    
     // Send email
     const emailPayload: any = {
       from: emailFrom,
@@ -324,6 +327,9 @@ const handler = async (req: Request): Promise<Response> => {
       subject,
       html,
       replyTo: replyTo || emailReplyTo,
+      headers: {
+        'X-Entity-Ref-ID': idempotencyKey,
+      },
     };
 
     const { data, error: emailError } = await resend.emails.send(emailPayload);

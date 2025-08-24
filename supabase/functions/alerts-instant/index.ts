@@ -469,12 +469,18 @@ serve(async (req) => {
         // Generate and send email
         const emailHtml = generateInstantEmail(tournament, alert);
         
+        // Create idempotency key to prevent duplicates
+        const idempotencyKey = `instant-${alert.id}-${tournamentId}-${action}`;
+        
         const { error: emailError } = await resend.emails.send({
           from: emailFrom,
           to: [alert.email],
           subject: `🏆 New Tournament Alert: ${tournament.name}`,
           html: emailHtml,
           replyTo: emailReplyTo,
+          headers: {
+            'X-Entity-Ref-ID': idempotencyKey,
+          },
         });
 
         if (emailError) {
