@@ -9,6 +9,9 @@ const supabase = createClient(
 );
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+const emailFrom = Deno.env.get("EMAIL_FROM") || "Football Tournaments UK <alerts@footballtournamentsuk.co.uk>";
+const emailFromName = Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK";
+const emailReplyTo = Deno.env.get("EMAIL_REPLY_TO") || "support@footballtournamentsuk.co.uk";
 
 interface Tournament {
   id: string;
@@ -467,10 +470,11 @@ serve(async (req) => {
         const emailHtml = generateInstantEmail(tournament, alert);
         
         const { error: emailError } = await resend.emails.send({
-          from: 'Football Tournaments UK <onboarding@resend.dev>',
+          from: emailFrom,
           to: [alert.email],
           subject: `🏆 New Tournament Alert: ${tournament.name}`,
           html: emailHtml,
+          replyTo: emailReplyTo,
         });
 
         if (emailError) {

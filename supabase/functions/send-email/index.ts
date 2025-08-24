@@ -3,7 +3,9 @@ import { Resend } from "npm:resend@2.0.0";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-const emailFrom = Deno.env.get("EMAIL_FROM") || "Football Tournaments UK <info@footballtournamentsuk.co.uk>";
+const emailFrom = Deno.env.get("EMAIL_FROM") || "Football Tournaments UK <alerts@footballtournamentsuk.co.uk>";
+const emailFromName = Deno.env.get("EMAIL_FROM_NAME") || "Football Tournaments UK";
+const emailReplyTo = Deno.env.get("EMAIL_REPLY_TO") || "support@footballtournamentsuk.co.uk";
 
 interface EmailRequest {
   type: 'welcome' | 'tournament_created' | 'review_request' | 'alert_verify';
@@ -321,11 +323,8 @@ const handler = async (req: Request): Promise<Response> => {
       to: [requestData.to],
       subject,
       html,
+      replyTo: replyTo || emailReplyTo,
     };
-
-    if (replyTo) {
-      emailPayload.replyTo = replyTo;
-    }
 
     const { data, error: emailError } = await resend.emails.send(emailPayload);
 
