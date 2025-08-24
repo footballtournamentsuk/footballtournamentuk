@@ -282,9 +282,10 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("=== SEND-EMAIL FUNCTION START ===");
+    console.log("=== SEND-EMAIL FUNCTION START (v2) ===");
     console.log("Environment variables check:");
     console.log("- RESEND_API_KEY:", Deno.env.get("RESEND_API_KEY") ? "AVAILABLE" : "MISSING");
+    console.log("- RESEND_API_KEY length:", Deno.env.get("RESEND_API_KEY")?.length || 0);
     console.log("- EMAIL_FROM:", Deno.env.get("EMAIL_FROM"));
     console.log("- EMAIL_FROM_NAME:", Deno.env.get("EMAIL_FROM_NAME"));
     
