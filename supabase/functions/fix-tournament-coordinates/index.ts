@@ -20,82 +20,80 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Re-geocode Madrid venue
-    console.log('📍 Re-geocoding Madrid venue...')
-    const madridResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/geocode-address`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
-      },
-      body: JSON.stringify({
-        location_name: "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid",
-        postcode: "28991",
-        region: "Mostoles",
-        country: "ES"
-      })
-    })
+    // Direct geocoding using Mapbox API
+    const mapboxToken = Deno.env.get('MAPBOX_PUBLIC_TOKEN')
+    if (!mapboxToken) {
+      throw new Error('MAPBOX_PUBLIC_TOKEN not configured')
+    }
 
-    const madridData: GeocodeResponse = await madridResponse.json()
+    // Madrid full address geocoding
+    console.log('📍 Geocoding Madrid venue with full address...')
+    const madridFullAddress = "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid, Spain"
+    console.log('🔍 Madrid address string:', madridFullAddress)
     
-    if (madridData.error) {
-      console.error('❌ Madrid geocoding failed:', madridData.error)
-    } else {
-      console.log('✅ Madrid coordinates:', madridData)
+    const madridGeocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(madridFullAddress)}.json?access_token=${mapboxToken}&limit=1&country=ES`
+    const madridResponse = await fetch(madridGeocodeUrl)
+    const madridGeoData = await madridResponse.json()
+    
+    if (madridGeoData.features && madridGeoData.features.length > 0) {
+      const madridCoords = madridGeoData.features[0].geometry.coordinates
+      const madridLng = madridCoords[0]
+      const madridLat = madridCoords[1]
+      
+      console.log('✅ Madrid geocoded coordinates:', madridLat, madridLng)
+      console.log('📍 Madrid place name:', madridGeoData.features[0].place_name)
       
       // Update Madrid tournament
       const { error: madridUpdateError } = await supabase
         .from('tournaments')
         .update({
-          latitude: madridData.latitude,
-          longitude: madridData.longitude
+          latitude: madridLat,
+          longitude: madridLng
         })
         .eq('id', '357e9f0a-518a-4032-ac1a-ab69dbfc1e83')
       
       if (madridUpdateError) {
         console.error('❌ Failed to update Madrid coordinates:', madridUpdateError)
       } else {
-        console.log(`✅ Madrid updated: ${madridData.latitude}, ${madridData.longitude}`)
+        console.log(`✅ Madrid coordinates updated in DB: ${madridLat}, ${madridLng}`)
       }
+    } else {
+      console.error('❌ Madrid geocoding failed: No results found')
     }
 
-    // Re-geocode Austria venue
-    console.log('📍 Re-geocoding Austria venue...')
-    const austriaResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/geocode-address`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
-      },
-      body: JSON.stringify({
-        location_name: "Sportzentrum Neustift im Mühlkreis, Upper Austria",
-        postcode: "4143",
-        region: "Austria",
-        country: "AT"
-      })
-    })
-
-    const austriaData: GeocodeResponse = await austriaResponse.json()
+    // Austria full address geocoding
+    console.log('📍 Geocoding Austria venue with full address...')
+    const austriaFullAddress = "Sportzentrum Neustift im Mühlkreis, 4143, Upper Austria, Austria"
+    console.log('🔍 Austria address string:', austriaFullAddress)
     
-    if (austriaData.error) {
-      console.error('❌ Austria geocoding failed:', austriaData.error)
-    } else {
-      console.log('✅ Austria coordinates:', austriaData)
+    const austriaGeocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(austriaFullAddress)}.json?access_token=${mapboxToken}&limit=1&country=AT`
+    const austriaResponse = await fetch(austriaGeocodeUrl)
+    const austriaGeoData = await austriaResponse.json()
+    
+    if (austriaGeoData.features && austriaGeoData.features.length > 0) {
+      const austriaCoords = austriaGeoData.features[0].geometry.coordinates
+      const austriaLng = austriaCoords[0]
+      const austriaLat = austriaCoords[1]
+      
+      console.log('✅ Austria geocoded coordinates:', austriaLat, austriaLng)
+      console.log('📍 Austria place name:', austriaGeoData.features[0].place_name)
       
       // Update Austria tournament
       const { error: austriaUpdateError } = await supabase
         .from('tournaments')
         .update({
-          latitude: austriaData.latitude,
-          longitude: austriaData.longitude
+          latitude: austriaLat,
+          longitude: austriaLng
         })
         .eq('id', '987af0e4-974f-4758-8759-c54117a5e608')
       
       if (austriaUpdateError) {
         console.error('❌ Failed to update Austria coordinates:', austriaUpdateError)
       } else {
-        console.log(`✅ Austria updated: ${austriaData.latitude}, ${austriaData.longitude}`)
+        console.log(`✅ Austria coordinates updated in DB: ${austriaLat}, ${austriaLng}`)
       }
+    } else {
+      console.error('❌ Austria geocoding failed: No results found')
     }
 
     // Get final coordinates for confirmation
