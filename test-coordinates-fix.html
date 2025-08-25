@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Tournament Coordinates</title>
+</head>
+<body>
+    <h1>Fix Tournament Coordinates</h1>
+    <button onclick="fixCoordinates()">Re-geocode Madrid & Austria</button>
+    <div id="results"></div>
+
+    <script>
+        async function fixCoordinates() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Processing...';
+
+            try {
+                const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/fix-tournament-coordinates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <h2>✅ Success!</h2>
+                        <h3>Updated Coordinates:</h3>
+                        <ul>
+                            ${data.results.map(t => `
+                                <li><strong>${t.name}:</strong> ${t.latitude}, ${t.longitude}</li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: red;">❌ Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

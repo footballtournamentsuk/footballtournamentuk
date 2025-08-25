@@ -44,3 +44,9 @@ verify_jwt = false
 
 [functions.sitemap-index]
 verify_jwt = false
+
+[functions.geocode-address]
+verify_jwt = false
+
+[functions.fix-tournament-coordinates]
+verify_jwt = false
