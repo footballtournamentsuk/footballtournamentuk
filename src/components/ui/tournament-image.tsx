@@ -6,6 +6,8 @@ interface TournamentImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
   alt: string;
   priority?: boolean;
   className?: string;
+  fallbackSrc?: string;
+  fallbackAlt?: string;
 }
 
 /**
@@ -16,18 +18,30 @@ export const TournamentImage: React.FC<TournamentImageProps> = ({
   alt,
   priority = false,
   className,
+  fallbackSrc,
+  fallbackAlt = 'Tournament placeholder',
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [currentAlt, setCurrentAlt] = useState(alt);
 
   const handleLoad = () => {
     setIsLoaded(true);
   };
 
   const handleError = () => {
-    setHasError(true);
-    setIsLoaded(true);
+    // If we have a fallback and haven't used it yet, try the fallback
+    if (fallbackSrc && currentSrc !== fallbackSrc) {
+      setCurrentSrc(fallbackSrc);
+      setCurrentAlt(fallbackAlt);
+      setIsLoaded(false);
+      setHasError(false);
+    } else {
+      setHasError(true);
+      setIsLoaded(true);
+    }
   };
 
   return (
@@ -42,8 +56,8 @@ export const TournamentImage: React.FC<TournamentImageProps> = ({
       
       {/* Main image */}
       <img
-        src={src}
-        alt={alt}
+        src={currentSrc}
+        alt={currentAlt}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         onLoad={handleLoad}

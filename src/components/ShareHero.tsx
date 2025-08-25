@@ -65,9 +65,13 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
     }
   };
 
-  // Determine the share cover image and variant
-  const shareCoverUrl = tournament.share_cover_url || tournament.banner_url;
+  // Import placeholder
+  const placeholderShare = '/src/assets/placeholders/placeholder-share-1200x630.webp';
+  
+  // Determine the share cover image and variant with proper fallback
+  const shareCoverUrl = tournament.share_cover_url || tournament.banner_url || placeholderShare;
   const shareVariant = tournament.share_cover_variant || 'FB_1200x630';
+  const isPlaceholder = !tournament.share_cover_url && !tournament.banner_url;
   
   // Get container dimensions based on variant
   const getContainerStyle = () => {
@@ -97,8 +101,8 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
     } as React.CSSProperties;
   };
 
-  const altText = tournament.share_cover_alt || 
-    `${tournament.name} - ${tournament.format} ${tournament.type} tournament in ${tournament.location.name}`;
+  const altText = isPlaceholder ? 'Tournament placeholder' : 
+    (tournament.share_cover_alt || `Tournament: ${tournament.name}`);
 
   return (
     <div className="w-full py-8 bg-gradient-to-br from-muted/30 to-background">
@@ -126,18 +130,26 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
             className="relative mx-auto rounded-lg overflow-hidden shadow-xl bg-muted"
             style={getContainerStyle()}
           >
-            {shareCoverUrl ? (
-              <img
-                src={shareCoverUrl}
-                alt={altText}
-                className="absolute inset-0 w-full h-full object-contain"
-                loading="eager"
-                decoding="async"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-              />
-            ) : (
-              // Fallback with tournament info overlay
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow flex flex-col justify-center items-center p-6 text-white text-center">
+            <img
+              src={shareCoverUrl}
+              alt={altText}
+              className="absolute inset-0 w-full h-full object-contain"
+              loading="eager"
+              decoding="async"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              onError={(e) => {
+                // Fallback to placeholder if image fails to load
+                if (e.currentTarget.src !== placeholderShare) {
+                  e.currentTarget.src = placeholderShare;
+                  e.currentTarget.alt = 'Tournament placeholder';
+                }
+              }}
+            />
+            
+            {/* Show fallback content only for placeholder */}
+            {isPlaceholder && (
+              // Tournament info overlay for placeholder
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary-glow/80 flex flex-col justify-center items-center p-6 text-white text-center">
                 <h2 className="text-2xl md:text-4xl font-bold mb-4">
                   {tournament.name}
                 </h2>
@@ -183,8 +195,8 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
             )}
           </div>
 
-          {/* Tournament Title (shown below card when image exists) */}
-          {shareCoverUrl && (
+          {/* Tournament Title (shown below card when custom image exists) */}
+          {!isPlaceholder && (
             <div className="text-center">
               <h1 className="text-3xl md:text-4xl font-bold mb-2">
                 {tournament.name}

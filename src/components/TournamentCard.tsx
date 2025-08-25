@@ -26,6 +26,7 @@ import { AddToCalendar } from './AddToCalendar';
 import { ContactOrganizerModal } from './ContactOrganizerModal';
 import { getTournamentThumbnail, shouldPrioritizeTournament } from '@/utils/tournamentThumbnails';
 import { TournamentImage } from '@/components/ui/tournament-image';
+import placeholderCard from '@/assets/placeholders/placeholder-card.webp';
 import { isDemoTournament } from '@/utils/demoUtils';
 import { formatPrice } from '@/utils/currency';
 
@@ -100,6 +101,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
     : null;
 
   const thumbnail = getTournamentThumbnail(tournament);
+  const fallbackSrc = placeholderCard;
   const isDemo = isDemoTournament(tournament);
 
   return (

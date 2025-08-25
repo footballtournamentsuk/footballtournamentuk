@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { getTournamentOGImage } from '@/utils/tournamentThumbnails';
 import { Tournament } from '@/types/tournament';
 import { isDemoTournament } from '@/utils/demoUtils';
 
@@ -176,12 +177,8 @@ export const SEO: React.FC<SEOProps> = ({
   const getOgImageUrl = () => {
     if (tournaments.length === 1) {
       const tournament = tournaments[0];
-      // Prefer share cover, fallback to dynamic generation, then default
-      if (tournament.share_cover_url) {
-        return tournament.share_cover_url;
-      }
-      // Dynamic OG image generation as fallback
-      return `${siteUrl}/functions/v1/generate-og-image?tournamentId=${tournament.id}`;
+      // Use proper fallback chain: share_cover_url → banner_url → placeholder → dynamic generation
+      return getTournamentOGImage(tournament) || `${siteUrl}/functions/v1/generate-og-image?tournamentId=${tournament.id}`;
     }
     // Default OG image for other pages
     return `${siteUrl}/og-image.jpg`;
