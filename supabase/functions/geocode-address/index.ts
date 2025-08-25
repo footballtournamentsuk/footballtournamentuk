@@ -39,20 +39,27 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Build address query - try multiple strategies for best accuracy
+    // Build address query prioritizing full venue address - no city center fallbacks
     const queries = [
-      // Strategy 1: Full venue address with postcode and country
+      // Strategy 1: Complete venue address (primary source of truth)
       `${location_name}, ${postcode}, ${region}, ${country}`,
-      // Strategy 2: Venue address with postcode  
-      `${location_name}, ${postcode}`,
-      // Strategy 3: Postcode only for fallback
-      `${postcode}, ${country === 'GB' ? 'UK' : country}`
+      // Strategy 2: Venue address with postcode only
+      `${location_name}, ${postcode}, ${country}`,
+      // Strategy 3: Venue address with region only  
+      `${location_name}, ${region}, ${country}`,
+      // Strategy 4: Venue address only (last resort)
+      `${location_name}, ${country}`
     ]
+    
+    // Remove empty/invalid queries
+    const validQueries = queries.filter(query => 
+      query.replace(/,\s*/g, '').length > country.length + 2
+    )
 
     let latitude: number | null = null
     let longitude: number | null = null
 
-    for (const query of queries) {
+    for (const query of validQueries) {
       console.log(`🔎 Trying geocoding query: "${query}"`)
       
       try {

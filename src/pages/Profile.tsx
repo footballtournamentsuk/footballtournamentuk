@@ -426,19 +426,31 @@ const ProfilePage = () => {
         return;
       }
 
-      // Geocode the location using international geocoding service
+      // Always geocode the location using the full venue address as source of truth
       let latitude, longitude;
+      
+      // Check if location data has changed (for updates) - re-geocode if needed
+      const existingTournament = editingTournament.id ? tournaments.find(t => t.id === editingTournament.id) : null;
+      const locationChanged = existingTournament && (
+        existingTournament.location.name !== editingTournament.location_name ||
+        existingTournament.location.postcode !== editingTournament.postcode ||
+        existingTournament.location.region !== editingTournament.region ||
+        existingTournament.location.country !== (editingTournament.country || 'GB')
+      );
+      
       try {
-        console.log('🌍 Geocoding location:', {
+        console.log('🌍 Geocoding venue address (source of truth):', {
           location_name: editingTournament.location_name,
           postcode: editingTournament.postcode,
           region: editingTournament.region,
-          country: editingTournament.country || 'GB'
+          country: editingTournament.country || 'GB',
+          isUpdate: !!editingTournament.id,
+          locationChanged: locationChanged
         });
 
         const geocodeResponse = await supabase.functions.invoke('geocode-address', {
           body: {
-            location_name: editingTournament.location_name,
+            location_name: editingTournament.location_name, // Full venue address as primary
             postcode: editingTournament.postcode || '',
             region: editingTournament.region,
             country: editingTournament.country || 'GB'
@@ -454,18 +466,24 @@ const ProfilePage = () => {
         if (data?.latitude && data?.longitude) {
           latitude = data.latitude;
           longitude = data.longitude;
-          console.log(`✅ Successfully geocoded to: ${latitude}, ${longitude}`);
+          console.log(`✅ Venue geocoded to exact coordinates: ${latitude}, ${longitude}`);
+          
+          // Log coordinate changes for updates
+          if (existingTournament) {
+            const [existingLng, existingLat] = existingTournament.location.coordinates;
+            console.log(`📍 Venue coordinates: ${existingLat}, ${existingLng} → ${latitude}, ${longitude}`);
+          }
         } else {
-          throw new Error(data?.error || 'No coordinates returned from geocoding service');
+          throw new Error(data?.error || 'No coordinates returned for venue address');
         }
       } catch (error) {
-        console.error('❌ Geocoding failed:', error);
+        console.error('❌ Venue geocoding failed:', error);
         toast({
-          title: "Location Error",
-          description: `Unable to find the location: ${error instanceof Error ? error.message : 'Please check your venue address, postcode, and region are correct.'}`,
+          title: "Venue Location Error",
+          description: `Unable to find the exact venue location: ${error instanceof Error ? error.message : 'Please verify your venue name, postcode, and region are correct and try again.'}`,
           variant: "destructive",
         });
-        return; // Don't save the tournament if we can't geocode the location
+        return; // Prevent saving tournament with incorrect/missing venue coordinates
       }
 
       const tournamentData = {
