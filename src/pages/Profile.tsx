@@ -112,9 +112,9 @@ const ProfilePage = () => {
   const [savingProfile, setSavingProfile] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [tournaments, setTournaments] = useState<TournamentFormData[]>([]);
   const [activeTab, setActiveTab] = useState('personal');
-  const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<Tournament | null>(null);
+  const [selectedTournamentForDetails, setSelectedTournamentForDetails] = useState<TournamentFormData | null>(null);
   const [savingExtendedDetails, setSavingExtendedDetails] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   
