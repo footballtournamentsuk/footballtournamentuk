@@ -432,10 +432,10 @@ const ProfilePage = () => {
       // Check if location data has changed (for updates) - re-geocode if needed
       const existingTournament = editingTournament.id ? tournaments.find(t => t.id === editingTournament.id) : null;
       const locationChanged = existingTournament && (
-        existingTournament.location.name !== editingTournament.location_name ||
-        existingTournament.location.postcode !== editingTournament.postcode ||
-        existingTournament.location.region !== editingTournament.region ||
-        existingTournament.location.country !== (editingTournament.country || 'GB')
+        existingTournament.location_name !== editingTournament.location_name ||
+        existingTournament.postcode !== editingTournament.postcode ||
+        existingTournament.region !== editingTournament.region ||
+        existingTournament.country !== (editingTournament.country || 'GB')
       );
       
       try {
@@ -470,8 +470,7 @@ const ProfilePage = () => {
           
           // Log coordinate changes for updates
           if (existingTournament) {
-            const [existingLng, existingLat] = existingTournament.location.coordinates;
-            console.log(`📍 Venue coordinates: ${existingLat}, ${existingLng} → ${latitude}, ${longitude}`);
+            console.log(`📍 Venue coordinates updated for: ${existingTournament.location_name}`);
           }
         } else {
           throw new Error(data?.error || 'No coordinates returned for venue address');
