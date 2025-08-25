@@ -319,7 +319,8 @@ const Map: React.FC<MapProps> = ({
       }
 
       const [lng, lat] = tournament.location.coordinates;
-      console.log('📍 Creating marker for:', tournament.name, 'at', lng, lat);
+      console.log('📍 Creating marker for:', tournament.name, 'at coordinates:', lng, lat);
+      console.log('📍 Full location object:', tournament.location);
       
       // Create marker element with color based on tournament type
       const getMarkerColor = (type: string) => {
