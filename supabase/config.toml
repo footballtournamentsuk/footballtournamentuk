@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.fix-venue-coordinates]
 verify_jwt = false
+
+[functions.geocode-exact-addresses]
+verify_jwt = false

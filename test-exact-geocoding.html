@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exact Address Geocoding Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .tournament { margin-bottom: 30px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .coords { background: #f0f8ff; padding: 12px; margin: 10px 0; border-radius: 5px; }
+        .address { font-weight: bold; color: #0066cc; margin-bottom: 10px; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        .link { color: #0066cc; text-decoration: none; margin-right: 15px; }
+        .link:hover { text-decoration: underline; }
+        .status { padding: 12px; margin: 15px 0; border-radius: 5px; }
+        .pending { background: #fff3cd; border: 1px solid #ffeaa7; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        button { background: #0066cc; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0052a3; }
+        .exact-match { background: #e7f3ff; padding: 10px; border-left: 4px solid #0066cc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Exact Address Geocoding</h1>
+    
+    <div class="status pending">
+        <strong>Ready to geocode using EXACT location_name addresses</strong><br>
+        No alterations, no defaults, no city centers - just the exact venue addresses from the database.
+    </div>
+    
+    <button onclick="geocodeExactAddresses()">Geocode Exact Addresses</button>
+    <div id="results"></div>
+    
+    <h2>Exact Addresses from Database:</h2>
+    
+    <div class="tournament">
+        <h3>🇪🇸 Madrid Tournament</h3>
+        <div class="address">
+            <strong>Exact location_name:</strong><br>
+            "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid"
+        </div>
+        <div class="address">
+            <strong>With postcode/region appended:</strong><br>
+            "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid, 28991, Mostoles"
+        </div>
+        <div class="exact-match">
+            <strong>Google Maps Test:</strong> Paste the exact address above into Google Maps to verify it finds the venue
+        </div>
+        <a href="https://www.google.com/maps/search/Cam.+de+Cubas,+16,+28991+Torrejón+de+la+Calzada,+Madrid" target="_blank" class="link">
+            🗺️ Google Maps Search
+        </a>
+    </div>
+    
+    <div class="tournament">
+        <h3>🇦🇹 Austria Tournament</h3>
+        <div class="address">
+            <strong>Exact location_name:</strong><br>
+            "Sportzentrum Neustift im Mühlkreis, Upper Austria"
+        </div>
+        <div class="address">
+            <strong>With postcode/region appended:</strong><br>
+            "Sportzentrum Neustift im Mühlkreis, Upper Austria, 4143, Austria"
+        </div>
+        <div class="exact-match">
+            <strong>Google Maps Test:</strong> Paste the exact address above into Google Maps to verify it finds the venue
+        </div>
+        <a href="https://www.google.com/maps/search/Sportzentrum+Neustift+im+Mühlkreis,+Upper+Austria" target="_blank" class="link">
+            🗺️ Google Maps Search
+        </a>
+    </div>
+    
+    <h3>Verification Process:</h3>
+    <ol>
+        <li><strong>Click "Geocode Exact Addresses"</strong> - Uses the exact location_name strings above</li>
+        <li><strong>Check results</strong> - Verify coordinates are updated in database</li>
+        <li><strong>Test Google Maps links</strong> - Confirm addresses find the actual venues</li>
+        <li><strong>Reload homepage</strong> - Verify pins appear at exact venue locations</li>
+        <li><strong>Compare pins</strong> - Our site pins should match Google Maps results exactly</li>
+    </ol>
+
+    <script>
+        async function geocodeExactAddresses() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="status pending">🔄 Geocoding exact addresses from location_name fields...</div>';
+
+            try {
+                const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/geocode-exact-addresses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<div class="status success"><strong>✅ Exact Address Geocoding Complete!</strong></div>';
+                    html += '<h3>📍 Results:</h3>';
+                    
+                    data.results.forEach(r => {
+                        html += `
+                            <div class="tournament">
+                                <h4>${r.name}</h4>
+                                <div class="address"><strong>Exact Address Used:</strong><br>"${r.address}"</div>
+                                ${r.error ? 
+                                    `<div class="error">❌ Error: ${r.error}</div>` :
+                                    `<div class="coords">
+                                        <strong>🎯 Final Coordinates:</strong> ${r.latitude}, ${r.longitude}<br>
+                                        <strong>Previous:</strong> ${r.old_latitude}, ${r.old_longitude}<br>
+                                        <strong>Mapbox Result:</strong> ${r.place_name}<br>
+                                        <strong>Relevance:</strong> ${r.relevance}
+                                    </div>
+                                    <a href="https://www.google.com/maps/@${r.latitude},${r.longitude},17z" target="_blank" class="link">
+                                        📍 View New Pin Location
+                                    </a>
+                                    <a href="https://www.google.com/maps/search/${encodeURIComponent(r.address)}" target="_blank" class="link">
+                                        🔍 Google Maps Search
+                                    </a>`
+                                }
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                        <div class="status success">
+                            <strong>🎯 Next Steps:</strong><br>
+                            1. Click "View New Pin Location" links to verify coordinates point to venues<br>
+                            2. Click "Google Maps Search" to confirm our addresses find the right places<br>
+                            3. Reload your homepage to see updated pin positions<br>
+                            4. Compare: our site pins should match Google's results exactly
+                        </div>
+                    `;
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<div class="status error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
