@@ -426,71 +426,46 @@ const ProfilePage = () => {
         return;
       }
 
-      // Geocode the location
+      // Geocode the location using international geocoding service
       let latitude, longitude;
       try {
-        const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/mapbox-token', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        console.log('🌍 Geocoding location:', {
+          location_name: editingTournament.location_name,
+          postcode: editingTournament.postcode,
+          region: editingTournament.region,
+          country: editingTournament.country || 'GB'
         });
-        const tokenData = response.ok ? await response.json() : null;
-        if (tokenData?.token) {
-          // Try multiple geocoding strategies for better accuracy
-          const queries = [
-            `${editingTournament.postcode}, UK`, // Postcode first (most accurate)
-            `${editingTournament.location_name}, ${editingTournament.postcode}`,
-            `${editingTournament.location_name}, ${editingTournament.region}, UK`
-          ];
-          
-          for (const query of queries) {
-            console.log(`Trying geocoding query: ${query}`);
-            const geocodeResponse = await fetch(
-              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${tokenData.token}&country=GB&limit=1`
-            );
-            
-            if (!geocodeResponse.ok) {
-              console.error(`Geocoding request failed: ${geocodeResponse.status} ${geocodeResponse.statusText}`);
-              continue;
-            }
-            
-            const data = await geocodeResponse.json();
-            console.log(`Geocoding response for "${query}":`, data);
-            
-            if (data.features && data.features.length > 0) {
-              [longitude, latitude] = data.features[0].center;
-              console.log(`Successfully geocoded "${query}" to: ${latitude}, ${longitude}`);
-              break; // Stop trying once we get a result
-            }
+
+        const geocodeResponse = await supabase.functions.invoke('geocode-address', {
+          body: {
+            location_name: editingTournament.location_name,
+            postcode: editingTournament.postcode || '',
+            region: editingTournament.region,
+            country: editingTournament.country || 'GB'
           }
-          
-          if (!latitude || !longitude) {
-            console.error('❌ Geocoding failed for all attempts. Cannot save tournament without valid coordinates.');
-            toast({
-              title: "Location Error",
-              description: "Unable to find the location you entered. Please check your venue, postcode, and region.",
-              variant: "destructive",
-            });
-            return; // Don't save the tournament if we can't geocode the location
-          }
+        });
+
+        if (geocodeResponse.error) {
+          console.error('❌ Geocoding service error:', geocodeResponse.error);
+          throw new Error(geocodeResponse.error.message || 'Geocoding service failed');
+        }
+
+        const data = geocodeResponse.data;
+        if (data?.latitude && data?.longitude) {
+          latitude = data.latitude;
+          longitude = data.longitude;
+          console.log(`✅ Successfully geocoded to: ${latitude}, ${longitude}`);
         } else {
-          console.error('Failed to get Mapbox token');
-          toast({
-            title: "Location Service Error",
-            description: "Unable to verify location. Please try again.",
-            variant: "destructive",
-          });
-          return;
+          throw new Error(data?.error || 'No coordinates returned from geocoding service');
         }
       } catch (error) {
-        console.error('Geocoding failed:', error);
+        console.error('❌ Geocoding failed:', error);
         toast({
-          title: "Location Service Error",
-          description: "Unable to verify location. Please try again.",
+          title: "Location Error",
+          description: `Unable to find the location: ${error instanceof Error ? error.message : 'Please check your venue address, postcode, and region are correct.'}`,
           variant: "destructive",
         });
-        return;
+        return; // Don't save the tournament if we can't geocode the location
       }
 
       const tournamentData = {
@@ -1155,6 +1130,7 @@ const ProfilePage = () => {
                         value={editingTournament.location_name}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, location_name: value }))}
                         placeholder="Enter venue name"
+                        country={editingTournament.country || 'GB'}
                         onAddressSelect={(suggestion) => {
                           // Extract region and postcode from selected address if available
                           const parts = suggestion.place_name.split(', ');
@@ -1179,6 +1155,7 @@ const ProfilePage = () => {
                         value={editingTournament.postcode}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, postcode: value }))}
                         placeholder="Enter postcode"
+                        country={editingTournament.country || 'GB'}
                         onAddressSelect={(suggestion) => {
                           // Extract location details from the selected address
                           const context = suggestion.context || [];
@@ -1203,6 +1180,7 @@ const ProfilePage = () => {
                         value={editingTournament.region}
                         onChange={(value) => setEditingTournament(prev => ({ ...prev, region: value }))}
                         placeholder="Enter region"
+                        country={editingTournament.country || 'GB'}
                         onAddressSelect={(suggestion) => {
                           setEditingTournament(prev => ({ 
                             ...prev, 

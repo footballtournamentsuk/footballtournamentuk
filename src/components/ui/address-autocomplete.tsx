@@ -21,6 +21,7 @@ interface AddressAutocompleteProps {
   placeholder?: string;
   className?: string;
   id?: string;
+  country?: string; // Add country parameter
 }
 
 export function AddressAutocomplete({ 
@@ -29,7 +30,8 @@ export function AddressAutocomplete({
   onAddressSelect, 
   placeholder, 
   className,
-  id 
+  id,
+  country = 'GB' // Default to GB for backward compatibility
 }: AddressAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +96,7 @@ export function AddressAutocomplete({
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
         `access_token=${mapboxToken}&` +
-        `country=GB&` +
+        `country=${country}&` +
         `types=address,poi,place&` +
         `limit=5`
       );

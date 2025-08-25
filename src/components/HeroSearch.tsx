@@ -9,6 +9,7 @@ import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 interface HeroSearchProps {
   onSearch: (searchTerm: string, postcode?: string, coordinates?: [number, number]) => void;
   className?: string;
+  country?: string; // Add country support
 }
 
 interface PostcodeSuggestion {
@@ -18,7 +19,7 @@ interface PostcodeSuggestion {
   center: [number, number];
 }
 
-export function HeroSearch({ onSearch, className }: HeroSearchProps) {
+export function HeroSearch({ onSearch, className, country = 'GB' }: HeroSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [postcode, setPostcode] = useState('');
   const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
@@ -88,7 +89,7 @@ export function HeroSearch({ onSearch, className }: HeroSearchProps) {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
         `access_token=${mapboxToken}&` +
-        `country=GB&` +
+        `country=${country}&` +
         `types=postcode,address,place&` +
         `limit=5`
       );

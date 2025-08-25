@@ -24,6 +24,7 @@ interface PostcodeAutocompleteProps {
   className?: string;
   id?: string;
   variant?: 'default' | 'glass';
+  country?: string; // Add country parameter
 }
 
 export function PostcodeAutocomplete({ 
@@ -33,7 +34,8 @@ export function PostcodeAutocomplete({
   placeholder, 
   className,
   id,
-  variant = 'default'
+  variant = 'default',
+  country = 'GB' // Default to GB for backward compatibility
 }: PostcodeAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -108,7 +110,7 @@ export function PostcodeAutocomplete({
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
         `access_token=${mapboxToken}&` +
-        `country=GB&` +
+        `country=${country}&` +
         `types=postcode,address&` +
         `limit=8`
       );
