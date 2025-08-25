@@ -53,7 +53,9 @@ export const usePreloadCriticalResources = (resources: CriticalResource[]) => {
 export const usePreloadHeroImages = (currentRoute?: string) => {
   const getCriticalImages = (): CriticalResource[] => {
     const baseImages: CriticalResource[] = [
-      { href: '/src/assets/hero-football.webp', as: 'image' }
+      { href: '/src/assets/hero-celebration-desktop.webp', as: 'image' },
+      { href: '/src/assets/hero-celebration-tablet.webp', as: 'image' },
+      { href: '/src/assets/hero-celebration-mobile.webp', as: 'image' }
     ];
 
     // Add city-specific images based on route

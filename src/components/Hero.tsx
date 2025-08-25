@@ -2,11 +2,12 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar, Users, Trophy, List, FileText } from 'lucide-react';
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useCounterAnimation } from '@/hooks/useCounterAnimation';
 import { usePreloadHeroImages } from '@/hooks/usePreloadCriticalResources';
 import { HeroSearch } from '@/components/HeroSearch';
-import heroImage from '@/assets/hero-football.webp';
+import heroDesktop from '@/assets/hero-celebration-desktop.webp';
+import heroTablet from '@/assets/hero-celebration-tablet.webp';
+import heroMobile from '@/assets/hero-celebration-mobile.webp';
 
 interface HeroProps {
   onHeroSearch?: (searchTerm: string, postcode?: string, coordinates?: [number, number]) => void;
@@ -48,16 +49,34 @@ const Hero: React.FC<HeroProps> = ({ onHeroSearch }) => {
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <OptimizedImage
-          src={heroImage}
-          alt="Youth football players in action"
-          priority={true}
-          className="w-full h-full"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-          placeholderColor="bg-emerald-900/20"
-        />
+        <picture>
+          {/* Mobile: 4:5 aspect ratio, portrait crop focused on trophy */}
+          <source
+            media="(max-width: 430px)"
+            srcSet={heroMobile}
+            width={1200}
+            height={1500}
+          />
+          {/* Tablet: 4:3 aspect ratio */}
+          <source
+            media="(max-width: 1024px)"
+            srcSet={heroTablet}
+            width={1600}
+            height={1200}
+          />
+          {/* Desktop: 16:9 aspect ratio */}
+          <img
+            src={heroDesktop}
+            alt="Young football players celebrating with trophy, winners lifting cup with confetti falling"
+            className="w-full h-full object-cover object-center"
+            width={1920}
+            height={1080}
+            sizes="100vw"
+            loading="eager"
+            decoding="async"
+            style={{ objectPosition: 'center center' }}
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
       </div>
 
