@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Venue Coordinates</title>
+</head>
+<body>
+    <h1>Fix Venue Coordinates for Madrid & Austria</h1>
+    <button onclick="fixVenueCoordinates()">Re-geocode from Exact Addresses</button>
+    <div id="results"></div>
+
+    <script>
+        async function fixVenueCoordinates() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Processing venue coordinates...';
+
+            try {
+                const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/fix-venue-coordinates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <h2>✅ Success!</h2>
+                        <h3>Address Strings Used & Final Coordinates:</h3>
+                        <div style="background: #f0f8ff; padding: 15px; margin: 10px 0;">
+                            ${data.results.map(r => `
+                                <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+                                    <strong>${r.name}</strong><br>
+                                    <strong>Address:</strong> ${r.address}<br>
+                                    ${r.error ? 
+                                        `<span style="color: red;">❌ Error: ${r.error}</span>` :
+                                        `<strong>Final Coordinates:</strong> ${r.latitude}, ${r.longitude}<br>
+                                         ${r.old_latitude ? `<em>Previous:</em> ${r.old_latitude}, ${r.old_longitude}` : ''}`
+                                    }
+                                </div>
+                            `).join('')}
+                        </div>
+                        <h3>Verification Links:</h3>
+                        <p><strong>Madrid (Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid, 28991, Mostoles, ES):</strong></p>
+                        <a href="https://www.google.com/maps/search/Cam.+de+Cubas,+16,+28991+Torrejón+de+la+Calzada,+Madrid" target="_blank">🗺️ Google Maps Search</a><br>
+                        
+                        <p><strong>Austria (Sportzentrum Neustift im Mühlkreis, Upper Austria, 4143, Austria, AT):</strong></p>
+                        <a href="https://www.google.com/maps/search/Sportzentrum+Neustift+im+Mühlkreis,+4143,+Austria" target="_blank">🗺️ Google Maps Search</a><br>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: red;">❌ Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

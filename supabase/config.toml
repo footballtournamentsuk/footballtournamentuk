@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.fix-tournament-coordinates]
 verify_jwt = false
+
+[functions.fix-venue-coordinates]
+verify_jwt = false
