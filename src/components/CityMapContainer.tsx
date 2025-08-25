@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar, Users, Trophy, Filter, X, Maximize2, Minimize2 } from 'lucide-react';
-import { getCurrencySymbol } from '@/utils/currency';
+import { formatPrice } from '@/utils/currency';
 
 interface CityMapContainerProps {
   city: CityConfig;
@@ -219,7 +219,7 @@ const CityMapContainer: React.FC<CityMapContainerProps> = ({
                   <div className="flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm font-medium">
-                      {getCurrencySymbol(selectedTournament.cost.currency)}{selectedTournament.cost.amount} per team
+                      {formatPrice(selectedTournament.cost.amount, selectedTournament.cost.currency)} per team
                     </span>
                   </div>
                 )}

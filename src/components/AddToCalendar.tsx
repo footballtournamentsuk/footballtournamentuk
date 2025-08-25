@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Tournament } from '@/types/tournament';
 import { format, addWeeks, addDays, addHours } from 'date-fns';
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
-import { getCurrencySymbol } from '@/utils/currency';
+import { formatPrice } from '@/utils/currency';
 
 interface AddToCalendarProps {
   tournament: Tournament;
@@ -89,7 +89,7 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
     parts.push(`Team Types: ${tournament.teamTypes.join(', ')}`);
     
     if (tournament.cost) {
-      parts.push(`Cost: ${getCurrencySymbol(tournament.cost.currency)}${tournament.cost.amount} per team`);
+      parts.push(`Cost: ${formatPrice(tournament.cost.amount, tournament.cost.currency)} per team`);
     }
     
     if (tournament.contact.email) {
@@ -136,7 +136,7 @@ export const AddToCalendar: React.FC<AddToCalendarProps> = ({
         parts.push(`⚽ Team Types: ${tournament.teamTypes.join(', ')}`);
         
         if (tournament.cost) {
-          parts.push(`💰 Cost: ${getCurrencySymbol(tournament.cost.currency)}${tournament.cost.amount} per team`);
+          parts.push(`💰 Cost: ${formatPrice(tournament.cost.amount, tournament.cost.currency)} per team`);
         }
         
         if (tournament.contact.email) {

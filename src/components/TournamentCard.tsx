@@ -27,7 +27,7 @@ import { ContactOrganizerModal } from './ContactOrganizerModal';
 import { getTournamentThumbnail, shouldPrioritizeTournament } from '@/utils/tournamentThumbnails';
 import { TournamentImage } from '@/components/ui/tournament-image';
 import { isDemoTournament } from '@/utils/demoUtils';
-import { getCurrencySymbol } from '@/utils/currency';
+import { formatPrice } from '@/utils/currency';
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -147,7 +147,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           {tournament.cost && (
             <div className="ml-auto bg-surface border rounded-lg px-3 py-1.5 text-center">
               <div className="font-semibold text-primary">
-                {getCurrencySymbol(tournament.cost.currency)}{tournament.cost.amount}
+                {formatPrice(tournament.cost.amount, tournament.cost.currency)}
               </div>
               <div className="text-xs text-muted-foreground">per team</div>
             </div>
