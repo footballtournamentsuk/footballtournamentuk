@@ -390,6 +390,7 @@ export type Database = {
           contact_phone: string | null
           cost_amount: number | null
           cost_currency: string | null
+          country: string
           created_at: string
           description: string | null
           end_date: string
@@ -437,6 +438,7 @@ export type Database = {
           contact_phone?: string | null
           cost_amount?: number | null
           cost_currency?: string | null
+          country?: string
           created_at?: string
           description?: string | null
           end_date: string
@@ -484,6 +486,7 @@ export type Database = {
           contact_phone?: string | null
           cost_amount?: number | null
           cost_currency?: string | null
+          country?: string
           created_at?: string
           description?: string | null
           end_date?: string

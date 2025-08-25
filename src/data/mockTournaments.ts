@@ -20,7 +20,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Crystal Palace Sports Centre',
       coordinates: [-0.0850, 51.4185],
       postcode: 'SE19 2BB',
-      region: 'London'
+      region: 'London',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-03-15'),
@@ -51,7 +52,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Trafford Training Ground',
       coordinates: [-2.2881, 53.4646],
       postcode: 'M16 0PX',
-      region: 'Manchester'
+      region: 'Manchester',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-04-08'),
@@ -81,7 +83,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Maidstone United FC',
       coordinates: [0.5357, 51.2769],
       postcode: 'ME14 5LQ',
-      region: 'Kent'
+      region: 'Kent',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-05-20'),
@@ -110,7 +113,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Birmingham FA Ground',
       coordinates: [-1.8904, 52.4862],
       postcode: 'B6 6HE',
-      region: 'Birmingham'
+      region: 'Birmingham',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-07-15'),
@@ -142,7 +146,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Anfield Sports Centre',
       coordinates: [-2.9606, 53.4308],
       postcode: 'L4 0TH',
-      region: 'Liverpool'
+      region: 'Liverpool',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-06-01'),
@@ -173,7 +178,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Ormskirk FC Ground',
       coordinates: [-2.8834, 53.5692], // Ormskirk coordinates
       postcode: 'L39 2AT',
-      region: 'Lancashire'
+      region: 'Lancashire',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-06-08'),
@@ -203,7 +209,8 @@ export const mockTournaments: Tournament[] = [
       name: 'Yorkshire Dales Activity Centre',
       coordinates: [-2.0781, 54.2766],
       postcode: 'DL8 3TW',
-      region: 'Yorkshire'
+      region: 'Yorkshire',
+      country: 'GB'
     },
     dates: {
       start: new Date('2024-08-05'),

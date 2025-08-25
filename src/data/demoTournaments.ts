@@ -100,7 +100,8 @@ export const generateDemoTournaments = (): Tournament[] => {
         name: venueNames[city.slug as keyof typeof venueNames] || `${city.displayName} Sports Centre`,
         coordinates: city.coordinates,
         postcode: generateDemoPostcode(city.slug),
-        region: city.region
+        region: city.region,
+        country: 'GB' // Default to GB for demo tournaments
       },
       dates: {
         start: startDate,

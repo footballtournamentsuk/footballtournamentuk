@@ -8,6 +8,7 @@ export interface Tournament {
     coordinates: [number, number]; // [longitude, latitude]
     postcode: string;
     region: string;
+    country: string; // Added country field
   };
   dates: {
     start: Date;
@@ -50,6 +51,35 @@ export interface Tournament {
   additional_notes?: string;
 }
 
+// Form-specific interface that matches the flat structure used in Profile.tsx
+export interface TournamentFormData {
+  id?: string;
+  name: string;
+  description?: string;
+  location_name: string;
+  postcode: string;
+  region: string;
+  country?: string; // Added country field
+  format: string[];
+  age_groups: AgeGroup[];
+  team_types: TeamType[];
+  type: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  registration_deadline?: string;
+  max_teams?: number;
+  cost_amount?: number;
+  cost_currency: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone?: string;
+  website?: string;
+  features?: string[];
+  latitude?: number;
+  longitude?: number;
+}
+
 // Database tournament type from Supabase
 export interface DatabaseTournament {
   id: string;
@@ -61,6 +91,7 @@ export interface DatabaseTournament {
   longitude: number;
   postcode: string;
   region: string;
+  country: string; // Added country field
   format: string;
   age_groups: string[];
   team_types: string[];

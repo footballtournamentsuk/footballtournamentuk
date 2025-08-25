@@ -153,12 +153,13 @@ const ProfilePage = () => {
     }
     return data;
   };
-  const [editingTournament, setEditingTournament] = useState<Tournament>({
+  const [editingTournament, setEditingTournament] = useState<TournamentFormData>({
     name: '',
     description: '',
     location_name: '',
     postcode: '',
     region: '',
+    country: 'GB', // Default to GB
     format: [],
     age_groups: [],
     team_types: [],
@@ -497,6 +498,7 @@ const ProfilePage = () => {
         organizer_id: user.id,
         latitude, // Use the geocoded latitude
         longitude, // Use the geocoded longitude
+        country: editingTournament.country || 'GB', // Use flat country property
         contact_name: profile.full_name,
         contact_email: profile.contact_email,
         contact_phone: profile.contact_phone

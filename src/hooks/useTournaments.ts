@@ -33,6 +33,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
       coordinates: [dbTournament.longitude, dbTournament.latitude],
       postcode: dbTournament.postcode,
       region: dbTournament.region,
+      country: dbTournament.country || 'GB', // Add country field with fallback
     },
     dates: {
       start: new Date(dbTournament.start_date),
