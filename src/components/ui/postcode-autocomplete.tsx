@@ -91,19 +91,13 @@ export function PostcodeAutocomplete({
   }, []);
 
   const searchPostcode = async (query: string) => {
-    if (!query.trim() || !mapboxToken || query.length < 3) {
+    if (!query.trim() || !mapboxToken || query.length < 2) {
       setSuggestions([]);
       return;
     }
 
-    // Basic UK postcode pattern validation
-    const postcodePattern = /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i;
-    const partialPostcodePattern = /^[A-Z]{1,2}[0-9]/i;
-    
-    if (!postcodePattern.test(query) && !partialPostcodePattern.test(query)) {
-      setSuggestions([]);
-      return;
-    }
+    // Support international postcodes - no pattern validation needed
+    // Let Mapbox handle validation for different country formats
 
     setLoading(true);
     try {
@@ -137,8 +131,8 @@ export function PostcodeAutocomplete({
 
   const extractPostcode = (placeName: string): string => {
     const parts = placeName.split(', ');
-    const postcodePattern = /^[A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2}$/i;
-    return parts.find(part => postcodePattern.test(part.trim())) || '';
+    // Look for the shortest part that contains numbers/letters (likely postcode)
+    return parts.find(part => /^[\w\s-]+$/.test(part.trim()) && /\d/.test(part)) || parts[parts.length - 1] || '';
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +178,7 @@ export function PostcodeAutocomplete({
             id={id}
             value={value}
             onChange={handleInputChange}
-            placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
+            placeholder={placeholder || "Enter postcode"}
             className={cn("pl-10 pr-10", className)}
             onFocus={() => {
               if (suggestions.length > 0) {
@@ -198,7 +192,7 @@ export function PostcodeAutocomplete({
             id={id}
             value={value}
             onChange={handleInputChange}
-            placeholder={placeholder || "Enter postcode (e.g., SW1A 1AA)"}
+            placeholder={placeholder || "Enter postcode"}
             className={cn("pl-10 pr-10", className)}
             onFocus={() => {
               if (suggestions.length > 0) {

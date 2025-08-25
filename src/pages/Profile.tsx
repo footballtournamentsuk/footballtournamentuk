@@ -1124,6 +1124,40 @@ const ProfilePage = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
+                      <Label htmlFor="country">Country *</Label>
+                      <Select
+                        value={editingTournament.country || 'GB'}
+                        onValueChange={(value) => setEditingTournament(prev => ({ ...prev, country: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="GB">United Kingdom</SelectItem>
+                          <SelectItem value="US">United States</SelectItem>
+                          <SelectItem value="CA">Canada</SelectItem>
+                          <SelectItem value="AU">Australia</SelectItem>
+                          <SelectItem value="DE">Germany</SelectItem>
+                          <SelectItem value="FR">France</SelectItem>
+                          <SelectItem value="ES">Spain</SelectItem>
+                          <SelectItem value="IT">Italy</SelectItem>
+                          <SelectItem value="NL">Netherlands</SelectItem>
+                          <SelectItem value="BE">Belgium</SelectItem>
+                          <SelectItem value="AT">Austria</SelectItem>
+                          <SelectItem value="CH">Switzerland</SelectItem>
+                          <SelectItem value="IE">Ireland</SelectItem>
+                          <SelectItem value="PT">Portugal</SelectItem>
+                          <SelectItem value="SE">Sweden</SelectItem>
+                          <SelectItem value="DK">Denmark</SelectItem>
+                          <SelectItem value="NO">Norway</SelectItem>
+                          <SelectItem value="FI">Finland</SelectItem>
+                          <SelectItem value="PL">Poland</SelectItem>
+                          <SelectItem value="CZ">Czech Republic</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
                       <Label htmlFor="location_name">Venue Name *</Label>
                       <AddressAutocomplete
                         id="location_name"
