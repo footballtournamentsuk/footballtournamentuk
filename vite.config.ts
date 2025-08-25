@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build: {
-    target: 'es2015',
+    target: 'es2020',
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
