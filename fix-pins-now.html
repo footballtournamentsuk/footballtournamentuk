@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Location Pins - Single Source of Truth</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .tournament { margin-bottom: 30px; padding: 20px; border: 2px solid #0066cc; border-radius: 8px; }
+        .coords { background: #f0f8ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .address { font-weight: bold; color: #0066cc; margin-bottom: 15px; background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #0066cc; }
+        .link { color: #0066cc; text-decoration: none; margin-right: 15px; display: inline-block; margin-bottom: 5px; }
+        .link:hover { text-decoration: underline; }
+        .status { padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .pending { background: #fff3cd; border: 1px solid #ffeaa7; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        button { background: #0066cc; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; }
+        button:hover { background: #0052a3; }
+        .source-truth { background: #e7f3ff; padding: 15px; border-left: 5px solid #0066cc; margin: 15px 0; }
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .before, .after { padding: 15px; border-radius: 5px; }
+        .before { background: #ffe6e6; border: 1px solid #ffcccc; }
+        .after { background: #e6ffe6; border: 1px solid #ccffcc; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Fix Location Pins - Single Source of Truth</h1>
+    
+    <div class="source-truth">
+        <strong>🔑 Single Source of Truth:</strong> Using ONLY the location_name field from the database.<br>
+        No postcode additions, no region modifications, no fallbacks - just the exact venue address as entered.
+    </div>
+    
+    <button onclick="fixLocationPins()">Fix Pins Using location_name Only</button>
+    <div id="results"></div>
+    
+    <h2>Current Database Values:</h2>
+    
+    <div class="tournament">
+        <h3>🇪🇸 Madrid Tournament</h3>
+        <div class="address">
+            <strong>location_name (Single Source of Truth):</strong><br>
+            "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid"
+        </div>
+        <div class="comparison">
+            <div class="before">
+                <strong>❌ Current Problem:</strong><br>
+                Pin location doesn't match this address
+            </div>
+            <div class="after">
+                <strong>✅ After Fix:</strong><br>
+                Pin will be exactly at this address
+            </div>
+        </div>
+        <a href="https://www.google.com/maps/search/Cam.+de+Cubas,+16,+28991+Torrejón+de+la+Calzada,+Madrid" target="_blank" class="link">
+            🗺️ Test Address in Google Maps
+        </a>
+    </div>
+    
+    <div class="tournament">
+        <h3>🇦🇹 Austria Tournament</h3>
+        <div class="address">
+            <strong>location_name (Single Source of Truth):</strong><br>
+            "Sportzentrum Neustift im Mühlkreis, Upper Austria"
+        </div>
+        <div class="comparison">
+            <div class="before">
+                <strong>❌ Current Problem:</strong><br>
+                Pin location doesn't match this address
+            </div>
+            <div class="after">
+                <strong>✅ After Fix:</strong><br>
+                Pin will be exactly at this address
+            </div>
+        </div>
+        <a href="https://www.google.com/maps/search/Sportzentrum+Neustift+im+Mühlkreis,+Upper+Austria" target="_blank" class="link">
+            🗺️ Test Address in Google Maps
+        </a>
+    </div>
+    
+    <div class="source-truth">
+        <h3>🔍 Verification Process:</h3>
+        <ol>
+            <li><strong>Click "Fix Pins"</strong> - Geocodes using ONLY the location_name strings above</li>
+            <li><strong>Check Google Maps links</strong> - Verify addresses point to actual venues</li>
+            <li><strong>Reload homepage</strong> - See pins now at correct locations</li>
+            <li><strong>Compare</strong> - Our pins should match Google Maps results exactly</li>
+            <li><strong>Confirm</strong> - Pasting location_name into Google = same spot as our pin</li>
+        </ol>
+    </div>
+
+    <script>
+        async function fixLocationPins() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="status pending">🔄 Fixing pins using location_name as single source of truth...</div>';
+
+            try {
+                const response = await fetch('https://yknmcddrfkggphrktivd.supabase.co/functions/v1/fix-location-pins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<div class="status success"><strong>✅ Pins Fixed - Now Match location_name!</strong></div>';
+                    html += '<h3>📍 Results:</h3>';
+                    
+                    data.results.forEach(r => {
+                        html += `
+                            <div class="tournament">
+                                <h4>${r.name}</h4>
+                                <div class="address">
+                                    <strong>🎯 location_name Used:</strong><br>
+                                    "${r.location_name}"
+                                </div>
+                                ${r.error ? 
+                                    `<div class="error">❌ Error: ${r.error}</div>` :
+                                    `<div class="coords">
+                                        <strong>🎯 NEW Coordinates (match address):</strong> ${r.new_latitude}, ${r.new_longitude}<br>
+                                        <strong>📍 Mapbox Found:</strong> ${r.mapbox_result}<br>
+                                        <strong>🔄 Previous:</strong> ${r.old_latitude}, ${r.old_longitude}<br>
+                                        <strong>✓ Relevance:</strong> ${r.relevance} | <strong>Type:</strong> ${r.place_type}
+                                    </div>
+                                    <a href="https://www.google.com/maps/@${r.new_latitude},${r.new_longitude},17z" target="_blank" class="link">
+                                        📍 View NEW Pin Location
+                                    </a>
+                                    <a href="https://www.google.com/maps/search/${encodeURIComponent(r.location_name)}" target="_blank" class="link">
+                                        🔍 Google Maps Search
+                                    </a>`
+                                }
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                        <div class="status success">
+                            <strong>🎯 FINAL VERIFICATION:</strong><br>
+                            <strong>Exact Address Strings Used:</strong><br>
+                            • Madrid: "Cam. de Cubas, 16, 28991 Torrejón de la Calzada, Madrid"<br>
+                            • Austria: "Sportzentrum Neustift im Mühlkreis, Upper Austria"<br><br>
+                            
+                            <strong>Final Stored Coordinates:</strong><br>
+                            ${data.results.filter(r => !r.error).map(r => 
+                                `• ${r.name}: ${r.new_latitude}, ${r.new_longitude}`
+                            ).join('<br>')}<br><br>
+                            
+                            <strong>Next Steps:</strong><br>
+                            1. ✅ Pins now match location_name exactly<br>
+                            2. 🔄 Reload your homepage to see corrected pins<br>
+                            3. 📍 Paste location_name into Google Maps - should match our pins exactly
+                        </div>
+                    `;
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<div class="status error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
