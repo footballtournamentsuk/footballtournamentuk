@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar, Users, Trophy, ArrowDown } from 'lucide-react';
 import { isDemoTournament } from '@/utils/demoUtils';
+import { getCurrencySymbol } from '@/utils/currency';
 
 interface ShareHeroProps {
   tournament: Tournament;
@@ -175,7 +176,7 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
                 {/* Cost Information */}
                 {tournament.cost && (
                   <div className="text-xl md:text-2xl font-bold mt-4">
-                    £{tournament.cost.amount} per team
+                    {getCurrencySymbol(tournament.cost.currency)}{tournament.cost.amount} per team
                   </div>
                 )}
               </div>
@@ -223,7 +224,7 @@ export const ShareHero: React.FC<ShareHeroProps> = ({
               {/* Cost Information */}
               {tournament.cost && (
                 <div className="text-2xl font-bold text-primary mb-4">
-                  £{tournament.cost.amount} per team
+                  {getCurrencySymbol(tournament.cost.currency)}{tournament.cost.amount} per team
                 </div>
               )}
             </div>

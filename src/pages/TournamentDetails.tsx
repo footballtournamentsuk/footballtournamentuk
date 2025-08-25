@@ -49,6 +49,7 @@ import { AddToCalendar } from '@/components/AddToCalendar';
 import { SimpleShareCard } from '@/components/SimpleShareCard';
 import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
 import { isDemoTournament } from '@/utils/demoUtils';
+import { getCurrencySymbol } from '@/utils/currency';
 
 const TournamentDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -314,7 +315,7 @@ const TournamentDetails = () => {
                 <div>
                   <div className="font-medium">Cost per Team</div>
                   <div className="text-2xl font-bold text-primary">
-                    £{tournament.cost.amount}
+                    {getCurrencySymbol(tournament.cost.currency)}{tournament.cost.amount}
                   </div>
                 </div>
               </div>
@@ -750,7 +751,7 @@ const TournamentDetails = () => {
                 <CardContent>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-primary">
-                      £{tournament.cost.amount}
+                      {getCurrencySymbol(tournament.cost.currency)}{tournament.cost.amount}
                     </div>
                     <div className="text-muted-foreground">per team</div>
                     <div className="text-xs text-muted-foreground mt-1">
