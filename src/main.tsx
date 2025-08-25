@@ -6,15 +6,25 @@ import './index.css'
 import { registerServiceWorker, addResourceHints, optimizeFonts } from '@/utils/performance';
 import { injectCriticalCSS, optimizeFontLoading } from '@/utils/criticalCss';
 
-// Initialize performance optimizations
+// Initialize performance optimizations immediately
 addResourceHints();
-optimizeFonts();
 injectCriticalCSS();
-optimizeFontLoading();
 
-// Register service worker for caching
-if ('serviceWorker' in navigator) {
-  registerServiceWorker();
+// Defer non-critical optimizations using requestIdleCallback fallback
+const deferNonCritical = () => {
+  optimizeFonts();
+  optimizeFontLoading();
+  
+  // Register service worker for caching
+  if ('serviceWorker' in navigator) {
+    registerServiceWorker();
+  }
+};
+
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(deferNonCritical, { timeout: 2000 });
+} else {
+  setTimeout(deferNonCritical, 100);
 }
 
 createRoot(document.getElementById("root")!).render(

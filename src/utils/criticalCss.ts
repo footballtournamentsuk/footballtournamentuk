@@ -45,20 +45,36 @@ export const injectCriticalCSS = () => {
   }
 };
 
-// Font loading optimization
+// Font loading optimization with better error handling
 export const optimizeFontLoading = () => {
-  // Ensure Inter font is loaded with font-display: swap
-  if ('fonts' in document) {
-    const font = new FontFace('Inter', 'url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2)', {
-      display: 'swap',
-      weight: '400 700'
-    });
-    
-    font.load().then(() => {
-      document.fonts.add(font);
-    }).catch(err => {
-      console.warn('Font loading failed:', err);
-    });
+  // Use font-display: swap and preload for critical fonts
+  if ('fonts' in document && 'FontFace' in window) {
+    const loadFont = async () => {
+      try {
+        const font = new FontFace(
+          'Inter', 
+          'url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2)',
+          { 
+            display: 'swap',
+            weight: '400 700',
+            style: 'normal'
+          }
+        );
+        
+        await font.load();
+        document.fonts.add(font);
+      } catch (err) {
+        // Silently fail and use fallback system fonts
+        console.warn('Font loading failed, using fallback:', err);
+      }
+    };
+
+    // Load font after critical content
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadFont);
+    } else {
+      setTimeout(loadFont, 100);
+    }
   }
 };
 

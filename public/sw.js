@@ -11,7 +11,10 @@ const PRECACHE_ASSETS = [
   '/manifest.json',
   '/favicon.png',
   '/app-icon-192.png',
-  '/app-icon-512.png'
+  '/app-icon-512.png',
+  '/src/assets/hero-celebration-desktop.webp',
+  '/src/assets/hero-celebration-tablet.webp',
+  '/src/assets/hero-celebration-mobile.webp'
 ];
 
 // Cache strategies

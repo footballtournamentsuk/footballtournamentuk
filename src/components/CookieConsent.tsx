@@ -11,10 +11,10 @@ export const CookieConsent = () => {
     // Check if user has already made a choice
     const cookieChoice = localStorage.getItem('cookieConsent');
     if (!cookieChoice) {
-      // Show modal after a brief delay to ensure page is loaded
+      // Delay showing consent until after LCP to not affect core metrics
       const timer = setTimeout(() => {
         setShowConsent(true);
-      }, 1000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -39,12 +39,13 @@ export const CookieConsent = () => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+      className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-[60] p-4 transform-gpu"
       role="dialog"
       aria-labelledby="cookie-consent-title"
       aria-describedby="cookie-consent-description"
+      style={{ contain: 'layout style paint' }}
     >
-      <Card className="max-w-md w-full glass shadow-xl shadow-black/10">
+      <Card className="max-w-md w-full mx-auto glass shadow-xl shadow-black/10">
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
             <h2 

@@ -74,6 +74,7 @@ const Hero: React.FC<HeroProps> = ({ onHeroSearch }) => {
             sizes="100vw"
             loading="eager"
             decoding="async"
+            fetchPriority="high"
             style={{ objectPosition: 'center center' }}
           />
         </picture>

@@ -11,8 +11,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
-import { SupportModal } from "@/components/SupportModal";
+
 import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -41,10 +42,15 @@ import YouthTournaments from "./pages/YouthTournaments";
 import TournamentFormats from "./pages/TournamentFormats";
 import Regions from "./pages/Regions";
 import { Footer } from "./components/Footer";
-import { CookieConsent } from "./components/CookieConsent";
+import { Suspense, lazy } from "react";
+
+// Lazy load non-critical components
+const CookieConsent = lazy(() => import("./components/CookieConsent").then(m => ({ default: m.CookieConsent })));
+const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({ default: m.PWAInstallPrompt })));
+const SupportModal = lazy(() => import("./components/SupportModal").then(m => ({ default: m.SupportModal })));
 import { ScrollToTop } from "./components/ScrollToTop";
 import BottomNavigation from "./components/BottomNavigation";
-import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+
 import { useTournamentAlerts } from "./hooks/useTournamentAlerts";
 
 // Extend Window interface for GTM dataLayer
@@ -65,6 +71,9 @@ const Navigation = () => {
   
   // Track Core Web Vitals for performance analytics
   useCoreWebVitals();
+  
+  // Initialize performance monitoring
+  usePerformanceMonitoring();
 
   const getInitials = (name: string | undefined, email: string | undefined) => {
     if (name && name.trim()) {
@@ -213,10 +222,12 @@ const Navigation = () => {
       </div>
       
       {/* Support Modal */}
-      <SupportModal 
-        isOpen={isSupportModalOpen} 
-        onClose={() => setIsSupportModalOpen(false)} 
-      />
+      <Suspense fallback={null}>
+        <SupportModal 
+          isOpen={isSupportModalOpen} 
+          onClose={() => setIsSupportModalOpen(false)} 
+        />
+      </Suspense>
     </nav>
   );
 };
@@ -292,8 +303,12 @@ const App = () => {
             </Routes>
           </main>
           <Footer />
-          <CookieConsent />
-          <PWAInstallPrompt />
+          <Suspense fallback={null}>
+            <CookieConsent />
+          </Suspense>
+          <Suspense fallback={null}>
+            <PWAInstallPrompt />
+          </Suspense>
           <BottomNavigation />
         </div>
       </BrowserRouter>

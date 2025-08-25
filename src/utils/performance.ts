@@ -71,18 +71,27 @@ export const addResourceHints = () => {
 
 // Optimize third-party scripts
 export const loadThirdPartyScripts = () => {
-  // Load analytics after page interactive
+// Load analytics after LCP and significant user interaction
+  const loadAfterLCP = () => {
+    requestIdleCallback(() => {
+      setTimeout(loadAnalytics, 2000);
+    }, { timeout: 5000 });
+  };
+  
   if (document.readyState === 'complete') {
-    loadAnalytics();
+    loadAfterLCP();
   } else {
-    window.addEventListener('load', loadAnalytics);
+    window.addEventListener('load', loadAfterLCP);
   }
 };
 
 const loadAnalytics = () => {
-  // Defer Google Analytics or other tracking scripts
-  // Note: gtag would be loaded by external script
-  deferScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID');
+  // Only load analytics if user has interacted and page is stable
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      deferScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID');
+    });
+  }
 };
 
 // Font loading optimization

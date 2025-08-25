@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-P37WSXS4');</script>
-    <!-- End Google Tag Manager -->
     
     <meta charset="UTF-8" />
     <!-- Favicon and Icons - BIMI SVG Logo Implementation -->
@@ -18,6 +11,16 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
     <link rel="shortcut icon" href="/bimi-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Preload critical resources for LCP optimization -->
+    <link rel="preload" href="/src/assets/hero-celebration-desktop.webp" as="image" media="(min-width: 1025px)" fetchpriority="high">
+    <link rel="preload" href="/src/assets/hero-celebration-tablet.webp" as="image" media="(min-width: 431px) and (max-width: 1024px)" fetchpriority="high">
+    <link rel="preload" href="/src/assets/hero-celebration-mobile.webp" as="image" media="(max-width: 430px)" fetchpriority="high">
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//yknmcddrfkggphrktivd.supabase.co">
     <meta name="author" content="Football Tournaments UK" />
     <meta name="keywords" content="football tournaments, youth football, UK football, soccer tournaments, grassroots football, football competitions" />
     <meta name="geo.region" content="GB" />
@@ -25,7 +28,6 @@
     <meta name="theme-color" content="#16a34a" />
     
     <!-- Critical Resource Preloads -->
-    <link rel="preload" href="/src/assets/hero-football.webp" as="image" fetchpriority="high">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,12 +106,22 @@
   </head>
 
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P37WSXS4"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Deferred Google Tag Manager for better performance -->
+    <script>
+      // Load GTM after initial page load to improve Core Web Vitals
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-P37WSXS4');
+        }, 2000);
+      });
+    </script>
   </body>
 </html>
