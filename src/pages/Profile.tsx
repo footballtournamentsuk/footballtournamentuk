@@ -56,7 +56,7 @@ interface Profile {
   pending_email_change?: string;
 }
 
-interface Tournament {
+interface TournamentFormData {
   id?: string;
   slug?: string;
   name: string;
@@ -64,6 +64,7 @@ interface Tournament {
   location_name: string;
   postcode: string;
   region: string;
+  country?: string;
   format: string[];
   age_groups: string[];
   team_types: string[];
