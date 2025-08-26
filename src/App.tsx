@@ -207,7 +207,7 @@ const Navigation = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="font-medium">
                     <Users className="h-4 w-4 mr-2" />
-                    For Organizers
+                    For Organisers
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48 bg-background border border-border shadow-lg z-50">
@@ -221,10 +221,10 @@ const Navigation = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link 
-                      to="/organizers/resources"
+                      to="/profile?tab=extended-details"
                       className="flex items-center cursor-pointer"
                     >
-                      Resources
+                      Extended Tournament Details
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
