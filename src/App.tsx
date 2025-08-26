@@ -112,7 +112,16 @@ const Navigation = () => {
           <Link to="/" className="text-xl font-bold text-primary">
             Football Tournaments UK
           </Link>
-          {BLOG_ENABLED}
+          {BLOG_ENABLED && (
+            <div className="hidden md:flex items-center gap-4">
+              <Link 
+                to="/blog" 
+                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+              >
+                Blog
+              </Link>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4">
           {canInstall && <Button onClick={triggerInstall} variant="ghost" size="sm" className="h-8 w-8 p-0" title="Download App">

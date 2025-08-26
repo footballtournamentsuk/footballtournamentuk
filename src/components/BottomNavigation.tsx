@@ -79,6 +79,9 @@ const BottomNavigation = () => {
     return location.pathname.startsWith(path);
   };
 
+  // Check if blog is enabled
+  const BLOG_ENABLED = import.meta.env.VITE_BLOG_ENABLED === 'true';
+
   // Tab configurations for different user states
   const nonRegisteredTabs = [
     {
@@ -93,6 +96,12 @@ const BottomNavigation = () => {
       action: handleSearchClick,
       isActive: location.pathname === '/tournaments'
     },
+    ...(BLOG_ENABLED ? [{
+      icon: HelpCircle, // Using HelpCircle as blog icon for now
+      label: 'Blog',
+      action: () => navigate('/blog'),
+      isActive: isActive('/blog')
+    }] : []),
     ...(isInPWA ? [{
       icon: RefreshCw,
       label: 'Refresh',
@@ -133,6 +142,12 @@ const BottomNavigation = () => {
       action: handleAddEvent,
       isActive: false
     },
+    ...(BLOG_ENABLED ? [{
+      icon: HelpCircle, // Using HelpCircle as blog icon for now
+      label: 'Blog',
+      action: () => navigate('/blog'),
+      isActive: isActive('/blog')
+    }] : []),
     ...(isInPWA ? [{
       icon: RefreshCw,
       label: 'Refresh',

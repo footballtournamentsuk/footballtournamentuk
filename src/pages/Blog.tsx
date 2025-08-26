@@ -112,8 +112,8 @@ export default function Blog() {
                 {tags.slice(0, 8).map((tag) => (
                   <Badge
                     key={tag}
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                    variant="glass"
+                    className="cursor-pointer"
                     onClick={() => handleSearch(tag)}
                   >
                     {tag}

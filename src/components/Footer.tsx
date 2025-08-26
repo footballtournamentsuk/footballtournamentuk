@@ -71,6 +71,11 @@ export const Footer = () => {
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 bg-white/10 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/auth">⚽ List Your Tournament</Link>
                 </Button>
+                {import.meta.env.VITE_BLOG_ENABLED === 'true' && (
+                  <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50" asChild>
+                    <Link to="/blog">📝 Blog</Link>
+                  </Button>
+                )}
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 border border-white/30 hover:border-emerald-300 focus-visible:ring-emerald-400/50" asChild>
                   <a href="mailto:info@footballtournamentsuk.co.uk">📧 Contact</a>
                 </Button>
