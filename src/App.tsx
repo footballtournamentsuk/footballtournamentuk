@@ -11,7 +11,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
-
 import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
@@ -48,12 +47,17 @@ import { Footer } from "./components/Footer";
 import { Suspense, lazy } from "react";
 
 // Lazy load non-critical components
-const CookieConsent = lazy(() => import("./components/CookieConsent").then(m => ({ default: m.CookieConsent })));
-const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({ default: m.PWAInstallPrompt })));
-const SupportModal = lazy(() => import("./components/SupportModal").then(m => ({ default: m.SupportModal })));
+const CookieConsent = lazy(() => import("./components/CookieConsent").then(m => ({
+  default: m.CookieConsent
+})));
+const PWAInstallPrompt = lazy(() => import("./components/PWAInstallPrompt").then(m => ({
+  default: m.PWAInstallPrompt
+})));
+const SupportModal = lazy(() => import("./components/SupportModal").then(m => ({
+  default: m.SupportModal
+})));
 import { ScrollToTop } from "./components/ScrollToTop";
 import BottomNavigation from "./components/BottomNavigation";
-
 import { useTournamentAlerts } from "./hooks/useTournamentAlerts";
 
 // Extend Window interface for GTM dataLayer
@@ -62,78 +66,61 @@ declare global {
     dataLayer: any[];
   }
 }
-
 const queryClient = new QueryClient();
 
 // Check if blog is enabled
 const BLOG_ENABLED = import.meta.env.VITE_BLOG_ENABLED === 'true';
-
 const Navigation = () => {
-  const { user, signOut } = useAuth();
-  const { profile } = useProfile();
-  const { toast } = useToast();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    profile
+  } = useProfile();
+  const {
+    toast
+  } = useToast();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
-  const { canInstall, triggerInstall } = usePWAInstall();
-  
+  const {
+    canInstall,
+    triggerInstall
+  } = usePWAInstall();
+
   // Track Core Web Vitals for performance analytics
   useCoreWebVitals();
-  
+
   // Initialize performance monitoring
   usePerformanceMonitoring();
-
   const getInitials = (name: string | undefined, email: string | undefined) => {
     if (name && name.trim()) {
-      return name
-        .split(' ')
-        .map(word => word.charAt(0))
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+      return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2);
     }
     if (email) {
       return email.charAt(0).toUpperCase();
     }
     return 'U';
   };
-
   const displayName = profile?.full_name || user?.email || 'User';
   const initials = getInitials(profile?.full_name, user?.email);
-  
+
   // Simple admin check - in production, you'd check roles from a profiles table
   const isAdmin = user?.email?.includes("admin") || user?.email?.includes("owner");
-
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  return <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="text-xl font-bold text-primary">
             Football Tournaments UK
           </Link>
-          {BLOG_ENABLED && (
-            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
-              Blog
-            </Link>
-          )}
+          {BLOG_ENABLED}
         </div>
         <div className="flex items-center gap-4">
-          {canInstall && (
-            <Button
-              onClick={triggerInstall}
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              title="Download App"
-            >
+          {canInstall && <Button onClick={triggerInstall} variant="ghost" size="sm" className="h-8 w-8 p-0" title="Download App">
               <Smartphone className="h-4 w-4" />
-            </Button>
-          )}
-          {user ? (
-            <DropdownMenu>
+            </Button>}
+          {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  className="relative h-8 w-8 rounded-full p-0 hover:bg-accent"
-                >
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0 hover:bg-accent">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
                       {initials}
@@ -141,11 +128,7 @@ const Navigation = () => {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                className="w-56 bg-background border border-border shadow-lg z-50" 
-                align="end" 
-                forceMount
-              >
+              <DropdownMenuContent className="w-56 bg-background border border-border shadow-lg z-50" align="end" forceMount>
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
                     <p className="font-medium text-sm">{displayName}</p>
@@ -165,8 +148,7 @@ const Navigation = () => {
                     Create Tournament
                   </Link>
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <>
+                {isAdmin && <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
@@ -174,13 +156,9 @@ const Navigation = () => {
                         Admin Panel
                       </Link>
                     </DropdownMenuItem>
-                  </>
-                )}
+                  </>}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => setIsSupportModalOpen(true)}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
+                <DropdownMenuItem onClick={() => setIsSupportModalOpen(true)} className="flex items-center gap-2 cursor-pointer">
                   <MessageSquare className="h-4 w-4" />
                   Support
                 </DropdownMenuItem>
@@ -191,64 +169,55 @@ const Navigation = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={async () => {
-                    try {
-                      const { error } = await signOut();
-                      if (error) {
-                        toast({
-                          title: "Sign out failed",
-                          description: error.message || "Unable to sign out. Please try again.",
-                          variant: "destructive",
-                        });
-                      } else {
-                        toast({
-                          title: "Signed out successfully",
-                          description: "You have been signed out of your account.",
-                        });
-                        // Force redirect to auth page
-                        window.location.href = '/auth';
-                      }
-                    } catch (error: any) {
-                      toast({
-                        title: "Sign out error",
-                        description: error.message || "An unexpected error occurred.",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
-                >
+                <DropdownMenuItem onClick={async () => {
+              try {
+                const {
+                  error
+                } = await signOut();
+                if (error) {
+                  toast({
+                    title: "Sign out failed",
+                    description: error.message || "Unable to sign out. Please try again.",
+                    variant: "destructive"
+                  });
+                } else {
+                  toast({
+                    title: "Signed out successfully",
+                    description: "You have been signed out of your account."
+                  });
+                  // Force redirect to auth page
+                  window.location.href = '/auth';
+                }
+              } catch (error: any) {
+                toast({
+                  title: "Sign out error",
+                  description: error.message || "An unexpected error occurred.",
+                  variant: "destructive"
+                });
+              }
+            }} className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
                   <LogOut className="h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link to="/auth">
+            </DropdownMenu> : <Link to="/auth">
               <Button variant="default" size="sm">
                 Sign In
               </Button>
-            </Link>
-          )}
+            </Link>}
         </div>
       </div>
       
       {/* Support Modal */}
       <Suspense fallback={null}>
-        <SupportModal 
-          isOpen={isSupportModalOpen} 
-          onClose={() => setIsSupportModalOpen(false)} 
-        />
+        <SupportModal isOpen={isSupportModalOpen} onClose={() => setIsSupportModalOpen(false)} />
       </Suspense>
-    </nav>
-  );
+    </nav>;
 };
 
 // Component to track route changes for GTM
 const RouteTracker = () => {
   const location = useLocation();
-
   React.useEffect(() => {
     // Push pageview to dataLayer for GTM on route change
     window.dataLayer = window.dataLayer || [];
@@ -258,10 +227,8 @@ const RouteTracker = () => {
       page_title: document.title
     });
   }, [location]);
-
   return null;
 };
-
 const App = () => {
   // Initialize tournament alerts monitoring
   useTournamentAlerts();
@@ -274,9 +241,7 @@ const App = () => {
       window.history.replaceState(null, '', storedRedirect);
     }
   }, []);
-
-  return (
-  <QueryClientProvider client={queryClient}>
+  return <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -313,14 +278,12 @@ const App = () => {
              <Route path="/alerts/manage/:managementToken" element={<AlertManagement />} />
              
              {/* Blog Routes - Order matters: specific paths before :slug */}
-             {BLOG_ENABLED && (
-               <>
+             {BLOG_ENABLED && <>
                  <Route path="/blog" element={<Blog />} />
                  <Route path="/blog/page/:pageNumber" element={<Blog />} />
                  <Route path="/blog/tags/:tag" element={<BlogTag />} />
                  <Route path="/blog/:slug" element={<BlogPost />} />
-               </>
-             )}
+               </>}
              
              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
              <Route path="*" element={<NotFound />} />
@@ -337,8 +300,6 @@ const App = () => {
         </div>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
-  );
+  </QueryClientProvider>;
 };
-
 export default App;
