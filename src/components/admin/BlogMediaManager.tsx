@@ -72,10 +72,30 @@ export const BlogMediaManager: React.FC = () => {
     }
   };
 
+  const sanitizeFileName = (fileName: string): string => {
+    // Remove file extension first
+    const lastDotIndex = fileName.lastIndexOf('.');
+    const nameWithoutExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+    const extension = lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+    
+    // Convert to ASCII-safe characters
+    const sanitized = nameWithoutExt
+      .normalize('NFD') // Decompose accented characters
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[^\w\s-]/g, '') // Remove non-word characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .toLowerCase()
+      .trim();
+    
+    return sanitized + extension;
+  };
+
   const uploadFile = async (file: File) => {
     setUploading(true);
     try {
-      const fileName = `${Date.now()}-${file.name}`;
+      const sanitizedName = sanitizeFileName(file.name);
+      const fileName = `${Date.now()}-${sanitizedName}`;
       const { data, error } = await supabase.storage
         .from(selectedBucket)
         .upload(fileName, file);
