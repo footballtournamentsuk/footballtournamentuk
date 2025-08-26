@@ -26,6 +26,10 @@ Deno.serve(async (req) => {
     <loc>${baseUrl}/sitemap_tournaments.xml</loc>
     <lastmod>${currentDate}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/blog-sitemap.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
 </sitemapindex>`
 
     console.log('Successfully generated sitemap index')

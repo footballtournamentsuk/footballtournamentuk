@@ -69,6 +69,10 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
         <meta name="twitter:description" content={seoData.description} />
         <meta name="twitter:image" content={seoData.ogImage} />
         
+        {/* Language and locale */}
+        <meta httpEquiv="Content-Language" content="en-GB" />
+        <link rel="alternate" hrefLang="en-GB" href={seoData.canonicalUrl} />
+        
         {/* Additional meta */}
         <meta name="author" content={seoData.author} />
         {seoData.readingTime && (
@@ -141,6 +145,10 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={`${baseUrl}/og-image.jpg`} />
+      
+      {/* Language and locale */}
+      <meta httpEquiv="Content-Language" content="en-GB" />
+      <link rel="alternate" hrefLang="en-GB" href={canonicalUrl} />
       
       {/* RSS Feed */}
       <link rel="alternate" type="application/rss+xml" title="Football Tournaments UK Blog RSS" href={`${baseUrl}/blog/feed.xml`} />

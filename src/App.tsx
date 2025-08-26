@@ -276,14 +276,6 @@ const Navigation = () => {
                       Contact
                     </button>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link 
-                      to="/guides"
-                      className="flex items-center cursor-pointer"
-                    >
-                      Guides
-                    </Link>
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

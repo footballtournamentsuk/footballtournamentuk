@@ -218,7 +218,8 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="robots" content={isDemoPage ? "noindex, nofollow" : "index, follow"} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="language" content="English" />
+      <meta name="language" content="en-GB" />
+      <meta httpEquiv="Content-Language" content="en-GB" />
       <meta name="geo.region" content="GB" />
       <meta name="geo.placename" content="United Kingdom" />
       <meta name="theme-color" content="#16a34a" />
