@@ -134,6 +134,7 @@ export type Database = {
           published_at: string | null
           reading_time: number | null
           slug: string
+          sources: Json | null
           status: string | null
           tags: string[] | null
           title: string
@@ -154,6 +155,7 @@ export type Database = {
           published_at?: string | null
           reading_time?: number | null
           slug: string
+          sources?: Json | null
           status?: string | null
           tags?: string[] | null
           title: string
@@ -174,6 +176,7 @@ export type Database = {
           published_at?: string | null
           reading_time?: number | null
           slug?: string
+          sources?: Json | null
           status?: string | null
           tags?: string[] | null
           title?: string
