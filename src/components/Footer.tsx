@@ -112,13 +112,13 @@ export const Footer = () => {
                   <Link to="/support">Support Us</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
-                  <Link to="/faq">FAQ</Link>
-                </Button>
-                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
                   <Link to="/policies">Policies</Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
-                  <Link to="/cookie-policy">Cookie Policy</Link>
+                  <Link to="/terms">Terms</Link>
+                </Button>
+                <Button variant="ghost" size="sm" className="text-emerald-200 hover:text-emerald-100 focus-visible:ring-emerald-400/50" asChild>
+                  <Link to="/cookie-policy">Privacy</Link>
                 </Button>
               </div>
             </div>

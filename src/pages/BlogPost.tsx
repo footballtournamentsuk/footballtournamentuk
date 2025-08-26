@@ -8,6 +8,7 @@ import { BlogContent } from '@/components/blog/BlogContent'
 import { BlogTableOfContents } from '@/components/blog/BlogTableOfContents'
 import { BlogLikeButton } from '@/components/blog/BlogLikeButton'
 import { BlogSEO } from '@/components/blog/BlogSEO'
+import { BlogPostFooter } from '@/components/blog/BlogPostFooter'
 import { BlogCard } from '@/components/blog/BlogCard'
 import { useBlogPost, useBlogPosts } from '@/hooks/useBlog'
 import { getRelatedPosts } from '@/utils/blogUtils'
@@ -147,6 +148,9 @@ export default function BlogPost() {
                     </ul>
                   </div>
                 )}
+                
+                {/* Blog Post Footer */}
+                <BlogPostFooter post={post} />
               </article>
 
               {/* Article Footer Actions */}

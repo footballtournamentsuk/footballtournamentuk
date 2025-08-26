@@ -42,9 +42,15 @@ import { Admin } from "./pages/Admin";
 import { AdminBlog } from "./pages/AdminBlog";
 import AlertManagement from "./pages/AlertManagement";
 import HowItWorks from "./pages/HowItWorks";
-import YouthTournaments from "./pages/YouthTournaments";
+import Terms from "./pages/Terms";
+import EditorialPolicy from "./pages/EditorialPolicy";
+import ImageCredits from "./pages/ImageCredits";
+import NoticeAndTakedown from "./pages/NoticeAndTakedown";
+import AffiliateDisclosure from "./pages/AffiliateDisclosure";
+import PricingDisclaimer from "./pages/PricingDisclaimer";
 import TournamentFormats from "./pages/TournamentFormats";
 import Regions from "./pages/Regions";
+import YouthTournaments from "./pages/YouthTournaments";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BlogTag from "./pages/BlogTag";
@@ -614,7 +620,13 @@ const App = () => {
             <Route path="/partners" element={<Partners />} />
              <Route path="/faq" element={<FAQ />} />
              <Route path="/how-it-works" element={<HowItWorks />} />
-             <Route path="/youth-tournaments" element={<YouthTournaments />} />
+                  <Route path="/youth-tournaments" element={<YouthTournaments />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/editorial-policy" element={<EditorialPolicy />} />
+                  <Route path="/image-credits" element={<ImageCredits />} />
+                  <Route path="/notice-and-takedown" element={<NoticeAndTakedown />} />
+                  <Route path="/affiliate-disclosure" element={<AffiliateDisclosure />} />
+                  <Route path="/pricing-disclaimer" element={<PricingDisclaimer />} />
              <Route path="/tournament-formats" element={<TournamentFormats />} />
              <Route path="/regions" element={<Regions />} />
            <Route path="/admin" element={<Admin />} />
