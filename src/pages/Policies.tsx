@@ -4,10 +4,13 @@ import { SEO } from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Policies() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'privacy';
+  const isMobile = useIsMobile();
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value });
@@ -41,24 +44,56 @@ export default function Policies() {
           </div>
 
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            {/* Mobile-friendly scrollable tab list */}
+            {/* Navigation - Responsive tabs/dropdown */}
             <div className="mb-8">
-              <ScrollArea className="w-full whitespace-nowrap">
-                <TabsList className="inline-flex h-12 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground w-max">
-                  {tabs.map((tab) => (
-                    <TabsTrigger
-                      key={tab.id}
-                      value={tab.id}
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                      role="tab"
-                      aria-selected={activeTab === tab.id}
-                      aria-controls={`panel-${tab.id}`}
+              {isMobile ? (
+                // Mobile: Dropdown selector
+                <div className="w-full">
+                  <label htmlFor="policy-select" className="block text-sm font-medium text-muted-foreground mb-2">
+                    Policy
+                  </label>
+                  <Select value={activeTab} onValueChange={handleTabChange}>
+                    <SelectTrigger 
+                      id="policy-select"
+                      className="w-full bg-background border border-input"
+                      aria-label="Select policy section"
                     >
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </ScrollArea>
+                      <SelectValue placeholder="Select a policy">
+                        {tabs.find(tab => tab.id === activeTab)?.label}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-input shadow-lg">
+                      {tabs.map((tab) => (
+                        <SelectItem 
+                          key={tab.id} 
+                          value={tab.id}
+                          className="cursor-pointer hover:bg-muted focus:bg-muted"
+                        >
+                          {tab.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                // Desktop/Tablet: Scrollable tabs
+                <ScrollArea className="w-full whitespace-nowrap">
+                  <TabsList className="inline-flex h-12 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground w-max">
+                    {tabs.map((tab) => (
+                      <TabsTrigger
+                        key={tab.id}
+                        value={tab.id}
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                        role="tab"
+                        aria-selected={activeTab === tab.id}
+                        aria-controls={`panel-${tab.id}`}
+                      >
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </ScrollArea>
+              )}
             </div>
 
             {/* Privacy & Cookies Tab */}
