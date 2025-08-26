@@ -65,7 +65,7 @@ export function BlogHero({ post }: BlogHeroProps) {
         <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground border-t pt-6">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>By {author}</span>
+            <span>By Admin</span>
           </div>
           
           {publishDate && (
