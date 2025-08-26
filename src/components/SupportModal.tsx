@@ -15,9 +15,10 @@ interface SupportModalProps {
   onClose: () => void;
   defaultSubject?: string;
   defaultCategory?: string;
+  defaultMessage?: string;
 }
 
-export const SupportModal = ({ isOpen, onClose, defaultSubject = "", defaultCategory = "" }: SupportModalProps) => {
+export const SupportModal = ({ isOpen, onClose, defaultSubject = "", defaultCategory = "", defaultMessage = "" }: SupportModalProps) => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { toast } = useToast();
@@ -40,11 +41,11 @@ export const SupportModal = ({ isOpen, onClose, defaultSubject = "", defaultCate
         email: user?.email || "",
         subject: defaultSubject,
         category: defaultCategory,
-        message: "",
+        message: defaultMessage,
         honeypot: "",
       });
     }
-  }, [isOpen, profile?.full_name, user?.email, defaultSubject, defaultCategory]);
+  }, [isOpen, profile?.full_name, user?.email, defaultSubject, defaultCategory, defaultMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

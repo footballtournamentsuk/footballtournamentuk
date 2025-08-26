@@ -1,18 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Mail, Calendar, User } from 'lucide-react';
 import { BlogPost } from '@/types/blog';
 import { formatPublishDate } from '@/utils/blogUtils';
+import { SupportModal } from '@/components/SupportModal';
 
 interface BlogPostFooterProps {
   post: BlogPost;
 }
 
 export function BlogPostFooter({ post }: BlogPostFooterProps) {
+  const location = useLocation();
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+
+  const handleContactClick = () => {
+    setIsSupportModalOpen(true);
+  };
+
   return (
-    <div className="mt-12 space-y-6">
+    <>
+      <div className="mt-12 space-y-6">
       {/* Author and Date Meta */}
       <div className="flex flex-wrap items-center gap-4 py-4 border-t border-border text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
@@ -70,10 +79,13 @@ export function BlogPostFooter({ post }: BlogPostFooterProps) {
           <p className="text-sm text-muted-foreground mb-4">
             Have feedback about this post or spotted an error? We&apos;d love to hear from you.
           </p>
-          <Button asChild variant="outline" size="sm">
-            <a href="mailto:info@footballtournamentsuk.co.uk?subject=Blog Feedback">
-              Contact Us
-            </a>
+          <Button 
+            onClick={handleContactClick}
+            variant="outline" 
+            size="sm"
+            aria-label={`Contact us about blog post: ${post.title}`}
+          >
+            Contact Us
           </Button>
         </CardContent>
       </Card>
@@ -127,6 +139,23 @@ export function BlogPostFooter({ post }: BlogPostFooterProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* Support Modal */}
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        defaultSubject={`Blog Feedback: ${post.title}`}
+        defaultCategory="General"
+        defaultMessage={`I have feedback regarding the blog post:
+
+Title: ${post.title}
+URL: ${window.location.href}
+Slug: ${post.slug}
+
+My feedback:
+`}
+      />
+    </>
   );
 }
