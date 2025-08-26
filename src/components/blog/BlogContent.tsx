@@ -10,7 +10,7 @@ interface BlogContentProps {
 
 export function BlogContent({ content, className }: BlogContentProps) {
   return (
-    <div className={`prose prose-lg max-w-none ${className || ''}`}>
+    <div className={`prose prose-neutral prose-lg max-w-none ${className || ''}`}>
       <ReactMarkdown
         components={{
           // Custom heading with anchor links

@@ -41,6 +41,9 @@ import HowItWorks from "./pages/HowItWorks";
 import YouthTournaments from "./pages/YouthTournaments";
 import TournamentFormats from "./pages/TournamentFormats";
 import Regions from "./pages/Regions";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import BlogTag from "./pages/BlogTag";
 import { Footer } from "./components/Footer";
 import { Suspense, lazy } from "react";
 
@@ -61,6 +64,9 @@ declare global {
 }
 
 const queryClient = new QueryClient();
+
+// Check if blog is enabled
+const BLOG_ENABLED = import.meta.env.VITE_BLOG_ENABLED === 'true';
 
 const Navigation = () => {
   const { user, signOut } = useAuth();
@@ -99,9 +105,16 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold text-primary">
-          Football Tournaments UK
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/" className="text-xl font-bold text-primary">
+            Football Tournaments UK
+          </Link>
+          {BLOG_ENABLED && (
+            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
+              Blog
+            </Link>
+          )}
+        </div>
         <div className="flex items-center gap-4">
           {canInstall && (
             <Button
@@ -296,10 +309,21 @@ const App = () => {
              <Route path="/city/:citySlug" element={<CityTournaments />} />
              {/* 301 redirects from old /tournaments/{city} URLs to new /city/{slug} format */}
              <Route path="/policies" element={<Policies />} />
-            <Route path="/cookie-policy" element={<CookiePolicy />} />
-            <Route path="/alerts/manage/:managementToken" element={<AlertManagement />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+             <Route path="/cookie-policy" element={<CookiePolicy />} />
+             <Route path="/alerts/manage/:managementToken" element={<AlertManagement />} />
+             
+             {/* Blog Routes - Order matters: specific paths before :slug */}
+             {BLOG_ENABLED && (
+               <>
+                 <Route path="/blog" element={<Blog />} />
+                 <Route path="/blog/page/:pageNumber" element={<Blog />} />
+                 <Route path="/blog/tags/:tag" element={<BlogTag />} />
+                 <Route path="/blog/:slug" element={<BlogPost />} />
+               </>
+             )}
+             
+             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+             <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />

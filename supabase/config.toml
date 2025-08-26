@@ -59,3 +59,12 @@ verify_jwt = false
 
 [functions.fix-location-pins]
 verify_jwt = false
+
+[functions.blog-like]
+verify_jwt = false
+
+[functions.blog-sitemap]
+verify_jwt = false
+
+[functions.blog-feed]
+verify_jwt = false
