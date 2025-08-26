@@ -7,13 +7,14 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-do
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone, Menu, Search, MapPin, Trophy, Users, FileText } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone, Menu, Search, MapPin, Trophy, Users, FileText, ChevronDown } from "lucide-react";
 import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
@@ -88,6 +89,7 @@ const Navigation = () => {
   const isMobile = useIsMobile();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [openAccordionSection, setOpenAccordionSection] = React.useState<string | null>(null);
   const {
     canInstall,
     triggerInstall
@@ -106,6 +108,11 @@ const Navigation = () => {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
+
+  // Handle accordion section toggle (only one open at a time)
+  const toggleAccordionSection = (section: string) => {
+    setOpenAccordionSection(prev => prev === section ? null : section);
+  };
 
   // Track Core Web Vitals for performance analytics
   useCoreWebVitals();
@@ -296,7 +303,8 @@ const Navigation = () => {
                     <SheetTitle className="text-left text-xl font-bold">Menu</SheetTitle>
                   </SheetHeader>
                   
-                  <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">
+                  <div className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+                    {/* Primary Navigation Items (Always Visible) */}
                     <Link 
                       to="/tournaments" 
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -326,74 +334,130 @@ const Navigation = () => {
                       <span>How It Works</span>
                     </Link>
                     
-                    <hr className="my-4 border-white/10" />
-                    
-                    <div className="space-y-2">
-                      <div className="px-4 py-2 text-sm font-medium opacity-70">
-                        Regions
-                      </div>
-                      {regionsData.map((region) => (
-                        <Link
-                          key={region.name}
-                          to={region.path}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="mobile-menu-item pl-8"
-                        >
-                          <span>{region.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                    
-                    <hr className="my-4 border-white/10" />
-                    
-                    <div className="space-y-2">
-                      <div className="px-4 py-2 text-sm font-medium opacity-70">
-                        Tournament Types
-                      </div>
-                      {tournamentTypesData.map((type) => (
-                        <Link
-                          key={type.name}
-                          to={type.path}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="mobile-menu-item pl-8"
-                        >
-                          <span>{type.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                    
-                    <hr className="my-4 border-white/10" />
-                    
-                    <Link 
-                      to="/faq" 
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="mobile-menu-item"
-                    >
-                      <HelpCircle className="h-5 w-5 shrink-0" />
-                      <span>FAQ</span>
-                    </Link>
-                    
-                    <button 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        setIsSupportModalOpen(true);
-                      }}
-                      className="mobile-menu-item w-full text-left"
-                    >
-                      <MessageSquare className="h-5 w-5 shrink-0" />
-                      <span>Contact Support</span>
-                    </button>
-                    
-                    {user && (
-                      <Link 
-                        to="/profile?tab=tournaments" 
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="mobile-menu-item"
+                    {/* Accordion Sections */}
+                    <div className="mt-4 space-y-1">
+                      {/* Regions Section */}
+                      <Collapsible 
+                        open={openAccordionSection === 'regions'}
+                        onOpenChange={() => toggleAccordionSection('regions')}
                       >
-                        <Plus className="h-5 w-5 shrink-0" />
-                        <span>Create Tournament</span>
-                      </Link>
-                    )}
+                        <CollapsibleTrigger className="mobile-menu-item w-full justify-between">
+                          <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 shrink-0" />
+                            <span>Regions</span>
+                          </div>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${
+                            openAccordionSection === 'regions' ? 'rotate-180' : ''
+                          }`} />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 mt-1">
+                          {regionsData.map((region) => (
+                            <Link
+                              key={region.name}
+                              to={region.path}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="mobile-menu-item pl-8 text-sm"
+                            >
+                              <span>{region.name}</span>
+                            </Link>
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Tournament Types Section */}
+                      <Collapsible 
+                        open={openAccordionSection === 'tournament-types'}
+                        onOpenChange={() => toggleAccordionSection('tournament-types')}
+                      >
+                        <CollapsibleTrigger className="mobile-menu-item w-full justify-between">
+                          <div className="flex items-center gap-3">
+                            <Trophy className="h-5 w-5 shrink-0" />
+                            <span>Tournament Types</span>
+                          </div>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${
+                            openAccordionSection === 'tournament-types' ? 'rotate-180' : ''
+                          }`} />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 mt-1">
+                          {tournamentTypesData.map((type) => (
+                            <Link
+                              key={type.name}
+                              to={type.path}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="mobile-menu-item pl-8 text-sm"
+                            >
+                              <span>{type.name}</span>
+                            </Link>
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Support Section */}
+                      <Collapsible 
+                        open={openAccordionSection === 'support'}
+                        onOpenChange={() => toggleAccordionSection('support')}
+                      >
+                        <CollapsibleTrigger className="mobile-menu-item w-full justify-between">
+                          <div className="flex items-center gap-3">
+                            <HelpCircle className="h-5 w-5 shrink-0" />
+                            <span>Support</span>
+                          </div>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${
+                            openAccordionSection === 'support' ? 'rotate-180' : ''
+                          }`} />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 mt-1">
+                          <Link 
+                            to="/faq" 
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="mobile-menu-item pl-8 text-sm"
+                          >
+                            <span>FAQ</span>
+                          </Link>
+                          <button 
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              setIsSupportModalOpen(true);
+                            }}
+                            className="mobile-menu-item pl-8 text-sm w-full text-left"
+                          >
+                            <span>Contact Support</span>
+                          </button>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Organisers Section */}
+                      <Collapsible 
+                        open={openAccordionSection === 'organisers'}
+                        onOpenChange={() => toggleAccordionSection('organisers')}
+                      >
+                        <CollapsibleTrigger className="mobile-menu-item w-full justify-between">
+                          <div className="flex items-center gap-3">
+                            <Users className="h-5 w-5 shrink-0" />
+                            <span>For Organisers</span>
+                          </div>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${
+                            openAccordionSection === 'organisers' ? 'rotate-180' : ''
+                          }`} />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 mt-1">
+                          <Link 
+                            to="/profile?tab=tournaments" 
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="mobile-menu-item pl-8 text-sm"
+                          >
+                            <span>Create Tournament</span>
+                          </Link>
+                          <Link 
+                            to="/profile?tab=extended-details" 
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="mobile-menu-item pl-8 text-sm"
+                          >
+                            <span>Extended Tournament Details</span>
+                          </Link>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
                   </div>
                 </div>
               </SheetContent>
