@@ -731,6 +731,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      is_storage_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       send_review_request_emails: {
         Args: Record<PropertyKey, never>
         Returns: undefined
