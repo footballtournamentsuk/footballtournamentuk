@@ -59,7 +59,12 @@ export function useBlogPosts(params: BlogListingParams = {}) {
 
       if (fetchError) throw fetchError
 
-      setPosts(data || [])
+      const processedPosts = (data || []).map(post => ({
+        ...post,
+        sources: Array.isArray(post.sources) ? post.sources : []
+      })) as BlogPost[]
+
+      setPosts(processedPosts)
       
       const totalPosts = count || 0
       const totalPages = Math.ceil(totalPosts / limit)
@@ -119,7 +124,13 @@ export function useBlogPost(slug: string) {
         .single()
 
       if (fetchError) throw fetchError
-      setPost(data)
+      
+      const processedPost = {
+        ...data,
+        sources: Array.isArray(data.sources) ? data.sources : []
+      } as BlogPost
+      
+      setPost(processedPost)
 
     } catch (err) {
       console.error('Error fetching blog post:', err)

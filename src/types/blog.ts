@@ -17,6 +17,7 @@ export interface BlogPost {
   likes_count: number
   is_pinned: boolean
   created_at: string
+  sources?: Array<{ label: string; url: string }>
   profiles?: {
     full_name?: string
     contact_email: string
