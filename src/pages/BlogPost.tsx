@@ -126,6 +126,27 @@ export default function BlogPost() {
               {/* Article Content */}
               <article className="prose prose-lg max-w-none">
                 <BlogContent content={post.content || ''} />
+                
+                {/* Sources Section */}
+                {post.sources && post.sources.length > 0 && (
+                  <div className="mt-12 pt-8 border-t border-border">
+                    <h3 className="text-xl font-semibold mb-4">Sources</h3>
+                    <ul className="space-y-2">
+                      {post.sources.map((source: { label: string; url: string }, index: number) => (
+                        <li key={index}>
+                          <a 
+                            href={source.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-primary/80 underline"
+                          >
+                            {source.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </article>
 
               {/* Article Footer Actions */}
