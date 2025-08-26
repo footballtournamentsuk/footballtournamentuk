@@ -79,6 +79,116 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_post_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          canonical_url: string | null
+          content: string | null
+          cover_alt: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          excerpt: string | null
+          id: string
+          is_pinned: boolean | null
+          likes_count: number | null
+          og_image_url: string | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          canonical_url?: string | null
+          content?: string | null
+          cover_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          likes_count?: number | null
+          og_image_url?: string | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          canonical_url?: string | null
+          content?: string | null
+          cover_alt?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          likes_count?: number | null
+          og_image_url?: string | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           consent_date: string | null
@@ -530,12 +640,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_reading_time: {
+        Args: { content_text: string }
+        Returns: number
+      }
       compute_tournament_status: {
         Args: {
           end_date: string
           registration_deadline: string
           start_date: string
         }
+        Returns: string
+      }
+      generate_blog_slug: {
+        Args: { post_title: string }
         Returns: string
       }
       generate_tournament_slug: {
