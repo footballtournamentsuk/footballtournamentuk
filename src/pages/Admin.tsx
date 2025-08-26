@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff, BarChart3 } from "lucide-react";
+import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff, BarChart3, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -41,6 +42,7 @@ interface UserProfile {
 }
 
 export const Admin = () => {
+  const navigate = useNavigate();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [stats, setStats] = useState<AdminStats>({
@@ -347,10 +349,14 @@ export const Admin = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="analytics" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="analytics">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Analytics
+                </TabsTrigger>
+                <TabsTrigger value="ecosystem" onClick={() => navigate('/admin/ecosystem/blog')}>
+                  <Globe className="h-4 w-4 mr-2" />
+                  Ecosystem
                 </TabsTrigger>
                 <TabsTrigger value="reviews">
                   Reviews ({testimonials.length})

@@ -35,6 +35,7 @@ import AlertManage from "./pages/AlertManage";
 import CheckEmail from "./pages/CheckEmail";
 import Tournaments from "./pages/Tournaments";
 import { Admin } from "./pages/Admin";
+import { AdminBlog } from "./pages/AdminBlog";
 import AlertManagement from "./pages/AlertManagement";
 import HowItWorks from "./pages/HowItWorks";
 import YouthTournaments from "./pages/YouthTournaments";
@@ -277,7 +278,8 @@ const App = () => {
              <Route path="/youth-tournaments" element={<YouthTournaments />} />
              <Route path="/tournament-formats" element={<TournamentFormats />} />
              <Route path="/regions" element={<Regions />} />
-             <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/ecosystem/blog/*" element={<AdminBlog />} />
              <Route path="/teams/:id" element={<TeamView />} />
              <Route path="/tournaments/:slug" element={<TournamentDetails />} />
              <Route path="/city/:citySlug" element={<CityTournaments />} />
