@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff, BarChart3, Globe } from "lucide-react";
+import { Star, Check, X, Users, Trophy, MessageSquare, Eye, EyeOff, BarChart3, Globe, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -354,7 +354,7 @@ export const Admin = () => {
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Analytics
                 </TabsTrigger>
-                <TabsTrigger value="ecosystem" onClick={() => navigate('/admin/ecosystem/blog')}>
+                <TabsTrigger value="ecosystem">
                   <Globe className="h-4 w-4 mr-2" />
                   Ecosystem
                 </TabsTrigger>
@@ -375,6 +375,45 @@ export const Admin = () => {
                   loading={loading}
                 />
                 <AnalyticsDashboard dateRange={analyticsDateRange} />
+              </TabsContent>
+
+              <TabsContent value="ecosystem" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Ecosystem Management</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/admin/ecosystem/blog')}>
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 bg-primary/10 rounded-lg">
+                              <FileText className="h-6 w-6 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold">Blog Management</h3>
+                              <p className="text-sm text-muted-foreground">Create and manage blog posts, tags, and media</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="opacity-50">
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 bg-muted rounded-lg">
+                              <Globe className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-muted-foreground">More Features</h3>
+                              <p className="text-sm text-muted-foreground">Coming soon...</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="reviews" className="space-y-4">

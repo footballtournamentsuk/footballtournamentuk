@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -55,8 +55,7 @@ interface BlogTag {
 }
 
 export const AdminBlog = () => {
-  const { section = 'posts', action, id } = useParams();
-  const location = useLocation();
+  const { section = 'posts', action, id } = useParams<{section: string; action?: string; id?: string}>();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
