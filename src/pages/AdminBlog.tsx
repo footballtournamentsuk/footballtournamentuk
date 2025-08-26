@@ -66,14 +66,40 @@ export const AdminBlog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // Owner-only access check
+  // Admin/Owner access check
+  const [userProfile, setUserProfile] = useState<{role: string} | null>(null);
   const isOwner = user?.email?.includes("owner");
+  const isAdmin = userProfile?.role === 'admin';
+  const hasAccess = isOwner || isAdmin;
 
   useEffect(() => {
-    if (user && isOwner) {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && hasAccess) {
       fetchData();
     }
-  }, [user, isOwner]);
+  }, [user, hasAccess]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error) throw error;
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -189,8 +215,8 @@ export const AdminBlog = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Access denied for non-owners
-  if (!isOwner) {
+  // Access denied for non-admins/owners
+  if (!hasAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="w-full max-w-md">
@@ -198,7 +224,7 @@ export const AdminBlog = () => {
             <div className="text-center">
               <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
               <p className="text-muted-foreground mb-4">
-                Only the owner can access the blog management system.
+                Only admins and owners can access the blog management system.
               </p>
               <Button onClick={() => navigate('/admin')}>
                 Back to Admin
