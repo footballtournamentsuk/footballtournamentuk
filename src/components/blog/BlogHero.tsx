@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { OptimizedImage } from '@/components/ui/optimized-image'
 import { BlogPost } from '@/types/blog'
 import { formatReadingTime, formatPublishDate } from '@/utils/blogUtils'
+import { getAuthorDisplayName } from '@/utils/authorUtils'
 
 interface BlogHeroProps {
   post: BlogPost
@@ -12,7 +13,7 @@ interface BlogHeroProps {
 export function BlogHero({ post }: BlogHeroProps) {
   const publishDate = formatPublishDate(post.published_at)
   const readingTime = formatReadingTime(post.reading_time)
-  const author = post.profiles?.full_name || 'Football Tournaments UK'
+  const author = getAuthorDisplayName(post.author_id, post.profiles)
 
   return (
     <div className="relative">

@@ -1,4 +1,5 @@
 import { BlogPost } from '@/types/blog'
+import { getAuthorDisplayName, getMetaAuthor } from './authorUtils'
 
 export function generateSessionId(): string {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -140,7 +141,7 @@ export function getBlogSEOData(post: BlogPost) {
     ogImage: post.og_image_url || post.cover_image_url || `${baseUrl}/og-image.jpg`,
     publishedAt: post.published_at,
     updatedAt: post.updated_at,
-    author: post.profiles?.full_name || 'Football Tournaments UK',
+    author: getMetaAuthor(post.author_id),
     tags: post.tags,
     readingTime: post.reading_time
   }

@@ -70,6 +70,7 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
         <meta name="twitter:image" content={seoData.ogImage} />
         
         {/* Additional meta */}
+        <meta name="author" content={seoData.author} />
         {seoData.readingTime && (
           <meta name="twitter:label1" content="Reading time" />
         )}

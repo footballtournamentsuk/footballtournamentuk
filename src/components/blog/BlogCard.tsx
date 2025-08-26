@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { OptimizedImage } from '@/components/ui/optimized-image'
 import { BlogPost } from '@/types/blog'
 import { formatReadingTime, formatPublishDate, generateBlogPostUrl, generateTagUrl } from '@/utils/blogUtils'
+import { getAuthorDisplayName } from '@/utils/authorUtils'
 
 interface BlogCardProps {
   post: BlogPost
@@ -16,6 +17,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
   const postUrl = generateBlogPostUrl(post.slug)
   const publishDate = formatPublishDate(post.published_at)
   const readingTime = formatReadingTime(post.reading_time)
+  const author = getAuthorDisplayName(post.author_id, post.profiles)
   
   return (
     <Card className={`group hover:shadow-lg transition-all duration-200 overflow-hidden ${className || ''}`}>
@@ -86,6 +88,10 @@ export function BlogCard({ post, className }: BlogCardProps) {
           {/* Meta information */}
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
             <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1">
+                <span>By {author}</span>
+              </div>
+              
               {publishDate && (
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />

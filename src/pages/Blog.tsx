@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { Search, Tag } from 'lucide-react'
+import { Search, Tag, ChevronDown, ChevronUp } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,8 @@ import { useBlogPosts, useBlogTags } from '@/hooks/useBlog'
 const BLOG_ENABLED = import.meta.env.VITE_BLOG_ENABLED === 'true'
 
 export default function Blog() {
+  const [showAllTags, setShowAllTags] = useState(false)
+  
   if (!BLOG_ENABLED) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -106,19 +108,47 @@ export default function Blog() {
 
             {/* Popular Tags */}
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 items-center">
-                <Tag className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Popular tags:</span>
-                {tags.slice(0, 8).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="glass"
-                    className="cursor-pointer"
-                    onClick={() => handleSearch(tag)}
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Popular tags:</span>
+                </div>
+                
+                <div className="relative">
+                  <div className={`flex flex-wrap gap-2 ${!showAllTags ? 'max-h-16 sm:max-h-none overflow-hidden' : ''}`}>
+                    {(showAllTags ? tags : tags.slice(0, 8)).map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="glass"
+                        className="cursor-pointer text-xs h-7 px-3 py-1.5 rounded-full sm:text-sm sm:h-auto sm:px-2.5 sm:py-0.5"
+                        onClick={() => handleSearch(tag)}
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  
+                  {tags.length > 8 && (
+                    <div className="sm:hidden mt-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAllTags(!showAllTags)}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        {showAllTags ? (
+                          <>
+                            Show less <ChevronUp className="w-3 h-3 ml-1" />
+                          </>
+                        ) : (
+                          <>
+                            Show more <ChevronDown className="w-3 h-3 ml-1" />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
