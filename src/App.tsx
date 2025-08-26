@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone, Menu, Search, MapPin, Trophy, Users } from "lucide-react";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone, Menu, Search, MapPin, Trophy, Users, FileText } from "lucide-react";
 import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
@@ -92,6 +92,20 @@ const Navigation = () => {
     canInstall,
     triggerInstall
   } = usePWAInstall();
+
+  // Handle body scroll lock when mobile menu is open
+  React.useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   // Track Core Web Vitals for performance analytics
   useCoreWebVitals();
@@ -276,68 +290,111 @@ const Navigation = () => {
                   <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80 bg-background border-border">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
-                <div className="mt-6 space-y-4">
-                  <Link 
-                    to="/tournaments" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
-                  >
-                    <Search className="h-4 w-4" />
-                    Find Tournaments
-                  </Link>
+              <SheetContent side="right" className="mobile-menu-glass border-0 p-0">
+                <div className="flex flex-col h-full">
+                  <SheetHeader className="p-6 pb-4">
+                    <SheetTitle className="text-left text-xl font-bold">Menu</SheetTitle>
+                  </SheetHeader>
                   
-                  {BLOG_ENABLED && (
+                  <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">
                     <Link 
-                      to="/blog" 
+                      to="/tournaments" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                      className="mobile-menu-item"
                     >
-                      Blog
+                      <Search className="h-5 w-5 shrink-0" />
+                      <span>Find Tournaments</span>
                     </Link>
-                  )}
-                  
-                  <Link 
-                    to="/how-it-works" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
-                  >
-                    How It Works
-                  </Link>
-                  
-                  <Link 
-                    to="/faq" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
-                  >
-                    <HelpCircle className="h-4 w-4" />
-                    FAQ
-                  </Link>
-                  
-                  <button 
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setIsSupportModalOpen(true);
-                    }}
-                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors w-full text-left"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Contact Support
-                  </button>
-                  
-                  {user && (
+                    
+                    {BLOG_ENABLED && (
+                      <Link 
+                        to="/blog" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="mobile-menu-item"
+                      >
+                        <FileText className="h-5 w-5 shrink-0" />
+                        <span>Blog</span>
+                      </Link>
+                    )}
+                    
                     <Link 
-                      to="/profile?tab=tournaments" 
+                      to="/how-it-works" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                      className="mobile-menu-item"
                     >
-                      <Plus className="h-4 w-4" />
-                      Create Tournament
+                      <HelpCircle className="h-5 w-5 shrink-0" />
+                      <span>How It Works</span>
                     </Link>
-                  )}
+                    
+                    <hr className="my-4 border-white/10" />
+                    
+                    <div className="space-y-2">
+                      <div className="px-4 py-2 text-sm font-medium opacity-70">
+                        Regions
+                      </div>
+                      {regionsData.map((region) => (
+                        <Link
+                          key={region.name}
+                          to={region.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="mobile-menu-item pl-8"
+                        >
+                          <span>{region.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                    
+                    <hr className="my-4 border-white/10" />
+                    
+                    <div className="space-y-2">
+                      <div className="px-4 py-2 text-sm font-medium opacity-70">
+                        Tournament Types
+                      </div>
+                      {tournamentTypesData.map((type) => (
+                        <Link
+                          key={type.name}
+                          to={type.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="mobile-menu-item pl-8"
+                        >
+                          <span>{type.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                    
+                    <hr className="my-4 border-white/10" />
+                    
+                    <Link 
+                      to="/faq" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="mobile-menu-item"
+                    >
+                      <HelpCircle className="h-5 w-5 shrink-0" />
+                      <span>FAQ</span>
+                    </Link>
+                    
+                    <button 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        setIsSupportModalOpen(true);
+                      }}
+                      className="mobile-menu-item w-full text-left"
+                    >
+                      <MessageSquare className="h-5 w-5 shrink-0" />
+                      <span>Contact Support</span>
+                    </button>
+                    
+                    {user && (
+                      <Link 
+                        to="/profile?tab=tournaments" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="mobile-menu-item"
+                      >
+                        <Plus className="h-5 w-5 shrink-0" />
+                        <span>Create Tournament</span>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

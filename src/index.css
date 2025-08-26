@@ -93,6 +93,13 @@
     --glass-border-dark: rgba(255, 255, 255, 0.25);
     --glass-blur: blur(6px);
 
+    /* Mobile Menu Glassmorphism */
+    --mobile-menu-overlay: rgba(15, 23, 42, 0.30);
+    --mobile-menu-bg: rgba(255, 255, 255, 0.18);
+    --mobile-menu-border: rgba(255, 255, 255, 0.35);
+    --mobile-menu-blur: blur(16px);
+    --mobile-menu-text: 216 12% 8%; /* #0f172a equivalent */
+
     /* Glass Chip/Button Tokens - Optimized for dark glass surfaces */
     --chip-bg: rgba(255, 255, 255, 0.20);
     --chip-text: hsl(0 0% 100%);
@@ -164,6 +171,11 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Mobile Menu Glassmorphism - Dark Mode */
+    --mobile-menu-bg: rgba(17, 25, 40, 0.60);
+    --mobile-menu-border: rgba(255, 255, 255, 0.14);
+    --mobile-menu-text: 210 40% 98%; /* #e2e8f0 equivalent */
   }
 }
 
@@ -352,8 +364,117 @@
     box-shadow: 0 0 0 2px hsl(var(--badge-glass-text));
   }
 
+  /* Mobile Menu Glassmorphism */
+  .mobile-menu-glass {
+    background: var(--mobile-menu-bg);
+    backdrop-filter: var(--mobile-menu-blur);
+    -webkit-backdrop-filter: var(--mobile-menu-blur);
+    border: 1px solid var(--mobile-menu-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+    width: 88vw;
+    max-width: 360px;
+    height: 100vh;
+    padding: 24px;
+    color: hsl(var(--mobile-menu-text));
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    /* Ensure proper stacking */
+    z-index: 50;
+    /* Smooth animations */
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu-glass[data-state="open"] {
+    animation: mobile-menu-slide-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu-glass[data-state="closed"] {
+    animation: mobile-menu-slide-out 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu-overlay {
+    background: var(--mobile-menu-overlay);
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Menu item styling for glassmorphism */
+  .mobile-menu-item {
+    min-height: 44px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: hsl(var(--mobile-menu-text));
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .mobile-menu-item:hover,
+  .mobile-menu-item:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
+    outline: none;
+  }
+
+  .mobile-menu-item:focus-visible {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  }
+
+  /* Animation keyframes */
+  @keyframes mobile-menu-slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mobile-menu-slide-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu-glass {
+      transition: none;
+      animation: none;
+    }
+    
+    .mobile-menu-item {
+      transition: none;
+    }
+    
+    .mobile-menu-item:hover {
+      transform: none;
+    }
+  }
+
   /* Fallback for browsers without backdrop-filter support */
   @supports not (backdrop-filter: blur(1px)) {
+    .mobile-menu-glass {
+      background: rgba(241, 245, 249, 0.95);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .dark .mobile-menu-glass {
+      background: rgba(11, 18, 32, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
     .badge-glass {
       background: hsl(142 76% 36% / 0.85);
       color: hsl(0 0% 100%);
