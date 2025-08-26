@@ -6,11 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { LogOut, User, UserCircle, Settings, HelpCircle, MessageSquare, Plus, Shield, Smartphone, Menu, Search, MapPin, Trophy, Users } from "lucide-react";
 import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { usePWAInstall } from "@/components/PWAInstallPrompt";
@@ -82,7 +85,9 @@ const Navigation = () => {
   const {
     toast
   } = useToast();
+  const isMobile = useIsMobile();
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const {
     canInstall,
     triggerInstall
@@ -107,24 +112,245 @@ const Navigation = () => {
 
   // Simple admin check - in production, you'd check roles from a profiles table
   const isAdmin = user?.email?.includes("admin") || user?.email?.includes("owner");
+
+  const regionsData = [
+    { name: "England", path: "/tournaments?region=england" },
+    { name: "Scotland", path: "/tournaments?region=scotland" },
+    { name: "Wales", path: "/tournaments?region=wales" },
+    { name: "Northern Ireland", path: "/tournaments?region=northern-ireland" },
+    { name: "London", path: "/tournaments?region=london" },
+  ];
+
+  const tournamentTypesData = [
+    { name: "3v3", path: "/tournaments?format=3v3" },
+    { name: "5v5", path: "/tournaments?format=5v5" },
+    { name: "7v7", path: "/tournaments?format=7v7" },
+    { name: "9v9", path: "/tournaments?format=9v9" },
+    { name: "11v11", path: "/tournaments?format=11v11" },
+    { name: "Youth", path: "/tournaments?category=youth" },
+  ];
+
   return <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="text-xl font-bold text-primary">
             Football Tournaments UK
           </Link>
-          {BLOG_ENABLED && (
-            <div className="hidden md:flex items-center gap-4">
-              <Link 
-                to="/blog" 
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
-                Blog
-              </Link>
-            </div>
+          
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList className="flex items-center gap-1">
+                <NavigationMenuItem>
+                  <Link to="/tournaments">
+                    <Button variant="default" size="sm" className="font-medium">
+                      <Search className="h-4 w-4 mr-2" />
+                      Find Tournaments
+                    </Button>
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Regions
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-48 p-2">
+                      {regionsData.map((region) => (
+                        <NavigationMenuLink key={region.name} asChild>
+                          <Link 
+                            to={region.path}
+                            className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                          >
+                            {region.name}
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Tournament Types
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-48 p-2">
+                      {tournamentTypesData.map((type) => (
+                        <NavigationMenuLink key={type.name} asChild>
+                          <Link 
+                            to={type.path}
+                            className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                          >
+                            {type.name}
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                {BLOG_ENABLED && (
+                  <NavigationMenuItem>
+                    <Link to="/blog">
+                      <Button variant="ghost" size="sm" className="font-medium">
+                        Blog
+                      </Button>
+                    </Link>
+                  </NavigationMenuItem>
+                )}
+
+                <NavigationMenuItem>
+                  <Link to="/how-it-works">
+                    <Button variant="ghost" size="sm" className="font-medium">
+                      How It Works
+                    </Button>
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <Users className="h-4 w-4 mr-2" />
+                    For Organizers
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-48 p-2">
+                      <NavigationMenuLink asChild>
+                        <Link 
+                          to="/profile?tab=tournaments"
+                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                        >
+                          Create Tournament
+                        </Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link 
+                          to="/organizers/resources"
+                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                        >
+                          Resources
+                        </Link>
+                      </NavigationMenuLink>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Support
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-48 p-2">
+                      <NavigationMenuLink asChild>
+                        <Link 
+                          to="/faq"
+                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                        >
+                          FAQ
+                        </Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <button 
+                          onClick={() => setIsSupportModalOpen(true)}
+                          className="block w-full text-left px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                        >
+                          Contact
+                        </button>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link 
+                          to="/guides"
+                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
+                        >
+                          Guides
+                        </Link>
+                      </NavigationMenuLink>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           )}
         </div>
         <div className="flex items-center gap-4">
+          {/* Mobile Menu */}
+          {isMobile && (
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80 bg-background border-border">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-4">
+                  <Link 
+                    to="/tournaments" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                  >
+                    <Search className="h-4 w-4" />
+                    Find Tournaments
+                  </Link>
+                  
+                  {BLOG_ENABLED && (
+                    <Link 
+                      to="/blog" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                    >
+                      Blog
+                    </Link>
+                  )}
+                  
+                  <Link 
+                    to="/how-it-works" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                  >
+                    How It Works
+                  </Link>
+                  
+                  <Link 
+                    to="/faq" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                    FAQ
+                  </Link>
+                  
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsSupportModalOpen(true);
+                    }}
+                    className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors w-full text-left"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Contact Support
+                  </button>
+                  
+                  {user && (
+                    <Link 
+                      to="/profile?tab=tournaments" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Create Tournament
+                    </Link>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
+
           {canInstall && <Button onClick={triggerInstall} variant="ghost" size="sm" className="h-8 w-8 p-0" title="Download App">
               <Smartphone className="h-4 w-4" />
             </Button>}
