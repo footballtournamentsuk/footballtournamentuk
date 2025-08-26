@@ -89,7 +89,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
-                <span>By {author}</span>
+                <span>By Admin</span>
               </div>
               
               {publishDate && (
