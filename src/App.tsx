@@ -278,8 +278,11 @@ const App = () => {
              <Route path="/youth-tournaments" element={<YouthTournaments />} />
              <Route path="/tournament-formats" element={<TournamentFormats />} />
              <Route path="/regions" element={<Regions />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/ecosystem/blog/*" element={<AdminBlog />} />
+           <Route path="/admin" element={<Admin />} />
+           <Route path="/admin/ecosystem/blog" element={<AdminBlog />} />
+           <Route path="/admin/ecosystem/blog/:section" element={<AdminBlog />} />
+           <Route path="/admin/ecosystem/blog/:section/:action" element={<AdminBlog />} />
+           <Route path="/admin/ecosystem/blog/:section/:action/:id" element={<AdminBlog />} />
              <Route path="/teams/:id" element={<TeamView />} />
              <Route path="/tournaments/:slug" element={<TournamentDetails />} />
              <Route path="/city/:citySlug" element={<CityTournaments />} />
