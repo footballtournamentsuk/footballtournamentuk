@@ -139,140 +139,132 @@ const Navigation = () => {
           
           {/* Desktop Navigation */}
           {!isMobile && (
-            <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList className="flex items-center gap-1">
-                <NavigationMenuItem>
-                  <Link to="/tournaments">
-                    <Button variant="default" size="sm" className="font-medium">
-                      <Search className="h-4 w-4 mr-2" />
-                      Find Tournaments
-                    </Button>
-                  </Link>
-                </NavigationMenuItem>
+            <div className="hidden md:flex items-center gap-1">
+              <Link to="/tournaments">
+                <Button variant="default" size="sm" className="font-medium">
+                  <Search className="h-4 w-4 mr-2" />
+                  Find Tournaments
+                </Button>
+              </Link>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="font-medium">
                     <MapPin className="h-4 w-4 mr-2" />
                     Regions
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="w-48 p-2">
-                      {regionsData.map((region) => (
-                        <NavigationMenuLink key={region.name} asChild>
-                          <Link 
-                            to={region.path}
-                            className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                          >
-                            {region.name}
-                          </Link>
-                        </NavigationMenuLink>
-                      ))}
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 bg-background border border-border shadow-lg z-50">
+                  {regionsData.map((region) => (
+                    <DropdownMenuItem key={region.name} asChild>
+                      <Link 
+                        to={region.path}
+                        className="flex items-center cursor-pointer"
+                      >
+                        {region.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="font-medium">
                     <Trophy className="h-4 w-4 mr-2" />
                     Tournament Types
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="w-48 p-2">
-                      {tournamentTypesData.map((type) => (
-                        <NavigationMenuLink key={type.name} asChild>
-                          <Link 
-                            to={type.path}
-                            className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                          >
-                            {type.name}
-                          </Link>
-                        </NavigationMenuLink>
-                      ))}
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 bg-background border border-border shadow-lg z-50">
+                  {tournamentTypesData.map((type) => (
+                    <DropdownMenuItem key={type.name} asChild>
+                      <Link 
+                        to={type.path}
+                        className="flex items-center cursor-pointer"
+                      >
+                        {type.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-                {BLOG_ENABLED && (
-                  <NavigationMenuItem>
-                    <Link to="/blog">
-                      <Button variant="ghost" size="sm" className="font-medium">
-                        Blog
-                      </Button>
-                    </Link>
-                  </NavigationMenuItem>
-                )}
+              {BLOG_ENABLED && (
+                <Link to="/blog">
+                  <Button variant="ghost" size="sm" className="font-medium">
+                    Blog
+                  </Button>
+                </Link>
+              )}
 
-                <NavigationMenuItem>
-                  <Link to="/how-it-works">
-                    <Button variant="ghost" size="sm" className="font-medium">
-                      How It Works
-                    </Button>
-                  </Link>
-                </NavigationMenuItem>
+              <Link to="/how-it-works">
+                <Button variant="ghost" size="sm" className="font-medium">
+                  How It Works
+                </Button>
+              </Link>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="font-medium">
                     <Users className="h-4 w-4 mr-2" />
                     For Organizers
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="w-48 p-2">
-                      <NavigationMenuLink asChild>
-                        <Link 
-                          to="/profile?tab=tournaments"
-                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                        >
-                          Create Tournament
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link 
-                          to="/organizers/resources"
-                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                        >
-                          Resources
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 bg-background border border-border shadow-lg z-50">
+                  <DropdownMenuItem asChild>
+                    <Link 
+                      to="/profile?tab=tournaments"
+                      className="flex items-center cursor-pointer"
+                    >
+                      Create Tournament
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link 
+                      to="/organizers/resources"
+                      className="flex items-center cursor-pointer"
+                    >
+                      Resources
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="font-medium">
                     <HelpCircle className="h-4 w-4 mr-2" />
                     Support
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="w-48 p-2">
-                      <NavigationMenuLink asChild>
-                        <Link 
-                          to="/faq"
-                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                        >
-                          FAQ
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <button 
-                          onClick={() => setIsSupportModalOpen(true)}
-                          className="block w-full text-left px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                        >
-                          Contact
-                        </button>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link 
-                          to="/guides"
-                          className="block px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors"
-                        >
-                          Guides
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 bg-background border border-border shadow-lg z-50">
+                  <DropdownMenuItem asChild>
+                    <Link 
+                      to="/faq"
+                      className="flex items-center cursor-pointer"
+                    >
+                      FAQ
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <button 
+                      onClick={() => setIsSupportModalOpen(true)}
+                      className="flex items-center cursor-pointer w-full text-left"
+                    >
+                      Contact
+                    </button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link 
+                      to="/guides"
+                      className="flex items-center cursor-pointer"
+                    >
+                      Guides
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </div>
         <div className="flex items-center gap-4">
