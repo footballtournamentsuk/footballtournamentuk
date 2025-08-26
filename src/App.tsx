@@ -140,6 +140,7 @@ const Navigation = () => {
     { name: "Wales", path: "/tournaments?region=wales" },
     { name: "Northern Ireland", path: "/tournaments?region=northern-ireland" },
     { name: "London", path: "/tournaments?region=london" },
+    { name: "International", path: "/tournaments?region=international" },
   ];
 
   const tournamentTypesData = [

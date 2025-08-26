@@ -172,32 +172,71 @@ const Tournaments = () => {
 
     // Apply regions filter
     if (filters.regions && filters.regions.length > 0) {
-      // Create a mapping from region slugs to actual region names
-      const regionSlugToName: Record<string, string[]> = {
-        'england': ['England', 'West Midlands', 'South West England', 'North West England', 'Yorkshire', 'East England', 'South England', 'North East England', 'East Midlands', 'London', 'South East England'],
-        'scotland': ['Scotland'],
-        'wales': ['Wales'],
-        'northern-ireland': ['Northern Ireland']
-      };
-      
-      // Get all possible region names for the selected region slugs
-      const targetRegions = filters.regions!.flatMap(regionSlug => {
-        // First try exact match (case-insensitive)
-        const exactMatch = Object.keys(regionSlugToName).find(key => 
-          key.toLowerCase() === regionSlug.toLowerCase()
-        );
-        if (exactMatch) {
-          return regionSlugToName[exactMatch];
+      // Handle International filter separately
+      if (filters.regions.includes('international')) {
+        // International = all tournaments outside UK
+        const nonInternationalRegions = filters.regions.filter(r => r !== 'international');
+        
+        if (nonInternationalRegions.length === 0) {
+          // Only international selected - show non-UK tournaments
+          filtered = filtered.filter(tournament => 
+            tournament.location.country !== 'GB' && tournament.location.country !== 'UK'
+          );
+        } else {
+          // Both international and UK regions selected
+          const regionSlugToName: Record<string, string[]> = {
+            'england': ['England', 'West Midlands', 'South West England', 'North West England', 'Yorkshire', 'East England', 'South England', 'North East England', 'East Midlands', 'London', 'South East England'],
+            'scotland': ['Scotland'],
+            'wales': ['Wales'],
+            'northern-ireland': ['Northern Ireland'],
+            'london': ['London']
+          };
+          
+          const targetRegions = nonInternationalRegions.flatMap(regionSlug => {
+            const exactMatch = Object.keys(regionSlugToName).find(key => 
+              key.toLowerCase() === regionSlug.toLowerCase()
+            );
+            if (exactMatch) {
+              return regionSlugToName[exactMatch];
+            }
+            return [regionSlug];
+          });
+          
+          filtered = filtered.filter(tournament => {
+            // Show international tournaments or UK tournaments matching selected regions
+            const isInternational = tournament.location.country !== 'GB' && tournament.location.country !== 'UK';
+            const isMatchingUKRegion = targetRegions.some(targetRegion => 
+              tournament.location.region.toLowerCase() === targetRegion.toLowerCase()
+            );
+            return isInternational || isMatchingUKRegion;
+          });
         }
-        // Fallback to treating it as a region name directly
-        return [regionSlug];
-      });
-      
-      filtered = filtered.filter(tournament => 
-        targetRegions.some(targetRegion => 
-          tournament.location.region.toLowerCase() === targetRegion.toLowerCase()
-        )
-      );
+      } else {
+        // No international filter - handle UK regions only
+        const regionSlugToName: Record<string, string[]> = {
+          'england': ['England', 'West Midlands', 'South West England', 'North West England', 'Yorkshire', 'East England', 'South England', 'North East England', 'East Midlands', 'London', 'South East England'],
+          'scotland': ['Scotland'],
+          'wales': ['Wales'],
+          'northern-ireland': ['Northern Ireland'],
+          'london': ['London']
+        };
+        
+        const targetRegions = filters.regions!.flatMap(regionSlug => {
+          const exactMatch = Object.keys(regionSlugToName).find(key => 
+            key.toLowerCase() === regionSlug.toLowerCase()
+          );
+          if (exactMatch) {
+            return regionSlugToName[exactMatch];
+          }
+          return [regionSlug];
+        });
+        
+        filtered = filtered.filter(tournament => 
+          targetRegions.some(targetRegion => 
+            tournament.location.region.toLowerCase() === targetRegion.toLowerCase()
+          )
+        );
+      }
     }
 
     // Apply status filter
