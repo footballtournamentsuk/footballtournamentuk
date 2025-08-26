@@ -56,8 +56,6 @@ interface BlogTag {
 
 export const AdminBlog = () => {
   const { section = 'posts', action, id } = useParams<{section: string; action?: string; id?: string}>();
-  console.log('AdminBlog params:', { section, action, id });
-  console.log('Current URL:', window.location.pathname);
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -320,10 +318,7 @@ export const AdminBlog = () => {
         {/* Navigation Tabs */}
         <Card className="mb-6">
           <CardContent className="p-0">
-            <Tabs value={section} onValueChange={(value) => {
-              console.log('Tab changed to:', value);
-              navigate(`/admin/ecosystem/blog/${value}`);
-            }}>
+            <Tabs value={section} onValueChange={(value) => navigate(`/admin/ecosystem/blog/${value}`)}>
               <TabsList className="grid w-full grid-cols-3 rounded-none border-b">
                 <TabsTrigger value="posts" className="gap-2">
                   <FileText className="h-4 w-4" />
@@ -365,10 +360,7 @@ export const AdminBlog = () => {
                     </select>
                   </div>
                   <Button 
-                    onClick={() => {
-                      console.log('New Post clicked, navigating to:', '/admin/ecosystem/blog/posts/create');
-                      navigate('/admin/ecosystem/blog/posts/create');
-                    }}
+                    onClick={() => navigate('/admin/ecosystem/blog/posts/create')}
                     className="gap-2"
                   >
                     <Plus className="h-4 w-4" />
@@ -457,10 +449,7 @@ export const AdminBlog = () => {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => {
-                                  console.log('Edit clicked for post:', post.id);
-                                  navigate(`/admin/ecosystem/blog/posts/edit/${post.id}`);
-                                }}
+                                onClick={() => navigate(`/admin/ecosystem/blog/posts/edit/${post.id}`)}
                                 className="gap-1"
                               >
                                 <Edit className="h-3 w-3" />
