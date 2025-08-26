@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -42,12 +42,6 @@ import { Admin } from "./pages/Admin";
 import { AdminBlog } from "./pages/AdminBlog";
 import AlertManagement from "./pages/AlertManagement";
 import HowItWorks from "./pages/HowItWorks";
-import Terms from "./pages/Terms";
-import EditorialPolicy from "./pages/EditorialPolicy";
-import ImageCredits from "./pages/ImageCredits";
-import NoticeAndTakedown from "./pages/NoticeAndTakedown";
-import AffiliateDisclosure from "./pages/AffiliateDisclosure";
-import PricingDisclaimer from "./pages/PricingDisclaimer";
 import TournamentFormats from "./pages/TournamentFormats";
 import Regions from "./pages/Regions";
 import YouthTournaments from "./pages/YouthTournaments";
@@ -621,12 +615,14 @@ const App = () => {
              <Route path="/faq" element={<FAQ />} />
              <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/youth-tournaments" element={<YouthTournaments />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/editorial-policy" element={<EditorialPolicy />} />
-                  <Route path="/image-credits" element={<ImageCredits />} />
-                  <Route path="/notice-and-takedown" element={<NoticeAndTakedown />} />
-                  <Route path="/affiliate-disclosure" element={<AffiliateDisclosure />} />
-                  <Route path="/pricing-disclaimer" element={<PricingDisclaimer />} />
+                  
+                  {/* Redirect old legal pages to new tabbed policies */}
+                  <Route path="/terms" element={<Navigate to="/policies?tab=terms" replace />} />
+                  <Route path="/editorial-policy" element={<Navigate to="/policies?tab=editorial" replace />} />
+                  <Route path="/image-credits" element={<Navigate to="/policies?tab=images" replace />} />
+                  <Route path="/notice-and-takedown" element={<Navigate to="/policies?tab=takedown" replace />} />
+                  <Route path="/affiliate-disclosure" element={<Navigate to="/policies?tab=affiliate" replace />} />
+                  <Route path="/pricing-disclaimer" element={<Navigate to="/policies?tab=pricing" replace />} />
              <Route path="/tournament-formats" element={<TournamentFormats />} />
              <Route path="/regions" element={<Regions />} />
            <Route path="/admin" element={<Admin />} />

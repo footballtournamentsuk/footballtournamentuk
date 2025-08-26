@@ -84,42 +84,42 @@ export function BlogPostFooter({ post }: BlogPostFooterProps) {
           <h4 className="font-semibold text-sm">Legal & Policies</h4>
           <div className="flex flex-wrap justify-center gap-2 text-xs">
             <Link 
-              to="/terms" 
+              to="/policies?tab=terms" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Terms of Use
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 
-              to="/editorial-policy" 
+              to="/policies?tab=editorial" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Editorial Policy
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 
-              to="/image-credits" 
+              to="/policies?tab=images" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Image Credits
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 
-              to="/notice-and-takedown" 
+              to="/policies?tab=takedown" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Notice & Takedown
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 
-              to="/affiliate-disclosure" 
+              to="/policies?tab=affiliate" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Affiliate Disclosure
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 
-              to="/pricing-disclaimer" 
+              to="/policies?tab=pricing" 
               className="text-muted-foreground hover:text-foreground underline"
             >
               Pricing Disclaimer
