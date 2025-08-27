@@ -75,7 +75,7 @@ export const SEO: React.FC<SEOProps> = ({
     name: 'Football Tournaments UK',
     description: 'Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.',
     url: siteUrl,
-    logo: `${siteUrl}/bimi-logo.svg`,
+    logo: `${siteUrl}/logo.png`,
     sameAs: [
       'https://www.instagram.com/footballtournamentuk/',
       'https://www.facebook.com/profile.php?id=61579443724038'
