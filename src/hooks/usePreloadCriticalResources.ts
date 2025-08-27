@@ -53,29 +53,29 @@ export const usePreloadCriticalResources = (resources: CriticalResource[]) => {
 export const usePreloadHeroImages = (currentRoute?: string) => {
   const getCriticalImages = (): CriticalResource[] => {
     const baseImages: CriticalResource[] = [
-      { href: '/src/assets/hero-celebration-desktop.webp', as: 'image' },
-      { href: '/src/assets/hero-celebration-tablet.webp', as: 'image' },
-      { href: '/src/assets/hero-celebration-mobile.webp', as: 'image' }
+      { href: '/hero-celebration-desktop.webp', as: 'image' },
+      { href: '/hero-celebration-tablet.webp', as: 'image' },
+      { href: '/hero-celebration-mobile.webp', as: 'image' }
     ];
 
     // Add city-specific images based on route
     if (currentRoute?.includes('/city/')) {
       const cityName = currentRoute.split('/city/')[1];
       baseImages.push({
-        href: `/src/assets/cities/${cityName}-hero.webp`,
+        href: `/cities/${cityName}-hero.webp`,
         as: 'image'
       });
     }
 
     // Preload tournament type images for better performance
     const tournamentTypeImages = [
-      '/src/assets/tournaments/tournament-type.webp',
-      '/src/assets/tournaments/league-type.webp',
-      '/src/assets/tournaments/camp-type.webp',
-      '/src/assets/tournaments/cup-type.webp',
-      '/src/assets/tournaments/festival-type.webp',
-      '/src/assets/tournaments/showcase-type.webp',
-      '/src/assets/tournaments/holiday-type.webp',
+      '/tournaments/tournament-type.webp',
+      '/tournaments/league-type.webp',
+      '/tournaments/camp-type.webp',
+      '/tournaments/cup-type.webp',
+      '/tournaments/festival-type.webp',
+      '/tournaments/showcase-type.webp',
+      '/tournaments/holiday-type.webp',
     ];
 
     tournamentTypeImages.forEach(imagePath => {
