@@ -23,17 +23,26 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
       '@type': 'BlogPosting',
       headline: seoData.title,
       description: seoData.description,
-      image: seoData.ogImage,
+      image: {
+        '@type': 'ImageObject',
+        url: seoData.ogImage,
+        width: 1200,
+        height: 630
+      },
       author: {
         '@type': 'Person',
-        name: seoData.author
+        name: seoData.author,
+        url: `${baseUrl}/about`
       },
       publisher: {
         '@type': 'Organization',
         name: 'Football Tournaments UK',
+        url: baseUrl,
         logo: {
           '@type': 'ImageObject',
-          url: `${baseUrl}/logo.png`
+          url: `${baseUrl}/logo.png`,
+          width: 512,
+          height: 512
         }
       },
       datePublished: seoData.publishedAt,
@@ -41,7 +50,12 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': seoData.canonicalUrl
-      }
+      },
+      keywords: seoData.tags.join(', '),
+      articleSection: 'Football',
+      inLanguage: 'en-GB',
+      isAccessibleForFree: true,
+      url: seoData.canonicalUrl
     }
 
     return (
@@ -73,8 +87,21 @@ export function BlogSEO({ post, isListingPage, currentPage = 1, tag, totalPages 
         <meta httpEquiv="Content-Language" content="en-GB" />
         <link rel="alternate" hrefLang="en-GB" href={seoData.canonicalUrl} />
         
+        {/* Google Discover/News optimization */}
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="news_keywords" content={seoData.tags.join(', ')} />
+        <meta name="article:section" content="Football" />
+        <meta name="article:opinion" content="false" />
+        
+        {/* Enhanced Open Graph for better sharing */}
+        <meta property="og:site_name" content="Football Tournaments UK" />
+        <meta property="og:locale" content="en_GB" />
+        <meta property="article:section" content="Football" />
+        
         {/* Additional meta */}
         <meta name="author" content={seoData.author} />
+        <meta name="keywords" content={seoData.tags.join(', ')} />
         {seoData.readingTime && (
           <meta name="twitter:label1" content="Reading time" />
         )}
