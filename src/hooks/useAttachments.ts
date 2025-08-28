@@ -26,7 +26,7 @@ export const useAttachments = (tournamentId: string) => {
       const { data, error: fetchError } = await supabase
         .from('tournament_attachments')
         .select('*')
-        .eq('tournament_id', tournamentId)
+        .eq('tournament_id', tournamentId as any)
         .order('created_at', { ascending: false });
 
       if (fetchError) {
@@ -35,7 +35,7 @@ export const useAttachments = (tournamentId: string) => {
         return;
       }
 
-      setAttachments(data || []);
+      setAttachments((data as any) || []);
     } catch (err: any) {
       console.error('Error in fetchAttachments:', err);
       setError(err.message || 'Failed to fetch attachments');
@@ -59,7 +59,7 @@ export const useAttachments = (tournamentId: string) => {
       const { error: dbError } = await supabase
         .from('tournament_attachments')
         .delete()
-        .eq('id', attachmentId);
+        .eq('id', attachmentId as any);
 
       if (dbError) {
         throw dbError;

@@ -66,7 +66,7 @@ export const ReviewModal = ({ isOpen, onClose }: ReviewModalProps) => {
           author_email: formData.author_email || null,
           rating: formData.rating,
           text: formData.text,
-        });
+        } as any);
 
       if (error) throw error;
 

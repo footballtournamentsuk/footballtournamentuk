@@ -157,25 +157,26 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
-        .eq('id', postId)
+        .eq('id', postId as any)
         .single();
 
       if (error) throw error;
 
+      const postData = data as any;
       setPostData({
-        title: data.title || '',
-        slug: data.slug || '',
-        excerpt: data.excerpt || '',
-        content: data.content || '',
-        cover_image_url: data.cover_image_url || '',
-        cover_alt: data.cover_alt || '',
-        og_image_url: data.og_image_url || '',
-        canonical_url: data.canonical_url || '',
-        tags: data.tags || [],
-        status: data.status || 'draft',
-        published_at: data.published_at ? new Date(data.published_at) : null,
-        is_pinned: data.is_pinned || false,
-        sources: Array.isArray(data.sources) ? data.sources.map((s: any) => ({
+        title: postData.title || '',
+        slug: postData.slug || '',
+        excerpt: postData.excerpt || '',
+        content: postData.content || '',
+        cover_image_url: postData.cover_image_url || '',
+        cover_alt: postData.cover_alt || '',
+        og_image_url: postData.og_image_url || '',
+        canonical_url: postData.canonical_url || '',
+        tags: postData.tags || [],
+        status: postData.status || 'draft',
+        published_at: postData.published_at ? new Date(postData.published_at) : null,
+        is_pinned: postData.is_pinned || false,
+        sources: Array.isArray(postData.sources) ? postData.sources.map((s: any) => ({
           label: s.label || '',
           url: s.url || ''
         })) : []
@@ -210,17 +211,17 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
       if (postId) {
         const { error } = await supabase
           .from('blog_posts')
-          .update(saveData)
-          .eq('id', postId);
+          .update(saveData as any)
+          .eq('id', postId as any);
         if (error) throw error;
       } else {
         const { data, error } = await supabase
           .from('blog_posts')
-          .insert([saveData])
+          .insert([saveData] as any)
           .select()
           .single();
         if (error) throw error;
-        navigate(`/admin/ecosystem/blog/posts/edit/${data.id}`, { replace: true });
+        navigate(`/admin/ecosystem/blog/posts/edit/${(data as any).id}`, { replace: true });
       }
 
       if (!isAutoSave) {
@@ -314,7 +315,7 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
           name: newTag.name,
           slug: newTag.slug || generateSlug(newTag.name),
           color: newTag.color
-        }])
+        }] as any)
         .select()
         .single();
 
@@ -328,7 +329,7 @@ export const BlogPostEditor: React.FC<BlogPostEditorProps> = ({
       // Add the new tag to the post and reset form
       setPostData(prev => ({
         ...prev,
-        tags: [...prev.tags, data.slug]
+        tags: [...prev.tags, (data as any).slug]
       }));
       setNewTag({ name: '', slug: '', color: '#6366F1' });
       setShowNewTagForm(false);

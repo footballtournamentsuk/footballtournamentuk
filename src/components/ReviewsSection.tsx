@@ -20,13 +20,13 @@ export const ReviewsSection = () => {
       const { data, error } = await supabase
         .from("testimonials")
         .select("rating")
-        .eq("published", true);
+        .eq("published", true as any);
 
       if (error) throw error;
 
       if (data && data.length > 0) {
         const total = data.length;
-        const sum = data.reduce((acc, review) => acc + review.rating, 0);
+        const sum = (data as any[]).reduce((acc: number, review: any) => acc + review.rating, 0);
         const average = sum / total;
 
         setReviewStats({

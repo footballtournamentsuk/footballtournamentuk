@@ -38,7 +38,7 @@ export const trackEvent = async (eventName: string, properties: Record<string, a
     // Insert into analytics_events table
     const { error } = await supabase
       .from('analytics_events')
-      .insert(event);
+      .insert(event as any);
 
     if (error) {
       console.warn('Failed to track analytics event:', error);

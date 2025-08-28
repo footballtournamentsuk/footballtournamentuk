@@ -123,7 +123,7 @@ export const AttachmentUploader: React.FC<AttachmentUploaderProps> = ({
           file_size: fileToUpload.file.size,
           file_url: publicUrl,
           uploaded_by: userId
-        });
+        } as any);
 
       if (dbError) throw dbError;
 

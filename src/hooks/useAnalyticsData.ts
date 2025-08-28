@@ -187,62 +187,62 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
     if (error) throw error;
 
     const total = tournaments?.length || 0;
-    const active = tournaments?.filter(t => {
+    const active = tournaments?.filter((t: any) => {
       const start = new Date(t.start_date);
       const end = new Date(t.end_date);
       return now >= start && now <= end;
     }).length || 0;
     
-    const expired = tournaments?.filter(t => {
+    const expired = tournaments?.filter((t: any) => {
       const end = new Date(t.end_date);
       return now > end;
     }).length || 0;
 
     // Count demo vs real tournaments (demo tournaments don't have organizer_id)
-    const demo = tournaments?.filter(t => !t.organizer_id).length || 0;
-    const real = tournaments?.filter(t => t.organizer_id).length || 0;
+    const demo = tournaments?.filter((t: any) => !t.organizer_id).length || 0;
+    const real = tournaments?.filter((t: any) => t.organizer_id).length || 0;
 
     // Group by city
-    const cityGroups = tournaments?.reduce((acc, t) => {
+    const cityGroups = tournaments?.reduce((acc: any, t: any) => {
       const city = t.location_name || 'Unknown';
       acc[city] = (acc[city] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
     
     const byCity = Object.entries(cityGroups)
-      .map(([city, count]) => ({ city, count }))
+      .map(([city, count]) => ({ city, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
     // Group by type
-    const typeGroups = tournaments?.reduce((acc, t) => {
+    const typeGroups = tournaments?.reduce((acc: any, t: any) => {
       const type = t.type || 'Unknown';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
     
     const byType = Object.entries(typeGroups)
-      .map(([type, count]) => ({ type, count }))
+      .map(([type, count]) => ({ type, count: count as number }))
       .sort((a, b) => b.count - a.count);
 
     // Group by format
-    const formatGroups = tournaments?.reduce((acc, t) => {
+    const formatGroups = tournaments?.reduce((acc: any, t: any) => {
       const format = t.format || 'Unknown';
       acc[format] = (acc[format] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
     
     const byFormat = Object.entries(formatGroups)
-      .map(([format, count]) => ({ format, count }))
+      .map(([format, count]) => ({ format, count: count as number }))
       .sort((a, b) => b.count - a.count);
 
     // Trends
-    const trends7d = tournaments?.filter(t => {
+    const trends7d = tournaments?.filter((t: any) => {
       const created = new Date(t.created_at);
       return created >= sevenDaysAgo;
     }).length || 0;
 
-    const trends30d = tournaments?.filter(t => {
+    const trends30d = tournaments?.filter((t: any) => {
       const created = new Date(t.created_at);
       return created >= thirtyDaysAgo;
     }).length || 0;
@@ -275,12 +275,12 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
 
     const totalUsers = profiles?.length || 0;
     
-    const signUpsLast7d = profiles?.filter(p => {
+    const signUpsLast7d = profiles?.filter((p: any) => {
       const created = new Date(p.created_at);
       return created >= sevenDaysAgo;
     }).length || 0;
 
-    const signUpsLast30d = profiles?.filter(p => {
+    const signUpsLast30d = profiles?.filter((p: any) => {
       const created = new Date(p.created_at);
       return created >= thirtyDaysAgo;
     }).length || 0;
@@ -306,7 +306,7 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
     if (error) throw error;
 
     // Group by city
-    const cityGroups = tournaments?.reduce((acc, t) => {
+    const cityGroups = tournaments?.reduce((acc: any, t: any) => {
       const city = t.location_name || 'Unknown';
       const region = t.region || 'Unknown';
       const key = `${city}-${region}`;
@@ -318,34 +318,34 @@ export const useAnalyticsData = (dateRange: { start: Date; end: Date } = {
     }, {} as Record<string, { city: string; region: string; count: number }>) || {};
 
     const topCities = Object.values(cityGroups)
-      .sort((a, b) => b.count - a.count)
+      .sort((a: any, b: any) => b.count - a.count)
       .slice(0, 10);
 
     // Group by postcode
-    const postcodeGroups = tournaments?.reduce((acc, t) => {
+    const postcodeGroups = tournaments?.reduce((acc: any, t: any) => {
       const postcode = t.postcode || 'Unknown';
       acc[postcode] = (acc[postcode] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
 
     const topPostcodes = Object.entries(postcodeGroups)
-      .map(([postcode, count]) => ({ postcode, count }))
+      .map(([postcode, count]) => ({ postcode, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
     // Group by region
-    const regionGroups = tournaments?.reduce((acc, t) => {
+    const regionGroups = tournaments?.reduce((acc: any, t: any) => {
       const region = t.region || 'Unknown';
       acc[region] = (acc[region] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
 
     const regionDistribution = Object.entries(regionGroups)
-      .map(([region, count]) => ({ region, count }))
+      .map(([region, count]) => ({ region, count: count as number }))
       .sort((a, b) => b.count - a.count);
 
     return {
-      topCities,
+      topCities: topCities as { city: string; count: number; region: string }[],
       topPostcodes,
       regionDistribution,
     };

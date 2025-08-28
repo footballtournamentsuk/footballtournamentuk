@@ -74,7 +74,7 @@ export const BlogTagsManager: React.FC<BlogTagsManagerProps> = ({
           name: newTag.name,
           slug: newTag.slug || generateSlug(newTag.name),
           color: newTag.color
-        }]);
+        }] as any);
 
       if (error) throw error;
 
@@ -105,8 +105,8 @@ export const BlogTagsManager: React.FC<BlogTagsManagerProps> = ({
     try {
       const { error } = await supabase
         .from('blog_tags')
-        .update(updatedData)
-        .eq('id', id);
+        .update(updatedData as any)
+        .eq('id', id as any);
 
       if (error) throw error;
 
@@ -140,7 +140,7 @@ export const BlogTagsManager: React.FC<BlogTagsManagerProps> = ({
       const { error } = await supabase
         .from('blog_tags')
         .delete()
-        .eq('id', id);
+        .eq('id', id as any);
 
       if (error) throw error;
 

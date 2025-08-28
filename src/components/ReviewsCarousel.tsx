@@ -52,12 +52,12 @@ export const ReviewsCarousel = () => {
       const { data, error } = await supabase
         .from("testimonials")
         .select("id, author_name, rating, text, created_at, source")
-        .eq("published", true)
+        .eq("published", true as any)
         .order("created_at", { ascending: false })
         .limit(12);
 
       if (error) throw error;
-      setReviews(data || []);
+      setReviews((data as any) || []);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
