@@ -103,7 +103,7 @@ export const Admin = () => {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    setTestimonials(data || []);
+    setTestimonials((data as any) || []);
   };
 
   const fetchUsers = async () => {

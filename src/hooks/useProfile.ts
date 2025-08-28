@@ -23,7 +23,7 @@ export const useProfile = () => {
 
   const loadProfile = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .select('full_name, contact_email')
         .eq('user_id', user?.id)
@@ -34,7 +34,7 @@ export const useProfile = () => {
         throw error;
       }
 
-      setProfile(data);
+      setProfile(data as any);
     } catch (error) {
       console.error('Error loading profile:', error);
     } finally {

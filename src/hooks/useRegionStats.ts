@@ -59,7 +59,7 @@ export const useRegionStats = () => {
       }
 
       // Filter out demo tournaments
-      const realTournaments = tournaments.filter(tournament => 
+      const realTournaments = tournaments.filter((tournament: any) => 
         tournament.organizer_id !== 'demo' && !tournament.id.startsWith('demo-')
       );
 
@@ -67,7 +67,7 @@ export const useRegionStats = () => {
       const regionStats: RegionStatsMap = {};
       const now = new Date();
 
-      realTournaments.forEach(tournament => {
+      realTournaments.forEach((tournament: any) => {
         const regionSlug = getRegionSlug(tournament.region || 'England');
         
         if (!regionStats[regionSlug]) {
@@ -94,7 +94,7 @@ export const useRegionStats = () => {
 
       // Calculate cities count for each region
       const citiesByRegion: Record<string, Set<string>> = {};
-      realTournaments.forEach(tournament => {
+      realTournaments.forEach((tournament: any) => {
         const regionSlug = getRegionSlug(tournament.region || 'England');
         
         if (!citiesByRegion[regionSlug]) {

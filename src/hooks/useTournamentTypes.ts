@@ -24,7 +24,7 @@ export const useTournamentTypes = () => {
       const allTournamentTypes = ['tournament', 'league', 'camp', 'cup', 'festival', 'showcase', 'friendly'];
       
       // Get unique types from database
-      const existingTypes = [...new Set(data.map(item => item.type))];
+      const existingTypes = [...new Set(data.map((item: any) => item.type))];
       
       // Combine predefined types with any additional types found in database
       const additionalTypes = existingTypes.filter(type => !allTournamentTypes.includes(type));

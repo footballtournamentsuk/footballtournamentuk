@@ -97,7 +97,7 @@ export const useTournaments = () => {
         throw supabaseError;
       }
 
-      const transformedTournaments = data.map(transformTournament);
+      const transformedTournaments = (data as any[]).map((item: any) => transformTournament(item as DatabaseTournament));
       
       // Generate demo tournaments for cities without real tournaments
       const demoTournaments = generateDemoTournaments();

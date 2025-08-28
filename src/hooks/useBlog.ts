@@ -27,7 +27,7 @@ export function useBlogPosts(params: BlogListingParams = {}) {
       setLoading(true)
       setError(null)
 
-      let query = supabase
+      let query = (supabase as any)
         .from('blog_posts')
         .select(`
           *,
@@ -59,7 +59,7 @@ export function useBlogPosts(params: BlogListingParams = {}) {
 
       if (fetchError) throw fetchError
 
-      const processedPosts = (data || []).map(post => ({
+      const processedPosts = (data || []).map((post: any) => ({
         ...post,
         sources: Array.isArray(post.sources) ? post.sources : []
       })) as BlogPost[]
@@ -109,7 +109,7 @@ export function useBlogPost(slug: string) {
       setLoading(true)
       setError(null)
 
-      const { data, error: fetchError } = await supabase
+      const { data, error: fetchError } = await (supabase as any)
         .from('blog_posts')
         .select(`
           *,
@@ -126,8 +126,8 @@ export function useBlogPost(slug: string) {
       if (fetchError) throw fetchError
       
       const processedPost = {
-        ...data,
-        sources: Array.isArray(data.sources) ? data.sources : []
+        ...(data as any),
+        sources: Array.isArray((data as any).sources) ? (data as any).sources : []
       } as BlogPost
       
       setPost(processedPost)
@@ -158,7 +158,7 @@ export function useBlogTags() {
 
   const fetchTags = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('blog_posts')
         .select('tags')
         .eq('status', 'published')
@@ -167,8 +167,8 @@ export function useBlogTags() {
       if (error) throw error
 
       const allTags = new Set<string>()
-      data?.forEach(post => {
-        post.tags?.forEach(tag => allTags.add(tag))
+      data?.forEach((post: any) => {
+        post.tags?.forEach((tag: string) => allTags.add(tag))
       })
 
       setTags(Array.from(allTags).sort())
