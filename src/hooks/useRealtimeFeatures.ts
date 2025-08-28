@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// Feature flag for realtime functionality
-const ENABLE_REALTIME = false; // Set to true when WebSocket issues are resolved
+// Feature flag for realtime functionality - enabled in production only
+const ENABLE_REALTIME = window.location.hostname.includes('footballtournamentsuk.co.uk');
 
 export const useRealtimeFeatures = () => {
   const [isRealtimeEnabled, setIsRealtimeEnabled] = useState(ENABLE_REALTIME);
@@ -24,20 +24,34 @@ export const useRealtimeFeatures = () => {
     try {
       const channel = supabase.channel(channelName);
       
-      // Add RLS-safe configuration
+      // Add RLS-safe configuration with error boundary
       config.forEach((item: any) => {
         channel.on('postgres_changes', {
           ...item.config,
-          // Ensure RLS policies are respected
-          filter: item.filter
-        }, item.callback);
+          // Ensure RLS policies are respected - only public data
+          filter: item.filter || 'status=neq.draft'
+        }, (payload: any) => {
+          try {
+            item.callback(payload);
+          } catch (error) {
+            console.warn(`Realtime callback error for ${channelName}:`, error);
+            // Graceful degradation - don't break UI
+          }
+        });
       });
 
-      channel.subscribe();
+      channel.subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`✅ Realtime channel ${channelName} connected in production`);
+        } else if (status === 'CHANNEL_ERROR') {
+          console.warn(`❌ Realtime channel ${channelName} failed, falling back to polling`);
+        }
+      });
+      
       channelsRef.current.push(channel);
       return channel;
     } catch (error) {
-      console.warn('Realtime channel creation failed:', error);
+      console.warn('Realtime channel creation failed, graceful fallback:', error);
       return null;
     }
   };
@@ -57,28 +71,42 @@ export const useRealtimeFeatures = () => {
   };
 };
 
-// Tournament-specific realtime hook
+// Tournament-specific realtime hook with production-only activation
 export const useTournamentRealtime = (onTournamentChange?: (tournament: any) => void) => {
   const { isRealtimeEnabled, createRealtimeChannel } = useRealtimeFeatures();
 
   useEffect(() => {
-    if (!isRealtimeEnabled || !onTournamentChange) return;
+    if (!isRealtimeEnabled || !onTournamentChange) {
+      console.log('Tournament realtime disabled - sandbox mode or no callback');
+      return;
+    }
 
-    const channel = createRealtimeChannel('tournament-updates', [
+    console.log('🔄 Enabling tournament realtime in production');
+    
+    const channel = createRealtimeChannel('tournament-updates-prod', [
       {
         config: { event: 'INSERT', schema: 'public', table: 'tournaments' },
-        filter: 'status=eq.upcoming', // RLS-safe filter
-        callback: (payload: any) => onTournamentChange(payload.new)
+        filter: 'status=neq.draft', // Only public tournaments, RLS-safe
+        callback: (payload: any) => {
+          console.log('🆕 New tournament via realtime:', payload.new?.name);
+          onTournamentChange(payload.new);
+        }
       },
       {
         config: { event: 'UPDATE', schema: 'public', table: 'tournaments' },
         filter: 'status=neq.draft', // Only public tournaments
-        callback: (payload: any) => onTournamentChange(payload.new)
+        callback: (payload: any) => {
+          console.log('🔄 Tournament updated via realtime:', payload.new?.name);
+          onTournamentChange(payload.new);
+        }
       }
     ]);
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      if (channel) {
+        console.log('🔌 Disconnecting tournament realtime');
+        supabase.removeChannel(channel);
+      }
     };
   }, [isRealtimeEnabled, onTournamentChange, createRealtimeChannel]);
 };

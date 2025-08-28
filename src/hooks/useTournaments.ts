@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tournament, DatabaseTournament, AgeGroup, TeamType } from '@/types/tournament';
 import { generateDemoTournaments, shouldShowDemoForCity } from '@/data/demoTournaments';
+import { useTournamentRealtime } from '@/hooks/useRealtimeFeatures';
 
 // Transform database tournament to frontend tournament format
 export const transformTournament = (dbTournament: DatabaseTournament): Tournament => {
@@ -127,6 +128,25 @@ export const useTournaments = () => {
       setLoading(false);
     }
   };
+
+  // Enable realtime updates for tournament list in production
+  useTournamentRealtime((updatedTournament: any) => {
+    setTournaments(prev => {
+      const existing = prev.find(t => t.id === updatedTournament.id);
+      if (existing) {
+        // Update existing tournament
+        return prev.map(t => t.id === updatedTournament.id ? transformTournament(updatedTournament) : t);
+      } else {
+        // Add new tournament
+        const newTournament = transformTournament(updatedTournament);
+        return [newTournament, ...prev].sort((a, b) => {
+          if (a.status === 'ongoing' && b.status !== 'ongoing') return -1;
+          if (b.status === 'ongoing' && a.status !== 'ongoing') return 1;
+          return new Date(a.dates.start).getTime() - new Date(b.dates.start).getTime();
+        });
+      }
+    });
+  });
 
   useEffect(() => {
     fetchTournaments();
