@@ -130,27 +130,6 @@ export const useTournaments = () => {
 
   useEffect(() => {
     fetchTournaments();
-
-    // Set up real-time subscription for tournament changes
-    const channel = supabase
-      .channel('tournaments-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'tournaments'
-        },
-        () => {
-          // Refetch tournaments when any change occurs
-          fetchTournaments();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   return {
