@@ -17,14 +17,27 @@ export default defineConfig(({ mode }) => ({
       },
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast'],
-          map: ['mapbox-gl'],
+          // Core React libraries - separate chunk
+          'react-vendor': ['react', 'react-dom'],
+          // Router - separate chunk  
+          'router': ['react-router-dom'],
+          // UI libraries - separate chunk
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-toast', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
+          // Form libraries - separate chunk
+          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          // Map libraries - separate chunk (heavy)
+          'map-vendor': ['mapbox-gl'],
+          // Query and data - separate chunk
+          'data-vendor': ['@tanstack/react-query', '@supabase/supabase-js'],
+          // Charts and visualization - separate chunk
+          'chart-vendor': ['recharts'],
+          // Utilities - separate chunk
+          'utils-vendor': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority']
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    // Reduce chunk size limit to force smaller bundles
+    chunkSizeWarningLimit: 500,
   },
   plugins: [
     react(),
