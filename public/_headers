@@ -6,32 +6,64 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
 
-# Static assets with long cache
+# Vite/Build assets (JS, CSS) - 1 year cache
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Images with long cache
-/src/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# WebP/AVIF images
-*.webp
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/webp
-
-*.avif
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: image/avif
-
-# JavaScript bundles
+# All JavaScript files - 1 year cache
 *.js
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/javascript
 
-# CSS files
+# All CSS files - 1 year cache  
 *.css
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: text/css
+
+# All WebP images - 1 year cache
+*.webp
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/webp
+
+# All PNG images - 1 year cache
+*.png
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/png
+
+# All JPG/JPEG images - 1 year cache
+*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+# SVG images - 1 year cache
+*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/svg+xml
+
+# Font files - 1 year cache
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff2
+
+*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff
+
+# Lovable uploads directory - 1 year cache
+/lovable-uploads/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Tournament images directory - 1 year cache  
+/tournaments/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Hero images in root - 1 year cache
+/hero-*.webp
+  Cache-Control: public, max-age=31536000, immutable
 
 # Service worker - no cache
 /sw.js
