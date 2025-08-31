@@ -7,8 +7,12 @@ import { registerServiceWorker, addResourceHints, optimizeFonts } from '@/utils/
 import { injectCriticalCSS, optimizeFontLoading } from '@/utils/criticalCss';
 import { deferHeavyOperations } from '@/utils/ttiOptimizations';
 import { scheduleTask } from '@/utils/taskScheduler';
+import { initSpeedIndexOptimizations } from '@/utils/speedIndex';
 
-// Initialize performance optimizations immediately
+// Initialize critical Speed Index optimizations immediately
+initSpeedIndexOptimizations();
+
+// Initialize other performance optimizations
 addResourceHints();
 injectCriticalCSS();
 
