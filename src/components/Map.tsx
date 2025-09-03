@@ -144,10 +144,6 @@ const Map: React.FC<MapProps> = ({
           center: centerCoordinates || [-3.4, 55.3], // Custom center or UK center
           zoom: defaultZoom,
           attributionControl: false,
-          projection: 'mercator', // Explicitly set mercator projection
-          maxZoom: 18,
-          minZoom: 5,
-          bounds: [[-8.5, 49.8], [2.0, 60.9]] // Constrain to UK bounds
         });
 
         console.log('✅ Map instance created successfully');
@@ -448,7 +444,7 @@ const Map: React.FC<MapProps> = ({
   return (
     <div 
       className="relative w-full rounded-lg overflow-hidden shadow-lg border bg-muted"
-      style={{ height: '520px', width: '100%', minHeight: '520px', maxWidth: '100%', position: 'relative' }}
+      style={{ height: '520px', width: '100%', minHeight: '520px' }}
     >
       {/* Map container - ALWAYS rendered with guaranteed dimensions */}
       <div 
@@ -456,7 +452,13 @@ const Map: React.FC<MapProps> = ({
         id="map"
         className="w-full h-full absolute inset-0"
         style={{ 
-          minHeight: '520px'
+          width: '100%',
+          height: '100%',
+          minHeight: '520px',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 1
         }}
       />
       

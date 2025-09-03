@@ -151,8 +151,6 @@ const AlertManage = () => {
       <Helmet>
         <title>Manage Tournament Alert - Football Tournaments UK</title>
         <meta name="description" content="Manage your tournament alert subscription" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="cache-control" content="no-store, no-cache, must-revalidate" />
       </Helmet>
 
       <div className="min-h-screen bg-background">

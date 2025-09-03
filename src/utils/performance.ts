@@ -69,32 +69,19 @@ export const addResourceHints = () => {
   });
 };
 
-// Optimize third-party scripts - delay much longer for better TTI
+// Optimize third-party scripts
 export const loadThirdPartyScripts = () => {
-// Load analytics only after user interaction and TTI
-  const loadAfterInteraction = () => {
-    const events = ['click', 'keydown', 'touchstart', 'scroll'];
-    const loadAnalytics = () => {
-      events.forEach(event => document.removeEventListener(event, loadAnalytics));
-      requestIdleCallback(() => {
-        setTimeout(() => {
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-              deferScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID');
-            });
-          }
-        }, 5000);
-      }, { timeout: 10000 });
-    };
-    
-    events.forEach(event => document.addEventListener(event, loadAnalytics, { once: true, passive: true }));
-    setTimeout(loadAnalytics, 15000); // Much longer fallback
+// Load analytics after LCP and significant user interaction
+  const loadAfterLCP = () => {
+    requestIdleCallback(() => {
+      setTimeout(loadAnalytics, 2000);
+    }, { timeout: 5000 });
   };
   
   if (document.readyState === 'complete') {
-    loadAfterInteraction();
+    loadAfterLCP();
   } else {
-    window.addEventListener('load', loadAfterInteraction);
+    window.addEventListener('load', loadAfterLCP);
   }
 };
 

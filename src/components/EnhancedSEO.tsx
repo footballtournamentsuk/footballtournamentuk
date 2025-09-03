@@ -254,9 +254,6 @@ export const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
       {/* Alternative language versions if applicable */}
       <link rel="alternate" href={canonicalUrl} hrefLang="en-gb" />
       <link rel="alternate" href={canonicalUrl} hrefLang="en" />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={canonicalUrl} />
     </Helmet>
   );
 };

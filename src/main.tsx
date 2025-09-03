@@ -5,55 +5,30 @@ import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker, addResourceHints, optimizeFonts } from '@/utils/performance';
 import { injectCriticalCSS, optimizeFontLoading } from '@/utils/criticalCss';
-import { deferHeavyOperations } from '@/utils/ttiOptimizations';
-import { scheduleTask } from '@/utils/taskScheduler';
-import { initSpeedIndexOptimizations } from '@/utils/speedIndex';
 
-// Initialize critical Speed Index optimizations immediately
-initSpeedIndexOptimizations();
-
-// Initialize other performance optimizations
+// Initialize performance optimizations immediately
 addResourceHints();
 injectCriticalCSS();
 
-// Defer non-critical optimizations to reduce TBT
+// Defer non-critical optimizations using requestIdleCallback fallback
 const deferNonCritical = () => {
-  // Break up font optimizations into separate tasks
-  scheduleTask(() => optimizeFonts(), { priority: 'background' });
-  scheduleTask(() => optimizeFontLoading(), { priority: 'background' });
+  optimizeFonts();
+  optimizeFontLoading();
   
-  // Register service worker with lowest priority
+  // Register service worker for caching
   if ('serviceWorker' in navigator) {
-    const registerSW = () => {
-      scheduleTask(() => registerServiceWorker(), { priority: 'background' });
-    };
-    
-    // Wait for user interaction to avoid blocking main thread
-    const events = ['click', 'keydown', 'touchstart', 'scroll'];
-    const registerOnInteraction = () => {
-      events.forEach(event => document.removeEventListener(event, registerOnInteraction));
-      scheduleTask(registerSW, { priority: 'background' });
-    };
-    
-    events.forEach(event => document.addEventListener(event, registerOnInteraction, { once: true, passive: true }));
-    
-    // Fallback - register after 10 seconds if no interaction
-    setTimeout(registerOnInteraction, 10000);
+    registerServiceWorker();
   }
 };
 
-// Use concurrent rendering features to reduce blocking
-const root = createRoot(document.getElementById("root")!);
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(deferNonCritical, { timeout: 2000 });
+} else {
+  setTimeout(deferNonCritical, 100);
+}
 
-// Schedule non-critical optimizations after initial render
-root.render(
+createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <App />
   </HelmetProvider>
 );
-
-// Schedule heavy operations after the app has rendered
-scheduleTask(() => {
-  deferNonCritical();
-  deferHeavyOperations();
-}, { priority: 'background' });

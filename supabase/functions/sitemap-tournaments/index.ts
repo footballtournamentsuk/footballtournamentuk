@@ -28,12 +28,11 @@ Deno.serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Fetch all active tournaments (not completed, not demo)
+    // Fetch all active tournaments (not completed)
     const { data: tournaments, error } = await supabase
       .from('tournaments')
-      .select('id, slug, name, updated_at, start_date, status, contact')
+      .select('id, slug, name, updated_at, start_date, status')
       .neq('status', 'completed')
-      .neq('contact->email', 'demo@footballtournamentsuk.co.uk')
       .order('updated_at', { ascending: false })
 
     if (error) {
