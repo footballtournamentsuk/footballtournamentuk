@@ -1,12 +1,11 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -20,7 +19,7 @@ serve(async (req) => {
     // Get all published posts
     const { data: posts, error } = await supabase
       .from('blog_posts')
-      .select('slug, updated_at, published_at')
+      .select('slug, updated_at, published_at, tags')
       .eq('status', 'published')
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false })
@@ -30,20 +29,14 @@ serve(async (req) => {
       return new Response('Error generating sitemap', { status: 500 })
     }
 
-    // Get unique tags
-    const { data: tagPosts } = await supabase
-      .from('blog_posts')
-      .select('tags')
-      .eq('status', 'published')
-      .lte('published_at', new Date().toISOString())
-
+    // Get unique tags from all posts
     const allTags = new Set<string>()
-    tagPosts?.forEach(post => {
+    posts?.forEach(post => {
       post.tags?.forEach((tag: string) => allTags.add(tag))
     })
 
     const baseUrl = 'https://footballtournamentsuk.co.uk'
-    const now = new Date().toISOString()
+    const currentDate = new Date().toISOString().split('T')[0]
 
     // Generate XML sitemap
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -51,7 +44,7 @@ serve(async (req) => {
   <!-- Blog index -->
   <url>
     <loc>${baseUrl}/blog</loc>
-    <lastmod>${now}</lastmod>
+    <lastmod>${currentDate}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -60,7 +53,7 @@ serve(async (req) => {
   ${posts?.map(post => `
   <url>
     <loc>${baseUrl}/blog/${post.slug}</loc>
-    <lastmod>${post.updated_at}</lastmod>
+    <lastmod>${post.updated_at ? new Date(post.updated_at).toISOString().split('T')[0] : currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`).join('') || ''}
@@ -69,7 +62,7 @@ serve(async (req) => {
   ${Array.from(allTags).map(tag => `
   <url>
     <loc>${baseUrl}/blog/tags/${encodeURIComponent(tag)}</loc>
-    <lastmod>${now}</lastmod>
+    <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>`).join('')}
@@ -79,12 +72,15 @@ serve(async (req) => {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600' // Cache for 1 hour
       }
     })
 
   } catch (error) {
     console.error('Error generating sitemap:', error)
-    return new Response('Internal server error', { status: 500 })
+    return new Response('Internal server error', { 
+      status: 500, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
   }
 })

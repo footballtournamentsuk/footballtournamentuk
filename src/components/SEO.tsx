@@ -196,13 +196,13 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="description" content={description} />
       
       {/* Canonical URL */}
-      {fullCanonicalUrl && <link rel="canonical" href={fullCanonicalUrl} />}
+      <link rel="canonical" href={fullCanonicalUrl} />
       
       {/* Open Graph */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content={fullCanonicalUrl || siteUrl} />
+      <meta property="og:url" content={fullCanonicalUrl} />
       <meta property="og:image" content={ogImageUrl} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
