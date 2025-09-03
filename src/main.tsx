@@ -42,15 +42,18 @@ const deferNonCritical = () => {
   }
 };
 
-// Use background scheduling to avoid blocking main thread
-scheduleTask(deferNonCritical, { priority: 'background' });
-
-// Schedule heavy operations to avoid blocking initial render
-scheduleTask(deferHeavyOperations, { priority: 'background' });
-
 // Use concurrent rendering features to reduce blocking
-createRoot(document.getElementById("root")!).render(
+const root = createRoot(document.getElementById("root")!);
+
+// Schedule non-critical optimizations after initial render
+root.render(
   <HelmetProvider>
     <App />
   </HelmetProvider>
 );
+
+// Schedule heavy operations after the app has rendered
+scheduleTask(() => {
+  deferNonCritical();
+  deferHeavyOperations();
+}, { priority: 'background' });

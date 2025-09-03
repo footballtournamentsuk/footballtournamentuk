@@ -78,26 +78,12 @@ export const optimizeCriticalRenderingPath = () => {
 
 // Minimize layout shifts for better Speed Index
 export const preventLayoutShifts = () => {
-  // Add CSS to prevent common layout shifts
+  // Add minimal CSS to prevent only critical layout shifts
   const preventShiftCSS = `
-    /* Prevent layout shifts */
+    /* Prevent layout shifts for images only */
     img, video {
       height: auto;
       max-width: 100%;
-    }
-    
-    /* Reserve space for dynamic content */
-    .tournament-card {
-      min-height: 200px;
-    }
-    
-    .hero-section {
-      min-height: 60vh;
-    }
-    
-    /* Stable button dimensions */
-    button {
-      min-height: 2.5rem;
     }
   `;
 
