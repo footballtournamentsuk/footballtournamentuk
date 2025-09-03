@@ -452,13 +452,7 @@ const Map: React.FC<MapProps> = ({
         id="map"
         className="w-full h-full absolute inset-0"
         style={{ 
-          width: '100%',
-          height: '100%',
-          minHeight: '520px',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          zIndex: 1
+          minHeight: '520px'
         }}
       />
       
