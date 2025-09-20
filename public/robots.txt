@@ -12,7 +12,16 @@ Allow: /
 
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
+# Block access to admin routes
+Disallow: /admin
+Disallow: /admin/
+
+# Block access to API endpoints
+Disallow: /api/
+
+# Allow all sitemaps
 Sitemap: https://footballtournamentsuk.co.uk/sitemap_index.xml
 Sitemap: https://footballtournamentsuk.co.uk/sitemap.xml
 Sitemap: https://footballtournamentsuk.co.uk/sitemap_tournaments.xml

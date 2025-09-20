@@ -3,135 +3,207 @@
   <!-- Main pages -->
   <url>
     <loc>https://footballtournamentsuk.co.uk/</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/about</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/how-it-works</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/youth-tournaments</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/tournament-formats</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/regions</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/faq</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/blog</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://footballtournamentsuk.co.uk/support</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://footballtournamentsuk.co.uk/policies</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/terms</loc>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/cookie-policy</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/editorial-policy</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/image-credits</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
   
   <!-- City pages -->
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/london</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/manchester</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/birmingham</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/liverpool</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/leeds</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://footballtournamentsuk.co.uk/city/glasgow</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/newcastle-upon-tyne</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/sheffield</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/bristol</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/nottingham</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/southampton</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/glasgow</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/edinburgh</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/cardiff</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/swansea</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/belfast</loc>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/leicester</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/portsmouth</loc>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://footballtournamentsuk.co.uk/city/brighton</loc>
-    <lastmod>2024-12-19</lastmod>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/oxford</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://footballtournamentsuk.co.uk/city/cambridge</loc>
+    <lastmod>2025-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
