@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tournament, DatabaseTournament, AgeGroup, TeamType } from '@/types/tournament';
-import { generateDemoTournaments, shouldShowDemoForCity } from '@/data/demoTournaments';
+
 import { useTournamentRealtime } from '@/hooks/useRealtimeFeatures';
 
 // Transform database tournament to frontend tournament format
@@ -100,18 +100,8 @@ export const useTournaments = () => {
 
       const transformedTournaments = (data as any[]).map((item: any) => transformTournament(item as DatabaseTournament));
       
-      // Generate demo tournaments for cities without real tournaments
-      const demoTournaments = generateDemoTournaments();
-      const filteredDemoTournaments = demoTournaments.filter(demo => {
-        const citySlug = demo.slug?.replace('demo-', '');
-        return shouldShowDemoForCity(citySlug || '', transformedTournaments);
-      });
-      
-      // Combine real and demo tournaments
-      const allTournaments = [...transformedTournaments, ...filteredDemoTournaments];
-      
       // Sort tournaments: ongoing first, then by start date ascending
-      const sortedTournaments = allTournaments.sort((a, b) => {
+      const sortedTournaments = transformedTournaments.sort((a, b) => {
         // Ongoing tournaments should appear first
         if (a.status === 'ongoing' && b.status !== 'ongoing') return -1;
         if (b.status === 'ongoing' && a.status !== 'ongoing') return 1;
