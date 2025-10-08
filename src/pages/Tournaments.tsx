@@ -5,7 +5,7 @@ import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import TournamentFilters from '@/components/TournamentFilters';
 import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
 import Map from '@/components/Map';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
@@ -339,9 +339,11 @@ const Tournaments = () => {
           isRefreshing={pullToRefresh.isRefreshing}
           canRefresh={pullToRefresh.canRefresh}
         />
-        <SEO
+        <UnifiedSEO
         title="Football Tournaments | Search & Find Local Events"
-        description="Find and join football tournaments across the UK. Search by location, age group, format (5v5, 7v7, 11v11) and more. All ages and skill levels welcome."
+        description="Find and join football tournaments across the UK. Search by location, age group, format (3v3, 5v5, 7v7, 9v9, 11v11) and more. All ages and skill levels welcome."
+        canonicalUrl="/tournaments"
+        keywords="find football tournaments, search football events, UK tournament listings, football competitions near me, football tournament search, local football tournaments, youth football events, grassroots football UK"
       />
       <ScrollToTop />
       

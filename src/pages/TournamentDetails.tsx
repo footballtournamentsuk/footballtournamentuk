@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useEngagementTracker } from '@/hooks/useEngagementTracker';
 import { trackTournamentDetailView, trackRegistrationStart } from '@/hooks/useAnalyticsEvents';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { HelmetProvider } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -200,11 +200,40 @@ const TournamentDetails = () => {
 
   return (
     <HelmetProvider>
-      <SEO
+      <UnifiedSEO
         title={`${tournament.name} | Football Tournaments UK`}
-        description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}. ${tournament.description || ''}`}
+        description={`${tournament.format} tournament in ${tournament.location.name} from ${formatDate(tournament.dates.start)} to ${formatDate(tournament.dates.end)}. ${tournament.description || 'Register now for this exciting football tournament.'}`}
         canonicalUrl={`/tournaments/${tournament.slug || tournament.id}`}
-        tournaments={[tournament]}
+        keywords={`${tournament.format} tournament, ${tournament.location.name} football, ${tournament.location.region} tournaments, ${tournament.ageGroups.join(', ')} football, ${tournament.type} competition, UK football events`}
+        ogType="article"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "SportsEvent",
+            "name": tournament.name,
+            "description": tournament.description || `${tournament.format} football tournament in ${tournament.location.name}`,
+            "startDate": tournament.dates.start,
+            "endDate": tournament.dates.end,
+            "location": {
+              "@type": "Place",
+              "name": tournament.location.name,
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": tournament.location.name,
+                "addressRegion": tournament.location.region,
+                "postalCode": tournament.location.postcode,
+                "addressCountry": "GB"
+              }
+            },
+            "offers": tournament.cost ? {
+              "@type": "Offer",
+              "price": tournament.cost.amount,
+              "priceCurrency": tournament.cost.currency,
+              "availability": "https://schema.org/InStock"
+            } : undefined,
+            "sport": "Football"
+          }
+        ]}
       />
       <div className="min-h-screen bg-background">
       {/* Simple Share Card Section */}

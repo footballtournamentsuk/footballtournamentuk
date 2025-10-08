@@ -9,7 +9,7 @@ import CityOrganizerCTA from '@/components/CityOrganizerCTA';
 import Map from '@/components/Map';
 import TournamentFilters from '@/components/TournamentFilters';
 import TournamentCard from '@/components/TournamentCard';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { CityContent } from '@/components/CityContent';
 import { EnhancedSEO } from '@/components/EnhancedSEO';
 import { InternalLinking } from '@/components/InternalLinking';
@@ -282,13 +282,31 @@ const CityTournaments = () => {
           isRefreshing={pullToRefresh.isRefreshing}
           canRefresh={pullToRefresh.canRefresh}
         />
-        <SEO
+        <UnifiedSEO
           title={pageTitle}
           description={pageDescription}
           canonicalUrl={`/city/${city.slug}`}
-          tournaments={upcomingTournaments.slice(0, 5)}
-          cityName={city.displayName}
-          isCityPage={true}
+          keywords={`${city.displayName} football tournaments, youth football ${city.displayName}, ${city.displayName} football clubs, ${city.displayName} sports tournaments, youth development ${city.region}, junior football ${city.displayName}, grassroots football ${city.region}`}
+          structuredData={[
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://footballtournamentsuk.co.uk"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": `${city.displayName} Tournaments`,
+                  "item": `https://footballtournamentsuk.co.uk/city/${city.slug}`
+                }
+              ]
+            }
+          ]}
         />
         
         <EnhancedSEO 

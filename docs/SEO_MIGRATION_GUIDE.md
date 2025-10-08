@@ -37,12 +37,11 @@ import { UnifiedSEO } from '@/components/UnifiedSEO';
 ### ✅ Completed
 - [x] FAQ.tsx
 - [x] Support.tsx
-
-### 🔄 High Priority (Do Next)
-- [ ] Index.tsx (homepage)
-- [ ] Tournaments.tsx
-- [ ] TournamentDetails.tsx
-- [ ] CityTournaments.tsx
+- [x] Partners.tsx
+- [x] Index.tsx (homepage)
+- [x] Tournaments.tsx
+- [x] TournamentDetails.tsx
+- [x] CityTournaments.tsx
 
 ### Medium Priority
 - [ ] About.tsx

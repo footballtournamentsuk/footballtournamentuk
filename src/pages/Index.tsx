@@ -9,7 +9,7 @@ import Map from '@/components/Map';
 import Hero from '@/components/Hero';
 import OrganizerCTA from '@/components/OrganizerCTA';
 import { ReviewsSection } from '@/components/ReviewsSection';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { CookieConsent } from '@/components/CookieConsent';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import PartnersCarousel from '@/components/PartnersCarousel';
@@ -244,33 +244,30 @@ const Index = () => {
         isRefreshing={pullToRefresh.isRefreshing}
         canRefresh={pullToRefresh.canRefresh}
       />
-      <SEO
+      <UnifiedSEO
         title="Football Tournaments UK – Youth, Adult & Grassroots Competitions"
-        description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts."
-        canonicalUrl="https://footballtournamentsuk.co.uk/"
-        tournaments={upcomingTournaments.slice(0, 5)}
-        isHomePage={true}
-      />
-
-      {/* WebSite Schema for Sitelinks */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "Football Tournaments UK",
-          "alternateName": "FTUK",
-          "url": "https://footballtournamentsuk.co.uk",
-          "description": "Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://footballtournamentsuk.co.uk/tournaments?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
+        description="Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts. All ages, formats (3v3, 5v5, 7v7, 9v9, 11v11), and skill levels."
+        canonicalUrl="/"
+        keywords="football tournaments UK, youth football, grassroots football, UK football competitions, football events, tournament finder, football leagues UK, junior football, youth football tournaments"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Football Tournaments UK",
+            "alternateName": "FTUK",
+            "url": "https://footballtournamentsuk.co.uk",
+            "description": "Find and join football tournaments across the UK. Free listings for organizers – no fees, no contracts.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://footballtournamentsuk.co.uk/tournaments?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
           }
-        })
-      }} />
+        ]}
+      />
       
       {/* Hero Section */}
       <Hero onHeroSearch={(searchTerm, postcode, coordinates) => {
