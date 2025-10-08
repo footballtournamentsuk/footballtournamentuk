@@ -1,4 +1,14 @@
 # Cloudflare Pages _redirects
+
+# Blog feature redirects
+/blog/feed.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-feed 200
+/blog/sitemap.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-sitemap 200
+
+# Dynamic sitemap redirects to Supabase Edge Functions
+/sitemap_tournaments.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments 200
+/sitemap_index.xml https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-index 200
+
+# Alert management routes
 /alerts/verify* /index.html 200
 /alerts/manage/* /index.html 200
 /auth* /index.html 200

@@ -2,6 +2,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # Sitemap redirects to Supabase Edge Functions
+    RewriteRule ^sitemap_index\.xml$ https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-index [P,L]
+    RewriteRule ^sitemap_tournaments\.xml$ https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments [P,L]
+    RewriteRule ^blog/sitemap\.xml$ https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-sitemap [P,L]
+    RewriteRule ^blog/feed\.xml$ https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-feed [P,L]
+    
     # Handle Angular and React Router
     # Don't rewrite files or directories
     RewriteCond %{REQUEST_FILENAME} -f [OR]
