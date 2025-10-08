@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { trackGA4Event, trackPageView as ga4PageView, trackTournamentRegistration, trackUserEngagement } from '@/utils/ga4';
 
 interface AnalyticsEvent {
   event_name: string;
@@ -17,7 +18,7 @@ const getSessionId = (): string => {
   return sessionId;
 };
 
-// Track analytics event
+// Track analytics event to both Supabase and GA4
 export const trackEvent = async (eventName: string, properties: Record<string, any> = {}) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -35,7 +36,7 @@ export const trackEvent = async (eventName: string, properties: Record<string, a
       session_id: getSessionId(),
     };
 
-    // Insert into analytics_events table
+    // Insert into Supabase analytics_events table
     const { error } = await supabase
       .from('analytics_events')
       .insert(event as any);
@@ -45,6 +46,9 @@ export const trackEvent = async (eventName: string, properties: Record<string, a
     } else {
       console.log(`📊 Analytics event tracked: ${eventName}`, properties);
     }
+
+    // Also track to GA4
+    trackGA4Event(eventName, properties);
   } catch (error) {
     console.warn('Analytics tracking error:', error);
   }
@@ -56,6 +60,7 @@ export const trackPWAPromptShown = (trigger: 'automatic' | 'manual' = 'automatic
     trigger,
     engagement_data: JSON.parse(sessionStorage.getItem('user-engagement') || '{}'),
   });
+  trackUserEngagement('pwa_interaction', { action: 'prompt_shown', trigger });
 };
 
 export const trackPWAInstalled = (timeFromPrompt?: number) => {
@@ -63,12 +68,14 @@ export const trackPWAInstalled = (timeFromPrompt?: number) => {
     time_from_prompt: timeFromPrompt,
     install_source: 'web_app_manifest',
   });
+  trackGA4Event('install', { method: 'pwa', time_from_prompt_ms: timeFromPrompt });
 };
 
 export const trackPWAPromptDismissed = (reason: 'user_dismissed' | 'auto_dismissed' = 'user_dismissed') => {
   trackEvent('pwa_prompt_dismissed', {
     dismissal_reason: reason,
   });
+  trackUserEngagement('pwa_interaction', { action: 'dismissed', reason });
 };
 
 // User activity tracking (for retention calculation)
@@ -76,6 +83,7 @@ export const trackUserActivity = () => {
   trackEvent('user_activity', {
     page_views: JSON.parse(sessionStorage.getItem('user-engagement') || '{}').pageViews || 0,
   });
+  trackUserEngagement('active', {});
 };
 
 // Funnel tracking functions
@@ -84,12 +92,18 @@ export const trackTournamentListView = (filters: Record<string, any> = {}) => {
     filters_applied: filters,
     results_count: filters.results_count || 0,
   });
+  trackGA4Event('view_item_list', { item_list_name: 'tournaments', filters });
 };
 
 export const trackTournamentDetailView = (tournamentId: string, tournamentName?: string) => {
   trackEvent('tournament_detail_view', {
     tournament_id: tournamentId,
     tournament_name: tournamentName,
+  });
+  trackGA4Event('view_item', { 
+    item_id: tournamentId, 
+    item_name: tournamentName,
+    item_category: 'tournament'
   });
 };
 
@@ -98,6 +112,10 @@ export const trackRegistrationStart = (tournamentId: string, registrationMethod?
     tournament_id: tournamentId,
     registration_method: registrationMethod || 'contact_organizer',
   });
+  trackGA4Event('begin_checkout', { 
+    tournament_id: tournamentId, 
+    method: registrationMethod 
+  });
 };
 
 export const trackRegistrationComplete = (tournamentId: string, completionMethod?: string) => {
@@ -105,6 +123,7 @@ export const trackRegistrationComplete = (tournamentId: string, completionMethod
     tournament_id: tournamentId,
     completion_method: completionMethod || 'contact_sent',
   });
+  trackTournamentRegistration(tournamentId, 'Tournament Registration', undefined);
 };
 
 // Performance tracking functions
@@ -114,6 +133,11 @@ export const trackCoreWebVitals = (metrics: { lcp?: number; fid?: number; cls?: 
     fid: metrics.fid,
     cls: metrics.cls,
     connection_type: (navigator as any).connection?.effectiveType || 'unknown',
+  });
+  trackGA4Event('web_vitals', {
+    metric_lcp: metrics.lcp,
+    metric_fid: metrics.fid,
+    metric_cls: metrics.cls
   });
 };
 
@@ -129,11 +153,14 @@ export const trackAPICall = (endpoint: string, method: string, duration: number,
 
 // Hook for automatic page view tracking
 export const usePageTracking = () => {
-  const trackPageView = (pathname: string) => {
+  const trackPageView = (pathname: string, title?: string) => {
     trackEvent('page_view', {
       pathname,
       referrer: document.referrer,
     });
+    
+    // Also track to GA4
+    ga4PageView(pathname, title);
   };
 
   return { trackPageView };

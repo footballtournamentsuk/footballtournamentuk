@@ -21,8 +21,5 @@ Disallow: /admin/
 # Block access to API endpoints
 Disallow: /api/
 
-# Allow all sitemaps
+# Sitemaps - Main sitemap index
 Sitemap: https://footballtournamentsuk.co.uk/sitemap_index.xml
-Sitemap: https://footballtournamentsuk.co.uk/sitemap.xml
-Sitemap: https://footballtournamentsuk.co.uk/sitemap_tournaments.xml
-Sitemap: https://footballtournamentsuk.co.uk/blog-sitemap.xml

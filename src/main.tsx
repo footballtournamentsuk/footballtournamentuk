@@ -5,10 +5,15 @@ import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker, addResourceHints, optimizeFonts } from '@/utils/performance';
 import { injectCriticalCSS, optimizeFontLoading } from '@/utils/criticalCss';
+import { initGA4 } from '@/utils/ga4';
 
 // Initialize performance optimizations immediately
 addResourceHints();
 injectCriticalCSS();
+
+// Initialize GA4 tracking
+// Replace with your GA4 Measurement ID
+initGA4('G-XXXXXXXXXX');
 
 // Defer non-critical optimizations using requestIdleCallback fallback
 const deferNonCritical = () => {

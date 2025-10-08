@@ -4,7 +4,7 @@ import { ChevronDown, ArrowLeft, Mail, Phone } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { trackEvent } from '@/hooks/useAnalyticsEvents';
 
 const FAQ = () => {
@@ -69,11 +69,26 @@ const FAQ = () => {
     }
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="FAQ - Frequently Asked Questions | UK Youth Football"
+      <UnifiedSEO 
+        title="FAQ - Frequently Asked Questions"
         description="Get answers to common questions about our free youth football tournament bulletin board. Learn about our platform, how to list tournaments, participation requirements, and more."
+        canonicalUrl="/faq"
+        structuredData={[faqSchema]}
       />
 
       {/* Header */}
@@ -177,21 +192,6 @@ const FAQ = () => {
         </div>
       </section>
 
-      {/* FAQPage Schema for SEO */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": faqData.map((faq, index) => ({
-            "@type": "Question",
-            "name": faq.question,
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": faq.answer
-            }
-          }))
-        })
-      }} />
 
       {/* Internal Links to Hub Pages */}
       <section className="py-12 bg-background">
