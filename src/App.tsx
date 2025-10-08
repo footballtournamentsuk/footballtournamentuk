@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
+import { trackPageView } from "@/utils/ga4";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -557,11 +558,15 @@ const Navigation = () => {
     </nav>;
 };
 
-// Component to track route changes for GTM
+// Component to track route changes for analytics
 const RouteTracker = () => {
   const location = useLocation();
-  React.useEffect(() => {
-    // Push pageview to dataLayer for GTM on route change
+  
+  useEffect(() => {
+    // Track page view in GA4
+    trackPageView(location.pathname + location.search, document.title);
+    
+    // Also push to dataLayer for any GTM configurations
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
       event: 'pageview',
@@ -569,6 +574,7 @@ const RouteTracker = () => {
       page_title: document.title
     });
   }, [location]);
+  
   return null;
 };
 const App = () => {

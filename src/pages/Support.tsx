@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Megaphone, Handshake, Users, Heart, Mail } from 'lucide-react';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { SupportModal } from '@/components/SupportModal';
 import { trackEvent } from '@/hooks/useAnalyticsEvents';
 import heroBackground from '@/assets/hero-football.jpg';
@@ -15,7 +15,12 @@ const Support = () => {
   };
 
   return <div className="min-h-screen bg-background">
-      <SEO title="Support Us - Football Tournaments UK" description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." canonicalUrl="/support" />
+      <UnifiedSEO 
+        title="Support Us - Football Tournaments UK" 
+        description="Support grassroots football in the UK. Help us connect teams, players, and organizers across the country with our 100% free platform." 
+        canonicalUrl="/support"
+        keywords="support grassroots football, sponsor football tournaments, volunteer football UK, football community support"
+      />
       
       {/* Hero Section */}
       <section className="relative bg-cover bg-center bg-no-repeat py-32 px-4 flex items-center justify-center" style={{

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PartnersCarousel from '@/components/PartnersCarousel';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { SupportModal } from '@/components/SupportModal';
 import { trackEvent } from '@/hooks/useAnalyticsEvents';
 import { 
@@ -79,10 +79,11 @@ const Partners = () => {
 
   return (
     <>
-      <SEO 
+      <UnifiedSEO 
         title="Partners - Football Tournaments UK | Building the Future of Youth Football"
         description="Join Football Tournaments UK as a partner. Unite players, clubs, and communities across the UK. Create opportunities, inspire the next generation, and grow football together."
         canonicalUrl="/partners"
+        keywords="football partnerships UK, grassroots football sponsors, youth football collaboration, football brand partnerships, tournament sponsorship, UK football community"
       />
       
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
