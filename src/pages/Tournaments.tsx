@@ -7,6 +7,7 @@ import { MobileFilterDrawer } from '@/components/MobileFilterDrawer';
 import Map from '@/components/Map';
 import { UnifiedSEO } from '@/components/UnifiedSEO';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -346,6 +347,7 @@ const Tournaments = () => {
         keywords="find football tournaments, search football events, UK tournament listings, football competitions near me, football tournament search, local football tournaments, youth football events, grassroots football UK"
       />
       <ScrollToTop />
+      <Breadcrumbs items={[{ label: 'Tournaments' }]} />
       
       <div className="min-h-screen">
         {/* Page Header */}

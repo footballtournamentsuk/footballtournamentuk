@@ -4,7 +4,8 @@ import { ArrowLeft, Calendar, Users, Shield, MapPin, Trophy } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const YouthTournaments = () => {
   const ageGroups = [
@@ -51,20 +52,22 @@ const YouthTournaments = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <UnifiedSEO 
         title="Youth Football Tournaments UK | Age Groups U6–U21"
-        description="Find youth football tournaments across the UK for all age groups from U6 to U21. Safe, competitive environments with proper age-group divisions and qualified supervision."
-        canonicalUrl="https://footballtournamentsuk.co.uk/youth-tournaments"
+        description="Find youth football tournaments, children's football leagues, and weekend competitions across the UK for all age groups from U6 to U21. Safe, competitive environments with proper age-group divisions, school holiday camps, and qualified supervision."
+        canonicalUrl="/youth-tournaments"
+        keywords="youth football tournaments UK, junior football competitions, U6-U21 football, children's football leagues, school football tournaments, youth football development, grassroots youth football, weekend football tournaments, school holiday camps"
+        structuredData={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            'name': 'Youth Football Tournaments UK',
+            'description': 'Find youth football tournaments and children\'s football leagues for all age groups from U6 to U21'
+          }
+        ]}
       />
 
-      {/* Breadcrumbs */}
-      <nav className="container mx-auto px-4 py-4">
-        <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <li><Link to="/" className="hover:text-foreground">Home</Link></li>
-          <li>/</li>
-          <li className="text-foreground">Youth Tournaments</li>
-        </ol>
-      </nav>
+      <Breadcrumbs items={[{ label: 'Youth Tournaments' }]} />
 
       {/* Header */}
       <header className="bg-primary text-primary-foreground py-12">
@@ -78,10 +81,10 @@ const YouthTournaments = () => {
             </Button>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Youth Football Tournaments Across the UK
+            Youth Football Tournaments & Children's Football Leagues Across the UK
           </h1>
           <p className="text-xl text-primary-foreground/80 max-w-3xl">
-            Discover safe, competitive football tournaments designed specifically for young players. 
+            Discover safe, competitive football tournaments, children's football leagues, weekend competitions, and school holiday camps designed specifically for young players. 
             From grassroots festivals to elite competitions, find the perfect tournament for your team.
           </p>
         </div>
@@ -160,10 +163,10 @@ const YouthTournaments = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="prose prose-lg max-w-none">
             <p className="text-lg leading-relaxed mb-6">
-              Youth football tournaments provide an excellent opportunity for young players to develop their skills, 
+              Youth football tournaments, children's football leagues, and weekend competitions provide an excellent opportunity for young players to develop their skills, 
               build confidence, and experience competitive football in a supportive environment. Our platform connects 
-              teams with high-quality tournaments across England, Scotland, and Wales, ensuring every young footballer 
-              can find appropriate competition.
+              teams with high-quality tournaments and school holiday camps across England, Scotland, and Wales, ensuring every young footballer 
+              can find appropriate competition throughout the year.
             </p>
             
             <h3 className="text-2xl font-bold mb-4">Safety & Development Focus</h3>
@@ -213,7 +216,7 @@ const YouthTournaments = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Find Your Next Tournament?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Browse hundreds of youth football tournaments across the UK. From grassroots festivals to competitive leagues, 
+            Browse hundreds of youth football tournaments, children's football leagues, and weekend competitions across the UK. From grassroots festivals to competitive leagues and school holiday camps, 
             find the perfect opportunity for your young players.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

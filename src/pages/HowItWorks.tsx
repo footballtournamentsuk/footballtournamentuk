@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { 
   UserPlus, 
   FileText, 
@@ -172,24 +173,21 @@ const HowItWorks = () => {
 
   return (
     <>
-      <SEO
-        title="How Football Tournaments UK Works | Youth Football Across the UK"
-        description="Learn how to find youth football tournaments or list your event free. Simple steps for organisers, parents & teams across the UK."
-        canonicalUrl="https://footballtournamentsuk.co.uk/how-it-works"
-        isHomePage={false}
+      <UnifiedSEO
+        title="How It Works - Football Tournaments UK | Easy Tournament Listing & Discovery"
+        description="Learn how to find youth football tournaments, children's football leagues, weekend tournaments, or list your school holiday camp free. Simple steps for organisers, parents & teams across the UK."
+        canonicalUrl="/how-it-works"
+        keywords="how to list football tournament, find youth football events, football tournament organizer guide, UK football competitions, tournament hosting guide, free tournament listing, children's football leagues, weekend tournaments, school holiday camps"
+        ogImage={`https://footballtournamentsuk.co.uk${ogImage}`}
+        structuredData={[
+          structuredData["@graph"][0], // BreadcrumbList
+          structuredData["@graph"][1], // HowTo for Organisers
+          structuredData["@graph"][2], // HowTo for Parents
+          structuredData["@graph"][3]  // FAQPage
+        ]}
       />
       
-      {/* Custom meta tags for social sharing */}
-      <meta property="og:image" content={`https://footballtournamentsuk.co.uk${ogImage}`} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:type" content="image/jpeg" />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:image" content={`https://footballtournamentsuk.co.uk${ogImage}`} />
-      
-      <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </script>
+      <Breadcrumbs items={[{ label: 'How It Works' }]} />
 
       {/* Skip to content link for accessibility */}
       <a 
@@ -221,7 +219,7 @@ const HowItWorks = () => {
               How Football Tournaments UK Works
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
-              Find youth football near you — or list your tournament for free.
+              Find youth football tournaments, children's football leagues, and weekend competitions near you — or list your tournament or school holiday camp for free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6 md:mb-8 z-20 relative">
               <Button 

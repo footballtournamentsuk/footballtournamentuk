@@ -48,6 +48,8 @@ import { ShareButton } from '@/components/ShareButton';
 import { AddToCalendar } from '@/components/AddToCalendar';
 import { SimpleShareCard } from '@/components/SimpleShareCard';
 import { ContactOrganizerModal } from '@/components/ContactOrganizerModal';
+import { RelatedTournaments } from '@/components/RelatedTournaments';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { isDemoTournament } from '@/utils/demoUtils';
 import { formatPrice } from '@/utils/currency';
 
@@ -236,6 +238,11 @@ const TournamentDetails = () => {
         ]}
       />
       <div className="min-h-screen bg-background">
+      <Breadcrumbs items={[
+        { label: 'Tournaments', href: '/tournaments' },
+        { label: tournament.name }
+      ]} />
+      
       {/* Simple Share Card Section */}
       <SimpleShareCard tournament={tournament} />
 
@@ -790,6 +797,13 @@ const TournamentDetails = () => {
                 </CardContent>
               </Card>
             )}
+            
+            {/* Related Tournaments */}
+            <RelatedTournaments 
+              currentTournament={tournament}
+              allTournaments={tournaments}
+              maxItems={3}
+            />
           </div>
         </div>
 

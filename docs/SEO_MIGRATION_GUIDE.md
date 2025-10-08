@@ -42,11 +42,11 @@ import { UnifiedSEO } from '@/components/UnifiedSEO';
 - [x] Tournaments.tsx
 - [x] TournamentDetails.tsx
 - [x] CityTournaments.tsx
+- [x] About.tsx
+- [x] HowItWorks.tsx
+- [x] YouthTournaments.tsx
 
-### Medium Priority
-- [ ] About.tsx
-- [ ] HowItWorks.tsx
-- [ ] YouthTournaments.tsx
+### 🔄 Medium Priority
 - [ ] TournamentFormats.tsx
 - [ ] Regions.tsx
 

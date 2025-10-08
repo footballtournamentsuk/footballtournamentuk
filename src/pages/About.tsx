@@ -2,7 +2,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SEO } from '@/components/SEO';
+import { UnifiedSEO } from '@/components/UnifiedSEO';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Users, Target, Heart, Globe, CheckCircle, Star, Trophy, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -66,12 +67,30 @@ const About = () => {
 
   return (
     <>
-      <SEO
+      <UnifiedSEO
         title="About Us - Football Tournaments UK | Connecting Teams, Inspiring Players"
-        description="Learn about Football Tournaments UK - the UK's premier free platform for youth football tournaments. Connecting teams, inspiring players, and growing the game nationwide."
+        description="Learn about Football Tournaments UK - the UK's premier free platform for youth football tournaments, children's football leagues, and weekend tournaments. Connecting teams, inspiring players, and growing the game nationwide."
         canonicalUrl="/about"
-        isHomePage={false}
+        keywords="about football tournaments UK, free tournament platform, grassroots football mission, youth football development UK, football community UK, children's football leagues, weekend football tournaments"
+        structuredData={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'AboutPage',
+            'name': 'About Football Tournaments UK',
+            'description': 'Learn about the UK\'s premier free platform for youth football tournaments, children\'s football leagues, and grassroots competitions'
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            'name': 'Football Tournaments UK',
+            'description': 'Free platform connecting football tournament organizers, teams, coaches, and players across the UK',
+            'url': 'https://footballtournamentsuk.co.uk',
+            'logo': 'https://footballtournamentsuk.co.uk/logo.png'
+          }
+        ]}
       />
+      
+      <Breadcrumbs items={[{ label: 'About Us' }]} />
       
       <div className="min-h-screen">
         {/* Hero Section */}
@@ -87,7 +106,7 @@ const About = () => {
               Growing the Game.
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed">
-              Your free UK football tournament hub — empowering organizers, inspiring players, and building communities.
+              Your free UK football tournament hub — empowering organizers of children's football leagues, weekend tournaments, and school holiday camps. Inspiring players and building communities nationwide.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" asChild>
@@ -128,13 +147,13 @@ const About = () => {
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                   <p className="text-lg mb-6 leading-relaxed">
-                    At Football Tournaments UK, we believe in the power of football to inspire, connect, and change lives.
+                    At Football Tournaments UK, we believe in the power of football to inspire, connect, and change lives through youth football tournaments, children's football leagues, and grassroots competitions.
                   </p>
                   <p className="text-lg mb-6 leading-relaxed">
-                    We are not event organizers — we are a free online bulletin board for football tournaments across the UK.
+                    We are not event organizers — we are a free online bulletin board for football tournaments, weekend football events, and school holiday camps across the UK.
                   </p>
                   <p className="text-lg leading-relaxed font-medium text-primary">
-                    Our mission: help organizers share their events and help players find new challenges and opportunities.
+                    Our mission: help organizers share their events and help players find new challenges and opportunities in competitive football.
                   </p>
                 </div>
                 <div className="relative">
