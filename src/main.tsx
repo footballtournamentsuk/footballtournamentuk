@@ -12,8 +12,7 @@ addResourceHints();
 injectCriticalCSS();
 
 // Initialize GA4 tracking
-// Replace with your GA4 Measurement ID
-initGA4('G-XXXXXXXXXX');
+initGA4('G-FSSPWX8DBV');
 
 // Defer non-critical optimizations using requestIdleCallback fallback
 const deferNonCritical = () => {
