@@ -1,6 +1,22 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap_index.xml",
+      "destination": "https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-index"
+    },
+    {
+      "source": "/sitemap_tournaments.xml",
+      "destination": "https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments"
+    },
+    {
+      "source": "/blog/sitemap.xml",
+      "destination": "https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-sitemap"
+    },
+    {
+      "source": "/blog/feed.xml",
+      "destination": "https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-feed"
+    },
+    {
       "source": "/alerts/verify",
       "destination": "/index.html"
     },
@@ -9,7 +25,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|.*\\.).*)",
+      "source": "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|sitemap_index.xml|sitemap_tournaments.xml|robots.txt|manifest.json|.*\\.).*)",
       "destination": "/index.html"
     }
   ],

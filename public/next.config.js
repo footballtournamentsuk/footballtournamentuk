@@ -3,6 +3,22 @@ module.exports = {
   async rewrites() {
     return [
       {
+        source: '/sitemap_index.xml',
+        destination: 'https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-index'
+      },
+      {
+        source: '/sitemap_tournaments.xml',
+        destination: 'https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments'
+      },
+      {
+        source: '/blog/sitemap.xml',
+        destination: 'https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-sitemap'
+      },
+      {
+        source: '/blog/feed.xml',
+        destination: 'https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-feed'
+      },
+      {
         source: '/alerts/verify/:path*',
         destination: '/index.html'
       },
