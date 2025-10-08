@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://footballtournamentsuk.co.uk/sitemap.xml</loc>
+    <lastmod>2025-10-08</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://yknmcddrfkggphrktivd.supabase.co/functions/v1/sitemap-tournaments</loc>
+    <lastmod>2025-10-08</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://yknmcddrfkggphrktivd.supabase.co/functions/v1/blog-sitemap</loc>
+    <lastmod>2025-10-08</lastmod>
+  </sitemap>
+</sitemapindex>
