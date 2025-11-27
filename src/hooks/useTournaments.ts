@@ -63,6 +63,7 @@ export const transformTournament = (dbTournament: DatabaseTournament): Tournamen
     features: dbTournament.features || undefined,
     organizerId: dbTournament.organizer_id || undefined,
     banner_url: dbTournament.banner_url || undefined,
+    banner_position: dbTournament.banner_position || undefined,
     share_cover_url: dbTournament.share_cover_url || undefined,
     share_cover_alt: dbTournament.share_cover_alt || undefined,
     share_cover_variant: (dbTournament.share_cover_variant as 'FB_1200x630' | 'IG_1080x1350' | 'IG_1080x1080') || 'FB_1200x630',

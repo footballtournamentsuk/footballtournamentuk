@@ -14,6 +14,7 @@ import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
 import { PendingTournaments } from "@/components/admin/PendingTournaments";
 import { TournamentParser } from "@/components/admin/TournamentParser";
 import { TournamentImageParser } from "@/components/admin/TournamentImageParser";
+import { TournamentManager } from "@/components/admin/TournamentManager";
 
 interface Testimonial {
   id: string;
@@ -364,14 +365,18 @@ export const Admin = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="analytics" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="analytics">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Analytics
                 </TabsTrigger>
+                <TabsTrigger value="manage">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Manage
+                </TabsTrigger>
                 <TabsTrigger value="tournaments">
                   <Trophy className="h-4 w-4 mr-2" />
-                  Tournaments ({pendingTournamentsCount})
+                  Create ({pendingTournamentsCount})
                 </TabsTrigger>
                 <TabsTrigger value="ecosystem">
                   <Globe className="h-4 w-4 mr-2" />
@@ -394,6 +399,10 @@ export const Admin = () => {
                   loading={loading}
                 />
                 <AnalyticsDashboard dateRange={analyticsDateRange} />
+              </TabsContent>
+
+              <TabsContent value="manage" className="space-y-6">
+                <TournamentManager />
               </TabsContent>
 
         <TabsContent value="tournaments" className="space-y-6">
