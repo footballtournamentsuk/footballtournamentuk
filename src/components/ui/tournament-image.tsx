@@ -8,6 +8,8 @@ interface TournamentImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
   className?: string;
   fallbackSrc?: string;
   fallbackAlt?: string;
+  width?: number;
+  height?: number;
 }
 
 /**
@@ -20,6 +22,7 @@ export const TournamentImage: React.FC<TournamentImageProps> = ({
   className,
   fallbackSrc,
   fallbackAlt = 'Tournament placeholder',
+  style,
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -62,6 +65,7 @@ export const TournamentImage: React.FC<TournamentImageProps> = ({
         decoding="async"
         onLoad={handleLoad}
         onError={handleError}
+        style={style}
         className={cn(
           "w-full h-full object-cover transition-all duration-700",
           isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105",

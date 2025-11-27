@@ -119,6 +119,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onSelect })
           height={512}
           style={{
             aspectRatio: '640/512',
+            objectPosition: tournament.banner_position || 'center',
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
