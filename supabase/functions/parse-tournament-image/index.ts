@@ -70,6 +70,14 @@ CRITICAL EXTRACTION RULES:
 - Start date and end date CAN BE DIFFERENT - look carefully!
 - NEVER assume dates are the same unless explicitly shown as single date
 - Format MUST be ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+- **YEAR DETERMINATION (CRITICAL):**
+  * If year IS shown: use exact year from image/text
+  * If year NOT shown (only day/month): determine year intelligently:
+    - Current date is 2025-11-27
+    - If month is December-November and no year shown: use 2026 (next year for upcoming events)
+    - If month is January-March and no year shown: use 2026 (early next year events)
+    - ALWAYS assume tournaments are UPCOMING events, never past
+  * Example: "29-30 December" (no year) → 2026-12-29 to 2026-12-30
 - If only year/month given, use 1st day of that month
 - Registration deadline: Look for "Register by", "Deadline", "Close date"
 
