@@ -539,6 +539,7 @@ export type Database = {
           format: string
           gallery_images: string[] | null
           id: string
+          is_published: boolean
           latitude: number
           location_name: string
           longitude: number
@@ -587,6 +588,7 @@ export type Database = {
           format: string
           gallery_images?: string[] | null
           id?: string
+          is_published?: boolean
           latitude: number
           location_name: string
           longitude: number
@@ -635,6 +637,7 @@ export type Database = {
           format?: string
           gallery_images?: string[] | null
           id?: string
+          is_published?: boolean
           latitude?: number
           location_name?: string
           longitude?: number

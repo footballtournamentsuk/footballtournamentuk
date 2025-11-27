@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
+import { PendingTournaments } from "@/components/admin/PendingTournaments";
 
 interface Testimonial {
   id: string;
@@ -51,6 +52,7 @@ export const Admin = () => {
     pendingReviews: 0,
     publishedReviews: 0
   });
+  const [pendingTournamentsCount, setPendingTournamentsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [analyticsDateRange, setAnalyticsDateRange] = useState({
@@ -82,7 +84,8 @@ export const Admin = () => {
       await Promise.all([
         fetchTestimonials(),
         fetchUsers(),
-        fetchStats()
+        fetchStats(),
+        fetchPendingTournamentsCount()
       ]);
     } catch (error) {
       console.error("Error fetching admin data:", error);
@@ -94,6 +97,16 @@ export const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchPendingTournamentsCount = async () => {
+    const { count, error } = await supabase
+      .from("tournaments")
+      .select("*", { count: "exact", head: true })
+      .eq("is_published", false);
+
+    if (error) throw error;
+    setPendingTournamentsCount(count || 0);
   };
 
   const fetchTestimonials = async () => {
@@ -349,10 +362,14 @@ export const Admin = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="analytics" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="analytics">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Analytics
+                </TabsTrigger>
+                <TabsTrigger value="tournaments">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Tournaments ({pendingTournamentsCount})
                 </TabsTrigger>
                 <TabsTrigger value="ecosystem">
                   <Globe className="h-4 w-4 mr-2" />
@@ -375,6 +392,10 @@ export const Admin = () => {
                   loading={loading}
                 />
                 <AnalyticsDashboard dateRange={analyticsDateRange} />
+              </TabsContent>
+
+              <TabsContent value="tournaments" className="space-y-4">
+                <PendingTournaments onUpdate={fetchData} />
               </TabsContent>
 
               <TabsContent value="ecosystem" className="space-y-4">
