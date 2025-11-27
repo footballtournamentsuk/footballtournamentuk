@@ -80,11 +80,11 @@ CRITICAL EXTRACTION RULES:
 - Valid formats: "3v3", "5v5", "7v7", "9v9", "11v11"
 
 📍 LOCATION (CRITICAL FOR MAP PINS):
-- Extract FULL venue name exactly as shown
+- Extract FULL venue address in location_name field: "Venue Name, City" (e.g., "Amory Park, Tiverton")
+- MUST include both venue AND city/town in location_name
 - Extract UK POSTCODE if visible (format: AB12 3CD)
-- Extract city/town name
-- For region: use UK county name (Yorkshire, Lancashire, Greater Manchester, etc.)
-- If address is visible, extract it completely
+- For region: use UK county name (Yorkshire, Lancashire, Greater Manchester, Devon, etc.)
+- Example: location_name = "Amory Park, Tiverton", region = "Devon", postcode = "EX16 4ER"
 
 💰 COSTS (CRITICAL - ALWAYS LOOK FOR THESE):
 - Look for: "Entry fee", "Cost per team", "Price", "£XX", "$XX", "€XX"
@@ -169,7 +169,7 @@ CRITICAL EXTRACTION RULES:
                   description: { type: 'string', description: 'Tournament description' },
                   start_date: { type: 'string', description: 'Start date in ISO 8601 format' },
                   end_date: { type: 'string', description: 'End date in ISO 8601 format' },
-                  location_name: { type: 'string', description: 'Venue or city name' },
+                  location_name: { type: 'string', description: 'Full venue address: "Venue Name, City"' },
                   postcode: { type: 'string', description: 'UK postcode' },
                   region: { type: 'string', description: 'UK county name' },
                   country: { type: 'string', description: 'Country code (GB for UK)' },
