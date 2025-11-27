@@ -234,36 +234,57 @@ export const TournamentImageParser: React.FC = () => {
       let bannerUrl: string | undefined;
 
       // Upload image to Supabase Storage if we have one
-      if (imageFile && imagePreview) {
+      if (imagePreview) {
         console.log('📤 Uploading tournament banner to Storage...');
         
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `${fileName}`;
+        try {
+          let fileToUpload: File;
 
-        // Upload to 'banners' bucket
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('banners')
-          .upload(filePath, imageFile, {
-            cacheControl: '3600',
-            upsert: false
-          });
+          if (imageFile) {
+            // Use original file if available
+            fileToUpload = imageFile;
+          } else {
+            // Convert base64 to File if we only have preview (from draft restore)
+            const base64Response = await fetch(imagePreview);
+            const blob = await base64Response.blob();
+            fileToUpload = new File([blob], 'tournament-banner.jpg', { type: 'image/jpeg' });
+          }
 
-        if (uploadError) {
-          console.error('⚠️ Image upload failed:', uploadError);
+          const fileExt = fileToUpload.name.split('.').pop() || 'jpg';
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const filePath = `${fileName}`;
+
+          // Upload to 'banners' bucket
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('banners')
+            .upload(filePath, fileToUpload, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            console.error('⚠️ Image upload failed:', uploadError);
+            toast({
+              title: 'Warning',
+              description: 'Tournament saved but image upload failed',
+              variant: 'default',
+            });
+          } else {
+            // Get public URL
+            const { data: urlData } = supabase.storage
+              .from('banners')
+              .getPublicUrl(filePath);
+            
+            bannerUrl = urlData.publicUrl;
+            console.log('✅ Banner uploaded:', bannerUrl);
+          }
+        } catch (uploadError) {
+          console.error('⚠️ Image conversion/upload error:', uploadError);
           toast({
-            title: 'Warning',
-            description: 'Tournament saved but image upload failed',
+            title: 'Warning', 
+            description: 'Failed to process tournament image',
             variant: 'default',
           });
-        } else {
-          // Get public URL
-          const { data: urlData } = supabase.storage
-            .from('banners')
-            .getPublicUrl(filePath);
-          
-          bannerUrl = urlData.publicUrl;
-          console.log('✅ Banner uploaded:', bannerUrl);
         }
       }
 
