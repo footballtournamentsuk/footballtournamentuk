@@ -71,3 +71,6 @@ verify_jwt = false
 
 [functions.parse-tournaments]
 verify_jwt = true
+
+[functions.parse-tournament-image]
+verify_jwt = true
