@@ -241,12 +241,17 @@ CRITICAL EXTRACTION RULES:
       try {
         console.log('📍 Geocoding location:', extractedData.location_name);
         
-        // Build precise search query prioritizing exact venue location
-        // Use location_name (which includes "Venue, City") + postcode if available
+        // Build precise search query for maximum accuracy
+        // Priority: exact venue + city + postcode (if available) + country
         const queryParts = [extractedData.location_name]; // e.g., "Amory Park, Tiverton"
         
         if (extractedData.postcode) {
           queryParts.push(extractedData.postcode);
+        }
+        
+        // Add region for additional context if available
+        if (extractedData.region) {
+          queryParts.push(extractedData.region);
         }
         
         queryParts.push('United Kingdom');
@@ -254,7 +259,9 @@ CRITICAL EXTRACTION RULES:
         const searchQuery = queryParts.join(', ');
         console.log('🎯 Precise geocoding query:', searchQuery);
         
-        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=poi,address,place&limit=1`;
+        // Use poi,place,address order to prioritize specific venues over generic locations
+        // Add fuzzyMatch=false for more precise results
+        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=poi,place,address&fuzzyMatch=false&limit=1`;
         
         const geocodeResponse = await fetch(geocodeUrl);
         
@@ -270,24 +277,35 @@ CRITICAL EXTRACTION RULES:
               relevance: feature.relevance
             });
 
-            // Reverse geocoding: if postcode wasn't extracted, get it from coordinates
-            if (!finalPostcode) {
-              console.log('🔄 Postcode not found in image, performing reverse geocoding...');
-              try {
-                const reverseUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&types=postcode&limit=1`;
-                const reverseResponse = await fetch(reverseUrl);
-                
-                if (reverseResponse.ok) {
-                  const reverseData = await reverseResponse.json();
-                  if (reverseData.features && reverseData.features.length > 0) {
-                    const postcodeFeature = reverseData.features[0];
-                    finalPostcode = postcodeFeature.text;
-                    console.log('✅ Postcode retrieved via reverse geocoding:', finalPostcode);
+            // Always perform reverse geocoding to get the most accurate postcode for the exact coordinates
+            // This ensures we get the venue-specific postcode even if it wasn't in the source text
+            console.log('🔄 Performing reverse geocoding for precise postcode...');
+            try {
+              const reverseUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&types=address,poi&limit=1`;
+              const reverseResponse = await fetch(reverseUrl);
+              
+              if (reverseResponse.ok) {
+                const reverseData = await reverseResponse.json();
+                if (reverseData.features && reverseData.features.length > 0) {
+                  const feature = reverseData.features[0];
+                  // Extract postcode from the context array (Mapbox includes postcode in address context)
+                  const postcodeContext = feature.context?.find((c: any) => c.id.startsWith('postcode'));
+                  if (postcodeContext) {
+                    finalPostcode = postcodeContext.text;
+                    console.log('✅ Precise postcode from coordinates:', finalPostcode);
+                  } else if (!finalPostcode) {
+                    // Fallback: extract from place_name if no context postcode
+                    const placeNameParts = feature.place_name.split(',');
+                    const postcodeMatch = placeNameParts.find((part: string) => /^[A-Z]{1,2}\d{1,2}\s?\d[A-Z]{2}$/i.test(part.trim()));
+                    if (postcodeMatch) {
+                      finalPostcode = postcodeMatch.trim();
+                      console.log('✅ Postcode extracted from place_name:', finalPostcode);
+                    }
                   }
                 }
-              } catch (reverseError) {
-                console.error('⚠️ Reverse geocoding failed:', reverseError);
               }
+            } catch (reverseError) {
+              console.error('⚠️ Reverse geocoding failed:', reverseError);
             }
           } else {
             console.warn('⚠️ No geocoding results found for:', searchQuery);
