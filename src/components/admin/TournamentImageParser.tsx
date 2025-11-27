@@ -267,6 +267,13 @@ export const TournamentImageParser: React.FC = () => {
         }
       }
 
+      // Get current user ID for organizer_id
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       // Save tournament with banner URL
       const { error } = await supabase
         .from('tournaments')
@@ -276,6 +283,7 @@ export const TournamentImageParser: React.FC = () => {
           contact_name: editedData.contact_name,
           postcode: editedData.postcode || 'UNKNOWN',
           banner_url: bannerUrl,
+          organizer_id: user.id, // Add organizer_id for RLS policy
         }]);
 
       if (error) {
