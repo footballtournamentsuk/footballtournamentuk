@@ -347,6 +347,47 @@ export const TournamentImageParser: React.FC = () => {
                     />
                   </div>
 
+                  {/* Cost */}
+                  <div>
+                    <Label>Cost Amount</Label>
+                    <Input
+                      type="number"
+                      value={editedData.cost_amount || ''}
+                      onChange={(e) => setEditedData({ ...editedData, cost_amount: e.target.value ? parseFloat(e.target.value) : undefined })}
+                      placeholder="450"
+                    />
+                  </div>
+                  <div>
+                    <Label>Currency</Label>
+                    <Input
+                      value={editedData.cost_currency || 'GBP'}
+                      onChange={(e) => setEditedData({ ...editedData, cost_currency: e.target.value })}
+                      placeholder="GBP"
+                    />
+                  </div>
+
+                  {/* Max Teams & Registration Deadline */}
+                  <div>
+                    <Label>Max Teams</Label>
+                    <Input
+                      type="number"
+                      value={editedData.max_teams || ''}
+                      onChange={(e) => setEditedData({ ...editedData, max_teams: e.target.value ? parseInt(e.target.value) : undefined })}
+                      placeholder="32"
+                    />
+                  </div>
+                  <div>
+                    <Label>Registration Deadline</Label>
+                    <Input
+                      type="datetime-local"
+                      value={editedData.registration_deadline ? 
+                        (editedData.registration_deadline.length === 10 ? 
+                          `${editedData.registration_deadline}T00:00` : 
+                          editedData.registration_deadline.slice(0, 16)) : ''}
+                      onChange={(e) => setEditedData({ ...editedData, registration_deadline: e.target.value || undefined })}
+                    />
+                  </div>
+
                   {/* Contact Info */}
                   <div>
                     <Label>Contact Name *</Label>

@@ -54,6 +54,12 @@ serve(async (req) => {
 
 CRITICAL EXTRACTION RULES:
 
+📝 DESCRIPTION (IMPORTANT):
+- Look for ANY descriptive text about the tournament
+- Extract tournament details, highlights, special notes
+- Common locations: below title, in info sections, promotional text
+- Examples: "Join us for...", "Featuring...", "Great opportunity to..."
+
 📅 DATES (MOST IMPORTANT):
 - Look for EXACT dates in formats: DD/MM/YYYY, DD-MM-YYYY, "29th December", "Dec 29", etc.
 - If you see a single date, check if there's a time range (e.g., "9am-5pm") - that's a one-day event
@@ -62,6 +68,7 @@ CRITICAL EXTRACTION RULES:
 - NEVER assume dates are the same unless explicitly shown as single date
 - Format MUST be ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
 - If only year/month given, use 1st day of that month
+- Registration deadline: Look for "Register by", "Deadline", "Close date"
 
 ⚽ FORMATS (EXTRACT ALL):
 - Look for ALL format mentions: "U8s play 5v5", "U10s play 7v7", etc.
@@ -76,9 +83,12 @@ CRITICAL EXTRACTION RULES:
 - For region: use UK county name (Yorkshire, Lancashire, Greater Manchester, etc.)
 - If address is visible, extract it completely
 
-💰 COSTS:
-- Look for entry fees, costs per team, registration fees
-- Extract numeric amount and currency (usually GBP/£)
+💰 COSTS (CRITICAL - ALWAYS LOOK FOR THESE):
+- Look for: "Entry fee", "Cost per team", "Price", "£XX", "$XX", "€XX"
+- Common locations: near title, in info boxes, with "COST:" or "ENTRY:" labels
+- Extract numeric amount (e.g., 450 from "£450")
+- Currency: GBP (£), EUR (€), or USD ($)
+- Look for phrases: "Cost: £450", "Entry: £50 per team", "Price £100"
 
 👥 CONTACT INFO:
 - Extract name, email, phone EXACTLY as shown
@@ -89,7 +99,7 @@ CRITICAL EXTRACTION RULES:
 - Age groups: U7, U8, U9, U10, U11, U12, U13, U14, U15, U16, U17, U18, U19, U21, Adult
 - Team types: Boys, Girls, Mixed
 - Type: tournament, league, cup, friendly, festival, camp, showcase
-- Max teams if mentioned
+- Max teams: Look for "Maximum teams", "Limited to X teams", "XX teams only"
 - Registration deadline if shown
 
 ⚠️ IMPORTANT: DO NOT guess or invent data. Only extract what is CLEARLY VISIBLE in the image.`;
