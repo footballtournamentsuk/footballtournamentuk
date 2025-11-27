@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Image, Loader2, CheckCircle, AlertCircle, Upload } from 'lucide-react';
+import { Image, Loader2, CheckCircle, AlertCircle, Upload, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import TournamentCard from '@/components/TournamentCard';
+import { Tournament } from '@/types/tournament';
 
 interface ExtractedTournament {
   name: string;
@@ -46,6 +48,47 @@ export const TournamentImageParser: React.FC = () => {
   const [extractedData, setExtractedData] = useState<ExtractedTournament | null>(null);
   const [editedData, setEditedData] = useState<ExtractedTournament | null>(null);
   const { toast } = useToast();
+
+  // Convert edited data to Tournament format for preview
+  const previewTournament = useMemo((): Tournament | null => {
+    if (!editedData) return null;
+
+    return {
+      id: 'preview-' + Date.now(),
+      name: editedData.name,
+      description: editedData.description,
+      location: {
+        name: editedData.location_name,
+        coordinates: [editedData.longitude, editedData.latitude],
+        postcode: editedData.postcode || '',
+        region: editedData.region,
+        country: editedData.country,
+      },
+      dates: {
+        start: new Date(editedData.start_date),
+        end: new Date(editedData.end_date),
+        registrationDeadline: editedData.registration_deadline ? new Date(editedData.registration_deadline) : undefined,
+      },
+      format: editedData.format,
+      ageGroups: editedData.age_groups,
+      teamTypes: editedData.team_types as ('boys' | 'girls' | 'mixed')[],
+      type: editedData.type as Tournament['type'],
+      status: editedData.status as Tournament['status'],
+      cost: editedData.cost_amount ? {
+        amount: editedData.cost_amount,
+        currency: editedData.cost_currency || 'GBP',
+      } : undefined,
+      contact: {
+        name: editedData.contact_name || 'TBA',
+        email: editedData.contact_email || '',
+        phone: editedData.contact_phone,
+        website: editedData.website,
+      },
+      maxTeams: editedData.max_teams,
+      registeredTeams: 0,
+      isPublished: false,
+    } as Tournament;
+  }, [editedData]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -251,12 +294,14 @@ export const TournamentImageParser: React.FC = () => {
 
           {/* Extracted Data Editor */}
           {editedData && (
-            <Card className="border-green-200 bg-green-50">
-              <CardContent className="pt-4 space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <h3 className="font-semibold text-green-900">Extracted Tournament Data</h3>
-                </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Edit Form */}
+              <Card className="border-green-200 bg-green-50">
+                <CardContent className="pt-4 space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <h3 className="font-semibold text-green-900">Extracted Tournament Data</h3>
+                  </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   {/* Name */}
@@ -463,22 +508,47 @@ export const TournamentImageParser: React.FC = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleSaveTournament}
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    'Save to Moderation Queue'
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button
+                    onClick={handleSaveTournament}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save to Moderation Queue'
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Live Preview */}
+              <div className="space-y-4">
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-blue-900">
+                      <Eye className="h-5 w-5" />
+                      Live Preview
+                    </CardTitle>
+                    <p className="text-sm text-blue-700">
+                      How this tournament will appear on the main page
+                    </p>
+                  </CardHeader>
+                </Card>
+
+                {previewTournament && (
+                  <div className="animate-in fade-in-50 duration-300">
+                    <TournamentCard 
+                      tournament={previewTournament}
+                      onSelect={() => {}}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           {/* Tips */}
