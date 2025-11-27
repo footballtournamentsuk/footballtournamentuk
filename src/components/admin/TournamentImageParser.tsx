@@ -309,7 +309,11 @@ export const TournamentImageParser: React.FC = () => {
                     <Input
                       value={editedData.postcode || ''}
                       onChange={(e) => setEditedData({ ...editedData, postcode: e.target.value })}
+                      placeholder="e.g. WN7 4JY"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Postcode helps place pin accurately on map
+                    </p>
                   </div>
 
                   <div>
@@ -395,6 +399,26 @@ export const TournamentImageParser: React.FC = () => {
                         <Badge key={idx} variant="secondary">{tt}</Badge>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Coordinates Display */}
+                  <div className="col-span-2 bg-blue-50 border border-blue-200 rounded p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className="bg-blue-100">Map Location</Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Latitude:</span>
+                        <span className="ml-2 font-mono">{editedData.latitude.toFixed(6)}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Longitude:</span>
+                        <span className="ml-2 font-mono">{editedData.longitude.toFixed(6)}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-2">
+                      ℹ️ Tournament pin will be placed at these coordinates
+                    </p>
                   </div>
                 </div>
 
