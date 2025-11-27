@@ -25,9 +25,9 @@ export const TournamentParser: React.FC = () => {
   const { toast } = useToast();
 
   const exampleUrls = [
-    'https://www.thefa.com/competitions',
-    'https://www.londonfootball.com/fixtures-results',
-    'https://www.yorkshirefa.com/competitions'
+    'https://www.yorkshirefa.com/youth-council/development-centres',
+    'https://www.surreyfootball.com/competitions/youth-football',
+    'https://www.birminghamfa.com/competitions'
   ];
 
   const handleParse = async () => {
@@ -97,9 +97,15 @@ export const TournamentParser: React.FC = () => {
         <CardContent className="space-y-4">
           <Alert>
             <Info className="h-4 w-4" />
-            <AlertDescription>
-              This tool uses AI to automatically extract upcoming tournament information from County FA websites. 
-              All parsed tournaments will be added to the moderation queue for your review before publication.
+            <AlertDescription className="space-y-2">
+              <p>
+                This tool uses AI to automatically extract upcoming tournament information from County FA websites. 
+                All parsed tournaments will be added to the moderation queue for your review before publication.
+              </p>
+              <p className="text-sm font-medium mt-2">
+                ⚠️ Important: Use specific tournament/competition pages, not general homepages. 
+                Look for pages with tournament details, dates, and registration information.
+              </p>
             </AlertDescription>
           </Alert>
 
@@ -113,27 +119,25 @@ export const TournamentParser: React.FC = () => {
               onChange={(e) => setUrl(e.target.value)}
               disabled={loading}
             />
-            <p className="text-xs text-muted-foreground">
-              Enter the URL of a County FA tournaments or fixtures page
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                Enter the URL of a specific tournament or competition page (not homepages)
+              </p>
+              <p className="text-xs font-medium text-orange-600">
+                ✓ Good: Pages with tournament names, dates, venues, and contact info<br/>
+                ✗ Bad: General fixtures pages, calendars, or homepages
+              </p>
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm">Example URLs to try:</Label>
-            <div className="flex flex-wrap gap-2">
-              {exampleUrls.map((exampleUrl) => (
-                <Button
-                  key={exampleUrl}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setUrl(exampleUrl)}
-                  disabled={loading}
-                  className="text-xs"
-                >
-                  {new URL(exampleUrl).hostname}
-                </Button>
-              ))}
-            </div>
+            <Label className="text-sm">Tips for finding good URLs:</Label>
+            <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+              <li>Look for "Youth Competitions", "Tournaments", "Development Centres" sections</li>
+              <li>Navigate to specific tournament/competition details pages</li>
+              <li>Avoid homepage URLs or general fixtures calendars</li>
+              <li>Best results from pages with complete tournament information</li>
+            </ul>
           </div>
 
           <Button
@@ -205,15 +209,27 @@ export const TournamentParser: React.FC = () => {
             </Card>
           )}
 
-          <div className="pt-4 border-t">
-            <h4 className="text-sm font-medium mb-2">How it works:</h4>
-            <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>AI fetches and analyzes the website content</li>
-              <li>Extracts tournament details (dates, location, age groups, etc.)</li>
-              <li>Geocodes addresses to map coordinates</li>
-              <li>Saves tournaments as unpublished (pending your approval)</li>
-              <li>You review and approve tournaments in the "Pending" tab</li>
-            </ol>
+          <div className="pt-4 border-t space-y-3">
+            <div>
+              <h4 className="text-sm font-medium mb-2">How it works:</h4>
+              <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+                <li>AI fetches and analyzes the website content</li>
+                <li>Extracts tournament details (dates, location, age groups, etc.)</li>
+                <li>Filters out past tournaments (only upcoming events)</li>
+                <li>Geocodes addresses to map coordinates</li>
+                <li>Saves tournaments as unpublished (pending your approval)</li>
+                <li>You review and approve tournaments in the "Pending" tab</li>
+              </ol>
+            </div>
+            
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+              <h4 className="text-sm font-medium mb-1 text-amber-900">Common Issues:</h4>
+              <ul className="text-xs text-amber-800 space-y-1">
+                <li>• <span className="font-medium">"No tournaments found"</span> - URL might be too general. Try a specific tournament page instead.</li>
+                <li>• <span className="font-medium">Missing details</span> - Page might not have complete tournament information (dates, contact, etc.)</li>
+                <li>• <span className="font-medium">Authentication required</span> - Some County FA pages require login to view tournament details.</li>
+              </ul>
+            </div>
           </div>
         </CardContent>
       </Card>
