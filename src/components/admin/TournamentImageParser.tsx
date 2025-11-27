@@ -44,6 +44,7 @@ interface ExtractedTournament {
 export const TournamentImageParser: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [additionalText, setAdditionalText] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [extractedData, setExtractedData] = useState<ExtractedTournament | null>(null);
   const [editedData, setEditedData] = useState<ExtractedTournament | null>(null);
@@ -126,10 +127,10 @@ export const TournamentImageParser: React.FC = () => {
   };
 
   const handleParseImage = async () => {
-    if (!imageFile || !imagePreview) {
+    if (!imageFile && !imagePreview && !additionalText.trim()) {
       toast({
         title: 'Error',
-        description: 'Please select an image first',
+        description: 'Please provide an image or text description',
         variant: 'destructive',
       });
       return;
@@ -140,10 +141,13 @@ export const TournamentImageParser: React.FC = () => {
     setEditedData(null);
 
     try {
-      console.log('🖼️ Parsing tournament image...');
+      console.log('🖼️ Parsing tournament data...');
 
       const { data, error } = await supabase.functions.invoke('parse-tournament-image', {
-        body: { imageData: imagePreview }
+        body: { 
+          imageData: imagePreview,
+          additionalText: additionalText.trim() || undefined
+        }
       });
 
       if (error) {
@@ -164,10 +168,10 @@ export const TournamentImageParser: React.FC = () => {
       });
 
     } catch (error) {
-      console.error('❌ Error parsing image:', error);
+      console.error('❌ Error parsing:', error);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to parse tournament image',
+        description: error.message || 'Failed to parse tournament data',
         variant: 'destructive',
       });
     } finally {
@@ -254,6 +258,7 @@ export const TournamentImageParser: React.FC = () => {
       // Reset form
       setImageFile(null);
       setImagePreview(null);
+      setAdditionalText('');
       setExtractedData(null);
       setEditedData(null);
 
@@ -283,17 +288,17 @@ export const TournamentImageParser: React.FC = () => {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               <p className="mb-2">
-                Upload a tournament flyer, poster, or screenshot and AI will automatically extract all tournament details including dates, location, contacts, and more.
+                Upload a tournament flyer/image and/or paste text description. AI will automatically extract all details.
               </p>
               <p className="text-sm font-medium">
-                ✓ Supports: Tournament posters, flyers, social media posts, website screenshots
+                ✓ Supports: Images, text descriptions, or both combined for best accuracy
               </p>
             </AlertDescription>
           </Alert>
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label htmlFor="image-upload">Tournament Image</Label>
+            <Label htmlFor="image-upload">Tournament Image (Optional)</Label>
             <div className="flex items-center gap-4">
               <Input
                 id="image-upload"
@@ -303,22 +308,6 @@ export const TournamentImageParser: React.FC = () => {
                 disabled={loading}
                 className="flex-1"
               />
-              <Button
-                onClick={handleParseImage}
-                disabled={loading || !imageFile}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Extract Data
-                  </>
-                )}
-              </Button>
             </div>
           </div>
 
@@ -332,6 +321,45 @@ export const TournamentImageParser: React.FC = () => {
               />
             </div>
           )}
+
+          {/* Text Description */}
+          <div className="space-y-2">
+            <Label htmlFor="additional-text">
+              Additional Text Description (Optional)
+            </Label>
+            <Textarea
+              id="additional-text"
+              placeholder="Paste tournament details here: dates, location, format, costs, contact info, etc.&#10;&#10;Example:&#10;Youth Football Tournament&#10;Date: 15-16 June 2025&#10;Location: Wembley Stadium, London, HA9 0WS&#10;Format: 7v7&#10;Age groups: U9, U10, U11&#10;Cost: £150 per team&#10;Contact: john@email.com, 07700 900123"
+              value={additionalText}
+              onChange={(e) => setAdditionalText(e.target.value)}
+              disabled={loading}
+              rows={8}
+              className="font-mono text-sm"
+            />
+            <p className="text-xs text-muted-foreground">
+              AI will analyze both image and text together for more accurate extraction
+            </p>
+          </div>
+
+          {/* Extract Button */}
+          <Button
+            onClick={handleParseImage}
+            disabled={loading || (!imageFile && !additionalText.trim())}
+            className="w-full"
+            size="lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Upload className="h-4 w-4 mr-2" />
+                Extract Tournament Data
+              </>
+            )}
+          </Button>
 
           {/* Extracted Data Editor */}
           {editedData && (
