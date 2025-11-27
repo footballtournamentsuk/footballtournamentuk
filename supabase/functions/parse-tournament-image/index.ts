@@ -192,6 +192,7 @@ CRITICAL EXTRACTION RULES:
     const MAPBOX_PUBLIC_TOKEN = Deno.env.get('MAPBOX_PUBLIC_TOKEN');
     let latitude = 51.5074; // Default to London if geocoding fails
     let longitude = -0.1278;
+    let finalPostcode = extractedData.postcode;
 
     if (MAPBOX_PUBLIC_TOKEN && extractedData.location_name) {
       try {
@@ -224,6 +225,26 @@ CRITICAL EXTRACTION RULES:
               place_name: feature.place_name,
               relevance: feature.relevance
             });
+
+            // Reverse geocoding: if postcode wasn't extracted, get it from coordinates
+            if (!finalPostcode) {
+              console.log('🔄 Postcode not found in image, performing reverse geocoding...');
+              try {
+                const reverseUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&types=postcode&limit=1`;
+                const reverseResponse = await fetch(reverseUrl);
+                
+                if (reverseResponse.ok) {
+                  const reverseData = await reverseResponse.json();
+                  if (reverseData.features && reverseData.features.length > 0) {
+                    const postcodeFeature = reverseData.features[0];
+                    finalPostcode = postcodeFeature.text;
+                    console.log('✅ Postcode retrieved via reverse geocoding:', finalPostcode);
+                  }
+                }
+              } catch (reverseError) {
+                console.error('⚠️ Reverse geocoding failed:', reverseError);
+              }
+            }
           } else {
             console.warn('⚠️ No geocoding results found for:', searchQuery);
           }
@@ -240,6 +261,7 @@ CRITICAL EXTRACTION RULES:
     // Prepare tournament data for database
     const tournamentData = {
       ...extractedData,
+      postcode: finalPostcode,
       latitude,
       longitude,
       is_published: false, // Always unpublished for admin review
