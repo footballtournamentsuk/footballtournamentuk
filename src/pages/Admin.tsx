@@ -12,6 +12,7 @@ import { Navigate } from "react-router-dom";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
 import { PendingTournaments } from "@/components/admin/PendingTournaments";
+import { TournamentParser } from "@/components/admin/TournamentParser";
 
 interface Testimonial {
   id: string;
@@ -394,7 +395,8 @@ export const Admin = () => {
                 <AnalyticsDashboard dateRange={analyticsDateRange} />
               </TabsContent>
 
-              <TabsContent value="tournaments" className="space-y-4">
+              <TabsContent value="tournaments" className="space-y-6">
+                <TournamentParser />
                 <PendingTournaments onUpdate={fetchData} />
               </TabsContent>
 

@@ -68,3 +68,6 @@ verify_jwt = false
 
 [functions.blog-feed]
 verify_jwt = false
+
+[functions.parse-tournaments]
+verify_jwt = true
