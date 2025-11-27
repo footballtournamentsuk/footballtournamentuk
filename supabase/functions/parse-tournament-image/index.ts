@@ -37,20 +37,23 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData } = await req.json();
+    const { imageData, additionalText } = await req.json();
     
-    if (!imageData) {
-      throw new Error('No image data provided');
+    if (!imageData && !additionalText) {
+      throw new Error('No image or text data provided');
     }
 
-    console.log('🖼️ Processing tournament image...');
+    console.log('🖼️ Processing tournament data...', {
+      hasImage: !!imageData,
+      hasText: !!additionalText
+    });
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    const systemPrompt = `You are a tournament data extraction expert. Extract ALL tournament information from the provided image with MAXIMUM ACCURACY.
+    const systemPrompt = `You are a tournament data extraction expert. Extract ALL tournament information from the provided sources (image and/or text) with MAXIMUM ACCURACY.
 
 CRITICAL EXTRACTION RULES:
 
@@ -102,9 +105,38 @@ CRITICAL EXTRACTION RULES:
 - Max teams: Look for "Maximum teams", "Limited to X teams", "XX teams only"
 - Registration deadline if shown
 
-⚠️ IMPORTANT: DO NOT guess or invent data. Only extract what is CLEARLY VISIBLE in the image.`;
+⚠️ IMPORTANT: 
+- If both image and text are provided, COMBINE information from both sources
+- Text description may contain more detailed information than the image
+- DO NOT guess or invent data. Only extract what is CLEARLY VISIBLE/STATED.`;
 
-    console.log('🤖 Sending image to Lovable AI for extraction...');
+    console.log('🤖 Sending data to Lovable AI for extraction...');
+
+    // Build user message content
+    const userContent: any[] = [];
+    
+    // Add text if provided
+    if (additionalText) {
+      userContent.push({
+        type: 'text',
+        text: `Additional text description:\n\n${additionalText}\n\n---\n\nExtract all tournament information from the text above${imageData ? ' and the image below' : ''}.`
+      });
+    } else {
+      userContent.push({
+        type: 'text',
+        text: 'Extract all tournament information from this image and return it in the specified JSON format.'
+      });
+    }
+    
+    // Add image if provided
+    if (imageData) {
+      userContent.push({
+        type: 'image_url',
+        image_url: {
+          url: imageData
+        }
+      });
+    }
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -121,18 +153,7 @@ CRITICAL EXTRACTION RULES:
           },
           {
             role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'Extract all tournament information from this image and return it in the specified JSON format.'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: imageData
-                }
-              }
-            ]
+            content: userContent
           }
         ],
         tools: [
