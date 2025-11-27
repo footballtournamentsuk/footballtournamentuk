@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { 
   Trash2, 
@@ -13,7 +15,9 @@ import {
   Loader2,
   Eye,
   EyeOff,
-  AlertCircle
+  AlertCircle,
+  Save,
+  X
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -29,12 +33,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const TournamentManager: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [editForm, setEditForm] = useState<any>(null);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -128,6 +140,96 @@ export const TournamentManager: React.FC = () => {
       setProcessingIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(id);
+        return newSet;
+      });
+    }
+  };
+
+  const handleEdit = (tournament: Tournament) => {
+    setEditingTournament(tournament);
+    setEditForm({
+      name: tournament.name,
+      description: tournament.description || '',
+      location_name: tournament.location.name,
+      postcode: tournament.location.postcode,
+      region: tournament.location.region,
+      start_date: new Date(tournament.dates.start).toISOString().slice(0, 16),
+      end_date: new Date(tournament.dates.end).toISOString().slice(0, 16),
+      registration_deadline: tournament.dates.registrationDeadline 
+        ? new Date(tournament.dates.registrationDeadline).toISOString().slice(0, 16) 
+        : '',
+      format: tournament.format,
+      type: tournament.type,
+      age_groups: tournament.ageGroups.join(', '),
+      team_types: tournament.teamTypes.join(', '),
+      cost_amount: tournament.cost?.amount || '',
+      cost_currency: tournament.cost?.currency || 'GBP',
+      max_teams: tournament.maxTeams || '',
+      contact_name: tournament.contact.name,
+      contact_email: tournament.contact.email,
+      contact_phone: tournament.contact.phone || '',
+      website: tournament.website || '',
+      banner_position: tournament.banner_position || 'center',
+      venue_details: tournament.venue_details || '',
+      additional_notes: tournament.additional_notes || '',
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingTournament || !editForm) return;
+
+    try {
+      setProcessingIds(prev => new Set(prev).add(editingTournament.id));
+
+      const { error } = await supabase
+        .from('tournaments')
+        .update({
+          name: editForm.name,
+          description: editForm.description || null,
+          location_name: editForm.location_name,
+          postcode: editForm.postcode,
+          region: editForm.region,
+          start_date: editForm.start_date,
+          end_date: editForm.end_date,
+          registration_deadline: editForm.registration_deadline || null,
+          format: editForm.format,
+          type: editForm.type,
+          age_groups: editForm.age_groups.split(',').map((s: string) => s.trim()).filter(Boolean),
+          team_types: editForm.team_types.split(',').map((s: string) => s.trim()).filter(Boolean),
+          cost_amount: editForm.cost_amount ? parseFloat(editForm.cost_amount) : null,
+          cost_currency: editForm.cost_currency || 'GBP',
+          max_teams: editForm.max_teams ? parseInt(editForm.max_teams) : null,
+          contact_name: editForm.contact_name,
+          contact_email: editForm.contact_email,
+          contact_phone: editForm.contact_phone || null,
+          website: editForm.website || null,
+          banner_position: editForm.banner_position,
+          venue_details: editForm.venue_details || null,
+          additional_notes: editForm.additional_notes || null,
+        })
+        .eq('id', editingTournament.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Tournament updated successfully',
+      });
+
+      setEditingTournament(null);
+      setEditForm(null);
+      await fetchTournaments();
+    } catch (error) {
+      console.error('Error updating tournament:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update tournament',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(editingTournament.id);
         return newSet;
       });
     }
@@ -269,6 +371,15 @@ export const TournamentManager: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => handleEdit(tournament)}
+                            disabled={processingIds.has(tournament.id)}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => window.open(`/tournaments/${tournament.slug || tournament.id}`, '_blank')}
                           >
                             <Eye className="h-4 w-4 mr-2" />
@@ -321,6 +432,237 @@ export const TournamentManager: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Tournament Dialog */}
+      <Dialog open={!!editingTournament} onOpenChange={(open) => !open && setEditingTournament(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Tournament</DialogTitle>
+          </DialogHeader>
+          {editForm && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <Label>Tournament Name *</Label>
+                  <Input
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={editForm.description}
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label>Location Name *</Label>
+                  <Input
+                    value={editForm.location_name}
+                    onChange={(e) => setEditForm({ ...editForm, location_name: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Postcode *</Label>
+                  <Input
+                    value={editForm.postcode}
+                    onChange={(e) => setEditForm({ ...editForm, postcode: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Region *</Label>
+                  <Input
+                    value={editForm.region}
+                    onChange={(e) => setEditForm({ ...editForm, region: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Type *</Label>
+                  <Input
+                    value={editForm.type}
+                    onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Start Date *</Label>
+                  <Input
+                    type="datetime-local"
+                    value={editForm.start_date}
+                    onChange={(e) => setEditForm({ ...editForm, start_date: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>End Date *</Label>
+                  <Input
+                    type="datetime-local"
+                    value={editForm.end_date}
+                    onChange={(e) => setEditForm({ ...editForm, end_date: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Format *</Label>
+                  <Input
+                    value={editForm.format}
+                    onChange={(e) => setEditForm({ ...editForm, format: e.target.value })}
+                    placeholder="3v3,5v5,7v7"
+                  />
+                </div>
+
+                <div>
+                  <Label>Age Groups * (comma-separated)</Label>
+                  <Input
+                    value={editForm.age_groups}
+                    onChange={(e) => setEditForm({ ...editForm, age_groups: e.target.value })}
+                    placeholder="U7,U8,U9"
+                  />
+                </div>
+
+                <div>
+                  <Label>Team Types * (comma-separated)</Label>
+                  <Input
+                    value={editForm.team_types}
+                    onChange={(e) => setEditForm({ ...editForm, team_types: e.target.value })}
+                    placeholder="boys,girls,mixed"
+                  />
+                </div>
+
+                <div>
+                  <Label>Registration Deadline</Label>
+                  <Input
+                    type="datetime-local"
+                    value={editForm.registration_deadline}
+                    onChange={(e) => setEditForm({ ...editForm, registration_deadline: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Cost Amount</Label>
+                  <Input
+                    type="number"
+                    value={editForm.cost_amount}
+                    onChange={(e) => setEditForm({ ...editForm, cost_amount: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Max Teams</Label>
+                  <Input
+                    type="number"
+                    value={editForm.max_teams}
+                    onChange={(e) => setEditForm({ ...editForm, max_teams: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Contact Name *</Label>
+                  <Input
+                    value={editForm.contact_name}
+                    onChange={(e) => setEditForm({ ...editForm, contact_name: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Contact Email *</Label>
+                  <Input
+                    type="email"
+                    value={editForm.contact_email}
+                    onChange={(e) => setEditForm({ ...editForm, contact_email: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Contact Phone</Label>
+                  <Input
+                    value={editForm.contact_phone}
+                    onChange={(e) => setEditForm({ ...editForm, contact_phone: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Website</Label>
+                  <Input
+                    value={editForm.website}
+                    onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Banner Position</Label>
+                  <select
+                    className="w-full border rounded px-3 py-2"
+                    value={editForm.banner_position}
+                    onChange={(e) => setEditForm({ ...editForm, banner_position: e.target.value })}
+                  >
+                    <option value="center">Center</option>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="top left">Top Left</option>
+                    <option value="top right">Top Right</option>
+                    <option value="bottom left">Bottom Left</option>
+                    <option value="bottom right">Bottom Right</option>
+                  </select>
+                </div>
+
+                <div className="col-span-2">
+                  <Label>Venue Details</Label>
+                  <Textarea
+                    value={editForm.venue_details}
+                    onChange={(e) => setEditForm({ ...editForm, venue_details: e.target.value })}
+                    rows={2}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Label>Additional Notes</Label>
+                  <Textarea
+                    value={editForm.additional_notes}
+                    onChange={(e) => setEditForm({ ...editForm, additional_notes: e.target.value })}
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingTournament(null)}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveEdit}
+                  disabled={editingTournament && processingIds.has(editingTournament.id)}
+                >
+                  {editingTournament && processingIds.has(editingTournament.id) ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
