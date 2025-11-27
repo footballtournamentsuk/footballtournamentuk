@@ -57,6 +57,7 @@ export const TournamentImageParser: React.FC = () => {
       id: 'preview-' + Date.now(),
       name: editedData.name,
       description: editedData.description,
+      banner_url: imagePreview || undefined, // Use uploaded image as banner
       location: {
         name: editedData.location_name,
         coordinates: [editedData.longitude, editedData.latitude],
@@ -88,7 +89,7 @@ export const TournamentImageParser: React.FC = () => {
       registeredTeams: 0,
       isPublished: false,
     } as Tournament;
-  }, [editedData]);
+  }, [editedData, imagePreview]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
