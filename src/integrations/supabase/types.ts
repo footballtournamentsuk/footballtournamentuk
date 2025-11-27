@@ -682,16 +682,13 @@ export type Database = {
         }
         Returns: string
       }
-      generate_blog_slug: {
-        Args: { post_title: string }
-        Returns: string
-      }
+      generate_blog_slug: { Args: { post_title: string }; Returns: string }
       generate_tournament_slug: {
         Args: { tournament_name: string }
         Returns: string
       }
       get_email_stats: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           pending_review_emails: number
           total_tournaments: number
@@ -727,22 +724,10 @@ export type Database = {
           retention_7d: number
         }[]
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_storage_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      send_review_request_emails: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      update_tournament_status: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_storage_admin: { Args: never; Returns: boolean }
+      send_review_request_emails: { Args: never; Returns: undefined }
+      update_tournament_status: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
