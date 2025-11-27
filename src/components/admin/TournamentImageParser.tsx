@@ -193,6 +193,43 @@ export const TournamentImageParser: React.FC = () => {
     try {
       console.log('💾 Saving tournament to database...');
 
+      let bannerUrl: string | undefined;
+
+      // Upload image to Supabase Storage if we have one
+      if (imageFile && imagePreview) {
+        console.log('📤 Uploading tournament banner to Storage...');
+        
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        // Upload to 'banners' bucket
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('banners')
+          .upload(filePath, imageFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('⚠️ Image upload failed:', uploadError);
+          toast({
+            title: 'Warning',
+            description: 'Tournament saved but image upload failed',
+            variant: 'default',
+          });
+        } else {
+          // Get public URL
+          const { data: urlData } = supabase.storage
+            .from('banners')
+            .getPublicUrl(filePath);
+          
+          bannerUrl = urlData.publicUrl;
+          console.log('✅ Banner uploaded:', bannerUrl);
+        }
+      }
+
+      // Save tournament with banner URL
       const { error } = await supabase
         .from('tournaments')
         .insert([{
@@ -200,6 +237,7 @@ export const TournamentImageParser: React.FC = () => {
           contact_email: editedData.contact_email,
           contact_name: editedData.contact_name,
           postcode: editedData.postcode || 'UNKNOWN',
+          banner_url: bannerUrl,
         }]);
 
       if (error) {
@@ -208,7 +246,9 @@ export const TournamentImageParser: React.FC = () => {
 
       toast({
         title: 'Success',
-        description: 'Tournament saved to moderation queue',
+        description: bannerUrl 
+          ? 'Tournament and image saved to moderation queue' 
+          : 'Tournament saved to moderation queue',
       });
 
       // Reset form
