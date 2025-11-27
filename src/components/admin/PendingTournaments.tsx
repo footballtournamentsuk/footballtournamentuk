@@ -124,8 +124,8 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     } catch (error) {
       console.error('Error fetching pending tournaments:', error);
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось загрузить турниры на модерации',
+        title: 'Error',
+        description: 'Failed to load pending tournaments',
         variant: 'destructive',
       });
     } finally {
@@ -145,8 +145,8 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
       if (error) throw error;
 
       toast({
-        title: 'Турнир одобрен',
-        description: 'Турнир опубликован на сайте',
+        title: 'Tournament Approved',
+        description: 'Tournament has been published on the site',
       });
 
       await fetchPendingTournaments();
@@ -154,8 +154,8 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     } catch (error) {
       console.error('Error approving tournament:', error);
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось одобрить турнир',
+        title: 'Error',
+        description: 'Failed to approve tournament',
         variant: 'destructive',
       });
     } finally {
@@ -179,8 +179,8 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
       if (error) throw error;
 
       toast({
-        title: 'Турнир отклонен',
-        description: 'Турнир удален из базы данных',
+        title: 'Tournament Rejected',
+        description: 'Tournament has been deleted from database',
       });
 
       await fetchPendingTournaments();
@@ -188,8 +188,8 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     } catch (error) {
       console.error('Error rejecting tournament:', error);
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось отклонить турнир',
+        title: 'Error',
+        description: 'Failed to reject tournament',
         variant: 'destructive',
       });
     } finally {
@@ -205,7 +205,7 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     return (
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-2 text-muted-foreground">Загрузка турниров...</p>
+        <p className="mt-2 text-muted-foreground">Loading tournaments...</p>
       </div>
     );
   }
@@ -214,10 +214,10 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     return (
       <div className="text-center py-12">
         <Badge variant="secondary" className="mb-4 text-lg px-4 py-2">
-          Нет турниров на модерации
+          No Pending Tournaments
         </Badge>
         <p className="text-muted-foreground">
-          Все турниры проверены и опубликованы
+          All tournaments have been reviewed and published
         </p>
       </div>
     );
@@ -227,9 +227,9 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold">Турниры на модерации</h3>
+          <h3 className="text-lg font-semibold">Pending Tournaments</h3>
           <p className="text-sm text-muted-foreground">
-            {pendingTournaments.length} {pendingTournaments.length === 1 ? 'турнир ожидает' : 'турниров ожидают'} проверки
+            {pendingTournaments.length} tournament{pendingTournaments.length !== 1 ? 's' : ''} awaiting review
           </p>
         </div>
       </div>
@@ -240,7 +240,7 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
             {/* Badge showing pending status */}
             <div className="absolute -top-2 -right-2 z-10">
               <Badge className="bg-orange-500 text-white font-bold shadow-lg">
-                НА МОДЕРАЦИИ
+                PENDING REVIEW
               </Badge>
             </div>
             
@@ -261,7 +261,7 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                   >
                     <Check className="h-4 w-4 mr-2" />
-                    Одобрить
+                    Approve
                   </Button>
                   <Button
                     size="sm"
@@ -271,7 +271,7 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
                     className="flex-1"
                   >
                     <X className="h-4 w-4 mr-2" />
-                    Отклонить
+                    Reject
                   </Button>
                 </div>
                 <Button
@@ -281,7 +281,7 @@ export const PendingTournaments: React.FC<PendingTournamentsProps> = ({ onUpdate
                   className="w-full"
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Просмотр деталей
+                  View Details
                 </Button>
               </CardContent>
             </Card>
