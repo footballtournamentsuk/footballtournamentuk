@@ -229,17 +229,21 @@ CRITICAL EXTRACTION RULES:
       try {
         console.log('📍 Geocoding location:', extractedData.location_name);
         
-        // Build search query - prioritize postcode for accuracy
-        let searchQuery: string;
-        if (extractedData.postcode) {
-          // Postcode is most accurate
-          searchQuery = `${extractedData.postcode}, United Kingdom`;
-          console.log('🎯 Using postcode for geocoding:', searchQuery);
-        } else {
-          // Fallback to venue + region
-          searchQuery = `${extractedData.location_name}, ${extractedData.region}, United Kingdom`;
-          console.log('📌 Using venue + region for geocoding:', searchQuery);
+        // Build comprehensive search query using all available data
+        const queryParts = [extractedData.location_name];
+        
+        if (extractedData.region) {
+          queryParts.push(extractedData.region);
         }
+        
+        if (extractedData.postcode) {
+          queryParts.push(extractedData.postcode);
+        }
+        
+        queryParts.push('United Kingdom');
+        
+        const searchQuery = queryParts.join(', ');
+        console.log('🎯 Using comprehensive query for geocoding:', searchQuery);
         
         const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=postcode,place,address,poi&limit=1`;
         
