@@ -50,25 +50,49 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    const systemPrompt = `You are a tournament data extraction expert. Extract ALL tournament information from the provided image.
+    const systemPrompt = `You are a tournament data extraction expert. Extract ALL tournament information from the provided image with MAXIMUM ACCURACY.
 
 CRITICAL EXTRACTION RULES:
-1. Extract the EXACT tournament name as it appears
-2. Dates MUST be in ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)
-3. If only month/year is shown, use the 1st day of that month
-4. Extract ALL contact information (name, email, phone, website)
-5. Region must be a UK county name (e.g., "Yorkshire", "Lancashire", "Greater London")
-6. Country default to "GB" for UK events
-7. Age groups must use format: "U7", "U8", "U9", "U10", "U11", "U12", "U13", "U14", "U15", "U16", "U17", "U18", "U19", "U21", "Adult"
-8. Team types must be one or more of: ["Boys", "Girls", "Mixed"]
-9. Format must be one of: ["3v3", "5v5", "7v7", "9v9", "11v11"]
-10. Type must be one of: ["tournament", "league", "cup", "friendly", "festival", "camp", "showcase"]
-11. Extract venue/location details if visible
-12. Extract costs/fees if mentioned
-13. Extract maximum team capacity if shown
-14. Extract registration deadline if mentioned
 
-If information is not visible or unclear, omit that field - DO NOT guess or invent data.`;
+📅 DATES (MOST IMPORTANT):
+- Look for EXACT dates in formats: DD/MM/YYYY, DD-MM-YYYY, "29th December", "Dec 29", etc.
+- If you see a single date, check if there's a time range (e.g., "9am-5pm") - that's a one-day event
+- If you see "29-30 December", that's TWO DAYS: start_date = 29th, end_date = 30th
+- Start date and end date CAN BE DIFFERENT - look carefully!
+- NEVER assume dates are the same unless explicitly shown as single date
+- Format MUST be ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+- If only year/month given, use 1st day of that month
+
+⚽ FORMATS (EXTRACT ALL):
+- Look for ALL format mentions: "U8s play 5v5", "U10s play 7v7", etc.
+- If MULTIPLE formats mentioned, choose the MOST COMMON or PRIMARY one for 'format' field
+- Add ALL formats to 'additional_notes' like: "Under 8s play 5v5, Under 10s and Under 12s play 7v7"
+- Valid formats: "3v3", "5v5", "7v7", "9v9", "11v11"
+
+📍 LOCATION (CRITICAL FOR MAP PINS):
+- Extract FULL venue name exactly as shown
+- Extract UK POSTCODE if visible (format: AB12 3CD)
+- Extract city/town name
+- For region: use UK county name (Yorkshire, Lancashire, Greater Manchester, etc.)
+- If address is visible, extract it completely
+
+💰 COSTS:
+- Look for entry fees, costs per team, registration fees
+- Extract numeric amount and currency (usually GBP/£)
+
+👥 CONTACT INFO:
+- Extract name, email, phone EXACTLY as shown
+- Email addresses are often in lowercase with @ symbol
+- Phone numbers may have spaces or dashes
+
+📋 OTHER DETAILS:
+- Age groups: U7, U8, U9, U10, U11, U12, U13, U14, U15, U16, U17, U18, U19, U21, Adult
+- Team types: Boys, Girls, Mixed
+- Type: tournament, league, cup, friendly, festival, camp, showcase
+- Max teams if mentioned
+- Registration deadline if shown
+
+⚠️ IMPORTANT: DO NOT guess or invent data. Only extract what is CLEARLY VISIBLE in the image.`;
 
     console.log('🤖 Sending image to Lovable AI for extraction...');
 
@@ -164,31 +188,53 @@ If information is not visible or unclear, omit that field - DO NOT guess or inve
       throw new Error('Missing required tournament information in image');
     }
 
-    // Geocode the location
-    const MAPBOX_TOKEN = Deno.env.get('MAPBOX_TOKEN');
-    let latitude = 51.5074; // Default to London
+    // Geocode the location with Mapbox API
+    const MAPBOX_PUBLIC_TOKEN = Deno.env.get('MAPBOX_PUBLIC_TOKEN');
+    let latitude = 51.5074; // Default to London if geocoding fails
     let longitude = -0.1278;
 
-    if (MAPBOX_TOKEN && extractedData.location_name) {
+    if (MAPBOX_PUBLIC_TOKEN && extractedData.location_name) {
       try {
         console.log('📍 Geocoding location:', extractedData.location_name);
-        const searchQuery = extractedData.postcode 
-          ? `${extractedData.postcode}, UK`
-          : `${extractedData.location_name}, ${extractedData.region}, UK`;
         
-        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_TOKEN}&country=GB&limit=1`;
+        // Build search query - prioritize postcode for accuracy
+        let searchQuery: string;
+        if (extractedData.postcode) {
+          // Postcode is most accurate
+          searchQuery = `${extractedData.postcode}, United Kingdom`;
+          console.log('🎯 Using postcode for geocoding:', searchQuery);
+        } else {
+          // Fallback to venue + region
+          searchQuery = `${extractedData.location_name}, ${extractedData.region}, United Kingdom`;
+          console.log('📌 Using venue + region for geocoding:', searchQuery);
+        }
+        
+        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=postcode,place,address,poi&limit=1`;
+        
         const geocodeResponse = await fetch(geocodeUrl);
         
         if (geocodeResponse.ok) {
           const geocodeData = await geocodeResponse.json();
           if (geocodeData.features && geocodeData.features.length > 0) {
-            [longitude, latitude] = geocodeData.features[0].center;
-            console.log('✅ Geocoded:', { latitude, longitude });
+            const feature = geocodeData.features[0];
+            [longitude, latitude] = feature.center;
+            console.log('✅ Geocoded successfully:', { 
+              latitude, 
+              longitude,
+              place_name: feature.place_name,
+              relevance: feature.relevance
+            });
+          } else {
+            console.warn('⚠️ No geocoding results found for:', searchQuery);
           }
+        } else {
+          console.error('❌ Geocoding API error:', geocodeResponse.status);
         }
       } catch (error) {
         console.error('⚠️ Geocoding failed:', error);
       }
+    } else {
+      console.warn('⚠️ Mapbox token or location missing, using default coordinates');
     }
 
     // Prepare tournament data for database
