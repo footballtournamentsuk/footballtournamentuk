@@ -274,11 +274,15 @@ export const TournamentImageParser: React.FC = () => {
         throw new Error('User not authenticated');
       }
 
+      // Normalize format to satisfy DB check constraint (e.g. remove spaces: "5v5,7v7")
+      const normalizedFormat = editedData.format.replace(/\s+/g, '');
+
       // Save tournament with banner URL
       const { error } = await supabase
         .from('tournaments')
         .insert([{
           ...editedData,
+          format: normalizedFormat,
           contact_email: editedData.contact_email,
           contact_name: editedData.contact_name,
           postcode: editedData.postcode || 'UNKNOWN',
