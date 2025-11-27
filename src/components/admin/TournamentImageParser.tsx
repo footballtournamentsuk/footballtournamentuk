@@ -1,16 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Image, Loader2, CheckCircle, AlertCircle, Upload, Eye } from 'lucide-react';
+import { Image, Loader2, CheckCircle, AlertCircle, Upload, Eye, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import TournamentCard from '@/components/TournamentCard';
 import { Tournament } from '@/types/tournament';
+import { useDraftPersistence } from '@/hooks/useDraftPersistence';
 
 interface ExtractedTournament {
   name: string;
@@ -49,6 +50,39 @@ export const TournamentImageParser: React.FC = () => {
   const [extractedData, setExtractedData] = useState<ExtractedTournament | null>(null);
   const [editedData, setEditedData] = useState<ExtractedTournament | null>(null);
   const { toast } = useToast();
+  const { saveDraft, getDraft, clearDraft, hasDraft } = useDraftPersistence();
+
+  // Restore draft on mount
+  useEffect(() => {
+    const draft = getDraft();
+    if (draft) {
+      setImagePreview(draft.imagePreview);
+      setAdditionalText(draft.additionalText);
+      setExtractedData(draft.extractedData);
+      setEditedData(draft.editedData);
+      
+      toast({
+        title: 'Draft restored',
+        description: 'Your previous work has been restored',
+      });
+    }
+  }, [getDraft, toast]);
+
+  // Auto-save draft when data changes
+  useEffect(() => {
+    if (imagePreview || additionalText || extractedData || editedData) {
+      const timer = setTimeout(() => {
+        saveDraft({
+          imagePreview,
+          additionalText,
+          extractedData,
+          editedData,
+        });
+      }, 1000); // Debounce for 1 second
+
+      return () => clearTimeout(timer);
+    }
+  }, [imagePreview, additionalText, extractedData, editedData, saveDraft]);
 
   // Convert edited data to Tournament format for preview
   const previewTournament = useMemo((): Tournament | null => {
@@ -255,7 +289,8 @@ export const TournamentImageParser: React.FC = () => {
           : 'Tournament saved to moderation queue',
       });
 
-      // Reset form
+      // Clear draft and reset form
+      clearDraft();
       setImageFile(null);
       setImagePreview(null);
       setAdditionalText('');
@@ -278,9 +313,17 @@ export const TournamentImageParser: React.FC = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Image className="h-5 w-5" />
-            Extract Tournament from Image (AI-Powered)
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Image className="h-5 w-5" />
+              Extract Tournament from Image (AI-Powered)
+            </div>
+            {hasDraft && (
+              <Badge variant="secondary" className="gap-1">
+                <Save className="h-3 w-3" />
+                Draft saved
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
