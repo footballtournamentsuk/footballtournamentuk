@@ -283,7 +283,7 @@ export const TournamentImageParser: React.FC = () => {
                     <Label>Start Date *</Label>
                     <Input
                       type="datetime-local"
-                      value={editedData.start_date.slice(0, 16)}
+                      value={editedData.start_date.length === 10 ? `${editedData.start_date}T00:00` : editedData.start_date.slice(0, 16)}
                       onChange={(e) => setEditedData({ ...editedData, start_date: e.target.value })}
                     />
                   </div>
@@ -291,7 +291,7 @@ export const TournamentImageParser: React.FC = () => {
                     <Label>End Date *</Label>
                     <Input
                       type="datetime-local"
-                      value={editedData.end_date.slice(0, 16)}
+                      value={editedData.end_date.length === 10 ? `${editedData.end_date}T00:00` : editedData.end_date.slice(0, 16)}
                       onChange={(e) => setEditedData({ ...editedData, end_date: e.target.value })}
                     />
                   </div>
