@@ -73,10 +73,18 @@ CRITICAL EXTRACTION RULES:
 - If only year/month given, use 1st day of that month
 - Registration deadline: Look for "Register by", "Deadline", "Close date"
 
-⚽ FORMATS (EXTRACT ALL):
-- Look for ALL format mentions: "U8s play 5v5", "U10s play 7v7", etc.
-- If MULTIPLE formats mentioned, choose the MOST COMMON or PRIMARY one for 'format' field
-- Add ALL formats to 'additional_notes' like: "Under 8s play 5v5, Under 10s and Under 12s play 7v7"
+⚽ FORMATS (CRITICAL - READ CAREFULLY):
+- FIRST: Look for EXPLICIT format mentions: "U8s play 5v5", "U10s play 7v7", "Format: 7v7", etc.
+- IF NO EXPLICIT FORMATS: Use standard UK youth football formats by age:
+  * U7-U8: use "5v5"
+  * U9-U10: use "7v7"  
+  * U11-U12: use "9v9"
+  * U13+: use "11v11"
+- IF MULTIPLE AGE GROUPS WITH DIFFERENT FORMATS:
+  * Set 'format' field to the MOST COMMON format across all age groups
+  * Example: U7,U8,U9,U10,U11,U12 → Most common would be "7v7" (covers U9,U10,U11,U12)
+  * ALWAYS add detailed format breakdown to 'additional_notes':
+    "U7-U8 play 5v5, U9-U10 play 7v7, U11-U12 play 9v9, U13+ play 11v11"
 - Valid formats: "3v3", "5v5", "7v7", "9v9", "11v11"
 
 📍 LOCATION (CRITICAL - FOLLOW EXACTLY):
