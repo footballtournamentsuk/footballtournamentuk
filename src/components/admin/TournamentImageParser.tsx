@@ -274,8 +274,19 @@ export const TournamentImageParser: React.FC = () => {
         throw new Error('User not authenticated');
       }
 
-      // Normalize format to satisfy DB check constraint (e.g. remove spaces: "5v5,7v7")
-      const normalizedFormat = editedData.format.replace(/\s+/g, '');
+      // Normalize format to satisfy DB check constraint
+      const allowedFormats = ['3v3', '5v5', '7v7', '9v9', '11v11'];
+      const rawFormat = (editedData.format || '').toLowerCase();
+      const formatTokens = rawFormat
+        .split(/[\s,]+/)
+        .map((t) => t.trim())
+        .filter((t) => allowedFormats.includes(t as (typeof allowedFormats)[number]));
+
+      const normalizedFormat = formatTokens.join(',');
+
+      if (!normalizedFormat) {
+        throw new Error('Invalid format. Use 3v3, 5v5, 7v7, 9v9 or 11v11');
+      }
 
       // Save tournament with banner URL
       const { error } = await supabase
