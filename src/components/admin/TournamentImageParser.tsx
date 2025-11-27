@@ -128,7 +128,7 @@ export const TournamentImageParser: React.FC = () => {
       registeredTeams: 0,
       isPublished: false,
     } as Tournament;
-  }, [editedData, imagePreview]);
+  }, [editedData, imagePreview, bannerPosition]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
