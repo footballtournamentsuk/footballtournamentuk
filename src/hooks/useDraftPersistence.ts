@@ -5,6 +5,7 @@ interface DraftData {
   additionalText: string;
   extractedData: any;
   editedData: any;
+  bannerPosition?: string;
   timestamp: number;
 }
 
@@ -28,6 +29,7 @@ export const useDraftPersistence = () => {
         additionalText: '',
         extractedData: null,
         editedData: null,
+        bannerPosition: 'center',
         ...existingDraft,
         ...data,
         timestamp: Date.now(),

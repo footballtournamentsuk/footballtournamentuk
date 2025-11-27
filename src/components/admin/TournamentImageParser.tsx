@@ -49,6 +49,7 @@ export const TournamentImageParser: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [extractedData, setExtractedData] = useState<ExtractedTournament | null>(null);
   const [editedData, setEditedData] = useState<ExtractedTournament | null>(null);
+  const [bannerPosition, setBannerPosition] = useState<string>('center');
   const { toast } = useToast();
   const { saveDraft, getDraft, clearDraft, hasDraft } = useDraftPersistence();
 
@@ -60,6 +61,7 @@ export const TournamentImageParser: React.FC = () => {
       setAdditionalText(draft.additionalText);
       setExtractedData(draft.extractedData);
       setEditedData(draft.editedData);
+      setBannerPosition(draft.bannerPosition || 'center');
       
       toast({
         title: 'Draft restored',
@@ -77,12 +79,13 @@ export const TournamentImageParser: React.FC = () => {
           additionalText,
           extractedData,
           editedData,
+          bannerPosition,
         });
       }, 1000); // Debounce for 1 second
 
       return () => clearTimeout(timer);
     }
-  }, [imagePreview, additionalText, extractedData, editedData, saveDraft]);
+  }, [imagePreview, additionalText, extractedData, editedData, bannerPosition, saveDraft]);
 
   // Convert edited data to Tournament format for preview
   const previewTournament = useMemo((): Tournament | null => {
@@ -93,6 +96,7 @@ export const TournamentImageParser: React.FC = () => {
       name: editedData.name,
       description: editedData.description,
       banner_url: imagePreview || undefined, // Use uploaded image as banner
+      banner_position: bannerPosition,
       location: {
         name: editedData.location_name,
         coordinates: [editedData.longitude, editedData.latitude],
@@ -319,6 +323,7 @@ export const TournamentImageParser: React.FC = () => {
           contact_name: editedData.contact_name,
           postcode: editedData.postcode || 'UNKNOWN',
           banner_url: bannerUrl,
+          banner_position: bannerPosition,
           organizer_id: user.id, // Add organizer_id for RLS policy
         }]);
 
@@ -340,6 +345,7 @@ export const TournamentImageParser: React.FC = () => {
       setAdditionalText('');
       setExtractedData(null);
       setEditedData(null);
+      setBannerPosition('center');
 
     } catch (error) {
       console.error('❌ Error saving tournament:', error);
@@ -663,6 +669,40 @@ export const TournamentImageParser: React.FC = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Image Position Control */}
+                {imagePreview && (
+                  <div className="space-y-3 pt-4">
+                    <Label htmlFor="bannerPosition" className="text-base font-semibold">Image Position in Card</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: 'top', label: 'Top' },
+                        { value: 'center', label: 'Center' },
+                        { value: 'bottom', label: 'Bottom' },
+                        { value: 'left', label: 'Left' },
+                        { value: 'right', label: 'Right' },
+                        { value: 'top left', label: 'Top Left' },
+                        { value: 'top right', label: 'Top Right' },
+                        { value: 'bottom left', label: 'Bottom Left' },
+                        { value: 'bottom right', label: 'Bottom Right' },
+                      ].map((position) => (
+                        <Button
+                          key={position.value}
+                          type="button"
+                          variant={bannerPosition === position.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setBannerPosition(position.value)}
+                          className="text-xs"
+                        >
+                          {position.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Choose how the image is positioned in the tournament card preview
+                    </p>
+                  </div>
+                )}
 
                   <Button
                     onClick={handleSaveTournament}
