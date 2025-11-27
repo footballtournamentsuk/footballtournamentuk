@@ -241,12 +241,9 @@ CRITICAL EXTRACTION RULES:
       try {
         console.log('📍 Geocoding location:', extractedData.location_name);
         
-        // Build comprehensive search query using all available data
-        const queryParts = [extractedData.location_name];
-        
-        if (extractedData.region) {
-          queryParts.push(extractedData.region);
-        }
+        // Build precise search query prioritizing exact venue location
+        // Use location_name (which includes "Venue, City") + postcode if available
+        const queryParts = [extractedData.location_name]; // e.g., "Amory Park, Tiverton"
         
         if (extractedData.postcode) {
           queryParts.push(extractedData.postcode);
@@ -255,9 +252,9 @@ CRITICAL EXTRACTION RULES:
         queryParts.push('United Kingdom');
         
         const searchQuery = queryParts.join(', ');
-        console.log('🎯 Using comprehensive query for geocoding:', searchQuery);
+        console.log('🎯 Precise geocoding query:', searchQuery);
         
-        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=postcode,place,address,poi&limit=1`;
+        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_PUBLIC_TOKEN}&country=GB&types=poi,address,place&limit=1`;
         
         const geocodeResponse = await fetch(geocodeUrl);
         
