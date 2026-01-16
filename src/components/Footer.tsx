@@ -155,7 +155,7 @@ export const Footer = () => {
         </div>
         
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-sm text-white/60">
-          <p>© 2025 FT UK Football Tournaments UK. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} FT UK Football Tournaments UK. All rights reserved.</p>
         </div>
       </div>
     </footer>;
