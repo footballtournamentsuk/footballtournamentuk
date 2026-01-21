@@ -449,7 +449,7 @@ const Tournaments = () => {
                   {/* Map */}
                   <div className="h-[600px]">
                     <Map 
-                      tournaments={allFilteredTournaments}
+                      tournaments={upcomingTournaments}
                       selectedTournament={selectedTournament}
                       onTournamentSelect={handleTournamentSelect}
                       centerCoordinates={filters.location?.coordinates}
