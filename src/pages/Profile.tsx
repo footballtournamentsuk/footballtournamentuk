@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useSessionManager } from '@/hooks/useSessionManager';
 import { supabase } from '@/integrations/supabase/client';
-import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText, ChevronDown, Shield, LogOut } from 'lucide-react';
+import { Calendar, Clock, Save, Eye, Globe, Trash2, Plus, X, User, Settings, AlertTriangle, Trophy, Upload, Image, FileText, ChevronDown, ChevronUp, Shield, LogOut } from 'lucide-react';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AddressAutocomplete } from '@/components/ui/address-autocomplete';
 import { PostcodeAutocomplete } from '@/components/ui/postcode-autocomplete';
@@ -101,6 +102,160 @@ interface TournamentFormData {
   share_cover_alt?: string;
   share_cover_variant?: string;
 }
+
+// Collapsible My Tournaments List Component
+const MyTournamentsList = ({ 
+  tournaments, 
+  onEdit, 
+  onDelete 
+}: { 
+  tournaments: TournamentFormData[];
+  onEdit: (tournament: TournamentFormData) => void;
+  onDelete: (id: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const VISIBLE_COUNT = 2;
+  const visibleTournaments = tournaments.slice(0, VISIBLE_COUNT);
+  const hiddenTournaments = tournaments.slice(VISIBLE_COUNT);
+
+  const TournamentItem = ({ tournament }: { tournament: TournamentFormData }) => (
+    <div className="p-3 border rounded-lg">
+      <h4 className="font-medium text-sm">{tournament.name}</h4>
+      <p className="text-xs text-muted-foreground">{tournament.location_name}</p>
+      <p className="text-xs text-muted-foreground">
+        {new Date(tournament.start_date).toLocaleDateString()}
+      </p>
+      <div className="flex gap-1 mt-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onEdit(tournament)}
+        >
+          Edit
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="destructive">
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{tournament.name}"? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => onDelete(tournament.id!)}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      {visibleTournaments.map((tournament) => (
+        <TournamentItem key={tournament.id} tournament={tournament} />
+      ))}
+      
+      {hiddenTournaments.length > 0 && (
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleContent className="space-y-3">
+            {hiddenTournaments.map((tournament) => (
+              <TournamentItem key={tournament.id} tournament={tournament} />
+            ))}
+          </CollapsibleContent>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-full mt-2">
+              {isOpen ? (
+                <>
+                  <ChevronUp className="w-4 h-4 mr-2" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 mr-2" />
+                  Show {hiddenTournaments.length} More
+                </>
+              )}
+            </Button>
+          </CollapsibleTrigger>
+        </Collapsible>
+      )}
+    </div>
+  );
+};
+
+// Collapsible Select Tournaments List Component
+const SelectTournamentsList = ({ 
+  tournaments, 
+  selectedId,
+  onSelect 
+}: { 
+  tournaments: TournamentFormData[];
+  selectedId?: string;
+  onSelect: (tournament: TournamentFormData) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const VISIBLE_COUNT = 2;
+  const visibleTournaments = tournaments.slice(0, VISIBLE_COUNT);
+  const hiddenTournaments = tournaments.slice(VISIBLE_COUNT);
+
+  const TournamentButton = ({ tournament }: { tournament: TournamentFormData }) => (
+    <Button
+      variant={selectedId === tournament.id ? "default" : "outline"}
+      className="w-full justify-start text-left"
+      onClick={() => onSelect(tournament)}
+    >
+      <div className="truncate">
+        <div className="font-medium">{tournament.name}</div>
+        <div className="text-xs opacity-60">{tournament.location_name}</div>
+      </div>
+    </Button>
+  );
+
+  return (
+    <div className="space-y-2">
+      {visibleTournaments.map((tournament) => (
+        <TournamentButton key={tournament.id} tournament={tournament} />
+      ))}
+      
+      {hiddenTournaments.length > 0 && (
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleContent className="space-y-2">
+            {hiddenTournaments.map((tournament) => (
+              <TournamentButton key={tournament.id} tournament={tournament} />
+            ))}
+          </CollapsibleContent>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-full mt-2">
+              {isOpen ? (
+                <>
+                  <ChevronUp className="w-4 h-4 mr-2" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 mr-2" />
+                  Show {hiddenTournaments.length} More
+                </>
+              )}
+            </Button>
+          </CollapsibleTrigger>
+        </Collapsible>
+      )}
+    </div>
+  );
+};
 
 const ProfilePage = () => {
   const { user, loading, signOut } = useAuth();
@@ -1485,50 +1640,11 @@ const ProfilePage = () => {
                     {tournaments.length === 0 ? (
                       <p className="text-muted-foreground text-sm">No tournaments created yet.</p>
                     ) : (
-                      <div className="space-y-3">
-                        {tournaments.map((tournament) => (
-                          <div key={tournament.id} className="p-3 border rounded-lg">
-                            <h4 className="font-medium text-sm">{tournament.name}</h4>
-                            <p className="text-xs text-muted-foreground">{tournament.location_name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(tournament.start_date).toLocaleDateString()}
-                            </p>
-                            <div className="flex gap-1 mt-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingTournament(tournament)}
-                              >
-                                Edit
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="destructive">
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete "{tournament.name}"? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteTournament(tournament.id!)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <MyTournamentsList 
+                        tournaments={tournaments}
+                        onEdit={setEditingTournament}
+                        onDelete={deleteTournament}
+                      />
                     )}
                   </CardContent>
                 </Card>
@@ -1551,21 +1667,11 @@ const ProfilePage = () => {
                         Create a tournament first in the Create Tournament tab.
                       </p>
                     ) : (
-                      <div className="space-y-2">
-                        {tournaments.map((tournament) => (
-                          <Button
-                            key={tournament.id}
-                            variant={selectedTournamentForDetails?.id === tournament.id ? "default" : "outline"}
-                            className="w-full justify-start text-left"
-                            onClick={() => setSelectedTournamentForDetails(tournament)}
-                          >
-                            <div className="truncate">
-                              <div className="font-medium">{tournament.name}</div>
-                              <div className="text-xs opacity-60">{tournament.location_name}</div>
-                            </div>
-                          </Button>
-                        ))}
-                      </div>
+                      <SelectTournamentsList
+                        tournaments={tournaments}
+                        selectedId={selectedTournamentForDetails?.id}
+                        onSelect={setSelectedTournamentForDetails}
+                      />
                     )}
                   </CardContent>
                 </Card>
