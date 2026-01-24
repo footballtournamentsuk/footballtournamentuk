@@ -66,10 +66,10 @@ const PartnersCarousel = ({
         </div>
       )}
 
-      <div className="flex justify-center px-4">
+      <div className="flex justify-center px-4 min-h-[320px] md:min-h-[280px]">
         <div 
-          className={`w-full max-w-3xl bg-gradient-to-br from-card via-card to-accent/5 border border-border/50 rounded-3xl p-6 md:p-10 shadow-xl transition-all duration-500 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+          className={`w-full max-w-3xl bg-gradient-to-br from-card via-card to-accent/5 border border-border/50 rounded-3xl p-6 md:p-10 shadow-xl transition-opacity duration-500 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
           }`}
         >
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
