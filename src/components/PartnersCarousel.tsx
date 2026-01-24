@@ -96,7 +96,7 @@ const PartnersCarousel = ({
               <h3 className="text-xl md:text-2xl font-bold text-foreground">
                 {currentPartner.name}
               </h3>
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+              <p className="text-muted-foreground text-sm md:text-base leading-relaxed line-clamp-3">
                 {currentPartner.description}
               </p>
               
