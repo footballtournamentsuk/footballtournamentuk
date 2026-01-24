@@ -17,7 +17,9 @@ import {
   EyeOff,
   AlertCircle,
   Save,
-  X
+  X,
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -169,10 +171,76 @@ export const TournamentManager: React.FC = () => {
       contact_email: tournament.contact.email,
       contact_phone: tournament.contact.phone || '',
       website: tournament.website || '',
+      banner_url: tournament.banner_url || '',
       banner_position: tournament.banner_position || 'center',
       venue_details: tournament.venue_details || '',
       additional_notes: tournament.additional_notes || '',
     });
+  };
+
+  const [bannerUploading, setBannerUploading] = useState(false);
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editingTournament) return;
+
+    // Validate file type
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload a JPG, PNG, or WebP image',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setBannerUploading(true);
+      
+      const timestamp = Date.now();
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `${editingTournament.id}/banner-${timestamp}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('tournament-banners')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('tournament-banners')
+        .getPublicUrl(fileName);
+
+      setEditForm((prev: any) => ({ ...prev, banner_url: data.publicUrl }));
+
+      toast({
+        title: 'Success',
+        description: 'Banner uploaded successfully',
+      });
+    } catch (error) {
+      console.error('Error uploading banner:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload banner image',
+        variant: 'destructive',
+      });
+    } finally {
+      setBannerUploading(false);
+    }
+  };
+
+  const handleRemoveBanner = () => {
+    setEditForm((prev: any) => ({ ...prev, banner_url: '' }));
   };
 
   const handleSaveEdit = async () => {
@@ -203,6 +271,7 @@ export const TournamentManager: React.FC = () => {
           contact_email: editForm.contact_email,
           contact_phone: editForm.contact_phone || null,
           website: editForm.website || null,
+          banner_url: editForm.banner_url || null,
           banner_position: editForm.banner_position,
           venue_details: editForm.venue_details || null,
           additional_notes: editForm.additional_notes || null,
@@ -593,6 +662,82 @@ export const TournamentManager: React.FC = () => {
                   <Input
                     value={editForm.website}
                     onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                  />
+                </div>
+
+                {/* Banner Upload Section */}
+                <div className="col-span-2 space-y-3 p-4 border rounded-lg bg-muted/30">
+                  <Label className="flex items-center gap-2">
+                    <ImageIcon className="h-4 w-4" />
+                    Tournament Banner
+                  </Label>
+                  
+                  {editForm.banner_url ? (
+                    <div className="space-y-3">
+                      <div className="relative aspect-[3/1] max-w-md rounded-lg overflow-hidden border">
+                        <img
+                          src={editForm.banner_url}
+                          alt="Tournament banner"
+                          className="w-full h-full object-cover"
+                          style={{ objectPosition: editForm.banner_position || 'center' }}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => document.getElementById('banner-upload')?.click()}
+                          disabled={bannerUploading}
+                        >
+                          {bannerUploading ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Replace
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={handleRemoveBanner}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div 
+                      className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                      onClick={() => document.getElementById('banner-upload')?.click()}
+                    >
+                      {bannerUploading ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Uploading...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2">
+                          <Upload className="h-8 w-8 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
+                            Click to upload banner image
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            JPG, PNG or WebP. Max 5MB
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <input
+                    id="banner-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleBannerUpload}
                   />
                 </div>
 
