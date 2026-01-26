@@ -347,9 +347,27 @@ CRITICAL EXTRACTION RULES:
       console.warn('⚠️ Mapbox token missing, using default coordinates');
     }
 
+    // Clean up region field - remove duplicates like "Nottinghamshire, Nottinghamshire"
+    let cleanRegion = extractedData.region || '';
+    if (cleanRegion.includes(',')) {
+      const parts = cleanRegion.split(',').map(p => p.trim());
+      // If all parts are the same, just use one
+      const uniqueParts = [...new Set(parts)];
+      cleanRegion = uniqueParts.join(', ');
+    }
+    
+    // Clean up location_name - ensure it doesn't duplicate region
+    let cleanLocationName = extractedData.location_name || '';
+    // If location ends with region twice, remove duplicate
+    if (cleanRegion && cleanLocationName.toLowerCase().endsWith(`, ${cleanRegion.toLowerCase()}, ${cleanRegion.toLowerCase()}`)) {
+      cleanLocationName = cleanLocationName.replace(new RegExp(`, ${cleanRegion}$`, 'i'), '');
+    }
+
     // Prepare tournament data for database
     const tournamentData = {
       ...extractedData,
+      location_name: cleanLocationName,
+      region: cleanRegion,
       postcode: finalPostcode,
       latitude,
       longitude,
