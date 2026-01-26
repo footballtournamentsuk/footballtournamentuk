@@ -73,27 +73,29 @@ CRITICAL EXTRACTION RULES:
 - **YEAR DETERMINATION (CRITICAL):**
   * If year IS shown: use exact year from image/text
   * If year NOT shown (only day/month): determine year intelligently:
-    - Current date is 2025-11-27
-    - If month is December-November and no year shown: use 2026 (next year for upcoming events)
-    - If month is January-March and no year shown: use 2026 (early next year events)
+    - Current date is 2026-01-26
+    - If month is February-December and no year shown: use 2026 (current year for upcoming events)
+    - If month is January and day has passed: use 2027 (next year)
     - ALWAYS assume tournaments are UPCOMING events, never past
-  * Example: "29-30 December" (no year) → 2026-12-29 to 2026-12-30
+  * Example: "18-19 July" (no year) → 2026-07-18 to 2026-07-19
+  * Example: "15 January" (no year, already passed) → 2027-01-15
 - If only year/month given, use 1st day of that month
 - Registration deadline: Look for "Register by", "Deadline", "Close date"
 
-⚽ FORMATS (CRITICAL - READ CAREFULLY):
+⚽ FORMATS (CRITICAL - RETURN ALL APPLICABLE FORMATS):
 - FIRST: Look for EXPLICIT format mentions: "U8s play 5v5", "U10s play 7v7", "Format: 7v7", etc.
 - IF NO EXPLICIT FORMATS: Use standard UK youth football formats by age:
-  * U7-U8: use "5v5"
-  * U9-U10: use "7v7"  
-  * U11-U12: use "9v9"
-  * U13+: use "11v11"
+  * U6-U8: 5v5
+  * U9-U10: 7v7  
+  * U11-U12: 9v9
+  * U13+: 11v11
 - IF MULTIPLE AGE GROUPS WITH DIFFERENT FORMATS:
-  * Set 'format' field to the MOST COMMON format across all age groups
-  * Example: U7,U8,U9,U10,U11,U12 → Most common would be "7v7" (covers U9,U10,U11,U12)
-  * ALWAYS add detailed format breakdown to 'additional_notes':
-    "U7-U8 play 5v5, U9-U10 play 7v7, U11-U12 play 9v9, U13+ play 11v11"
-- Valid formats: "3v3", "5v5", "7v7", "9v9", "11v11"
+  * Return ALL formats as comma-separated string (no spaces): "5v5,7v7,9v9,11v11"
+  * Example: Tournament with U7,U8,U9,U10,U11,U12,U13,U14 → format = "5v5,7v7,9v9,11v11"
+  * ALSO add detailed format breakdown by age group to 'additional_notes':
+    "U7-U8 play 5v5. U9-U10 play 7v7. U11-U12 play 9v9. U13-U14 play 11v11."
+- Valid individual formats: "3v3", "5v5", "7v7", "9v9", "11v11"
+- Valid combined formats: "5v5,7v7", "7v7,9v9", "5v5,7v7,9v9,11v11" etc.
 
 📍 LOCATION (CRITICAL - FOLLOW EXACTLY):
 **LOCATION_NAME MUST ALWAYS INCLUDE CITY:**
@@ -202,7 +204,7 @@ CRITICAL EXTRACTION RULES:
                   region: { type: 'string', description: 'UK county name' },
                   country: { type: 'string', description: 'Country code (GB for UK)' },
                   type: { type: 'string', enum: ['tournament', 'league', 'cup', 'friendly', 'festival', 'camp', 'showcase'] },
-                  format: { type: 'string', enum: ['3v3', '5v5', '7v7', '9v9', '11v11'] },
+                  format: { type: 'string', description: 'Format(s) - single format like "7v7" OR multiple comma-separated like "5v5,7v7,9v9,11v11"' },
                   age_groups: { type: 'array', items: { type: 'string' }, description: 'Age groups (U7-U21, Adult)' },
                   team_types: { type: 'array', items: { type: 'string' }, description: 'Boys/Girls/Mixed' },
                   contact_name: { type: 'string', description: 'Contact person name' },
