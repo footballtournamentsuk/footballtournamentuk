@@ -114,20 +114,20 @@ export const TournamentManager: React.FC = () => {
     }
   };
 
-  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
+  const handleTogglePublish = async (id: string, targetStatus: boolean) => {
     try {
       setProcessingIds(prev => new Set(prev).add(id));
       
       const { error } = await supabase
         .from('tournaments')
-        .update({ is_published: !currentStatus })
+        .update({ is_published: targetStatus })
         .eq('id', id);
 
       if (error) throw error;
 
       toast({
         title: 'Success',
-        description: `Tournament ${!currentStatus ? 'published' : 'unpublished'} successfully`,
+        description: `Tournament ${targetStatus ? 'published' : 'unpublished'} successfully`,
       });
 
       await fetchTournaments();
