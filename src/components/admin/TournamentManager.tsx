@@ -83,7 +83,41 @@ export const TournamentManager: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       setProcessingIds(prev => new Set(prev).add(id));
-      
+
+      // Find the tournament to get image URLs for cleanup
+      const tournament = tournaments.find(t => t.id === id);
+
+      // Clean up storage images via Storage API
+      if (tournament) {
+        const filesToDelete: string[] = [];
+        
+        const extractPath = (url: string, bucket: string) => {
+          const marker = `/storage/v1/object/public/${bucket}/`;
+          const idx = url.indexOf(marker);
+          return idx !== -1 ? url.substring(idx + marker.length) : null;
+        };
+
+        if (tournament.banner_url) {
+          const path = extractPath(tournament.banner_url, 'banners');
+          if (path) filesToDelete.push(path);
+        }
+        if (tournament.gallery_images?.length) {
+          for (const img of tournament.gallery_images) {
+            const path = extractPath(img, 'banners');
+            if (path) filesToDelete.push(path);
+          }
+        }
+
+        if (filesToDelete.length > 0) {
+          await supabase.storage.from('banners').remove(filesToDelete);
+        }
+      }
+
+      // Delete related records first
+      await supabase.from('tournament_attachments').delete().eq('tournament_id', id);
+      await supabase.from('tournament_review_emails_sent').delete().eq('tournament_id', id);
+
+      // Now delete the tournament
       const { error } = await supabase
         .from('tournaments')
         .delete()
